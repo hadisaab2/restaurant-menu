@@ -1,7 +1,7 @@
 import React from 'react'
 import { Container } from './styles'
 import PlatesMenu from './platesmenu'
-import PlateDetails from './platedetails'
+import PlateDetails from './logo'
 
 export default function index() {
   return (
