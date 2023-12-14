@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Container, Plate,PlateContainer } from "./styles";
-import plate from "../plate.png";
+import plate from "../../../../static/plate.png";
 export default function CirclularCarousel({plates,activeIndex}) {
 
   return (
@@ -12,7 +12,7 @@ export default function CirclularCarousel({plates,activeIndex}) {
       {plates.map((p,index) => {
         return (
           <PlateContainer index={index} activeIndex={activeIndex}>
-            <Plate src={p.image} right={"-170px"} color={p} />
+            <Plate src={p.image} right={"-150px"} color={p} />
           </PlateContainer>
         );
       })}

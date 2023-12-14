@@ -6,7 +6,11 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
-
+html, body {
+  margin: 0;
+  padding: 0;
+  min-height: 100vh; /* use min-height 100 vh instead of height to allow extended height with large content */
+}
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;

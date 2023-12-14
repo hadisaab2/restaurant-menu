@@ -24,7 +24,6 @@ export const Carousel = styled.div`
       return `translateX(-${(props.activeIndex-3)*25}%)`;
     }
   }};
-  /* transform: translateX(calc(100% / 4)); */
 `;
 
 export const CarouselItem = styled.div`
@@ -36,11 +35,12 @@ export const CarouselItem = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  cursor: pointer;
 `;
 export const PlateContainer = styled.div`
   width: 70%;
   background-color: ${(props) =>
-    props.activeIndex == props.index ? "#E7E6E8" : "transparent"};
+    props.activeIndex == props.index ? "#667075" : "transparent"};
   border-radius: 10px;
   height: 100%;
   display: flex;
@@ -56,7 +56,7 @@ export const Plate = styled.img`
 `;
 export const PlateName = styled.span`
   font-size: 13px;
-  color:#444046;
+  color:white;
   text-align: center;
 
 `;

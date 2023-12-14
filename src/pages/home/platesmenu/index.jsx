@@ -3,10 +3,10 @@ import { Container } from './styles'
 import CirclularCarousel from './CirclularCarousel'
 import LinearCarousel from './LinearCarousel'
 import PlateName from './PlateName';
-import plate from "./plate.png";
-import plate2 from "./plate2.png";
-import plate3 from "./plate4.png";
-import plate4 from "./plate3.png";
+import plate from "../../../static/plate.png";
+import plate2 from "../../../static/plate2.png";
+import plate3 from "../../../static/plate4.png";
+import plate4 from "../../../static/plate3.png";
 
 export default function PlatesMenu() {
     const plates = [
