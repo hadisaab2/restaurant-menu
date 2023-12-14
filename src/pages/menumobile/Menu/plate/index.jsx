@@ -10,6 +10,7 @@ import {
 } from "./styles";
 
 export default function Plate({ plates, activePlate }) {
+  const {nametop,namebottom,price}=plates[activePlate];
   return (
     <Container>
       {plates.map((plateitem, index) => {
@@ -23,10 +24,10 @@ export default function Plate({ plates, activePlate }) {
       })}
 
       <PlateInfo>
-        <PlateNameTop>BoneLess</PlateNameTop>
-        <PlateNameBottom>Chicken</PlateNameBottom>
+        <PlateNameTop>{nametop}</PlateNameTop>
+        <PlateNameBottom>{namebottom}</PlateNameBottom>
 
-        <Price>8$</Price>
+        <Price>{price}$</Price>
 
         <Description>
           Lorem Ipsum is simply dummy text of the printing and typesetting

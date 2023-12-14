@@ -30,12 +30,12 @@ export default function VerticalCarousel({ plates,setactivePlate,activePlate,ani
     if (!scrollInProgress) {
       setScrollInProgress(true);
       if (deltaY > 0) {
-        if (carouselPosition > 0) {
-          setcarouselPosition(carouselPosition - 1);
+        if (carouselPosition > 1) {
+          setcarouselPosition(carouselPosition - 2);
         }
       } else {
-        if (carouselPosition < plates.length - 8) {
-          setcarouselPosition(carouselPosition + 1);
+        if (carouselPosition < plates.length - 7) {
+          setcarouselPosition(carouselPosition + 2);
         }
       }
 

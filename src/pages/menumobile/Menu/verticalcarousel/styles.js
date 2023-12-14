@@ -26,11 +26,11 @@ export const Carousel = styled.div`
 
   width: 100%;
   transform: ${(props) =>
-    `translateY(-${(props.carouselPosition * 100) / 7}%)`};
+    `translateY(-${(props.carouselPosition * 100) /6}%)`};
 `;
 
 export const CarouselItem = styled.div`
-  min-height: calc(100% / 7);
+  min-height: calc(100% /6);
   box-sizing: border-box;
   display: flex;
   align-items: center;
@@ -87,11 +87,11 @@ export const ArrowDown = {
 export const BoxContainer = styled.div`
   position: absolute;
   width: 100%;
-  height: calc(100% / 7);
+  height: calc(100% /6);
   display: flex;
   align-items: flex-end;
   transform: ${(props) =>
-    `translateY(${(props.activePlate - props.carouselPosition) * 12.2}vh)`};
+    `translateY(${(props.activePlate - props.carouselPosition) * 13.2}vh)`};
   transition: all 0.8s ease-in-out;
 `;
 
