@@ -1,5 +1,5 @@
 import styled from "styled-components";
 
 export const PageLayout = styled.div`
-height: 100svh;
+height: 100vh;
 `;
