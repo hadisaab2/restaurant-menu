@@ -96,7 +96,8 @@ export const BoxContainer = styled.div`
 `;
 
 export const Box = styled.div`
-  background-color: #f3c9b8;
+  /* background-color: #f3c9b8; */
+  background-color: #f9dd63;
   height: 100%;
   width: 100%;
   border-radius: 20px;

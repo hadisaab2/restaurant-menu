@@ -55,5 +55,6 @@ transition: all 0.6s ease-in-out;
 export const Line = styled.div`
 width: 27%;
 height: 2px;
-background-color:#FB4303;
+/* background-color:#FB4303; */
+background-color: #fad218;
 `;
