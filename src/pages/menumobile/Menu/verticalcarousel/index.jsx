@@ -12,7 +12,7 @@ import {
   BoxContainer,
   Box
 } from "./styles";
-
+import PreventScrollRefresh from "./PreventScrollRefresh";
 export default function VerticalCarousel({ plates,setactivePlate,activePlate,animationchange }) {
   const [carouselPosition, setcarouselPosition] = useState(0);
   const [scrollInProgress, setScrollInProgress] = useState(false);
@@ -53,6 +53,7 @@ export default function VerticalCarousel({ plates,setactivePlate,activePlate,ani
   }
   return (
     <Container>
+      <PreventScrollRefresh />
       <CarouselContainer
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
