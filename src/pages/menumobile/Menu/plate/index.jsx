@@ -9,11 +9,11 @@ import {
   Description
 } from "./styles";
 
-export default function Plate({ plates, activePlate }) {
-  const {nametop,namebottom,price}=plates[activePlate];
+export default function Plate({ menu, activePlate }) {
+  const {nametop,namebottom,price}=menu[activePlate];
   return (
     <Container>
-      {plates.map((plateitem, index) => {
+      {menu.map((plateitem, index) => {
         return (
           <PlateItem
             src={plateitem.image}

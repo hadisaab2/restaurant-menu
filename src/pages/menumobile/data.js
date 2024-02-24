@@ -8,7 +8,7 @@ import burger3 from "../../static/burger3.png";
 
 
 
-export const plates=[
+export const menu=[
     {
       category: "Plates",
       items: [
@@ -33,18 +33,18 @@ export const plates=[
     {
       category: "Burgers",
       items: [
-        { nametop: "Beaf",namebottom:"Burger",description:"",price:"9", image:`${burger1}?v=${Math.random()}`  },
-        { nametop: "Double Beaf",namebottom:"Burger",description:"",price:"7", image: `${burger1}?v=${Math.random()}` },
-        {  nametop: "Chicken",namebottom:"Burger",description:"",price:"11",image: `${burger1}?v=${Math.random()}` },
-       { nametop: "Beaf",namebottom:"Burger",description:"",price:"9", image:`${burger1}?v=${Math.random()}`  },
-        { nametop: "Double Beaf",namebottom:"Burger",description:"",price:"7", image: `${burger1}?v=${Math.random()}` },
-        {  nametop: "Chicken",namebottom:"Burger",description:"",price:"11",image: `${burger1}?v=${Math.random()}` },
-        { nametop: "Beaf",namebottom:"Burger",description:"",price:"9", image:`${burger1}?v=${Math.random()}`  },
-        { nametop: "Double Beaf",namebottom:"Burger",description:"",price:"7", image: `${burger1}?v=${Math.random()}` },
-        {  nametop: "Chicken",namebottom:"Burger",description:"",price:"11",image: `${burger1}?v=${Math.random()}` },
-        { nametop: "Beaf",namebottom:"Burger",description:"",price:"9", image:`${burger1}?v=${Math.random()}`  },
-        { nametop: "Double Beaf",namebottom:"Burger",description:"",price:"7", image: `${burger1}?v=${Math.random()}` },
-        {  nametop: "Chicken",namebottom:"Burger",description:"",price:"11",image: `${burger1}?v=${Math.random()}` },
+        { nametop: "Beaf",namebottom:"Burger",description:"",price:"9", image: burger1 },
+        { nametop: "Double Beaf",namebottom:"Burger",description:"",price:"7", image: burger2 },
+        {  nametop: "Chicken",namebottom:"Burger",description:"",price:"11",image: burger3 },
+        { nametop: "Beaf",namebottom:"Burger",description:"",price:"9", image: burger1 },
+        { nametop: "Double Beaf",namebottom:"Burger",description:"",price:"7", image: burger2 },
+        {  nametop: "Chicken",namebottom:"Burger",description:"",price:"11",image: burger3 },
+        { nametop: "Beaf",namebottom:"Burger",description:"",price:"9", image: burger1 },
+        { nametop: "Double Beaf",namebottom:"Burger",description:"",price:"7", image: burger2 },
+        {  nametop: "Chicken",namebottom:"Burger",description:"",price:"11",image: burger3 },
+        { nametop: "Beaf",namebottom:"Burger",description:"",price:"9", image: burger1 },
+        { nametop: "Double Beaf",namebottom:"Burger",description:"",price:"7", image: burger2 },
+        {  nametop: "Chicken",namebottom:"Burger",description:"",price:"11",image: burger3 },
       ],
     },
     { category: "Drinks",  items: [

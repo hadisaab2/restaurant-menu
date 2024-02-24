@@ -51,6 +51,7 @@ export default function VerticalCarousel({ plates, setactivePlate, activePlate, 
 
   return (
     <Container>
+      {console.log(plates)}
       <PreventScrollRefresh />
       <CarouselContainer
         onTouchStart={handleTouchStart}

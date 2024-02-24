@@ -48,11 +48,11 @@ const spin = keyframes`
 `;
 
 export const Loader = styled.div`
-  border: 4px solid rgba(0, 0, 0, 0.1);
+  border: 3px solid rgba(0, 0, 0, 0.1);
   border-left-color: #333; /* Change color as needed */
   border-radius: 50%;
-  width: 40px;
-  height: 40px;
+  width: 20px;
+  height: 20px;
   animation: ${spin} 1s linear infinite; /* Apply animation */
 `;
 

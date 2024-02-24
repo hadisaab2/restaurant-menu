@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Container } from "./styles";
 import Menu from "./Menu";
 import Header from "./Header";
-import {plates} from "./data"
+import {menu} from "./data"
 
 export default function MenuMobile() {
   const [activeCategory, setactiveCategory] = useState(0);
@@ -11,14 +11,14 @@ export default function MenuMobile() {
   return (
     <Container>
       <Header
-        plates={plates}
+        menu={menu}
         activeCategory={activeCategory}
         setactiveCategory={setactiveCategory}
         setanimationchange={setanimationchange}
         animationchange={animationchange}
       />
       <Menu
-        plates={plates[activeCategory].items}
+        menu={menu}
         activeCategory={activeCategory}
         animationchange={animationchange}
       />
