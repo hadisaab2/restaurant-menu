@@ -1,19 +1,16 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import {
   Container,
   CarouselContainer,
   Carousel,
-  CarouselItem,
-  PlateContainer,
-  Plate,
-  PlateName,
-  ArrowUp,
-  ArrowDown,
+
   BoxContainer,
   Box
 } from "./styles";
 import PreventScrollRefresh from "./PreventScrollRefresh";
-export default function VerticalCarousel({ plates,setactivePlate,activePlate,animationchange }) {
+import PlateItem from "./plateitem";
+
+export default function VerticalCarousel({ plates, setactivePlate, activePlate, animationchange }) {
   const [carouselPosition, setcarouselPosition] = useState(0);
   const [scrollInProgress, setScrollInProgress] = useState(false);
   const touchStartY = useRef(0);
@@ -48,9 +45,10 @@ export default function VerticalCarousel({ plates,setactivePlate,activePlate,ani
     setScrollInProgress(false);
   };
 
-  const itemclick = (index)=>{
-    setactivePlate(index)
-  }
+  const itemclick = (index) => {
+    setactivePlate(index);
+  };
+
   return (
     <Container>
       <PreventScrollRefresh />
@@ -61,17 +59,12 @@ export default function VerticalCarousel({ plates,setactivePlate,activePlate,ani
         className="CarouselContainer"
       >
         <BoxContainer activePlate={activePlate} carouselPosition={carouselPosition}>
-          <Box/>
+          <Box />
         </BoxContainer>
         <Carousel carouselPosition={carouselPosition}>
           {plates.map((plateitem, index) => {
             return (
-              <CarouselItem onClick={()=>itemclick(index)}>
-                <PlateContainer index={index}>
-                  <Plate src={plateitem.image} animationchange={animationchange}/>
-                  {/* <PlateName>{plateitem.name}</PlateName> */}
-                </PlateContainer>
-              </CarouselItem>
+              <PlateItem plateitem={plateitem} itemclick={itemclick} index={index}/>
             );
           })}
         </Carousel>
