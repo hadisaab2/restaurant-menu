@@ -2,14 +2,16 @@ import React, { useEffect } from 'react';
 
 const PreventScrollRefresh = () => {
   useEffect(() => {
-    const preventScrollRefresh = (event) => {
-      event.preventDefault();
+    const handleTouchMove = (event) => {
+      if (event.target.closest('.CarouselContainer')) {
+        event.preventDefault();
+      }
     };
 
-    document.addEventListener('touchmove', preventScrollRefresh, { passive: false });
+    document.addEventListener('touchmove', handleTouchMove, { passive: false });
 
     return () => {
-      document.removeEventListener('touchmove', preventScrollRefresh);
+      document.removeEventListener('touchmove', handleTouchMove);
     };
   }, []);
 

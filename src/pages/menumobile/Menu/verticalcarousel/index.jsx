@@ -58,6 +58,7 @@ export default function VerticalCarousel({ plates,setactivePlate,activePlate,ani
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
+        className="CarouselContainer"
       >
         <BoxContainer activePlate={activePlate} carouselPosition={carouselPosition}>
           <Box/>
