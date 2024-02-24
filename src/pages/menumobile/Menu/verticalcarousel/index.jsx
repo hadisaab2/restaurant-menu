@@ -64,7 +64,7 @@ export default function VerticalCarousel({ plates, setactivePlate, activePlate, 
         <Carousel carouselPosition={carouselPosition}>
           {plates.map((plateitem, index) => {
             return (
-              <PlateItem plateitem={plateitem} itemclick={itemclick} index={index}/>
+              <PlateItem plateitem={plateitem} itemclick={itemclick} index={index} key={index}/>
             );
           })}
         </Carousel>

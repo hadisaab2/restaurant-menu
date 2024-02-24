@@ -6,14 +6,14 @@ import {
   LoaderWrapper,
   Loader,
 } from "./styles";
-export default function PlateItem({ plateitem, itemclick, index }) {
+export default function PlateItem({ plateitem, itemclick, index,key }) {
   const [imageLoaded, setimageLoaded] = useState(false);
   const handleImageLoaded = () => {
     console.log("hiiii")
     setimageLoaded(true);
   };
   return (
-    <CarouselItem onClick={() => itemclick(index)}>
+    <CarouselItem onClick={() => itemclick(index)} key={key}>
       <PlateContainer index={index}>
         {!imageLoaded && (
           <LoaderWrapper>
