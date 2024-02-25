@@ -5,7 +5,6 @@ flex:1;
 display: flex;
 align-items: center;
 position: relative;
-background-color: green;
 `;
 export const Brand = styled.img`
 width: 140px;
