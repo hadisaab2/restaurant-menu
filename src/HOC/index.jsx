@@ -1,5 +1,5 @@
 import React from "react";
-import { DetailsBtn, Location, PageLayout } from "./styles";
+import { DetailsBtn, Location, PageLayout,SwipeDownContainer,Line,Arrow } from "./styles";
 import { useState } from "react";
 import Popup from "./popup";
 
@@ -16,7 +16,10 @@ export default function HOC(WrappedComponent) {
         <Location/>
       </DetailsBtn>
       <Popup showPopup={showPopup} popupHandler={popupHandler}/>
-      
+      <SwipeDownContainer>
+        {/* <Line/> */}
+        <Arrow/>
+      </SwipeDownContainer>
     </PageLayout>
   );
 }

@@ -1,5 +1,6 @@
-import styled from "styled-components";
+import styled, { keyframes } from 'styled-components';
 import { FaLocationArrow } from "react-icons/fa6";
+import { IoIosArrowDown } from "react-icons/io";
 
 export const PageLayout = styled.div`
 height: 100vh;
@@ -24,4 +25,38 @@ cursor: pointer;
 export const Location = styled(FaLocationArrow)`
 transform: rotate(270deg);
 
+`;
+const arrowanimation = keyframes`
+  0% {
+    margin-top: -10px;
+
+  }
+  50%{
+    margin-top: 0px;
+
+  }
+  75%{
+    margin-top: -5px;
+
+  }
+  100% {
+    margin-top: -10px;
+  }
+`;
+
+export const Arrow = styled(IoIosArrowDown)`
+font-size: 20px;
+animation: ${arrowanimation} 1s linear infinite;
+margin-bottom: -10px;
+color:#f9dd63;
+`;
+
+export const SwipeDownContainer = styled.div`
+position: absolute;
+left: 5px;
+top:20vh;
+display: flex;
+flex-direction: column;
+align-items: center;
+justify-content: center;
 `;
