@@ -1,14 +1,14 @@
 import styled from "styled-components";
 
 export const Container = styled.div`
-flex:1;
 display: flex;
 align-items: center;
 padding-left: 25px;
+height: 7vh;
 `;
 export const CarouselContainer = styled.div`
   overflow: hidden;
-  width: 75%;
+  width: 90%;
   display: flex;
   align-items: center;
   position:relative;
@@ -25,18 +25,18 @@ export const Carousel = styled.div`
   transition: transform 0.6s ease-in-out;
   width: 100%;
   transform: ${(props) =>
-    `translateX(-${(props.carouselPosition) * 100/3}%)`};
+    `translateX(-${(props.carouselPosition) * 100/4}%)`};
 `;
 
 export const CarouselItem = styled.div`
-  min-width: calc(100% / 3);
+  min-width: calc(100% / 4);
   box-sizing: border-box;
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: bold;
   transition:all 0.2s ease-in-out;
-  color:${props=>props.index==props.activeCategory?"black":"lightgray"}
+  color:${props=>props.index==props.activeCategory?"black":"lightgray"};
 `;
 export const LineContainer = styled.div`
 position: relative;
@@ -45,11 +45,11 @@ flex: 1;
 `;
 
 export const LineBox = styled.div`
-width:calc(100%/3);
+width:calc(100%/4);
 display: flex;
 align-items: center;
 justify-content: center;
-margin-left: ${props=>`${((props.activeCategory-props.carouselPosition)*100/3)}%`};
+margin-left: ${props=>`${((props.activeCategory-props.carouselPosition)*100/4)}%`};
 transition: all 0.6s ease-in-out;
 `
 export const Line = styled.div`

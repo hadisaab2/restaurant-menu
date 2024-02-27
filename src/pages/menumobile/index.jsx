@@ -2,9 +2,10 @@ import React, { useState } from "react";
 import { Container } from "./styles";
 import Menu from "./Menu";
 import Header from "./Header";
-import {menu} from "./data"
+import { menu } from "./data";
+import Offers from "./Offers";
 
-export default function MenuMobile({showPopup}) {
+export default function MenuMobile({ showPopup }) {
   const [activeCategory, setactiveCategory] = useState(0);
   const [animationchange, setanimationchange] = useState(false);
 
@@ -17,11 +18,17 @@ export default function MenuMobile({showPopup}) {
         setanimationchange={setanimationchange}
         animationchange={animationchange}
       />
-      <Menu
-        menu={menu}
-        activeCategory={activeCategory}
-        animationchange={animationchange}
-      />
+      {activeCategory === 0 ? (
+        <Offers
+          offers={menu.find((category) => category.category === "Offers")}
+        />
+      ) : (
+        <Menu
+          menu={menu}
+          activeCategory={activeCategory}
+          animationchange={animationchange}
+        />
+      )}
     </Container>
   );
 }

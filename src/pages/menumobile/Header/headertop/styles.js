@@ -1,10 +1,10 @@
 import styled from "styled-components";
 
 export const Container = styled.div`
-flex:1;
 display: flex;
 align-items: center;
 position: relative;
+height: 7vh;
 `;
 export const Brand = styled.img`
 width: 140px;

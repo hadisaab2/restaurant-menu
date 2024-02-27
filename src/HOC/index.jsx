@@ -16,10 +16,9 @@ export default function HOC(WrappedComponent) {
         <Location/>
       </DetailsBtn>
       <Popup showPopup={showPopup} popupHandler={popupHandler}/>
-      <SwipeDownContainer>
-        {/* <Line/> */}
+      {/* <SwipeDownContainer>
         <Arrow/>
-      </SwipeDownContainer>
+      </SwipeDownContainer> */}
     </PageLayout>
   );
 }

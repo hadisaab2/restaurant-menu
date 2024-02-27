@@ -10,9 +10,35 @@ import pizza2 from "../../static/pizza2.png";
 import pizza3 from "../../static/pizza3.png";
 import pizza4 from "../../static/pizza4.png";
 import pizza5 from "../../static/pizza5.png";
+import pizzaoffer from "../../static/pizzaoffer.jpg";
+import plateoffer from "../../static/plateoffer.jpg";
+import burgeroffer from "../../static/burgeroffer.jpg";
+
 
 
 export const menu=[
+    { category: "Offers",  items: [
+        {  nametop: "Pepperoni",namebottom:"Pizza",description:"Grab our mouthwatering Boneless Chicken Plate for just $9 today! Limited time offer!",price:"9", image: pizzaoffer },
+        {  nametop: "Boneless",namebottom:"Chicken",description:"Grab our mouthwatering Boneless Chicken Plate for just $9 today! Limited time offer!",price:"10", image: plateoffer },
+        {  nametop: "Beef",namebottom:"Burger",description:"Grab our mouthwatering Boneless Chicken Plate for just $9 today! Limited time offer!",price:"15", image: burgeroffer },
+        {  nametop: "Boneless",namebottom:"Chicken",description:"Grab our mouthwatering Boneless Chicken Plate for just $9 today! Limited time offer!",price:"14", image: plateoffer },
+        
+      ],},
+      
+    { category: "Pizza",  items: [
+      {  nametop: "California",namebottom:"Pizza",description:"",price:"9", image: pizza1 },
+      {  nametop: "Greek",namebottom:"Pizza",description:"",price:"9", image: pizza2 },
+      {  nametop: "Chicago",namebottom:"Pizza",description:"",price:"9", image: pizza4 },
+      {  nametop: "BBQ Chicken",namebottom:"Pizza",description:"",price:"9", image: pizza5 },
+      {  nametop: "California",namebottom:"Pizza",description:"",price:"9", image: pizza1 },
+      {  nametop: "Greek",namebottom:"Pizza",description:"",price:"9", image: pizza2 },
+      {  nametop: "Pepperoni",namebottom:"Pizza",description:"",price:"9", image: pizza4 },
+      {  nametop: "BBQ Chicken",namebottom:"Pizza",description:"",price:"9", image: pizza5 },
+      {  nametop: "California",namebottom:"Pizza",description:"",price:"9", image: pizza1 },
+      {  nametop: "Greek",namebottom:"Pizza",description:"",price:"9", image: pizza2 },
+      {  nametop: "Pepperoni",namebottom:"Pizza",description:"",price:"9", image: pizza4 },
+      {  nametop: "BBQ Chicken",namebottom:"Pizza",description:"",price:"9", image: pizza5 },
+    ] },
     {
       category: "Plates",
       items: [
@@ -51,57 +77,6 @@ export const menu=[
         {  nametop: "Chicken",namebottom:"Burger",description:"",price:"11",image: burger3 },
       ],
     },
-    { category: "Pizza",  items: [
-        {  nametop: "California",namebottom:"Pizza",description:"",price:"9", image: pizza1 },
-        {  nametop: "Greek",namebottom:"Pizza",description:"",price:"9", image: pizza2 },
-        {  nametop: "Chicago",namebottom:"Pizza",description:"",price:"9", image: pizza4 },
-        {  nametop: "BBQ Chicken",namebottom:"Pizza",description:"",price:"9", image: pizza5 },
-        {  nametop: "California",namebottom:"Pizza",description:"",price:"9", image: pizza1 },
-        {  nametop: "Greek",namebottom:"Pizza",description:"",price:"9", image: pizza2 },
-        {  nametop: "Pepperoni",namebottom:"Pizza",description:"",price:"9", image: pizza4 },
-        {  nametop: "BBQ Chicken",namebottom:"Pizza",description:"",price:"9", image: pizza5 },
-        {  nametop: "California",namebottom:"Pizza",description:"",price:"9", image: pizza1 },
-        {  nametop: "Greek",namebottom:"Pizza",description:"",price:"9", image: pizza2 },
-        {  nametop: "Pepperoni",namebottom:"Pizza",description:"",price:"9", image: pizza4 },
-        {  nametop: "BBQ Chicken",namebottom:"Pizza",description:"",price:"9", image: pizza5 },
-      ], },
-    { category: "Offers",  items: [
-        {  nametop: "Boneless",namebottom:"Chicken",description:"",price:"9", image: plate },
-        {  nametop: "Boneless",namebottom:"Chicsdas",description:"",price:"9", image: plate2 },
-        {  nametop: "Boneless",namebottom:"Chicken",description:"",price:"9", image: plate3 },
-        {  nametop: "Boneless",namebottom:"Chicken",description:"",price:"9", image: plate4 },
-        {  nametop: "Boneless",namebottom:"Chicken",description:"",price:"9", image: plate2 },
-        {  nametop: "Boneless",namebottom:"Chicken",description:"",price:"9", image: plate3 },
-        {  nametop: "Boneless",namebottom:"Chicken",description:"",price:"9", image: plate4 },
-        {  nametop: "Boneless",namebottom:"Chicken",description:"",price:"9", image: plate2 },
-        {  nametop: "Boneless",namebottom:"Chicken",description:"",price:"9", image: plate },
-        {  nametop: "Boneless",namebottom:"Chicken",description:"",price:"9", image: plate2 },
-        {  nametop: "Boneless",namebottom:"Chicken",description:"",price:"9", image: plate3 },
-        {  nametop: "Boneless",namebottom:"Chicken",description:"",price:"9", image: plate4 },
-        {  nametop: "Boneless",namebottom:"Chicken",description:"",price:"9", image: plate2 },
-        {  nametop: "Boneless",namebottom:"Chicken",description:"",price:"9", image: plate3 },
-        {  nametop: "Boneless",namebottom:"Chicken",description:"",price:"9", image: plate4 },
-        {  nametop: "Boneless",namebottom:"Chicken",description:"",price:"9", image: plate2 },
-      ],},
-    { category: "Appetizers",  items: [
-        {  nametop: "Boneless",namebottom:"Chicken",description:"",price:"9", image: plate },
-        {  nametop: "Boneless",namebottom:"Chicsdas",description:"",price:"9", image: plate2 },
-        {  nametop: "Boneless",namebottom:"Chicken",description:"",price:"9", image: plate3 },
-        {  nametop: "Boneless",namebottom:"Chicken",description:"",price:"9", image: plate4 },
-        {  nametop: "Boneless",namebottom:"Chicken",description:"",price:"9", image: plate2 },
-        {  nametop: "Boneless",namebottom:"Chicken",description:"",price:"9", image: plate3 },
-        {  nametop: "Boneless",namebottom:"Chicken",description:"",price:"9", image: plate4 },
-        {  nametop: "Boneless",namebottom:"Chicken",description:"",price:"9", image: plate2 },
-        {  nametop: "Boneless",namebottom:"Chicken",description:"",price:"9", image: plate },
-        {  nametop: "Boneless",namebottom:"Chicken",description:"",price:"9", image: plate2 },
-        {  nametop: "Boneless",namebottom:"Chicken",description:"",price:"9", image: plate3 },
-        {  nametop: "Boneless",namebottom:"Chicken",description:"",price:"9", image: plate4 },
-        {  nametop: "Boneless",namebottom:"Chicken",description:"",price:"9", image: plate2 },
-        {  nametop: "Boneless",namebottom:"Chicken",description:"",price:"9", image: plate3 },
-        {  nametop: "Boneless",namebottom:"Chicken",description:"",price:"9", image: plate4 },
-        {  nametop: "Boneless",namebottom:"Chicken",description:"",price:"9", image: plate2 },
-      ], },
-      
     { category: "Drinks",  items: [
         {  nametop: "Boneless",namebottom:"Chicken",description:"",price:"9", image: plate },
         {  nametop: "Boneless",namebottom:"Chicsdas",description:"",price:"9", image: plate2 },
