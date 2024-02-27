@@ -5,6 +5,7 @@ import {
   Plate,
   LoaderWrapper,
   Loader,
+  PlateName
 } from "./styles";
 export default function PlateItem({ plateitem, itemclick, index,key }) {
   const [imageLoaded, setimageLoaded] = useState(false);
@@ -24,6 +25,7 @@ export default function PlateItem({ plateitem, itemclick, index,key }) {
           src={plateitem.image}
           onLoad={handleImageLoaded} // Call handleImageLoaded when image is loaded
         />
+        <PlateName>{plateitem.nametop} {plateitem.namebottom}</PlateName>
       </PlateContainer>
     </CarouselItem>
   );

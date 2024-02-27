@@ -2,7 +2,7 @@ import styled from "styled-components";
 import { keyframes } from 'styled-components'
 
 export const CarouselItem = styled.div`
-  min-height: calc(100% /6);
+  min-height: calc(100% /5);
   box-sizing: border-box;
   display: flex;
   align-items: center;
@@ -36,6 +36,10 @@ export const Plate = styled.img`
   filter: drop-shadow(1px 1px 1px black);
   animation: ${PlateAnimation} 1s ease-in-out;
   z-index: 2;
+`;
+export const PlateName = styled.span`
+font-size: 10px;
+margin-top:4px
 `;
 
 const spin = keyframes`
