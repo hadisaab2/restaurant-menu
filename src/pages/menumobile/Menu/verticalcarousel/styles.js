@@ -92,7 +92,7 @@ export const BoxContainer = styled.div`
   align-items: flex-end;
   transform: ${(props) =>
     `translateY(${(props.activePlate - props.carouselPosition) * 16.2}vh)`};
-  transition: all 0.8s ease-in-out;
+  transition: transform 0.6s ease-in-out;
 `;
 
 export const Box = styled.div`
