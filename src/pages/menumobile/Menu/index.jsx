@@ -6,7 +6,7 @@ export default function Menu({ menu, activeCategory, animationchange }) {
   const [activePlate, setactivePlate] = useState(0);
 
   return (
-    <Container>
+    <Container activeCategory={activeCategory}>
       {menu.map((singlemenu, index) => {
         if (activeCategory == index) {
           return (

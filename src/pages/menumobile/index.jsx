@@ -18,17 +18,15 @@ export default function MenuMobile({ showPopup }) {
         setanimationchange={setanimationchange}
         animationchange={animationchange}
       />
-      {activeCategory === 0 ? (
         <Offers
           offers={menu.find((category) => category.category === "Offers")}
+          activeCategory={activeCategory}
         />
-      ) : (
         <Menu
           menu={menu}
           activeCategory={activeCategory}
           animationchange={animationchange}
         />
-      )}
     </Container>
   );
 }

@@ -2,7 +2,7 @@ import styled, { keyframes } from 'styled-components';
 
 export const Container = styled.div`
 width: 100%;
-display: flex;
+display: ${props=>props.activeCategory==0 ?"flex":"none"};
 justify-content: center;
 flex-direction: column;
 align-items: center;

@@ -1,9 +1,9 @@
 import React from 'react'
 import { Container, OfferContainer,OfferImage, Price, Title, TitleContainer,Details } from './styles'
 
-export default function Offers({offers}) {
+export default function Offers({offers,activeCategory}) {
   return (
-    <Container>
+    <Container activeCategory={activeCategory} >
         
         {offers.items.map((offer,index)=>{
             return(
