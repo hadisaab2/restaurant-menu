@@ -10,7 +10,7 @@ import {
 import PreventScrollRefresh from "./PreventScrollRefresh";
 import PlateItem from "./plateitem";
 
-export default function VerticalCarousel({ plates, setactivePlate, activePlate, animationchange }) {
+export default function VerticalCarousel({ plates, setactivePlate, activePlate, animationchange,setScrollChecker }) {
   const [carouselPosition, setcarouselPosition] = useState(0);
   const [scrollInProgress, setScrollInProgress] = useState(false);
   const touchStartY = useRef(0);
@@ -32,6 +32,7 @@ export default function VerticalCarousel({ plates, setactivePlate, activePlate, 
         }
       } else {
         if (carouselPosition < plates.length - 7) {
+          setScrollChecker(true)
           setcarouselPosition(carouselPosition + 2);
         }
       }

@@ -4,6 +4,7 @@ import VerticalCarousel from "./verticalcarousel";
 import Plate from "./plate";
 export default function Menu({ menu, activeCategory, animationchange }) {
   const [activePlate, setactivePlate] = useState(0);
+  const[scrollChecker,setScrollChecker]=useState(false);
 
   return (
     <Container activeCategory={activeCategory}>
@@ -15,12 +16,13 @@ export default function Menu({ menu, activeCategory, animationchange }) {
               plates={singlemenu.items}
               setactivePlate={setactivePlate}
               animationchange={animationchange}
+              setScrollChecker={setScrollChecker}
             />
           );
         }
       })}
 
-      <Plate activePlate={activePlate} menu={menu[activeCategory].items} />
+      <Plate activePlate={activePlate} menu={menu[activeCategory].items} scrollChecker={scrollChecker} />
     </Container>
   );
 }

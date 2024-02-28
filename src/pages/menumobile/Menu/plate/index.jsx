@@ -6,10 +6,12 @@ import {
   PlateNameBottom,
   PlateNameTop,
   Price,
-  Description
+  Description,
+  Arrow,
+  ScrollContainer
 } from "./styles";
 
-export default function Plate({ menu, activePlate }) {
+export default function Plate({ menu, activePlate,scrollChecker }) {
   const {nametop,namebottom,price}=menu[activePlate];
   return (
     <Container>
@@ -35,6 +37,9 @@ export default function Plate({ menu, activePlate }) {
           since the 1500s
         </Description>
       </PlateInfo>
+      <ScrollContainer scrollChecker={scrollChecker}>
+        <Arrow/>
+      </ScrollContainer>
     </Container>
   );
 }
