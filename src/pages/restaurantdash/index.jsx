@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { CateogoryIcon, Container, Content, ProfileIcon, Sidebar, SidebarBottom, SidebarContent, SidebarTop, Username,Tab, TabText,Title, Header, Path } from './style'
 import Products from './products'
 import Settings from './settings'
+import Categories from './categories'
 
 export default function RestaurantDash() {
     const [section,setSection]=useState("Products")
@@ -41,6 +42,7 @@ export default function RestaurantDash() {
             </Header>
             {section=="Products" && <Products/>}
             {section=="Settings" && <Settings/>}
+            {section=="Categories" && <Categories/>}
 
         </Content>
     </Container>
