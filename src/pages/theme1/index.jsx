@@ -2,13 +2,16 @@ import React, { useState } from "react";
 import { Container } from "./styles";
 import Menu from "./Menu";
 import Header from "./Header";
-import { menu } from "./data";
+import { restaurantmenus } from "../../data";
 import Offers from "./Offers";
+import { useParams } from 'react-router-dom';
 
-export default function MenuMobile({ showPopup }) {
+export default function Theme1({ showPopup }) {
+  const { restaurantname } = useParams();
   const [activeCategory, setactiveCategory] = useState(0);
   const [animationchange, setanimationchange] = useState(false);
-
+  let menu=restaurantmenus.find((restaurant) => restaurant.name === restaurantname).menu
+  console.log(menu)
   return (
     <Container showPopup={showPopup}>
       <Header

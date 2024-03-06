@@ -12,7 +12,7 @@ bottom:20px;
 right:20px;
 width:50px;
 height:50px;
-background-color:#f9dd63;
+background-color:#cce4a9;
 border-radius:50%;
 display: flex;
 align-items: center;
@@ -48,7 +48,7 @@ export const Arrow = styled(IoIosArrowDown)`
 font-size: 20px;
 animation: ${arrowanimation} 1s linear infinite;
 margin-bottom: -10px;
-color:#f9dd63;
+color:#cce4a9;
 `;
 
 export const SwipeDownContainer = styled.div`

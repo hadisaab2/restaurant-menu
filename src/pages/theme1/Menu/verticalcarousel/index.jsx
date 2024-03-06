@@ -48,7 +48,8 @@ export default function VerticalCarousel({ plates, setactivePlate, activePlate, 
 
   const itemclick = (index) => {
     setactivePlate(index);
-  };
+  }
+
 
   return (
     <Container>

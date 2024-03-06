@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import { keyframes } from 'styled-components'
-
+import { themecolors } from "../../../../styles/theme";
 export const Container = styled.div`
   display: flex;
   flex-direction: row;
@@ -97,7 +97,7 @@ export const BoxContainer = styled.div`
 
 export const Box = styled.div`
   /* background-color: #f3c9b8; */
-  background-color: #f9dd63;
+  background-color: ${themecolors.main};
   height: 100%;
   width: 100%;
   border-radius: 20px;

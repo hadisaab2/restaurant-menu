@@ -3,7 +3,7 @@ import { DetailsBtn, Location, PageLayout,SwipeDownContainer,Line,Arrow } from "
 import { useState } from "react";
 import Popup from "./popup";
 
-export default function HOC(WrappedComponent) {
+export default function Theme1HOC(WrappedComponent) {
   const [showPopup,setshowPopup] =useState(false)
   const popupHandler = (show)=>{
     setshowPopup(show)
