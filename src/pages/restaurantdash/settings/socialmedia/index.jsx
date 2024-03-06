@@ -1,38 +1,50 @@
 import React, { useState } from "react";
 import {
-    AddMediaForm,
-  Container,
-  Title,
+  AddMediaForm,
   Table,
   Th,
   Td,
   EditDeleteIcons,
   Edit,
   Delete,
+  AddMedia,
+  BackIcon
 } from "./styles";
-import { TextField, Button, InputLabel, Select, FormControl, MenuItem,Box } from "@mui/material";
+import {
+  TextField,
+  Button,
+  InputLabel,
+  Select,
+  FormControl,
+  MenuItem,
+  Box,
+  
+} from "@mui/material";
 
 export default function SocialMedia() {
+  const [showAddComponent, setShowAddComponent] = useState(false);
+
   const [media, setMedia] = useState([
     {
       name: "Instagram",
       link: "www.instagram.com/addict",
     },
     {
-        name: "Instagram",
-        link: "www.instagram.com/addict",
-      }
+      name: "Instagram",
+      link: "www.instagram.com/addict",
+    },
   ]);
 
-  const[mediaType,setMediaType]=useState("")
+  const [mediaType, setMediaType] = useState("");
   const handleChange = (event) => {
-    setMediaType(event.target.value)
+    setMediaType(event.target.value);
   };
   return (
     <>
-      <Title>Social Media</Title>
-      <AddMediaForm>
-      <Box sx={{ minWidth: 120 }}>
+      {showAddComponent ? (
+        <AddMediaForm>
+          <BackIcon onClick={() => setShowAddComponent(false)} />
+          <Box sx={{ minWidth: 120 }}>
             <FormControl fullWidth>
               <InputLabel id="demo-simple-select-label">Media</InputLabel>
               <Select
@@ -50,37 +62,44 @@ export default function SocialMedia() {
           </Box>
           <TextField label="Link" name="Link" variant="outlined" />
 
-        <Button variant="contained" style={{ backgroundColor: "turquoise" }}>
-          Add Media
-        </Button>
-      </AddMediaForm>
-      <Table>
-        <thead>
-          <tr>
-            <Th>Name</Th>
-            <Th>Link</Th>
-            <Th>Actions</Th>
-          </tr>
-        </thead>
-        <tbody>
-          {media.map(({ name, link }) => {
-            return (
-              <tr>
-                <Td>{name}</Td>
-                <Td>
-                  <a href="#">{link}</a>
-                </Td>
-                <Td>
-                  <EditDeleteIcons>
-                    <Edit />
-                    <Delete />
-                  </EditDeleteIcons>
-                </Td>
-              </tr>
-            );
-          })}
-        </tbody>
-      </Table>
+          <AddMedia  >
+            Add Media
+          </AddMedia>
+        </AddMediaForm>
+      ) : (
+        <>
+        <AddMedia onClick={() => setShowAddComponent(true)} >
+        Add Media
+      </AddMedia>
+        <Table>
+          <thead>
+            <tr>
+              <Th>Name</Th>
+              <Th>Link</Th>
+              <Th>Actions</Th>
+            </tr>
+          </thead>
+          <tbody>
+            {media.map(({ name, link }) => {
+              return (
+                <tr>
+                  <Td>{name}</Td>
+                  <Td>
+                    <a href="#">{link}</a>
+                  </Td>
+                  <Td>
+                    <EditDeleteIcons>
+                      <Edit onClick={() => setShowAddComponent(true)} />
+                      <Delete />
+                    </EditDeleteIcons>
+                  </Td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </Table>
+        </>
+      )}
     </>
   );
 }

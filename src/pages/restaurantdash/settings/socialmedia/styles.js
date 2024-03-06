@@ -2,6 +2,7 @@ import styled from "styled-components";
 import { breakingPoints } from "../../../../styles/theme";
 import { MdModeEditOutline } from "react-icons/md";
   import { MdDelete } from "react-icons/md";
+  import { MdOutlineKeyboardBackspace } from "react-icons/md";
 
 export const Container = styled.div`
   display: flex;
@@ -28,6 +29,9 @@ export const AddMediaForm = styled.div`
   gap:20px;
   margin-top:30px;
   margin-left: 20px;
+  padding-top: 40px;
+  position: relative;
+
 `;
 
 
@@ -71,4 +75,26 @@ cursor: pointer;
     color:turquoise;
 }
 
+`;
+
+export const BackIcon = styled(MdOutlineKeyboardBackspace)`
+  position: absolute;
+  left: 0;
+  top: 0;
+  font-size: 20px;
+`;
+
+export const AddMedia = styled.button`
+width: 150px;
+  height: 40px;
+  outline: none;
+  border: 0;
+  color: white;
+  cursor: pointer;
+  border-radius: 5px;
+  background-color: turquoise;
+  margin-top: 20px;
+  font-weight: 500;
+  font-size: 14px;
+  margin-left: 20px;
 `;
