@@ -10,16 +10,19 @@ import {
 } from "./styles";
 
 import pizza1 from "../../../../static/pizza1.png";
-export default function Product() {
-  return (
+export default function Product({ product }) {
+  const { en_name, category, image } = product;
+  https: return (
     <Container>
       <Wrapper>
         <ImageWrapper>
-          <Image src={pizza1} />
+          <Image
+            src={`https://storage.googleapis.com/ecommerce-bucket-testing/${image?.url}`}
+          />
         </ImageWrapper>
         <InfoContainer>
-          <Title>Chicken Burger</Title>
-          <Category>Burgers</Category>
+          <Title>{en_name}</Title>
+          <Category>{category.en_category}</Category>
         </InfoContainer>
       </Wrapper>
     </Container>

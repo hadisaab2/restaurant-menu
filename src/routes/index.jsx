@@ -9,17 +9,21 @@ import Theme1HOC from "../HOC/theme1Hoc";
 import AdminLayout from "../HOC/AdminLayout";
 import AdminSignin from "../pages/adminauth";
 import RestaurantDash from "../pages/restaurantdash";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { withRedirection } from "../HOC/sign-in";
 
 export default function ApplicationRoutes() {
-  return (
-    <BrowserRouter>
-      <RoutesWrapper>
-        <Route path={THEME1URL} element={Theme1HOC(Theme1)} />
-        <Route path={ADMINSIGNIN} element={AdminLayout(AdminSignin)} />
-        <Route path={RESTAURANTDASH} element={AdminLayout(RestaurantDash)} />
+  const queryClient = new QueryClient();
 
-        
-      </RoutesWrapper>
-    </BrowserRouter>
+  return (
+    <QueryClientProvider client={queryClient}>
+      <BrowserRouter>
+        <RoutesWrapper>
+          <Route path={THEME1URL} element={Theme1HOC(Theme1)} />
+          <Route path={ADMINSIGNIN} Component={withRedirection(AdminSignin)} />
+          <Route path={RESTAURANTDASH} element={AdminLayout(RestaurantDash)} />
+        </RoutesWrapper>
+      </BrowserRouter>
+    </QueryClientProvider>
   );
 }

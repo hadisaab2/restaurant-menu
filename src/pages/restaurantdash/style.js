@@ -10,7 +10,6 @@ export const Container = styled.div`
   justify-content: center;
   align-items: center;
   background-color: #edeeef;
-
 `;
 
 export const Sidebar = styled.div`
@@ -24,54 +23,51 @@ export const Sidebar = styled.div`
   top: 0;
 `;
 export const SidebarTop = styled.div`
-height: 20%;
- width: 100%;
- display: flex;
- align-items: center;
- justify-content: center;
- border-bottom: 1px solid rgb(0,0,0,0.2);
-
+  height: 20%;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-bottom: 1px solid rgb(0, 0, 0, 0.2);
 `;
 export const Title = styled.span`
-font-size:25px;
-font-weight: bold;
+  font-size: 25px;
+  font-weight: bold;
 `;
 
-export const Tab= styled.div`
-display: flex;
-width: 100%;
-flex-direction:row;
-height: 45px;
-font-size:16px;
-align-items: center;
-gap:5px;
-color: black;
-cursor: pointer;
-&:hover{
-    background-color:#edeeef;
-}
+export const Tab = styled.div`
+  display: flex;
+  width: 100%;
+  flex-direction: row;
+  height: 45px;
+  font-size: 16px;
+  align-items: center;
+  gap: 5px;
+  color: black;
+  cursor: pointer;
+  &:hover {
+    background-color: #edeeef;
+  }
 `;
-export const TabText= styled.span`
+export const TabText = styled.span``;
+export const SidebarContent = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
 `;
-export const SidebarContent= styled.div`
-display: flex;
-flex-direction: column;
-gap:10px;
-width: 100%;
-`;
-export const SidebarBottom= styled.div`
-display: flex;
-height: 10%;
-position: absolute;
-bottom: 0;
-width: 100%;
-font-size: 18px;
-flex-direction: row;
-align-items: center;
-gap:10px;
-color: black;
-border-top: 1px solid rgb(0,0,0,0.2);
-
+export const SidebarBottom = styled.div`
+  display: flex;
+  height: 10%;
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  font-size: 18px;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+  color: black;
+  border-top: 1px solid rgb(0, 0, 0, 0.2);
 `;
 export const Content = styled.div`
   padding-left: 15%;
@@ -93,21 +89,20 @@ export const Header = styled.div`
   align-items: center;
 `;
 export const Path = styled.span`
-margin-left:20px;
-font-weight: 500;
-  
+  margin-left: 20px;
+  font-weight: 500;
 `;
-export const CateogoryIcon =styled(TbCategoryPlus)`
-margin-left: 20px;
-`;
-
-export const ProfileIcon =styled(IoPersonCircle)`
-font-size: 25px;
-margin-left: 20px;
+export const CateogoryIcon = styled(TbCategoryPlus)`
+  margin-left: 20px;
 `;
 
-export const Username= styled.span`
-font-weight: normal;
-font-size: 14px;
+export const ProfileIcon = styled(IoPersonCircle)`
+  font-size: 25px;
+  margin-left: 20px;
+`;
 
+export const Username = styled.span`
+  font-weight: normal;
+  font-size: 14px;
+  text-transform: capitalize;
 `;

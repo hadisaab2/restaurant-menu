@@ -3,13 +3,13 @@ import { MdOutlineKeyboardBackspace } from "react-icons/md";
 
 export const ProductInfo = styled.div`
   display: flex;
+  flex-wrap: wrap;
   flex-direction: row;
   gap: 20px;
-  flex-direction: column;
   position: relative;
   padding-top: 40px;
   margin-top: 20px;
-  width: 30%;
+  width: 60%;
 `;
 
 export const BackIcon = styled(MdOutlineKeyboardBackspace)`
@@ -19,13 +19,16 @@ export const BackIcon = styled(MdOutlineKeyboardBackspace)`
   font-size: 20px;
 `;
 
-
 export const UploadPhoto = styled.input`
-    display: none;
+  display: none;
+`;
+
+export const Row = styled.div`
+  width: 100%;
 `;
 
 export const UploadBtn = styled.button`
-width: 150px;
+  width: 150px;
   height: 40px;
   outline: none;
   border: 0;
@@ -39,6 +42,10 @@ width: 150px;
 `;
 
 export const UploadedImage = styled.img`
-width: 200px;
+  width: 200px;
   height: 200px;
 `;
+
+export const fieldStyle = {
+  width: "40%",
+};

@@ -1,29 +1,43 @@
-import React, { useState} from "react";
+import React, { useEffect, useState } from "react";
 import { Container, Wrapper, AddButton } from "./styles";
 
 import Product from "./product";
 import { IoMdAdd } from "react-icons/io";
 import AddProduct from "./addproduct";
+import { useGetProducts } from "../../../apis/products/getProducts";
 
 export default function Products() {
   const [editProduct, setEditProduct] = useState(true);
+  const [isFormOpen, setIsFormOpen] = useState(false);
+  const [products, setProducts] = useState([]);
+  const { isLoading, response } = useGetProducts({ onSuccess: () => {} });
+
+  useEffect(() => {
+    if (!isLoading) {
+      setProducts(response?.data);
+      console.log(response?.data);
+    }
+  }, [isLoading]);
 
   return (
     <Container>
-      {editProduct ? (
+      {!isFormOpen ? (
         <>
-          <AddButton onClick={() => setEditProduct(false)}>
+          <AddButton onClick={() => setIsFormOpen(true)}>
             <IoMdAdd />
             Add Product
           </AddButton>
           <Wrapper>
-            {[0, 1, 2, 3, 5, 6, 3, 2, 0, 1, 2, 3, 5, 6, 3, 2].map((product) => {
-              return <Product />;
+            {products.map((product) => {
+              return <Product product={product} />;
             })}
           </Wrapper>
         </>
       ) : (
-        <AddProduct setEditProduct={setEditProduct} />
+        <AddProduct
+          setIsFormOpen={setIsFormOpen}
+          setEditProduct={setEditProduct}
+        />
       )}
     </Container>
   );
