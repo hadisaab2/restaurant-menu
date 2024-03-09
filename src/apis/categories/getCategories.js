@@ -20,12 +20,12 @@ const getCategories = async (id) => {
 };
 
 export const useGetCategories = ({ onSuccess, restaurantId }) => {
-  const { error, isLoading, status, data } = useQuery({
+  const { error, isLoading, status, data, refetch } = useQuery({
     queryFn: () => getCategories(restaurantId),
     retry: false,
     queryKey: ["categories"],
     onSuccess,
   });
 
-  return { error, isLoading, status, response: data };
+  return { error, isLoading, status, response: data, refetch };
 };

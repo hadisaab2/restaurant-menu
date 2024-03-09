@@ -7,16 +7,24 @@ import AddProduct from "./addproduct";
 import { useGetProducts } from "../../../apis/products/getProducts";
 
 export default function Products() {
-  const [editProduct, setEditProduct] = useState(true);
+  const [selectedProduct, setSelectedProduct] = useState(null);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [products, setProducts] = useState([]);
-  const { isLoading, response } = useGetProducts({ onSuccess: () => {} });
+  const { isLoading, response, refetch } = useGetProducts({
+    onSuccess: () => {},
+  });
 
   useEffect(() => {
     if (!isLoading) {
       setProducts(response?.data);
     }
   }, [isLoading]);
+
+  const refetchProducts = () => {
+    refetch()
+      .then(({ data: { data } }) => setProducts(data))
+      .catch((err) => console.log(err));
+  };
 
   return (
     <Container>
@@ -28,14 +36,22 @@ export default function Products() {
           </AddButton>
           <Wrapper>
             {products?.map((product) => {
-              return <Product product={product} />;
+              return (
+                <Product
+                  product={product}
+                  setIsFormOpen={setIsFormOpen}
+                  setSelectedProduct={setSelectedProduct}
+                />
+              );
             })}
           </Wrapper>
         </>
       ) : (
         <AddProduct
           setIsFormOpen={setIsFormOpen}
-          setEditProduct={setEditProduct}
+          selectedProduct={selectedProduct}
+          setSelectedProduct={setSelectedProduct}
+          refetchProducts={refetchProducts}
         />
       )}
     </Container>

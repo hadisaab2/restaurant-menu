@@ -8,6 +8,7 @@ export const Container = styled.div`
   display: flex;
   align-items: center;
   justify-content: flex-start;
+  cursor: pointer;
 `;
 export const Wrapper = styled.div`
   width: 80%;
@@ -20,34 +21,32 @@ export const Wrapper = styled.div`
 `;
 
 export const ImageWrapper = styled.div`
-width: 90%;
-height: 120px;
-border-radius: 20px;
-background-color:#edeeef;
-display: flex;
-align-items: center;
-justify-content: center;
-margin-top:10px ;
+  width: 90%;
+  height: 120px;
+  border-radius: 20px;
+  background-color: #edeeef;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 10px;
 `;
 export const Image = styled.img`
-width: 100px;
-height: 100px;
+  width: 100px;
+  height: 100px;
 `;
 
 export const InfoContainer = styled.div`
-width: 90%;
-display: flex;
-flex-direction: column;
-
+  width: 90%;
+  display: flex;
+  flex-direction: column;
 `;
 export const Title = styled.span`
-font-size:15px;
-font-weight: 500;
-margin-top: 10px;
-
+  font-size: 15px;
+  font-weight: 500;
+  margin-top: 10px;
 `;
 export const Category = styled.span`
-margin-top: 2px;
-font-size:15px;
-font-weight: 300;
+  margin-top: 2px;
+  font-size: 15px;
+  font-weight: 300;
 `;

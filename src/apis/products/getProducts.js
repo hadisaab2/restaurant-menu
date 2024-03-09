@@ -20,12 +20,12 @@ const getProducts = async () => {
 };
 
 export const useGetProducts = ({ onSuccess }) => {
-  const { error, isLoading, status, data } = useQuery({
+  const { error, isLoading, status, data, refetch } = useQuery({
     queryFn: getProducts,
     retry: false,
     queryKey: ["products"],
     onSuccess,
   });
 
-  return { error, isLoading, status, response: data };
+  return { error, isLoading, status, response: data, refetch };
 };

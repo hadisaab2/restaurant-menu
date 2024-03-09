@@ -15,8 +15,6 @@ export const Wrapper = styled.div`
   align-content: flex-start;
 `;
 
-
-
 export const AddButton = styled.button`
   width: 150px;
   height: 40px;

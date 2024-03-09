@@ -17,6 +17,7 @@ import {
   FormControl,
   Select,
   FormHelperText,
+  Button,
 } from "@mui/material";
 import { useForm } from "react-hook-form";
 import { getCookie } from "../../../../utilities/manageCookies";
@@ -31,13 +32,21 @@ import {
 } from "../yup-shap";
 import { LoadingButton } from "@mui/lab";
 import { useGetCategories } from "../../../../apis/categories/getCategories";
+import { useEditProductQuery } from "../../../../apis/products/editProduct";
+import { useDeleteProductQuery } from "../../../../apis/products/deleteProduct";
 
-export default function AddProduct({ setEditProduct, setIsFormOpen }) {
+export default function AddProduct({
+  setIsFormOpen,
+  selectedProduct,
+  refetchProducts,
+  setSelectedProduct,
+}) {
   const [file, setFile] = useState(null);
   const [imageUrl, setImageUrl] = useState(null);
   const [categories, setCategories] = useState([]);
   const fileInputRef = useRef(null);
   const storedUserInfo = getCookie("userInfo") || "{}";
+  const { AR, EN, ENAR } = LANGUAGES;
   const [userInformation, setUserInformation] = useState(
     JSON.parse(storedUserInfo)
   );
@@ -49,13 +58,36 @@ export default function AddProduct({ setEditProduct, setIsFormOpen }) {
       ? enProductSchema
       : EnArProductSchema;
 
-  const { register, handleSubmit, formState } = useForm({
+  const { register, handleSubmit, formState, setValue, getValues } = useForm({
     resolver: yupResolver(schema),
   });
 
   const { handleApiCall, isPending } = useAddProductQuery({
-    onSuccess: () => setIsFormOpen(false),
+    onSuccess: () => {
+      setSelectedProduct(null);
+      refetchProducts();
+      setIsFormOpen(false);
+    },
   });
+
+  const { handleApiCall: handleDeleteProduct, isPending: isDeleting } =
+    useDeleteProductQuery({
+      onSuccess: () => {
+        setSelectedProduct(null);
+        refetchProducts();
+        setIsFormOpen(false);
+      },
+    });
+
+  const { handleApiCall: handleEditApi, isPending: isEditing } =
+    useEditProductQuery({
+      onSuccess: () => {
+        setSelectedProduct(null);
+        refetchProducts();
+        setIsFormOpen(false);
+      },
+    });
+
   const { isLoading, response } = useGetCategories({
     onSuccess: () => setIsFormOpen(false),
     restaurantId: userInformation.restaurant_id,
@@ -76,20 +108,79 @@ export default function AddProduct({ setEditProduct, setIsFormOpen }) {
     }
   }, [isLoading]);
 
+  useEffect(() => {
+    console.log(selectedProduct);
+    if (selectedProduct) {
+      if (userInformation.Lang === EN) {
+        const { en_name, en_description, en_price } = selectedProduct;
+
+        setValue("en_name", en_name);
+        setValue("en_description", en_description);
+        setValue("en_price", en_price);
+      } else if (userInformation.Lang === AR) {
+        const { ar_name, ar_description, ar_price } = selectedProduct;
+
+        setValue("ar_name", ar_name);
+        setValue("ar_description", ar_description);
+        setValue("ar_price", ar_price);
+      } else {
+        const {
+          en_name,
+          en_description,
+          en_price,
+          ar_name,
+          ar_description,
+          ar_price,
+        } = selectedProduct;
+
+        setValue("en_name", en_name);
+        setValue("en_description", en_description);
+        setValue("en_price", en_price);
+
+        setValue("ar_name", ar_name);
+        setValue("ar_description", ar_description);
+        setValue("ar_price", ar_price);
+      }
+
+      setValue(
+        "image",
+        `https://storage.googleapis.com/ecommerce-bucket-testing/${selectedProduct.image.url}`
+      );
+      setImageUrl(
+        `https://storage.googleapis.com/ecommerce-bucket-testing/${selectedProduct.image.url}`
+      );
+      setValue("category_id", selectedProduct.category_id);
+    }
+  }, []);
+
   const handleButtonClick = () => {
     fileInputRef.current.click();
   };
 
   const handleAddProduct = () => {
-    if (file) {
-      handleSubmit((data) => {
-        handleApiCall({
-          ...data,
-          image: file,
-          restaurant_id: userInformation.restaurant_id,
-        });
-      })();
-    }
+    handleSubmit((data) => {
+      if (file || imageUrl) {
+        if (selectedProduct) {
+          handleEditApi(selectedProduct.id, {
+            ...data,
+            image: file,
+            restaurant_id: userInformation.restaurant_id,
+          });
+        } else {
+          handleApiCall({
+            ...data,
+            image: file,
+            restaurant_id: userInformation.restaurant_id,
+          });
+        }
+      }
+    })();
+  };
+
+  const handleOnDeleteImage = () => {
+    setImageUrl(null);
+    setFile(null);
+    setValue("image", null);
   };
 
   const displayEnglish =
@@ -141,7 +232,12 @@ export default function AddProduct({ setEditProduct, setIsFormOpen }) {
 
   return (
     <ProductInfo>
-      <BackIcon onClick={() => setIsFormOpen(false)} />
+      <BackIcon
+        onClick={() => {
+          setSelectedProduct(null);
+          setIsFormOpen(false);
+        }}
+      />
       <Row
         style={{
           display: "flex",
@@ -154,8 +250,21 @@ export default function AddProduct({ setEditProduct, setIsFormOpen }) {
           ref={fileInputRef}
           onChange={handleFileChange}
         />
-        <UploadBtn onClick={handleButtonClick}>Upload Image</UploadBtn>
-        {!file && <UploadImageText>Please upload image</UploadImageText>}
+        {imageUrl ? (
+          <Button
+            variant="contained"
+            color="error"
+            style={{ width: "150px", height: "40px" }}
+            onClick={() => handleOnDeleteImage()}
+          >
+            Delete
+          </Button>
+        ) : (
+          <UploadBtn onClick={handleButtonClick}>Upload Image</UploadBtn>
+        )}
+        {!file && !getValues().image && (
+          <UploadImageText>Please upload image</UploadImageText>
+        )}
       </Row>
 
       {imageUrl && (
@@ -190,12 +299,13 @@ export default function AddProduct({ setEditProduct, setIsFormOpen }) {
             label="Category"
             {...register("category_id")}
             error={!isEmpty(formState?.errors?.category_id)}
+            defaultValue={selectedProduct?.category_id}
           >
-            <>
-              {categories.map((category) => (
-                <MenuItem value={category.id}>{category.en_category}</MenuItem>
-              ))}
-            </>
+            {categories.map(({ id, en_category }) => (
+              <MenuItem value={id} key={id}>
+                {en_category}
+              </MenuItem>
+            ))}
           </Select>
           {!isEmpty(formState?.errors?.category_id) && (
             <FormHelperText style={{ color: "#d64241" }}>
@@ -206,14 +316,28 @@ export default function AddProduct({ setEditProduct, setIsFormOpen }) {
       </Box>
       <Row>
         <LoadingButton
-          loading={isPending}
+          loading={isPending || isEditing}
           variant="contained"
           style={{ backgroundColor: "turquoise" }}
           onClick={handleAddProduct}
+          disabled={isDeleting}
         >
-          Add Product
+          {selectedProduct ? "Edit Product" : "Add Product"}
         </LoadingButton>
       </Row>
+      {selectedProduct && (
+        <Row>
+          <LoadingButton
+            disabled={isPending || isEditing}
+            loading={isDeleting}
+            variant="contained"
+            style={{ backgroundColor: "turquoise" }}
+            onClick={() => handleDeleteProduct(selectedProduct.id)}
+          >
+            Delete Product
+          </LoadingButton>
+        </Row>
+      )}
     </ProductInfo>
   );
 }

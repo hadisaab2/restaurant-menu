@@ -9,10 +9,19 @@ import {
   Category,
 } from "./styles";
 
-export default function Product({ product }) {
+export default function Product({
+  product,
+  setIsFormOpen,
+  setSelectedProduct,
+}) {
   const { en_name, category, image } = product;
   return (
-    <Container>
+    <Container
+      onClick={() => {
+        setSelectedProduct(product);
+        setIsFormOpen(true);
+      }}
+    >
       <Wrapper>
         <ImageWrapper>
           <Image

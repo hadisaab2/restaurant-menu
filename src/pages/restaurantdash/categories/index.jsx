@@ -25,9 +25,11 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { useAddCategoryQuery } from "../../../apis/categories/addCategory";
 import { useGetCategories } from "../../../apis/categories/getCategories";
 import { useEditCategoryQuery } from "../../../apis/categories/editCategory";
+import DeleteCategoryPopup from "./deleteCategoryPopup";
 
 export default function Categories() {
   const [showAddComponent, setShowAddComponent] = useState(false);
+  const [isDeletePopupOpen, setIsDeletePopupOpen] = useState(false);
   const { AR, ENAR, EN } = LANGUAGES;
   const storedUserInfo = getCookie("userInfo") || "{}";
   const [userInformation, _] = useState(JSON.parse(storedUserInfo));
@@ -35,15 +37,21 @@ export default function Categories() {
   const [selectedIdForAction, setSelectedIdForAction] = useState(null);
 
   const { isPending, handleApiCall } = useAddCategoryQuery({
-    onSuccess: () => setShowAddComponent(false),
+    onSuccess: () => {
+      refetchCategories();
+      setShowAddComponent(false);
+    },
   });
 
   const { isPending: isEditing, handleApiCall: handleEditApi } =
     useEditCategoryQuery({
-      onSuccess: () => setShowAddComponent(false),
+      onSuccess: () => {
+        refetchCategories();
+        setShowAddComponent(false);
+      },
     });
 
-  const { isLoading, response } = useGetCategories({
+  const { isLoading, response, refetch } = useGetCategories({
     onSuccess: () => {},
     restaurantId: userInformation.restaurant_id,
   });
@@ -98,6 +106,12 @@ export default function Categories() {
     setShowAddComponent(true);
   };
 
+  const refetchCategories = () => {
+    refetch()
+      .then(({ data: { data } }) => setCategories(data))
+      .catch((err) => console.log(err));
+  };
+
   useEffect(() => {
     if (!isLoading) {
       setCategories(response?.data);
@@ -119,6 +133,12 @@ export default function Categories() {
 
   return (
     <Container>
+      <DeleteCategoryPopup
+        isOpen={isDeletePopupOpen}
+        setIsOpen={setIsDeletePopupOpen}
+        selectedIdForAction={selectedIdForAction}
+        refetchCategories={refetchCategories}
+      />
       {showAddComponent ? (
         <AddCategoryForm>
           <BackIcon onClick={() => setShowAddComponent(false)} />
@@ -171,7 +191,12 @@ export default function Categories() {
                       {categoryText(category)}
                       <Actions>
                         <Edit onClick={() => handleOnEdit(category)} />
-                        <Delete />
+                        <Delete
+                          onClick={() => {
+                            setSelectedIdForAction(category.id);
+                            setIsDeletePopupOpen(true);
+                          }}
+                        />
                       </Actions>
                     </Category>
                   );

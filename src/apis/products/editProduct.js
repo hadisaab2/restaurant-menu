@@ -1,12 +1,12 @@
 import axios from "axios";
-import { ADD_PRODUCT_URL } from "../URLs";
+import { EDIT_PRODUCT_URL } from "../URLs";
 import { useMutation } from "@tanstack/react-query";
 import { getCookie } from "../../utilities/manageCookies";
 import { LANGUAGES } from "../../global";
 
-const addProduct = async (payload) => {
+const editProduct = async (id, payload) => {
   try {
-    const url = ADD_PRODUCT_URL;
+    const url = EDIT_PRODUCT_URL(id);
     const formData = new FormData();
     const { EN, ENAR, AR } = LANGUAGES;
     const { Lang } = JSON.parse(getCookie("userInfo"));
@@ -38,25 +38,26 @@ const addProduct = async (payload) => {
     formData.append("category_id", payload.category_id);
     formData.append(`image`, payload.image);
 
-    const response = await axios.post(url, formData, {
+    const response = await axios.put(url, formData, {
       headers: {
         "Content-Type": "multipart/form-data",
         Authorization: `Bearer ${getCookie("accessToken")}`,
       },
     });
+
     return response;
   } catch (error) {
     throw error;
   }
 };
 
-export const useAddProductQuery = ({ onSuccess }) => {
+export const useEditProductQuery = ({ onSuccess }) => {
   const { error, mutate, isPending } = useMutation({
-    mutationFn: addProduct,
+    mutationFn: (params) => editProduct(params[0], params[1]),
     onSuccess,
   });
 
-  const handleApiCall = (data) => mutate(data);
+  const handleApiCall = (id, data) => mutate([id, data]);
 
   return { isPending, error, handleApiCall };
 };
