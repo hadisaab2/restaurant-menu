@@ -5,21 +5,22 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
-import { useDeleteCategoryQuery } from "../../../../apis/categories/deleteCategory";
 import { LoadingButton } from "@mui/lab";
+import { useDeleteRestaurantQuery } from "../../../../apis/restaurants/deleteRestauarant";
 
-export default function DeleteCategoryPopup({
+export default function DeleteRestaurantPopup({
   isOpen,
   setIsOpen,
   selectedIdForAction,
-  refetchCategories,
+  refetchRestaurant,
 }) {
-  const { isPending, handleApiCall } = useDeleteCategoryQuery({
+  const { isPending, handleApiCall } = useDeleteRestaurantQuery({
     onSuccess: () => {
-      refetchCategories();
+      refetchRestaurant();
       setIsOpen(false);
     },
   });
+
   const handleClose = () => {
     setIsOpen(false);
   };
@@ -29,11 +30,10 @@ export default function DeleteCategoryPopup({
   return (
     <React.Fragment>
       <Dialog open={isOpen} onClose={handleClose}>
-        <DialogTitle>Delete Category</DialogTitle>
+        <DialogTitle>Delete Restaurant</DialogTitle>
         <DialogContent>
-          <DialogContentText>
-            Are you sure you want to delete this category with all corresponding
-            products?
+          <DialogContentText id="alert-dialog-description">
+            Are you sure you want to delete this restaurant?
           </DialogContentText>
         </DialogContent>
         <DialogActions>
