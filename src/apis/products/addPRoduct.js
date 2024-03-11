@@ -1,6 +1,7 @@
 import axios from "axios";
 import { ADD_PRODUCT_URL } from "../URLs";
 import { useMutation } from "@tanstack/react-query";
+// import { toast } from "react-toastify";
 import { getCookie } from "../../utilities/manageCookies";
 import { LANGUAGES } from "../../global";
 
