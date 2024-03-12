@@ -20,18 +20,19 @@ import {
   Box,
   
 } from "@mui/material";
+import AddEditMedia from "./addmedia";
 
 export default function SocialMedia() {
   const [showAddComponent, setShowAddComponent] = useState(false);
-
+  const[selectedMedia,setSelectedMedia]=useState(null)
   const [media, setMedia] = useState([
     {
-      name: "Instagram",
+      mediatype: "Instagram",
       link: "www.instagram.com/addict",
     },
     {
-      name: "Instagram",
-      link: "www.instagram.com/addict",
+      mediatype: "Facebook",
+      link: "www.facebook.com/addict",
     },
   ]);
 
@@ -39,33 +40,15 @@ export default function SocialMedia() {
   const handleChange = (event) => {
     setMediaType(event.target.value);
   };
+
+  const handleEdit= (media)=>{
+    setShowAddComponent(true)
+    setSelectedMedia(media)
+   }
   return (
     <>
       {showAddComponent ? (
-        <AddMediaForm>
-          <BackIcon onClick={() => setShowAddComponent(false)} />
-          <Box sx={{ minWidth: 120 }}>
-            <FormControl fullWidth>
-              <InputLabel id="demo-simple-select-label">Media</InputLabel>
-              <Select
-                labelId="demo-simple-select-label"
-                id="demo-simple-select"
-                value={mediaType}
-                label="mediaType"
-                onChange={handleChange}
-              >
-                <MenuItem value={10}>Instagram</MenuItem>
-                <MenuItem value={20}>Facebook</MenuItem>
-                <MenuItem value={30}>Tiktok</MenuItem>
-              </Select>
-            </FormControl>
-          </Box>
-          <TextField label="Link" name="Link" variant="outlined" />
-
-          <AddMedia  >
-            Add Media
-          </AddMedia>
-        </AddMediaForm>
+          <AddEditMedia setShowAddComponent={setShowAddComponent} selectedMedia={selectedMedia} setSelectedMedia={setSelectedMedia}/>
       ) : (
         <>
         <AddMedia onClick={() => setShowAddComponent(true)} >
@@ -80,16 +63,16 @@ export default function SocialMedia() {
             </tr>
           </thead>
           <tbody>
-            {media.map(({ name, link }) => {
+            {media.map((media) => {
               return (
                 <tr>
-                  <Td>{name}</Td>
+                  <Td>{media.mediatype}</Td>
                   <Td>
-                    <a href="#">{link}</a>
+                    <a href="#">{media.link}</a>
                   </Td>
                   <Td>
                     <EditDeleteIcons>
-                      <Edit onClick={() => setShowAddComponent(true)} />
+                    <Edit  onClick={()=>handleEdit(media)}/>
                       <Delete />
                     </EditDeleteIcons>
                   </Td>

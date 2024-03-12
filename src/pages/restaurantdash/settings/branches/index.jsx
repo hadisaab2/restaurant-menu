@@ -13,32 +13,32 @@ import {
   AddBranch,
 } from "./styles";
 import { TextField, Button } from "@mui/material";
+import AddEditBranch from "./addbranch";
 
 export default function Branches() {
   const [showAddComponent, setShowAddComponent] = useState(false);
+  const[selectedBranch,setSelectedBranch]=useState(null)
   const [branches, setBranches] = useState([
     {
       name: "Beirut",
       location: "Beirut / Sayed Nasralah Street",
-      maps: "www.googlemaps.com/addict",
+      maps: "www.googlemaps.com/addictbeirut",
     },
     {
-      name: "Beirut",
-      location: "Beirut / Sayed Nasralah Street",
-      maps: "www.googlemaps.com/addict",
+      name: "Sour",
+      location: "Sour / Bus Street",
+      maps: "www.googlemaps.com/addictsour",
     },
   ]);
+
+  const handleEdit= (branch)=>{
+   setShowAddComponent(true)
+   setSelectedBranch(branch)
+  }
   return (
     <>
       {showAddComponent ? (
-        <AddBranchForm>
-          <BackIcon onClick={() => setShowAddComponent(false)} />
-
-          <TextField label="Name" name="Name" variant="outlined" />
-          <TextField label="Location" variant="outlined" name="Location" />
-          <TextField label="Maps" variant="outlined" name="Maps" />
-          <AddBranch>Add Branch</AddBranch>
-        </AddBranchForm>
+          <AddEditBranch selectedBranch={selectedBranch} setSelectedBranch={setSelectedBranch} setShowAddComponent={setShowAddComponent}/>
       ) : (
         <>
           <AddBranch onClick={() => setShowAddComponent(true)}>
@@ -54,17 +54,17 @@ export default function Branches() {
               </tr>
             </thead>
             <tbody>
-              {branches.map(({ name, location, maps }) => {
+              {branches.map((branch) => {
                 return (
                   <tr>
-                    <Td>{name}</Td>
-                    <Td>{location}</Td>
+                    <Td>{branch.name}</Td>
+                    <Td>{branch.location}</Td>
                     <Td>
-                      <a href="#">{maps}</a>
+                      <a href="#">{branch.maps}</a>
                     </Td>
                     <Td>
                       <EditDeleteIcons>
-                        <Edit  onClick={() => setShowAddComponent(true)}/>
+                        <Edit  onClick={()=>handleEdit(branch)}/>
                         <Delete />
                       </EditDeleteIcons>
                     </Td>
