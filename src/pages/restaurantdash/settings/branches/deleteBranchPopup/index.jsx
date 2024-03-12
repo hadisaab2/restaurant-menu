@@ -5,21 +5,21 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
-import { useDeleteCategoryQuery } from "../../../../apis/categories/deleteCategory";
 import { LoadingButton } from "@mui/lab";
+import { useDeleteBranchQuery } from "../../../../../apis/branches/deleteBranch";
 
-export default function DeleteCategoryPopup({
+export default function DeleteBranchPopup({
   isOpen,
   setIsOpen,
   selectedIdForAction,
-  refetchCategories,
+  refetchBranches,
   setSelectedIdForAction,
 }) {
-  const { isPending, handleApiCall } = useDeleteCategoryQuery({
+  const { isPending, handleApiCall } = useDeleteBranchQuery({
     onSuccess: () => {
-      refetchCategories();
-      setIsOpen(false);
+      refetchBranches();
       setSelectedIdForAction(null);
+      setIsOpen(false);
     },
   });
   const handleClose = () => {
@@ -31,11 +31,10 @@ export default function DeleteCategoryPopup({
   return (
     <React.Fragment>
       <Dialog open={isOpen} onClose={handleClose}>
-        <DialogTitle>Delete Category</DialogTitle>
+        <DialogTitle>Delete Branch</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            Are you sure you want to delete this category with all corresponding
-            products?
+            Are you sure you want to delete this Branch ?
           </DialogContentText>
         </DialogContent>
         <DialogActions>

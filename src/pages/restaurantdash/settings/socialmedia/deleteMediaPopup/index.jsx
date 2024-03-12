@@ -5,21 +5,21 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
-import { useDeleteCategoryQuery } from "../../../../apis/categories/deleteCategory";
 import { LoadingButton } from "@mui/lab";
+import { useDeleteMediaQuery } from "../../../../../apis/socialMedia/deleteSocialMedial";
 
-export default function DeleteCategoryPopup({
+export default function DeleteMediaPopup({
   isOpen,
   setIsOpen,
   selectedIdForAction,
-  refetchCategories,
-  setSelectedIdForAction,
+  refetchMedia,
+  setSelectedIdFroAction,
 }) {
-  const { isPending, handleApiCall } = useDeleteCategoryQuery({
+  const { isPending, handleApiCall } = useDeleteMediaQuery({
     onSuccess: () => {
-      refetchCategories();
+      refetchMedia();
       setIsOpen(false);
-      setSelectedIdForAction(null);
+      setSelectedIdFroAction(null);
     },
   });
   const handleClose = () => {
@@ -31,11 +31,10 @@ export default function DeleteCategoryPopup({
   return (
     <React.Fragment>
       <Dialog open={isOpen} onClose={handleClose}>
-        <DialogTitle>Delete Category</DialogTitle>
+        <DialogTitle>Delete Media</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            Are you sure you want to delete this category with all corresponding
-            products?
+            Are you sure you want to delete this Media ?
           </DialogContentText>
         </DialogContent>
         <DialogActions>

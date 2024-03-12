@@ -23,3 +23,15 @@ export const EDIT_RESTAURANT_URL = (id) =>
   `${REACT_APP_BASE_URL}/restaurants/${id}`;
 export const DELETE_RESTAURANT_URL = (id) =>
   `${REACT_APP_BASE_URL}/restaurants/${id}`;
+
+export const ADD_BRANCH_URL = `${REACT_APP_BASE_URL}/branches`;
+export const GET_BRANCHES_URL = (restaurantId) =>
+  `${REACT_APP_BASE_URL}/branches?restaurantId=${restaurantId}`;
+export const EDIT_BRANCH_URL = (id) => `${REACT_APP_BASE_URL}/branches/${id}`;
+export const DELETE_BRANCH_URL = (id) => `${REACT_APP_BASE_URL}/branches/${id}`;
+
+export const ADD_MEDIA_URL = `${REACT_APP_BASE_URL}/media`;
+export const GET_MEDIA_URL = (restaurantId) =>
+  `${REACT_APP_BASE_URL}/media?restaurantId=${restaurantId}`;
+export const EDIT_MEDIA_URL = (id) => `${REACT_APP_BASE_URL}/media/${id}`;
+export const DELETE_MEDIA_URL = (id) => `${REACT_APP_BASE_URL}/media/${id}`;

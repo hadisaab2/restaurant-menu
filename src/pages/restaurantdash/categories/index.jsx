@@ -138,6 +138,7 @@ export default function Categories() {
         setIsOpen={setIsDeletePopupOpen}
         selectedIdForAction={selectedIdForAction}
         refetchCategories={refetchCategories}
+        setSelectedIdForAction={setSelectedIdForAction}
       />
       {showAddComponent ? (
         <AddCategoryForm>
