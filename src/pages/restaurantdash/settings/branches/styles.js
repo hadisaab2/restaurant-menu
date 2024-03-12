@@ -2,7 +2,6 @@ import styled from "styled-components";
 import { breakingPoints } from "../../../../styles/theme";
 import { MdModeEditOutline } from "react-icons/md";
   import { MdDelete } from "react-icons/md";
-  import { MdOutlineKeyboardBackspace } from "react-icons/md";
 
 export const Container = styled.div`
   display: flex;
@@ -20,17 +19,6 @@ export const Title = styled.span`
   margin-top: 30px;
   margin-left: 20px;
 
-`;
-export const AddBranchForm = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items:center;
-  justify-content: center;
-  gap:20px;
-  margin-top:30px;
-  margin-left: 20px;
-  position: relative;
-  padding-top: 40px;
 `;
 
 
@@ -74,13 +62,6 @@ cursor: pointer;
     color:turquoise;
 }
 
-`;
-
-export const BackIcon = styled(MdOutlineKeyboardBackspace)`
-  position: absolute;
-  left: 0;
-  top: 0;
-  font-size: 20px;
 `;
 
 export const AddBranch = styled.button`
