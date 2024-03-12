@@ -27,5 +27,5 @@ export const useGetRestaurants = ({ onSuccess }) => {
     onSuccess,
   });
 
-  return { error, isLoading, status, response: data };
+  return { error, isLoading, status, response: data, refetch };
 };

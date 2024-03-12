@@ -9,4 +9,4 @@ export const setCookie = (key, value) => {
 
 export const getCookie = (key) => Cookies.get(key);
 
-export const deleteCookie = () => Cookies.remove("accessToken");
+export const deleteCookie = (key) => Cookies.remove(key);

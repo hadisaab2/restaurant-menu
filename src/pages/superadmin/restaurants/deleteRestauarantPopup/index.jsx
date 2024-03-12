@@ -6,7 +6,7 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import { LoadingButton } from "@mui/lab";
-import { useDeleteRestaurantQuery } from "../../../../apis/restaurants/deleteRestauarant";
+import { useDeleteRestaurantQuery } from "../../../../apis/restaurants/deleteRestaurant";
 
 export default function DeleteRestaurantPopup({
   isOpen,
@@ -38,7 +38,11 @@ export default function DeleteRestaurantPopup({
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>Cancel</Button>
-          <LoadingButton onClick={handleDelete} loading={isPending}>
+          <LoadingButton
+            onClick={handleDelete}
+            loading={isPending}
+            loadingPosition="start"
+          >
             Delete
           </LoadingButton>
         </DialogActions>

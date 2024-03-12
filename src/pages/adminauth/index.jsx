@@ -13,7 +13,7 @@ import { useNavigate } from "react-router-dom";
 import { useSignInQuery } from "../../apis/users/sign-in";
 import { getCookie, setCookie } from "../../utilities/manageCookies";
 import { jwtDecode } from "jwt-decode";
-import { RESTAURANTDASH } from "../../routes/URLs";
+import { RESTAURANTDASH, SUPERADMIN } from "../../routes/URLs";
 
 export default function AdminSignin() {
   const navigate = useNavigate();
@@ -31,7 +31,7 @@ export default function AdminSignin() {
     if (decodedToken.role_id === 2) {
       navigate(RESTAURANTDASH);
     } else {
-      //! TODO:Navigate to Super-admin dashboard
+      navigate(SUPERADMIN);
     }
   };
 

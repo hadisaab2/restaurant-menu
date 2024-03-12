@@ -15,6 +15,7 @@ import { useForm } from "react-hook-form";
 import { useState } from "react";
 import {
   Box,
+  Button,
   FormControl,
   InputLabel,
   MenuItem,
@@ -24,10 +25,14 @@ import {
 import { templates } from "./themedata";
 import { useAddRestaurantQuery } from "../../../apis/restaurants/addRestaurant";
 import { useGetRestaurants } from "../../../apis/restaurants/getRestaurants";
+import { useEditRestaurantQuery } from "../../../apis/restaurants/editRestaurant";
 import { LoadingButton } from "@mui/lab";
 import { useEffect } from "react";
 import { isEmpty } from "lodash";
 import DeleteRestaurantPopup from "./deleteRestauarantPopup";
+import { deleteCookie } from "../../../utilities/manageCookies";
+import { useNavigate } from "react-router-dom";
+import { ADMINSIGNIN } from "../../../routes/URLs";
 
 export default function Restaurants() {
   const [isEditMode, setIsEditMode] = useState(false);
@@ -36,23 +41,44 @@ export default function Restaurants() {
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [selectedIdForAction, setSelectedIdForAction] = useState(null);
   const [restaurants, setRestaurants] = useState([]);
+  const navigate = useNavigate();
 
-  const { register, handleSubmit, getValues, unregister, setValue, formState } =
-    useForm();
+  const {
+    register,
+    handleSubmit,
+    getValues,
+    unregister,
+    setValue,
+    formState,
+    reset,
+  } = useForm();
 
   const { response, isLoading, refetch } = useGetRestaurants({
     onSuccess: () => {},
   });
 
+  const refetchRestaurants = () => {
+    refetch()
+      .then(({ data: { data } }) => setRestaurants(data))
+      .catch((err) => console.log(err));
+  };
+
+  const { handleApiCall: handleEditApi, isPending: isEditing } =
+    useEditRestaurantQuery({
+      onSuccess: () => {
+        setSelectedIdForAction(null);
+        setSelectedProduct(null);
+        refetchRestaurants();
+        setShowAddComponent(false);
+      },
+    });
+
   const { handleApiCall, isPending } = useAddRestaurantQuery({
     onSuccess: () => {
-      refetch().then(({ data: { data } }) => setRestaurants(data));
+      refetchRestaurants();
       setShowAddComponent(false);
     },
   });
-
-  const refetchRestaurants = () =>
-    refetch().then(({ data: { data } }) => setRestaurants(data));
 
   const [template, setTemplate] = useState();
 
@@ -83,9 +109,10 @@ export default function Restaurants() {
     languages,
     template_id,
     theme: themeString,
+    restaurant_id,
   }) => {
     const theme = JSON.parse(themeString);
-    setSelectedProduct({ languages, template_id, theme });
+    setSelectedProduct({ languages, template_id, theme, restaurant_id });
     setIsEditMode(true);
     setTemplate(template_id);
     setValue("username", username);
@@ -97,7 +124,11 @@ export default function Restaurants() {
 
   const handleAddRestaurant = () => {
     handleSubmit((data) => {
-      handleApiCall(data);
+      if (selectedProduct) {
+        handleEditApi(selectedProduct.restaurant_id, data);
+      } else {
+        handleApiCall(data);
+      }
     })();
   };
 
@@ -149,7 +180,14 @@ export default function Restaurants() {
       ) : (
         <>
           <AddRestaurantForm>
-            <BackIcon onClick={() => setShowAddComponent(false)} />
+            <BackIcon
+              onClick={() => {
+                reset();
+                setSelectedIdForAction(null);
+                setSelectedProduct(null);
+                setShowAddComponent(false);
+              }}
+            />
 
             <TextField
               label="UserName"
@@ -252,13 +290,33 @@ export default function Restaurants() {
             <LoadingButton
               onClick={handleAddRestaurant}
               style={{ backgroundColor: "turquoise", color: "white" }}
-              loading={isPending}
+              loading={isPending || isEditing}
             >
               {isEditMode ? "Edit Restaurant" : "Add Restaurant"}
             </LoadingButton>
           </AddRestaurantForm>
         </>
       )}
+      <Button
+        style={{
+          alignSelf: "flex-start",
+          marginLeft: "20px",
+          marginTop: "40px",
+          textTransform: "capitalize",
+          width: "150px",
+          color: "white",
+          backgroundColor: "turquoise",
+        }}
+        variant="contained"
+        onClick={() => {
+          localStorage.removeItem("isLoggedIn");
+          deleteCookie("accessToken");
+          deleteCookie("userInfo");
+          navigate(ADMINSIGNIN);
+        }}
+      >
+        Logout
+      </Button>
     </Container>
   );
 }
