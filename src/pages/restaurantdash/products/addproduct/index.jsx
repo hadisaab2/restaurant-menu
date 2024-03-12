@@ -109,7 +109,6 @@ export default function AddProduct({
   }, [isLoading]);
 
   useEffect(() => {
-    console.log(selectedProduct);
     if (selectedProduct) {
       if (userInformation.Lang === EN) {
         const { en_name, en_description, en_price } = selectedProduct;

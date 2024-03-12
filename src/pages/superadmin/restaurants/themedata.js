@@ -1,14 +1,17 @@
-export const templates=[
-        {
-            name:"template1",
-            colors:["maincolor","backgroundcolor","textcolor"]
-        },
-        {
-            name:"template2",
-            colors:["popupcolor","maincolor","backgroundcolor","textcolor"]
-        },
-        {
-            name:"template3",
-            colors:["maincolor","backgroundcolor","textcolor"]
-        }
-]
+export const templates = [
+  {
+    id: 1,
+    name: "template1",
+    colors: ["maincolor", "backgroundcolor", "textcolor"],
+  },
+  {
+    id: 2,
+    name: "template2",
+    colors: ["popupcolor", "maincolor", "backgroundcolor", "textcolor"],
+  },
+  {
+    id: 3,
+    name: "template3",
+    colors: ["maincolor", "backgroundcolor", "textcolor"],
+  },
+];

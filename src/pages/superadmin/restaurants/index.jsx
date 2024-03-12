@@ -22,51 +22,122 @@ import {
   TextField,
 } from "@mui/material";
 import { templates } from "./themedata";
-export default function Restaurants() {
-  const [restaurants, setRestaurants] = useState([
-    { name: "Addict", template: "template1" },
-    { name: "Addict", template: "template1" },
-    { name: "Addict", template: "template1" },
-  ]);
-  const { register, handleSubmit, getValues } = useForm();
+import { useAddRestaurantQuery } from "../../../apis/restaurants/addRestaurant";
+import { useGetRestaurants } from "../../../apis/restaurants/getRestaurants";
+import { LoadingButton } from "@mui/lab";
+import { useEffect } from "react";
+import { isEmpty } from "lodash";
+import DeleteRestaurantPopup from "./deleteRestauarantPopup";
 
+export default function Restaurants() {
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState(null);
   const [showAddComponent, setShowAddComponent] = useState(false);
-  const [template, setTemplate] = useState("");
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
+  const [selectedIdForAction, setSelectedIdForAction] = useState(null);
+  const [restaurants, setRestaurants] = useState([]);
+
+  const { register, handleSubmit, getValues, unregister, setValue, formState } =
+    useForm();
+
+  const { response, isLoading, refetch } = useGetRestaurants({
+    onSuccess: () => {},
+  });
+
+  const { handleApiCall, isPending } = useAddRestaurantQuery({
+    onSuccess: () => {
+      refetch().then(({ data: { data } }) => setRestaurants(data));
+      setShowAddComponent(false);
+    },
+  });
+
+  const refetchRestaurants = () =>
+    refetch().then(({ data: { data } }) => setRestaurants(data));
+
+  const [template, setTemplate] = useState();
 
   const handletemplate = (e) => {
+    Object.keys(getValues()).map((key) => {
+      const shouldDeleteField = ["username", "password", "language"].every(
+        (field) => field !== key
+      );
+      if (shouldDeleteField) {
+        unregister(key);
+        setValue(key, undefined);
+      }
+    });
     setTemplate(e.target.value);
   };
+
+  useEffect(() => {
+    if (!isLoading) {
+      setRestaurants(response?.data);
+    }
+  }, [isLoading]);
+
+  const handleEdit = ({
+    username,
+    phone_number,
+    email,
+    restaurantName,
+    languages,
+    template_id,
+    theme: themeString,
+  }) => {
+    const theme = JSON.parse(themeString);
+    setSelectedProduct({ languages, template_id, theme });
+    setIsEditMode(true);
+    setTemplate(template_id);
+    setValue("username", username);
+    setValue("phone_number", phone_number);
+    setValue("email", email);
+    setValue("name", restaurantName);
+    setShowAddComponent(true);
+  };
+
   const handleAddRestaurant = () => {
-    console.log(getValues());
     handleSubmit((data) => {
-      console.log(data);
+      handleApiCall(data);
     })();
   };
+
   return (
     <Container>
       {!showAddComponent ? (
         <>
+          <DeleteRestaurantPopup
+            refetchRestaurant={refetchRestaurants}
+            isOpen={isPopupOpen}
+            selectedIdForAction={selectedIdForAction}
+            setIsOpen={setIsPopupOpen}
+          />
           <AddRestaurant onClick={() => setShowAddComponent(true)}>
             Add Restaurant
           </AddRestaurant>
           <Table>
             <thead>
               <tr>
-                <Th>Name</Th>
-                <Th>Locations</Th>
-                <Th>Actions</Th>
+                <Th>User name</Th>
+                <Th>Restaurant name</Th>
+                <Th>Phone</Th>
               </tr>
             </thead>
             <tbody>
-              {restaurants.map(({ name, template }) => {
+              {restaurants.map((restaurant) => {
                 return (
                   <tr>
-                    <Td>{name}</Td>
-                    <Td>{template}</Td>
+                    <Td>{restaurant.username}</Td>
+                    <Td>{restaurant.restaurantName}</Td>
+                    <Td>{restaurant.phone_number}</Td>
                     <Td>
                       <EditDeleteIcons>
-                        <Edit onClick={() => setShowAddComponent(true)} />
-                        <Delete />
+                        <Edit onClick={() => handleEdit(restaurant)} />
+                        <Delete
+                          onClick={() => {
+                            setSelectedIdForAction(restaurant.restaurant_id);
+                            setIsPopupOpen(true);
+                          }}
+                        />
                       </EditDeleteIcons>
                     </Td>
                   </tr>
@@ -82,64 +153,109 @@ export default function Restaurants() {
 
             <TextField
               label="UserName"
-              name="userName"
+              name="username"
               variant="outlined"
-              {...register("username")}
+              {...register("username", { required: "Required" })}
+              error={!isEmpty(formState?.errors?.username)}
+              helperText={
+                !isEmpty(formState?.errors?.username) &&
+                formState.errors?.username.message
+              }
             />
             <TextField
               label="Password"
               variant="outlined"
               name="password"
               {...register("password")}
+              error={!isEmpty(formState?.errors?.username)}
+              helperText={
+                !isEmpty(formState?.errors?.username) &&
+                formState.errors?.username.message
+              }
+            />
+            <TextField
+              label="Phone"
+              variant="outlined"
+              name="phone_number"
+              {...register("phone_number", { required: "Required" })}
+              error={!isEmpty(formState?.errors?.phone_number)}
+              helperText={
+                !isEmpty(formState?.errors?.phone_number) &&
+                formState.errors?.phone_number.message
+              }
+            />
+            <TextField
+              label="Email"
+              variant="outlined"
+              name="email"
+              {...register("email", { required: "Required" })}
+              error={!isEmpty(formState?.errors?.email)}
+              helperText={
+                !isEmpty(formState?.errors?.email) &&
+                formState.errors?.email.message
+              }
+            />
+            <TextField
+              label="Restaurant name"
+              variant="outlined"
+              name="name"
+              {...register("name", { required: "Required" })}
+              error={!isEmpty(formState?.errors?.name)}
+              helperText={
+                !isEmpty(formState?.errors?.name) &&
+                formState.errors?.name.message
+              }
             />
             <Box sx={{ minWidth: 120 }}>
               <FormControl fullWidth>
-                <InputLabel id="demo-simple-select-label">Language</InputLabel>
+                <InputLabel>Language</InputLabel>
                 <Select
-                  labelId="demo-simple-select-label"
-                  id="demo-simple-select"
                   label="Language"
-                  {...register("language")}
+                  {...register("languages")}
+                  defaultValue={selectedProduct?.languages}
                 >
                   <MenuItem value="en">En</MenuItem>
                   <MenuItem value="ar">Ar</MenuItem>
-                  <MenuItem value="en/ar">En/Ar</MenuItem>
+                  <MenuItem value="en&ar">En/Ar</MenuItem>
                 </Select>
               </FormControl>
             </Box>
             <Box sx={{ minWidth: 120 }}>
               <FormControl fullWidth>
-                <InputLabel id="demo-simple-select-label">Template</InputLabel>
+                <InputLabel>Template</InputLabel>
                 <Select
-                  labelId="demo-simple-select-label"
-                  id="demo-simple-select"
                   label="mediaType"
-                  {...register("template")}
+                  {...register("template_id")}
                   onChange={handletemplate}
-                  value={template}
+                  defaultValue={selectedProduct?.template_id}
                 >
-                  {templates.map(({ name }) => {
-                    return <MenuItem value={name}>{name}</MenuItem>;
-                  })}
+                  {templates.map(({ name, id }) => (
+                    <MenuItem value={id}>{name}</MenuItem>
+                  ))}
                 </Select>
               </FormControl>
             </Box>
 
             {templates
-              .find((t) => t.name == template)
+              .find((t) => t.id == template)
               ?.colors.map((color) => {
                 return (
                   <TextField
                     label={color}
                     name={color}
                     variant="outlined"
-                    {...register(color)}
+                    {...register(`theme.[${color}]`)}
+                    defaultValue={selectedProduct?.theme?.[color]}
                   />
                 );
               })}
-            <AddRestaurant onClick={handleAddRestaurant}>
-              Add Restaurant
-            </AddRestaurant>
+            <LoadingButton
+              onClick={handleAddRestaurant}
+              style={{ backgroundColor: "turquoise", color: "white" }}
+              loading={isPending}
+            >
+              {isEditMode ? "Edit Restaurant" : "Add Restaurant"}
+            </LoadingButton>
           </AddRestaurantForm>
         </>
       )}
