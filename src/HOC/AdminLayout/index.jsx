@@ -2,8 +2,8 @@ import ProtectedRoute from "../../routes/protectedRoutes";
 
 export default function AdminLayout(WrappedComponent) {
   return (
-    <>
-      <WrappedComponent  />
-    </>
+    <ProtectedRoute>
+      <WrappedComponent />
+    </ProtectedRoute>
   );
 }
