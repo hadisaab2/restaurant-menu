@@ -3,9 +3,9 @@ import { GET_PRODUCT_URL } from "../URLs";
 import { useQuery } from "@tanstack/react-query";
 import { getCookie } from "../../utilities/manageCookies";
 
-const getProducts = async () => {
+const getProducts = async (id) => {
   try {
-    const url = GET_PRODUCT_URL;
+    const url = GET_PRODUCT_URL(id);
 
     const response = await axios.get(url, {
       headers: {
@@ -19,13 +19,13 @@ const getProducts = async () => {
   }
 };
 
-export const useGetProducts = ({ onSuccess }) => {
-  const { error, isLoading, status, data } = useQuery({
-    queryFn: getProducts,
+export const useGetProducts = ({ onSuccess, restaurantId }) => {
+  const { error, isLoading, status, data, refetch } = useQuery({
+    queryFn: () => getProducts(restaurantId),
     retry: false,
     queryKey: ["products"],
     onSuccess,
   });
 
-  return { error, isLoading, status, response: data };
+  return { error, isLoading, status, response: data, refetch };
 };
