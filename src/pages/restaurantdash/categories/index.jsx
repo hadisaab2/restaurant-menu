@@ -41,28 +41,6 @@ export default function Categories({ setProducts }) {
     restaurantId: userInformation.restaurant_id,
   });
 
-  const { isPending, handleApiCall } = useAddCategoryQuery({
-    onSuccess: () => {
-      refetchCategories();
-      refetchProductsHandler();
-      setShowAddComponent(false);
-    },
-  });
-
-  const { isPending: isEditing, handleApiCall: handleEditApi } =
-    useEditCategoryQuery({
-      onSuccess: () => {
-        refetchCategories();
-        refetchProductsHandler();
-        setShowAddComponent(false);
-      },
-    });
-
-  const { isLoading, response, refetch } = useGetCategories({
-    onSuccess: () => {},
-    restaurantId: userInformation.restaurant_id,
-  });
-
   const schema =
     userInformation.Lang === AR
       ? arCategorySchema
@@ -76,8 +54,31 @@ export default function Categories({ setProducts }) {
   const displayArabic =
     userInformation.Lang === AR || userInformation.Lang === ENAR;
 
-  const { handleSubmit, register, formState, setValue } = useForm({
+  const { handleSubmit, register, formState, setValue, reset } = useForm({
     resolver: yupResolver(schema),
+  });
+  const { isPending, handleApiCall } = useAddCategoryQuery({
+    onSuccess: () => {
+      refetchCategories();
+      refetchProductsHandler();
+      reset();
+      setShowAddComponent(false);
+    },
+  });
+
+  const { isPending: isEditing, handleApiCall: handleEditApi } =
+    useEditCategoryQuery({
+      onSuccess: () => {
+        refetchCategories();
+        refetchProductsHandler();
+        reset();
+        setShowAddComponent(false);
+      },
+    });
+
+  const { isLoading, response, refetch } = useGetCategories({
+    onSuccess: () => {},
+    restaurantId: userInformation.restaurant_id,
   });
 
   const handleAddCategory = () => {
@@ -155,7 +156,12 @@ export default function Categories({ setProducts }) {
       />
       {showAddComponent ? (
         <AddCategoryForm>
-          <BackIcon onClick={() => setShowAddComponent(false)} />
+          <BackIcon
+            onClick={() => {
+              reset();
+              setShowAddComponent(false);
+            }}
+          />
           {displayEnglish && (
             <TextField
               label="English category"
