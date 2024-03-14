@@ -14,10 +14,12 @@ export default function DeleteCategoryPopup({
   selectedIdForAction,
   refetchCategories,
   setSelectedIdForAction,
+  refetchProductsHandler,
 }) {
   const { isPending, handleApiCall } = useDeleteCategoryQuery({
     onSuccess: () => {
       refetchCategories();
+      refetchProductsHandler();
       setIsOpen(false);
       setSelectedIdForAction(null);
     },

@@ -26,8 +26,9 @@ import { useAddCategoryQuery } from "../../../apis/categories/addCategory";
 import { useGetCategories } from "../../../apis/categories/getCategories";
 import { useEditCategoryQuery } from "../../../apis/categories/editCategory";
 import DeleteCategoryPopup from "./deleteCategoryPopup";
+import { useGetProducts } from "../../../apis/products/getProducts";
 
-export default function Categories() {
+export default function Categories({ setProducts }) {
   const [showAddComponent, setShowAddComponent] = useState(false);
   const [isDeletePopupOpen, setIsDeletePopupOpen] = useState(false);
   const { AR, ENAR, EN } = LANGUAGES;
@@ -35,10 +36,15 @@ export default function Categories() {
   const [userInformation, _] = useState(JSON.parse(storedUserInfo));
   const [categories, setCategories] = useState([]);
   const [selectedIdForAction, setSelectedIdForAction] = useState(null);
+  const { refetch: refetchProducts } = useGetProducts({
+    onSuccess: () => {},
+    restaurantId: userInformation.restaurant_id,
+  });
 
   const { isPending, handleApiCall } = useAddCategoryQuery({
     onSuccess: () => {
       refetchCategories();
+      refetchProductsHandler();
       setShowAddComponent(false);
     },
   });
@@ -47,6 +53,7 @@ export default function Categories() {
     useEditCategoryQuery({
       onSuccess: () => {
         refetchCategories();
+        refetchProductsHandler();
         setShowAddComponent(false);
       },
     });
@@ -111,6 +118,11 @@ export default function Categories() {
       .then(({ data: { data } }) => setCategories(data))
       .catch((err) => console.log(err));
   };
+  function refetchProductsHandler() {
+    refetchProducts()
+      .then(({ data: { data } }) => setProducts(data))
+      .catch((err) => console.log(err));
+  }
 
   useEffect(() => {
     if (!isLoading) {
@@ -139,6 +151,7 @@ export default function Categories() {
         selectedIdForAction={selectedIdForAction}
         refetchCategories={refetchCategories}
         setSelectedIdForAction={setSelectedIdForAction}
+        refetchProductsHandler={refetchProductsHandler}
       />
       {showAddComponent ? (
         <AddCategoryForm>
