@@ -40,16 +40,13 @@ export default function AddProduct({
   selectedProduct,
   refetchProducts,
   setSelectedProduct,
+  userInformation,
 }) {
   const [file, setFile] = useState(null);
   const [imageUrl, setImageUrl] = useState(null);
   const [categories, setCategories] = useState([]);
   const fileInputRef = useRef(null);
-  const storedUserInfo = getCookie("userInfo") || "{}";
   const { AR, EN, ENAR } = LANGUAGES;
-  const [userInformation, setUserInformation] = useState(
-    JSON.parse(storedUserInfo)
-  );
 
   const schema =
     userInformation.Lang === LANGUAGES.AR
