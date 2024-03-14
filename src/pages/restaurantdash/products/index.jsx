@@ -7,10 +7,9 @@ import AddProduct from "./addproduct";
 import { useGetProducts } from "../../../apis/products/getProducts";
 import { getCookie } from "../../../utilities/manageCookies";
 
-export default function Products() {
+export default function Products({ setProducts, products }) {
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [isFormOpen, setIsFormOpen] = useState(false);
-  const [products, setProducts] = useState([]);
   const storedUserInfo = getCookie("userInfo") || "{}";
   const [userInformation, setUserInformation] = useState(
     JSON.parse(storedUserInfo)

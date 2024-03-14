@@ -26,8 +26,9 @@ import { useAddCategoryQuery } from "../../../apis/categories/addCategory";
 import { useGetCategories } from "../../../apis/categories/getCategories";
 import { useEditCategoryQuery } from "../../../apis/categories/editCategory";
 import DeleteCategoryPopup from "./deleteCategoryPopup";
+import { useGetProducts } from "../../../apis/products/getProducts";
 
-export default function Categories() {
+export default function Categories({ setProducts }) {
   const [showAddComponent, setShowAddComponent] = useState(false);
   const [isDeletePopupOpen, setIsDeletePopupOpen] = useState(false);
   const { AR, ENAR, EN } = LANGUAGES;
@@ -35,23 +36,7 @@ export default function Categories() {
   const [userInformation, _] = useState(JSON.parse(storedUserInfo));
   const [categories, setCategories] = useState([]);
   const [selectedIdForAction, setSelectedIdForAction] = useState(null);
-
-  const { isPending, handleApiCall } = useAddCategoryQuery({
-    onSuccess: () => {
-      refetchCategories();
-      setShowAddComponent(false);
-    },
-  });
-
-  const { isPending: isEditing, handleApiCall: handleEditApi } =
-    useEditCategoryQuery({
-      onSuccess: () => {
-        refetchCategories();
-        setShowAddComponent(false);
-      },
-    });
-
-  const { isLoading, response, refetch } = useGetCategories({
+  const { refetch: refetchProducts } = useGetProducts({
     onSuccess: () => {},
     restaurantId: userInformation.restaurant_id,
   });
@@ -69,8 +54,31 @@ export default function Categories() {
   const displayArabic =
     userInformation.Lang === AR || userInformation.Lang === ENAR;
 
-  const { handleSubmit, register, formState, setValue } = useForm({
+  const { handleSubmit, register, formState, setValue, reset } = useForm({
     resolver: yupResolver(schema),
+  });
+  const { isPending, handleApiCall } = useAddCategoryQuery({
+    onSuccess: () => {
+      refetchCategories();
+      refetchProductsHandler();
+      reset();
+      setShowAddComponent(false);
+    },
+  });
+
+  const { isPending: isEditing, handleApiCall: handleEditApi } =
+    useEditCategoryQuery({
+      onSuccess: () => {
+        refetchCategories();
+        refetchProductsHandler();
+        reset();
+        setShowAddComponent(false);
+      },
+    });
+
+  const { isLoading, response, refetch } = useGetCategories({
+    onSuccess: () => {},
+    restaurantId: userInformation.restaurant_id,
   });
 
   const handleAddCategory = () => {
@@ -111,6 +119,11 @@ export default function Categories() {
       .then(({ data: { data } }) => setCategories(data))
       .catch((err) => console.log(err));
   };
+  function refetchProductsHandler() {
+    refetchProducts()
+      .then(({ data: { data } }) => setProducts(data))
+      .catch((err) => console.log(err));
+  }
 
   useEffect(() => {
     if (!isLoading) {
@@ -139,10 +152,16 @@ export default function Categories() {
         selectedIdForAction={selectedIdForAction}
         refetchCategories={refetchCategories}
         setSelectedIdForAction={setSelectedIdForAction}
+        refetchProductsHandler={refetchProductsHandler}
       />
       {showAddComponent ? (
         <AddCategoryForm>
-          <BackIcon onClick={() => setShowAddComponent(false)} />
+          <BackIcon
+            onClick={() => {
+              reset();
+              setShowAddComponent(false);
+            }}
+          />
           {displayEnglish && (
             <TextField
               label="English category"

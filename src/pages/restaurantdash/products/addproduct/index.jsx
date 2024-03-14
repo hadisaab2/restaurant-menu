@@ -43,6 +43,8 @@ export default function AddProduct({
   userInformation,
 }) {
   const [file, setFile] = useState(null);
+  const [fileErrMsg, setFileErrMsg] = useState("Please upload image");
+
   const [imageUrl, setImageUrl] = useState(null);
   const [categories, setCategories] = useState([]);
   const fileInputRef = useRef(null);
@@ -92,6 +94,14 @@ export default function AddProduct({
 
   const handleFileChange = ({ target }) => {
     if (target.files[0]) {
+      const uploadedFile = target.files[0];
+      const fileSizeInMB = uploadedFile.size / (1024 * 1024);
+      if (fileSizeInMB > 2) {
+        setFileErrMsg("Image is greater than 2MB");
+        return;
+      } else {
+        setFileErrMsg("Please upload image");
+      }
       setFile(target.files[0]);
       const url = URL.createObjectURL(target.files[0]);
       setImageUrl(url);
@@ -259,7 +269,7 @@ export default function AddProduct({
           <UploadBtn onClick={handleButtonClick}>Upload Image</UploadBtn>
         )}
         {!file && !getValues().image && (
-          <UploadImageText>Please upload image</UploadImageText>
+          <UploadImageText>{fileErrMsg}</UploadImageText>
         )}
       </Row>
 

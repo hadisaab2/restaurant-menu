@@ -22,6 +22,7 @@ import { getCookie } from "../../utilities/manageCookies";
 
 export default function RestaurantDash() {
   const [section, setSection] = useState("Products");
+  const [products, setProducts] = useState([]);
   const [userInformation, setUserInformation] = useState({});
 
   useEffect(() => {
@@ -58,9 +59,11 @@ export default function RestaurantDash() {
         <Header>
           <Path>Admin / {section}</Path>
         </Header>
-        {section == "Products" && <Products />}
+        {section == "Products" && (
+          <Products setProducts={setProducts} products={products} />
+        )}
         {section == "Settings" && <Settings />}
-        {section == "Categories" && <Categories />}
+        {section == "Categories" && <Categories setProducts={setProducts} />}
       </Content>
     </Container>
   );
