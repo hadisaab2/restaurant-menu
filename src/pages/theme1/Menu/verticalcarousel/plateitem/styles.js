@@ -39,7 +39,8 @@ export const Plate = styled.img`
 `;
 export const PlateName = styled.span`
 font-size: 10px;
-margin-top:4px
+margin-top:4px;
+color:${props=>props.theme.textcolor}
 `;
 
 const spin = keyframes`
@@ -68,5 +69,5 @@ export const LoaderWrapper = styled.div`
   position: absolute;
   width: 100%;
   z-index: 3;
-  background-color: white;
+  background-color: ${props=>props.theme.backgroundcolor};
 `;

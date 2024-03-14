@@ -1,6 +1,6 @@
 import React from 'react'
 import { Container,Brand } from './styles'
-import LaMarsa from "./LaMarsa.png"
+import thecage from "./thecage.png"
 import { useParams } from 'react-router-dom';
 import { restaurantmenus } from '../../../../data';
 export default function HeaderTop() {
@@ -9,7 +9,7 @@ export default function HeaderTop() {
 
   return (
     <Container>
-      <Brand src={logo}/>
+      <Brand src={thecage}/>
     </Container>
   )
 }
