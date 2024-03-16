@@ -307,9 +307,9 @@ export default function AddProduct({
             error={!isEmpty(formState?.errors?.category_id)}
             defaultValue={selectedProduct?.category_id}
           >
-            {categories.map(({ id, en_category }) => (
+            {categories.map(({ id, en_category, ar_category }) => (
               <MenuItem value={id} key={id}>
-                {en_category}
+                {en_category || ar_category}
               </MenuItem>
             ))}
           </Select>

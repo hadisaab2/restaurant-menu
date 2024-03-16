@@ -14,7 +14,7 @@ export default function Product({
   setIsFormOpen,
   setSelectedProduct,
 }) {
-  const { en_name, category, image } = product;
+  const { category, image } = product;
   return (
     <Container
       onClick={() => {
@@ -29,8 +29,10 @@ export default function Product({
           />
         </ImageWrapper>
         <InfoContainer>
-          <Title>{en_name}</Title>
-          <Category>{category.en_category}</Category>
+          <Title>
+            {product?.en_name} ||{product?.ar_name}
+          </Title>
+          <Category>{category?.en_category || category?.ar_category}</Category>
         </InfoContainer>
       </Wrapper>
     </Container>
