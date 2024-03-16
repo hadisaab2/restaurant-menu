@@ -14,16 +14,20 @@ import {
   Title,
   Header,
   Path,
+  Logout,
 } from "./style";
 import Products from "./products";
 import Settings from "./settings";
 import Categories from "./categories";
-import { getCookie } from "../../utilities/manageCookies";
+import { getCookie, deleteCookie } from "../../utilities/manageCookies";
+import { useNavigate } from "react-router-dom";
+import { ADMINSIGNIN } from "../../routes/URLs";
 
 export default function RestaurantDash() {
   const [section, setSection] = useState("Products");
   const [products, setProducts] = useState([]);
   const [userInformation, setUserInformation] = useState({});
+  const navigate = useNavigate();
 
   useEffect(() => {
     const storedUserInfo = getCookie("userInfo") || "{}";
@@ -51,13 +55,25 @@ export default function RestaurantDash() {
           </Tab>
         </SidebarContent>
         <SidebarBottom>
-          <ProfileIcon />
-          <Username>{userInformation?.username || "user"}</Username>
+            <ProfileIcon />
+            <Username>{userInformation?.username || "user"}</Username>
+
+          
         </SidebarBottom>
       </Sidebar>
       <Content>
         <Header>
           <Path>Admin / {section}</Path>
+          <Logout
+            onClick={() => {
+              localStorage.removeItem("isLoggedIn");
+              deleteCookie("accessToken");
+              deleteCookie("userInfo");
+              navigate(ADMINSIGNIN);
+            }}
+          >
+            Logout
+          </Logout>
         </Header>
         {section == "Products" && (
           <Products setProducts={setProducts} products={products} />

@@ -4,8 +4,8 @@ import thecage from "./thecage.png"
 import { useParams } from 'react-router-dom';
 import { restaurantmenus } from '../../../../data';
 export default function HeaderTop() {
-  const { restaurantName } = useParams();
-  let logo=restaurantmenus.find((restaurant) => restaurant.name === restaurantName).logo
+  const { restaurantname } = useParams();
+  let logo=restaurantmenus.find((restaurant) => restaurant.name === restaurantname).logo
 
   return (
     <Container>

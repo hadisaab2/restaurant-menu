@@ -11,7 +11,7 @@ export const MenuWrapper = styled.div`
 width: 100%;
 display: flex;
 flex-direction: column;
-filter:${props=>props.showPopup?"blur(5px)":"blur(0px)"} ;
+filter:${props=>props.showPopup?"blur(5px)":"blur(0px)"};
 transition: all 1s ease-in-out;
 height: 100vh;
 position: relative;

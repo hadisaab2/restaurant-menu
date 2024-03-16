@@ -8,7 +8,7 @@ import { useParams } from "react-router-dom";
 import Popup from "./popup";
 
 export default function Theme1() {
-  const { restaurantname } = useParams();
+  const { restaurantName } = useParams();
   const [activeCategory, setactiveCategory] = useState(0);
   const [animationchange, setanimationchange] = useState(false);
   const [showPopup, setshowPopup] = useState(false);
@@ -16,7 +16,7 @@ export default function Theme1() {
     setshowPopup(show);
   };
   let menu = restaurantmenus.find(
-    (restaurant) => restaurant.name === restaurantname
+    (restaurant) => restaurant.name === restaurantName
   ).menu;
   return (
     <Container >

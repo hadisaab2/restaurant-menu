@@ -87,6 +87,7 @@ export const Header = styled.div`
   margin-top: 30px;
   display: flex;
   align-items: center;
+  justify-content: space-between;
 `;
 export const Path = styled.span`
   margin-left: 20px;
@@ -101,8 +102,21 @@ export const ProfileIcon = styled(IoPersonCircle)`
   margin-left: 20px;
 `;
 
+
 export const Username = styled.span`
   font-weight: normal;
   font-size: 14px;
   text-transform: capitalize;
 `;
+export const Logout = styled.button`
+  width:80px;
+  outline: none;
+  border:0;
+  border-radius: 20px;
+  height:50%;
+  margin-right: 20px;
+  font-size: 15px;
+  background-color: #edeeef;
+  cursor: pointer;
+`;
+
