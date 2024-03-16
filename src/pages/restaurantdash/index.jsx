@@ -78,7 +78,7 @@ export default function RestaurantDash() {
         {section == "Products" && (
           <Products setProducts={setProducts} products={products} />
         )}
-        {section == "Settings" && <Settings />}
+        {section == "Settings" && <Settings setSection={setSection} />}
         {section == "Categories" && <Categories setProducts={setProducts} />}
       </Content>
     </Container>

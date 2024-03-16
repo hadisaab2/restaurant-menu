@@ -24,8 +24,12 @@ export const GET_RESTAURANT_URL = (restaurantname) =>
   `${REACT_APP_BASE_URL}/restaurants/${restaurantname}`;
 export const EDIT_RESTAURANT_URL = (id) =>
   `${REACT_APP_BASE_URL}/restaurants/${id}`;
+export const EDIT_OR_ADD_RESTAURANT_LOGO_URL = (id) =>
+  `${REACT_APP_BASE_URL}/restaurants/logo/${id}`;
 export const DELETE_RESTAURANT_URL = (id) =>
   `${REACT_APP_BASE_URL}/restaurants/${id}`;
+export const GET_RESTAURANT_LOGO_URL = (name) =>
+  `${REACT_APP_BASE_URL}/restaurants/${name}?onlyLogo=true`;
 
 export const ADD_BRANCH_URL = `${REACT_APP_BASE_URL}/branches`;
 export const GET_BRANCHES_URL = (restaurantId) =>
