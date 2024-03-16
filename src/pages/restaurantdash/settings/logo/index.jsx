@@ -46,7 +46,7 @@ export default function Logo({ setSection }) {
   };
 
   useEffect(() => {
-    if (!isLoading) {
+    if (!isLoading && response.data.logoURL) {
       setImageUrl(
         `https://storage.googleapis.com/ecommerce-bucket-testing/${response.data.logoURL}`
       );
