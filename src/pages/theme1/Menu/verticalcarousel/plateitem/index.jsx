@@ -10,7 +10,6 @@ import {
 export default function PlateItem({ plateitem, itemclick, index,key }) {
   const [imageLoaded, setimageLoaded] = useState(false);
   const handleImageLoaded = () => {
-    console.log("hiiii")
     setimageLoaded(true);
   };
   return (

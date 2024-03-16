@@ -2,7 +2,7 @@ export const templates = [
   {
     id: 1,
     name: "template1",
-    colors: ["maincolor", "backgroundcolor", "textcolor"],
+    colors: ["maincolor", "backgroundcolor", "textcolor","categoryactive","categoryunactive"],
   },
   {
     id: 2,

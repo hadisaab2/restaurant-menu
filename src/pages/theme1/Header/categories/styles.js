@@ -36,7 +36,7 @@ export const CarouselItem = styled.div`
   justify-content: center;
   font-weight: bold;
   transition:all 0.2s ease-in-out;
-  color:${props=>props.index==props.activeCategory?"black":"lightgray"};
+  color:${props=>props.index==props.activeCategory?props.theme.categoryactive:props.theme.categoryunactive};
 `;
 export const LineContainer = styled.div`
 position: relative;
@@ -56,5 +56,5 @@ export const Line = styled.div`
 width: 27%;
 height: 2px;
 /* background-color:#FB4303; */
-background-color: #fad218;
+background-color: ${props=>props.theme.maincolor};
 `;

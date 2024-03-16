@@ -1,26 +1,33 @@
 import React, { useState } from "react";
-import { Container } from "./styles";
+import { Container, DetailsBtn, Location, MenuWrapper } from "./styles";
 import Menu from "./Menu";
 import Header from "./Header";
 import { restaurantmenus } from "../../data";
 import Offers from "./Offers";
-import { useParams } from 'react-router-dom';
+import { useParams } from "react-router-dom";
+import Popup from "./popup";
 
-export default function Theme1({ showPopup }) {
+export default function Theme1() {
   const { restaurantname } = useParams();
   const [activeCategory, setactiveCategory] = useState(0);
   const [animationchange, setanimationchange] = useState(false);
-  let menu=restaurantmenus.find((restaurant) => restaurant.name === restaurantname).menu
-  console.log(menu)
+  const [showPopup, setshowPopup] = useState(false);
+  const popupHandler = (show) => {
+    setshowPopup(show);
+  };
+  let menu = restaurantmenus.find(
+    (restaurant) => restaurant.name === restaurantname
+  ).menu;
   return (
-    <Container showPopup={showPopup}>
-      <Header
-        menu={menu}
-        activeCategory={activeCategory}
-        setactiveCategory={setactiveCategory}
-        setanimationchange={setanimationchange}
-        animationchange={animationchange}
-      />
+    <Container >
+      <MenuWrapper showPopup={showPopup}>
+        <Header
+          menu={menu}
+          activeCategory={activeCategory}
+          setactiveCategory={setactiveCategory}
+          setanimationchange={setanimationchange}
+          animationchange={animationchange}
+        />
         <Offers
           offers={menu.find((category) => category.category === "Offers")}
           activeCategory={activeCategory}
@@ -30,6 +37,12 @@ export default function Theme1({ showPopup }) {
           activeCategory={activeCategory}
           animationchange={animationchange}
         />
+      </MenuWrapper>
+
+      <DetailsBtn onClick={() => popupHandler(true)}>
+        <Location />
+      </DetailsBtn>
+      <Popup showPopup={showPopup} popupHandler={popupHandler} />
     </Container>
   );
 }

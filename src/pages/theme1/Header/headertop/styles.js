@@ -7,8 +7,8 @@ position: relative;
 height: 7vh;
 `;
 export const Brand = styled.img`
-width: 150px;
-height: 100px;
+width: 100px;
+height: 30px;
 position: absolute;
-
+margin-left: 20px;
 `;
