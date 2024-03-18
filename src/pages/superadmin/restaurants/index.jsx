@@ -176,6 +176,26 @@ export default function Restaurants() {
               })}
             </tbody>
           </Table>
+          <Button
+            style={{
+              alignSelf: "flex-start",
+              marginLeft: "20px",
+              marginTop: "40px",
+              textTransform: "capitalize",
+              width: "150px",
+              color: "white",
+              backgroundColor: "turquoise",
+            }}
+            variant="contained"
+            onClick={() => {
+              localStorage.removeItem("isLoggedIn");
+              deleteCookie("accessToken");
+              deleteCookie("userInfo");
+              navigate(ADMINSIGNIN);
+            }}
+          >
+            Logout
+          </Button>
         </>
       ) : (
         <>
@@ -297,26 +317,6 @@ export default function Restaurants() {
           </AddRestaurantForm>
         </>
       )}
-      <Button
-        style={{
-          alignSelf: "flex-start",
-          marginLeft: "20px",
-          marginTop: "40px",
-          textTransform: "capitalize",
-          width: "150px",
-          color: "white",
-          backgroundColor: "turquoise",
-        }}
-        variant="contained"
-        onClick={() => {
-          localStorage.removeItem("isLoggedIn");
-          deleteCookie("accessToken");
-          deleteCookie("userInfo");
-          navigate(ADMINSIGNIN);
-        }}
-      >
-        Logout
-      </Button>
     </Container>
   );
 }

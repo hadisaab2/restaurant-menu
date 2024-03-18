@@ -205,6 +205,7 @@ export default function Categories({ setProducts }) {
                 Add Category
               </AddCategory>
               <CategoriesContainer>
+                <Category>Offer</Category>
                 {categories?.map((category) => {
                   return (
                     <Category>

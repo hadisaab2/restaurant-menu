@@ -1,18 +1,13 @@
 import React, { useEffect, useState } from "react";
 import {
-  AddBranchForm,
-  Container,
-  Title,
   Table,
   Th,
   Td,
   EditDeleteIcons,
   Edit,
   Delete,
-  BackIcon,
   AddBranch,
 } from "./styles";
-import { TextField, Button } from "@mui/material";
 import AddEditBranch from "./addbranch";
 import { useGetBranches } from "../../../../apis/branches/getBranches";
 import { getCookie } from "../../../../utilities/manageCookies";
@@ -26,6 +21,7 @@ export default function Branches() {
   const [branches, setBranches] = useState([]);
   const storedUserInfo = getCookie("userInfo") || "{}";
   const [userInformation, _] = useState(JSON.parse(storedUserInfo));
+
   const { response, refetch, isLoading } = useGetBranches({
     onSuccess: () => {},
     restaurant_id: userInformation.restaurant_id,

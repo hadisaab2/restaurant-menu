@@ -18,12 +18,23 @@ import {
 import Products from "./products";
 import Settings from "./settings";
 import Categories from "./categories";
-import { getCookie } from "../../utilities/manageCookies";
+import { deleteCookie, getCookie } from "../../utilities/manageCookies";
+import { ADMINSIGNIN } from "../../routes/URLs";
+import { useNavigate } from "react-router-dom";
+import { CiLogout } from "react-icons/ci";
 
 export default function RestaurantDash() {
   const [section, setSection] = useState("Products");
   const [products, setProducts] = useState([]);
   const [userInformation, setUserInformation] = useState({});
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    localStorage.removeItem("isLoggedIn");
+    deleteCookie("accessToken");
+    deleteCookie("userInfo");
+    navigate(ADMINSIGNIN);
+  };
 
   useEffect(() => {
     const storedUserInfo = getCookie("userInfo") || "{}";
@@ -48,6 +59,10 @@ export default function RestaurantDash() {
           <Tab onClick={() => setSection("Settings")}>
             <CateogoryIcon />
             <TabText>Settings</TabText>
+          </Tab>
+          <Tab onClick={handleLogout}>
+            <CiLogout style={{ marginLeft: "20px" }} />
+            <TabText>Logout</TabText>
           </Tab>
         </SidebarContent>
         <SidebarBottom>

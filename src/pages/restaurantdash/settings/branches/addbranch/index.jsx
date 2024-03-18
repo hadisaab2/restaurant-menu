@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { AddBranch, AddBranchForm, BackIcon } from "./styles";
+import { AddBranchForm, BackIcon } from "./styles";
 import { TextField } from "@mui/material";
 import { useForm } from "react-hook-form";
 import { useAddBranchQuery } from "../../../../../apis/branches/addBranch";
@@ -62,6 +62,7 @@ export default function AddEditBranch({
     setSelectedBranch(null);
     setShowAddComponent(false);
   };
+
   return (
     <AddBranchForm>
       <BackIcon onClick={() => handleBack()} />
