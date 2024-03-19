@@ -23,7 +23,7 @@ export const useGetSocialMedia = ({ onSuccess, restaurant_id }) => {
   const { error, isLoading, status, data, refetch } = useQuery({
     queryFn: () => getSocialMedia(restaurant_id),
     retry: false,
-    queryKey: ["media"],
+    queryKey: [`media-${restaurant_id}`],
     onSuccess,
   });
 

@@ -29,10 +29,10 @@ export default function Product({
           />
         </ImageWrapper>
         <InfoContainer>
-          <Title>
-            {product?.en_name} ||{product?.ar_name}
-          </Title>
-          <Category>{category?.en_category || category?.ar_category}</Category>
+          <Title>{product?.en_name || product?.ar_name}</Title>
+          <Category>
+            {category?.en_category || category?.ar_category || "Offer"}
+          </Category>
         </InfoContainer>
       </Wrapper>
     </Container>

@@ -24,7 +24,6 @@ export default function AdminSignin() {
 
   const onSuccess = ({ data: { accessToken } }) => {
     const decodedToken = jwtDecode(accessToken);
-    console.log(decodedToken)
     setCookie("accessToken", accessToken);
     setCookie("userInfo", JSON.stringify(decodedToken));
     localStorage.setItem("isLoggedIn", "true");

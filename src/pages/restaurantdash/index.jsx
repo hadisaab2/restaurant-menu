@@ -29,6 +29,13 @@ export default function RestaurantDash() {
   const [userInformation, setUserInformation] = useState({});
   const navigate = useNavigate();
 
+  const handleLogout = () => {
+    localStorage.removeItem("isLoggedIn");
+    deleteCookie("accessToken");
+    deleteCookie("userInfo");
+    navigate(ADMINSIGNIN);
+  };
+
   useEffect(() => {
     const storedUserInfo = getCookie("userInfo") || "{}";
     setUserInformation(JSON.parse(storedUserInfo));

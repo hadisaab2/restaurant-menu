@@ -20,7 +20,6 @@ import {
   Button,
 } from "@mui/material";
 import { useForm } from "react-hook-form";
-import { getCookie } from "../../../../utilities/manageCookies";
 import { LANGUAGES } from "../../../../global/index";
 import { useAddProductQuery } from "../../../../apis/products/addPRoduct";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -307,6 +306,7 @@ export default function AddProduct({
             error={!isEmpty(formState?.errors?.category_id)}
             defaultValue={selectedProduct?.category_id}
           >
+            <MenuItem value={0}>Offer</MenuItem>
             {categories.map(({ id, en_category, ar_category }) => (
               <MenuItem value={id} key={id}>
                 {en_category || ar_category}
