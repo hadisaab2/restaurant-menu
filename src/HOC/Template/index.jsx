@@ -10,13 +10,11 @@ import { ThemeProvider } from "styled-components";
 export default function Template() {
   const dispatch = useDispatch();
   const { restaurantName } = useParams();
-
   const { isLoading, response } = useGetRestaurant({
     onSuccess: () => {},
     restaurantName: restaurantName,
   });
 
- 
   useEffect(() => {
     if (!isLoading) {
       dispatch(addmenu(response?.data));

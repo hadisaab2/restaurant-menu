@@ -2,7 +2,7 @@ import styled from "styled-components";
 import { keyframes } from 'styled-components'
 
 export const CarouselItem = styled.div`
-  min-height: calc(100% /5);
+  height: calc(100% /5);
   box-sizing: border-box;
   display: flex;
   align-items: center;

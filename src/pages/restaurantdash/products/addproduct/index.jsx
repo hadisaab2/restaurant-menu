@@ -96,8 +96,8 @@ export default function AddProduct({
     if (target.files[0]) {
       const uploadedFile = target.files[0];
       const fileSizeInMB = uploadedFile.size / (1024 * 1024);
-      if (fileSizeInMB > 2) {
-        setFileErrMsg("Image is greater than 2MB");
+      if (fileSizeInMB > 4) {
+        setFileErrMsg("Image is greater than 4MB");
         return;
       } else {
         setFileErrMsg("Please upload image");

@@ -1,30 +1,34 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Container,
   Title,
   ResName,
-  LocationTitle,
-  LocTitle,
-  Location,
-  LocationsContainer,
-  Loc,
-  NumberTitle,
-  NumberLogo,
-  NumTitle,
-  Num,
-  NumbersContainer,
+  LocationLogo,
   Close,
   SocialMediaContainer,
-  LogoContainer,
   InstagramContainer,
   InstagramLogo,
   WhatsappContainer,
   WhatsappLogo,
   TiktokContainer,
   TiktokLogo,
+  BranchesContainer,
+  Branch,
+  InfoContainer,
+  Info,
+  BranchInfo,
+  CallLogo,
+  MapsLogo,
+  FacebookContainer,
+  FacebookLogo,
 } from "./styles";
 
-export default function Popup({ showPopup, popupHandler = { popupHandler } }) {
+export default function Popup({
+  restaurant,
+  showPopup,
+  popupHandler = { popupHandler },
+}) {
+  const [activeBranch, setActiveBranch] = useState(restaurant?.branches[0]);
   return (
     <Container showPopup={showPopup}>
       <Close
@@ -34,32 +38,56 @@ export default function Popup({ showPopup, popupHandler = { popupHandler } }) {
       />
       <Title>Welcome To </Title>
       <ResName>Addict Burger</ResName>
-      <LocationTitle>
-        <Location />
-        <LocTitle>Location</LocTitle>
-      </LocationTitle>
-      <LocationsContainer>
-        <Loc>1. Beirut | Hadi Nasrallah St, Facing AlSharek Sweet </Loc>
-        <Loc>2. Nabatieh | Mahmoud Fakih St </Loc>
-      </LocationsContainer>
-      <NumberTitle>
-        <NumberLogo />
-        <NumTitle>Contact</NumTitle>
-      </NumberTitle>
-      <NumbersContainer>
-        <Num>1. Beirut 01274929 | 70771432 | 03615688</Num>
-        <Num>2. Nabatieh 07763503 | 71181987 | 81076363</Num>
-      </NumbersContainer>
+      <BranchesContainer>
+        {restaurant?.branches.map((branch) => {
+          return (
+            <Branch
+              onClick={() => setActiveBranch(branch)}
+              activeBranch={activeBranch.id}
+              BranchId={branch.id}
+            >
+              {branch.name}
+            </Branch>
+          );
+        })}
+      </BranchesContainer>
+      <BranchInfo>
+        <InfoContainer>
+          <LocationLogo />
+          <Info>{activeBranch.location}</Info>
+        </InfoContainer>
+        <InfoContainer>
+          <CallLogo />
+          <Info>01274929 | 70771432 | 03615688</Info>
+        </InfoContainer>
+        <InfoContainer>
+          <MapsLogo />
+          <Info>{activeBranch.mapLink}</Info>
+        </InfoContainer>
+      </BranchInfo>
+
       <SocialMediaContainer>
-        <InstagramContainer>
-          <InstagramLogo />
-        </InstagramContainer>
-        <WhatsappContainer>
+        {restaurant.socialMedia.find((media) => media.platform == "Instagram") && (
+          <InstagramContainer href={restaurant.socialMedia.find((media) => media.platform == "Instagram").link}>
+            <InstagramLogo />
+          </InstagramContainer>
+        )}
+        {restaurant.socialMedia.find((media) => media.platform == "Whatsapp") && (
+          <WhatsappContainer>
           <WhatsappLogo />
         </WhatsappContainer>
+        )}
+      {restaurant.socialMedia.find((media) => media.platform == "Facebook") && (
+          <FacebookContainer>
+          <FacebookLogo />
+        </FacebookContainer>
+        )}
+        {restaurant.socialMedia.find((media) => media.platform == "Tiktok") && (
         <TiktokContainer>
-          <TiktokLogo />
-        </TiktokContainer>
+        <TiktokLogo />
+      </TiktokContainer>
+        )}
+
       </SocialMediaContainer>
     </Container>
   );

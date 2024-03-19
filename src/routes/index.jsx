@@ -20,9 +20,6 @@ import Template from "../HOC/Template";
 export default function ApplicationRoutes() {
 
 
-
-
-
   return (
         <BrowserRouter>
           <RoutesWrapper>

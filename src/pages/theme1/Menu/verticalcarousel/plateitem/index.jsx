@@ -12,6 +12,7 @@ export default function PlateItem({ plateitem, itemclick, index,key }) {
   const handleImageLoaded = () => {
     setimageLoaded(true);
   };
+
   return (
     <CarouselItem onClick={() => itemclick(index)} key={key}>
       <PlateContainer index={index}>
@@ -21,10 +22,10 @@ export default function PlateItem({ plateitem, itemclick, index,key }) {
           </LoaderWrapper>
         )}
         <Plate
-          src={plateitem.image}
+          src={`https://storage.googleapis.com/ecommerce-bucket-testing/${plateitem.image.url}`}
           onLoad={handleImageLoaded} // Call handleImageLoaded when image is loaded
         />
-        <PlateName>{plateitem.nametop} {plateitem.namebottom}</PlateName>
+        <PlateName>{plateitem.en_name}</PlateName>
       </PlateContainer>
     </CarouselItem>
   );

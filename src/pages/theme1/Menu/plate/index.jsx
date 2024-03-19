@@ -12,13 +12,12 @@ import {
 } from "./styles";
 
 export default function Plate({ menu, activePlate,scrollChecker }) {
-  const {nametop,namebottom,price}=menu[activePlate];
   return (
     <Container>
       {menu.map((plateitem, index) => {
         return (
           <PlateItem
-            src={plateitem.image}
+          src={`https://storage.googleapis.com/ecommerce-bucket-testing/${plateitem.image.url}`}
             activePlate={activePlate}
             index={index}
           />
@@ -26,10 +25,10 @@ export default function Plate({ menu, activePlate,scrollChecker }) {
       })}
 
       <PlateInfo>
-        <PlateNameTop>{nametop}</PlateNameTop>
-        <PlateNameBottom>{namebottom}</PlateNameBottom>
+        <PlateNameTop>{menu[activePlate]?.en_name}</PlateNameTop>
+        {/* <PlateNameBottom>{namebottom}</PlateNameBottom> */}
 
-        <Price>{price}$</Price>
+        <Price>{menu[activePlate]?.en_price}$</Price>
 
         <Description>
           Lorem Ipsum is simply dummy text of the printing and typesetting

@@ -11,12 +11,12 @@ export default function Menu({ menu, activeCategory, animationchange }) {
   },[activeCategory])
   return (
     <Container activeCategory={activeCategory}>
-      {menu.map((singlemenu, index) => {
+      {menu?.map((singlemenu, index) => {
         if (activeCategory == index) {
           return (
             <VerticalCarousel
               activePlate={activePlate}
-              plates={singlemenu.items}
+              plates={singlemenu?.products}
               setactivePlate={setactivePlate}
               animationchange={animationchange}
               setScrollChecker={setScrollChecker}
@@ -25,7 +25,7 @@ export default function Menu({ menu, activeCategory, animationchange }) {
         }
       })}
 
-      <Plate activePlate={activePlate} menu={menu[activeCategory].items} scrollChecker={scrollChecker} />
+      <Plate activePlate={activePlate} menu={menu?.[activeCategory].products} scrollChecker={scrollChecker} />
     </Container>
   );
 }

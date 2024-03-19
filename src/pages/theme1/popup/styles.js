@@ -1,10 +1,12 @@
 import styled from "styled-components";
 import { MdLocationOn } from "react-icons/md";
-import { BsTelephoneFill } from "react-icons/bs";
+import { IoIosCall } from "react-icons/io";
 import { IoMdClose } from "react-icons/io";
 import { IoLogoWhatsapp } from "react-icons/io";
 import { FaInstagram } from "react-icons/fa6";
 import { FaTiktok } from "react-icons/fa";
+import { FaLocationArrow } from "react-icons/fa6";
+import { FaFacebookF } from "react-icons/fa";
 
 export const Container = styled.div`
 position: fixed;
@@ -35,26 +37,62 @@ text-align: left;
 width: 70%;
 margin-left: 20px;
 `;
+export const BranchesContainer = styled.div`
+  flex-wrap: wrap;
+  display: flex;
+  align-content: flex-start;
+  width: 80%;
+  gap:20px;
+  margin-left: 20px;
+  margin-top: 40px;
+  height: 40px;
 
-export const LocationTitle = styled.div`
+`;
+export const Branch = styled.span`
+ font-size:18px;
+ font-weight: 620;
+ color:${props=>props.activeBranch==props.BranchId?props.theme.backgroundcolor:"#bcb9b9"};
+ border-bottom:${props=>props.activeBranch==props.BranchId?`2px solid ${props.theme.backgroundcolor}`:"null"};
+ transition:all 0.1s ease-in-out;
+ height: 26px;
+ `;
+
+
+export const BranchInfo = styled.div`
+  margin-left: 20px;
+  margin-top: 30px;
+  display: flex;
+  flex-direction: column;
+  gap:40px;
+`;
+
+export const InfoContainer = styled.div`
 display: flex;
-flex-direction: row;
-align-items: center;
-gap:5px;
-width: 100%;
-margin-left: 20px;
-margin-top: 20px;
-
-`;
-export const LocTitle = styled.span`
-font-size: 20px;
-font-weight: bold;
-
+  flex-direction: row;
+  gap:10px;
+  align-items: center;
 
 `;
 
-export const Location = styled(MdLocationOn)`
-font-size: 20px;
+export const Info = styled.span`
+font-size:16px;
+ font-weight: 620;
+
+`;
+
+
+export const LocationLogo = styled(FaLocationArrow)`
+font-size: 25px;
+opacity: 0.8;
+`;
+
+export const CallLogo = styled(IoIosCall)`
+font-size: 25px;
+opacity: 0.8;
+`;
+export const MapsLogo = styled(MdLocationOn)`
+font-size: 25px;
+opacity: 0.8;
 `;
 
 export const Close = styled(IoMdClose)`
@@ -65,55 +103,6 @@ right:20px;
 cursor: pointer;
 `;
 
-export const LocationsContainer = styled.div`
-margin-left: 20px;
-margin-top: 10px;
-display: flex;
-flex-direction: column;
-`;
-
-export const Loc = styled.div`
-font-size: 15px;
-margin-top: 5px;
-
-
-`;
-
-
-
-export const NumberTitle = styled.div`
-display: flex;
-flex-direction: row;
-align-items: center;
-gap:5px;
-width: 100%;
-margin-left: 20px;
-margin-top: 20px;
-
-`;
-export const NumTitle = styled.span`
-font-size: 20px;
-font-weight: bold;
-
-
-`;
-
-export const NumberLogo = styled(BsTelephoneFill)`
-font-size: 20px;
-
-`;
-
-export const NumbersContainer = styled.div`
-margin-left: 20px;
-margin-top: 10px;
-display: flex;
-flex-direction: column;
-`;
-export const Num = styled.span`
-font-size: 15px;
-margin-top: 5px;
-
-`;
 export const SocialMediaContainer = styled.div`
 margin-top: 80px;
 display: flex;
@@ -124,13 +113,13 @@ justify-content: center;
 gap:15px;
 `;
 
-export const InstagramContainer = styled.div`
+export const InstagramContainer = styled.a`
 display: flex;
 justify-content: center;
 align-items: center;
 background: #f09433;
-width: 60px;
-height: 60px;
+width: 50px;
+height: 50px;
 border-radius: 50%;
 background: -moz-linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%); 
 background: -webkit-linear-gradient(45deg, #f09433 0%,#e6683c 25%,#dc2743 50%,#cc2366 75%,#bc1888 100%); 
@@ -138,41 +127,58 @@ background: linear-gradient(45deg, #f09433 0%,#e6683c 25%,#dc2743 50%,#cc2366 75
 filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f09433', endColorstr='#bc1888',GradientType=1 );
 cursor: pointer;
 `;
-export const WhatsappContainer = styled.div`
+export const WhatsappContainer = styled.a`
 display: flex;
 justify-content: center;
 align-items: center;
-width: 60px;
-height: 60px;
+width: 50px;
+height: 50px;
 border-radius: 50%;
 background-color: #25D366;
 cursor: pointer;
 
 `;
-export const TiktokContainer = styled.div`
+export const TiktokContainer = styled.a`
 display: flex;
 justify-content: center;
 align-items: center;
-width: 60px;
-height: 60px;
+width: 50px;
+height: 50px;
 border-radius: 50%;
 background-color:  black;
 cursor: pointer;
+`;
 
+export const FacebookContainer = styled.a`
+display: flex;
+justify-content: center;
+align-items: center;
+background: #f09433;
+width: 50px;
+height: 50px;
+border-radius: 50%;
+background-color:  #1877F2;
+cursor: pointer;
+`;
+
+
+export const FacebookLogo = styled(FaFacebookF)`
+font-size: 24px;
+color: white;
 `;
 export const WhatsappLogo = styled(IoLogoWhatsapp)`
-font-size: 30px;
+font-size: 24px;
 color: white;
 
 
 `;
 export const InstagramLogo = styled(FaInstagram)`
-font-size: 30px;
+font-size: 24px;
 color: white;
 
 `;
 export const TiktokLogo = styled(FaTiktok)`
-font-size: 30px;
+font-size: 24px;
 color: white;
 
 `;

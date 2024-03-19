@@ -17,7 +17,7 @@ opacity:${props=>props.index==props.activePlate?"1":"0"};
 
 margin-left:50px;
 top:50px;
-transition: transform 1.2s ease-in-out, opacity 1s ease-in-out;
+transition: transform 0.8s ease-in-out, opacity 0.6s ease-in-out;
 
 transform-origin: center;
 filter:drop-shadow(1px 1px 1px gray)
@@ -98,7 +98,7 @@ display: ${props=>props.scrollChecker?"none":"flex"};
 justify-content: center;
 top:20px;
 left: -20px;
-border: 2px solid rgb(0,0,0,0.2);
+border: 2px solid ${props=>props.theme.scrollanimator};
 overflow: hidden;
 animation: ${scrollanimation} 2s linear infinite;
 
@@ -108,5 +108,5 @@ position: absolute;
 font-size: 20px;
 animation: ${arrowanimation} 2s linear infinite;
 
-color:rgb(0,0,0,0.2);
+color:${props=>props.theme.scrollanimator};
 `;

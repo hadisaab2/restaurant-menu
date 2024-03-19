@@ -6,6 +6,7 @@ flex-direction: row;
 height: 80vh;
 position: relative;
 overflow: hidden;
-display: ${props=>props.activeCategory==0 ?"none":"flex"};
+display: flex;
+/* display: ${props=>props.activeCategory==0 ?"flex":"flex"}; */
 
 `;

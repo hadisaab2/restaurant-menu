@@ -23,52 +23,15 @@ export const Carousel = styled.div`
   display: flex;
   flex-direction: column;
   height: 100%;
-  transition: transform 0.6s ease-in-out;
-
+  transition: transform 0.3s ease-in-out;
   width: 100%;
   transform: ${(props) =>
     `translateY(-${(props.carouselPosition * 100) /5}%)`};
 `;
 
-export const CarouselItem = styled.div`
-  min-height: calc(100% /5);
-  box-sizing: border-box;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-`;
 
-export const PlateContainer = styled.div`
-  width: 70%;
-  /* background-color: ${(props) =>
-    props.activeIndex == props.index ? "#667075" : "transparent"}; */
-  border-radius: 10px;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 5px;
-  height: 150px;
-`;
-const PlateAnimation = keyframes`
- 0% { width: 0px;height:0px;}
- 40% { width: 0px;height:0px;}
- 100% { width: 75px;height:75px;}
-`;
 
-export const Plate = styled.img`
-  width: 75px;
-  height: 75px;
-  user-select: none;
-  filter: drop-shadow(1px 1px 1px black);
-  animation: ${PlateAnimation} 1s ease-in-out;
-`;
-export const PlateName = styled.span`
-  font-size: 13px;
-  color: white;
-  text-align: center;
-`;
+
 
 export const ArrowUp = {
   position: "absolute",
@@ -89,11 +52,14 @@ export const BoxContainer = styled.div`
   position: absolute;
   width: 100%;
   height: calc(100% /5);
+  box-sizing: border-box;
+
   display: flex;
   align-items: flex-end;
   transform: ${(props) =>
     `translateY(${(props.activePlate - props.carouselPosition) * 16.2}vh)`};
-  transition: transform 0.6s ease-in-out;
+  transition: transform 0.3s ease-in-out;
+
 `;
 
 export const Box = styled.div`

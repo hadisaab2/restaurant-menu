@@ -3,12 +3,12 @@ import { Container } from "./styles";
 import Categories from "./categories";
 import HeaderTop from "./headertop";
 
-export default function Header({ activeCategory, setactiveCategory, menu,setanimationchange,animationchange }) {
+export default function Header({ activeCategory, setactiveCategory, categories,setanimationchange,animationchange }) {
   return (
     <Container>
       <HeaderTop />
       <Categories
-        categories={menu}
+        categories={categories}
         activeCategory={activeCategory}
         setactiveCategory={setactiveCategory}
         setanimationchange={setanimationchange}

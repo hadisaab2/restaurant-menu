@@ -49,9 +49,9 @@ export default function Categories({categories,activeCategory,setactiveCategory,
       >
 
         <Carousel carouselPosition={carouselPosition} >
-          {categories.map((category, index) => {
+          {categories?.map((category, index) => {
             return (
-              <CarouselItem activeCategory={activeCategory} index={index} onClick={() => itemClick(index)}>{category.category}</CarouselItem>
+              <CarouselItem activeCategory={activeCategory} index={index} onClick={() => itemClick(index)}>{category.en_category}</CarouselItem>
             );
           })}
         </Carousel>

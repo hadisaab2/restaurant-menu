@@ -27,14 +27,17 @@ export default function VerticalCarousel({ plates, setactivePlate, activePlate, 
     if (!scrollInProgress) {
       setScrollInProgress(true);
       if (deltaY > 0) {
-        if (carouselPosition > 1) {
-          setcarouselPosition(carouselPosition - 2);
+        
+        if (carouselPosition >= 1) {
+          setcarouselPosition(carouselPosition - 1);
         }
+      
       } else {
-        if (carouselPosition < plates.length - 7) {
-          setScrollChecker(true)
-          setcarouselPosition(carouselPosition + 2);
-        }
+          if (carouselPosition < plates.length-5) {
+            setScrollChecker(true)
+            setcarouselPosition(carouselPosition + 1);
+          }
+        
       }
 
       touchStartY.current = currentY;
@@ -64,7 +67,7 @@ export default function VerticalCarousel({ plates, setactivePlate, activePlate, 
           <Box />
         </BoxContainer>
         <Carousel carouselPosition={carouselPosition}>
-          {plates.map((plateitem, index) => {
+          {plates?.map((plateitem, index) => {
             return (
               <PlateItem plateitem={plateitem} itemclick={itemclick} index={index} key={index}/>
             );
