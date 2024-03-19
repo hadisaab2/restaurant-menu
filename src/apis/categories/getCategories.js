@@ -23,7 +23,7 @@ export const useGetCategories = ({ onSuccess, restaurantId }) => {
   const { error, isLoading, status, data, refetch } = useQuery({
     queryFn: () => getCategories(restaurantId),
     retry: false,
-    queryKey: ["categories"],
+    queryKey: [`categories-${restaurantId}`],
     onSuccess,
   });
 

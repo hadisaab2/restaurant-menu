@@ -23,7 +23,7 @@ export const useGetBranches = ({ onSuccess, restaurant_id }) => {
   const { error, isLoading, status, data, refetch } = useQuery({
     queryFn: () => getSocialMedia(restaurant_id),
     retry: false,
-    queryKey: ["branches"],
+    queryKey: [`branches-${restaurant_id}`],
     onSuccess,
   });
 
