@@ -3,8 +3,7 @@ import {
   Container,
   PlateItem,
   PlateInfo,
-  PlateNameBottom,
-  PlateNameTop,
+  PlateName,
   Price,
   Description,
   Arrow,
@@ -25,8 +24,7 @@ export default function Plate({ menu, activePlate,scrollChecker }) {
       })}
 
       <PlateInfo>
-        <PlateNameTop>{menu[activePlate]?.en_name}</PlateNameTop>
-        {/* <PlateNameBottom>{namebottom}</PlateNameBottom> */}
+        <PlateName>{menu[activePlate]?.en_name}</PlateName>
 
         <Price>{menu[activePlate]?.en_price}$</Price>
 

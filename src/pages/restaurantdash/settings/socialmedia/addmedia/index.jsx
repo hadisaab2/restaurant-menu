@@ -95,6 +95,9 @@ export default function AddEditMedia({
             {!platformAlreadyAdded("Tiktok") && (
               <MenuItem value={"Tiktok"}>Tiktok</MenuItem>
             )}
+            {!platformAlreadyAdded("Whatsapp") && (
+              <MenuItem value={"Whatsapp"}>Whatsapp</MenuItem>
+            )}
           </Select>
           {!isEmpty(formState?.errors?.platform) && (
             <FormHelperText style={{ color: "#d64241" }}>

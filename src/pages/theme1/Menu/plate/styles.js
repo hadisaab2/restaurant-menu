@@ -32,19 +32,14 @@ display: flex;
 flex-direction: column;
 `;
 
-export const PlateNameTop = styled.span`
+
+export const PlateName = styled.span`
 font-size: 30px;
 font-weight:bold;
-color:${props=>props.theme.textcolor}
-
+color:${props=>props.theme.textcolor};
+width:70%;
 `;
-export const PlateNameBottom = styled.span`
-font-size: 30px;
-font-weight:bold;
-margin-top: -8px;
-color:${props=>props.theme.textcolor}
 
-`;
 
 
 export const Price = styled.span`

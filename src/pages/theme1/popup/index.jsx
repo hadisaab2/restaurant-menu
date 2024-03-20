@@ -68,7 +68,7 @@ export default function Popup({
 
       <SocialMediaContainer>
         {restaurant.socialMedia.find((media) => media.platform == "Instagram") && (
-          <InstagramContainer href={restaurant.socialMedia.find((media) => media.platform == "Instagram").link}>
+          <InstagramContainer href={`https://${restaurant.socialMedia.find((media) => media.platform == "Instagram").link}`}>
             <InstagramLogo />
           </InstagramContainer>
         )}

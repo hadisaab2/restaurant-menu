@@ -1,15 +1,12 @@
 import React from 'react'
 import { Container,Brand } from './styles'
-import thecage from "./thecage.png"
-import { useParams } from 'react-router-dom';
-import { restaurantmenus } from '../../../../data';
+import { useSelector } from 'react-redux';
 export default function HeaderTop() {
-  const { restaurantName } = useParams();
-  let logo=restaurantmenus.find((restaurant) => restaurant.name === restaurantName).logo
+  const restaurant = useSelector((state) => state.restaurant);
 
   return (
     <Container>
-      <Brand src={thecage}/>
+      <Brand src={restaurant.logoURL && `https://storage.googleapis.com/ecommerce-bucket-testing/${restaurant.logoURL}`}/>
     </Container>
   )
 }
