@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import {
   Container,
+  ErrorMessage,
   FormContainer,
   HeaderContainer,
   InputsContainer,
@@ -14,6 +15,7 @@ import { useSignInQuery } from "../../apis/users/sign-in";
 import { getCookie, setCookie } from "../../utilities/manageCookies";
 import { jwtDecode } from "jwt-decode";
 import { RESTAURANTDASH, SUPERADMIN } from "../../routes/URLs";
+import { isNull } from "lodash";
 
 export default function AdminSignin() {
   const navigate = useNavigate();
@@ -21,12 +23,14 @@ export default function AdminSignin() {
     username: "",
     password: "",
   });
+  const [errorMessage, setErrorMessage] = useState(null);
 
   const onSuccess = ({ data: { accessToken } }) => {
     const decodedToken = jwtDecode(accessToken);
     setCookie("accessToken", accessToken);
     setCookie("userInfo", JSON.stringify(decodedToken));
     localStorage.setItem("isLoggedIn", "true");
+    setErrorMessage(null);
 
     if (decodedToken.role_id === 2) {
       navigate(RESTAURANTDASH);
@@ -41,6 +45,9 @@ export default function AdminSignin() {
 
   const { handleApiCall } = useSignInQuery({
     onSuccess,
+    onError: () => {
+      setErrorMessage("Invalid credentials");
+    },
   });
 
   const handleOnSubmit = () => handleApiCall(credentials);
@@ -62,6 +69,7 @@ export default function AdminSignin() {
             variant="outlined"
             style={inputStyle}
             onChange={handleOnChange}
+            error={!isNull(errorMessage)}
           />
           <TextField
             label="password"
@@ -70,7 +78,9 @@ export default function AdminSignin() {
             name="password"
             style={inputStyle}
             onChange={handleOnChange}
+            error={!isNull(errorMessage)}
           />
+          {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
           <Button variant="contained" onClick={handleOnSubmit}>
             sign in
           </Button>

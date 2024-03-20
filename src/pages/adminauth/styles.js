@@ -61,3 +61,7 @@ export const SubTitle = styled.p`
 `;
 
 export const inputStyle = { width: "80%" };
+
+export const ErrorMessage = styled.p`
+  color: red;
+`;
