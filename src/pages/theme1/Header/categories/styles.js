@@ -37,6 +37,7 @@ export const CarouselItem = styled.div`
   font-weight: bold;
   transition:all 0.2s ease-in-out;
   color:${props=>props.index==props.activeCategory?props.theme.categoryactive:props.theme.categoryunactive};
+  line-height: ${props=>props.activeLanuguage=="ar"?"1.5":"null"};
 `;
 export const LineContainer = styled.div`
 position: relative;

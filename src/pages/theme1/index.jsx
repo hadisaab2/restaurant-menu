@@ -5,21 +5,20 @@ import Header from "./Header";
 import Offers from "./Offers";
 import Popup from "./popup";
 import { useSelector } from "react-redux";
+import { useParams } from "react-router-dom";
 
 export default function Theme1() {
   const [activeCategory, setactiveCategory] = useState(0);
   const [animationchange, setanimationchange] = useState(false);
   const [showPopup, setshowPopup] = useState(false);
-  const restaurant = useSelector((state) => state.restaurant);
-
+  const {restaurantName}=useParams();
+  const restaurant = useSelector((state) => state.restaurant?.[restaurantName]);
+  
   const popupHandler = (show) => {
     setshowPopup(show);
   };
   return (
     <Container>
-      {restaurant.categories && (
-                  <>
-
       <MenuWrapper showPopup={showPopup}>
         
             <Header
@@ -46,9 +45,6 @@ export default function Theme1() {
         <Location />
       </DetailsBtn>
       <Popup restaurant={restaurant} showPopup={showPopup} popupHandler={popupHandler} />
-      </>
-
-      )}
     </Container>
   );
 }

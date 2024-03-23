@@ -7,7 +7,12 @@ import {
   Loader,
   PlateName
 } from "./styles";
+import { useSelector } from "react-redux";
+import { useParams } from "react-router-dom";
 export default function PlateItem({ plateitem, itemclick, index,key }) {
+  const { restaurantName } = useParams();
+  const activeLanuguage = useSelector((state) => state.restaurant?.[restaurantName].activeLanguage);
+
   const [imageLoaded, setimageLoaded] = useState(false);
   const handleImageLoaded = () => {
     setimageLoaded(true);
@@ -25,7 +30,7 @@ export default function PlateItem({ plateitem, itemclick, index,key }) {
           src={`https://storage.googleapis.com/ecommerce-bucket-testing/${plateitem.image.url}`}
           onLoad={handleImageLoaded} // Call handleImageLoaded when image is loaded
         />
-        <PlateName>{plateitem.en_name}</PlateName>
+        <PlateName>{activeLanuguage==="en"?plateitem.en_name:plateitem.ar_name}</PlateName>
       </PlateContainer>
     </CarouselItem>
   );

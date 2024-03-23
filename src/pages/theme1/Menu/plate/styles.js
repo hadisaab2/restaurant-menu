@@ -26,10 +26,12 @@ filter:drop-shadow(1px 1px 1px gray)
 
 export const PlateInfo = styled.div`
 
-margin-top: 300px;
+margin-top: 270px;
 width: 100%;
 display: flex;
 flex-direction: column;
+align-items: ${props=>props.activeLanuguage=="en"?"flex-start":"flex-end"};
+margin-right:${props=>props.activeLanuguage=="en"?"0px":"30px"};
 `;
 
 
@@ -38,6 +40,9 @@ font-size: 30px;
 font-weight:bold;
 color:${props=>props.theme.textcolor};
 width:70%;
+text-align:${props=>props.activeLanuguage=="en"?"left":"right"};
+line-height: ${props=>props.activeLanuguage=="ar"?"1.3":"null"};
+
 `;
 
 
@@ -49,10 +54,15 @@ margin-top: 20px;
 color:${props=>props.theme.maincolor}
 `;
 export const Description = styled.span`
-font-size: 15px;
+font-size: ${props=>props.activeLanuguage=="en"?"15px":"13px"};
 margin-top: 5px;
-color: gray;
-width: 80%;
+color: ${props=>props.theme.textcolor};
+width: 90%;
+text-align:${props=>props.activeLanuguage=="en"?"left":"right"};
+line-height: ${props=>props.activeLanuguage=="ar"?"1.6":"null"};
+opacity: 0.8;
+
+
 `;
 
 const arrowanimation = keyframes`

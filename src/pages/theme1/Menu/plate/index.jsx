@@ -9,8 +9,14 @@ import {
   Arrow,
   ScrollContainer
 } from "./styles";
+import { useSelector } from "react-redux";
+import { useParams } from "react-router-dom";
 
 export default function Plate({ menu, activePlate,scrollChecker }) {
+  const { restaurantName } = useParams();
+
+  const activeLanuguage = useSelector((state) => state.restaurant?.[restaurantName].activeLanguage);
+
   return (
     <Container>
       {menu.map((plateitem, index) => {
@@ -23,15 +29,13 @@ export default function Plate({ menu, activePlate,scrollChecker }) {
         );
       })}
 
-      <PlateInfo>
-        <PlateName>{menu[activePlate]?.en_name}</PlateName>
+      <PlateInfo activeLanuguage={activeLanuguage}>
+        <PlateName  activeLanuguage={activeLanuguage} >{activeLanuguage=="en"?menu[activePlate]?.en_name:menu[activePlate]?.ar_name}</PlateName>
 
-        <Price>{menu[activePlate]?.en_price}$</Price>
+        <Price>{activeLanuguage=="en"?menu[activePlate]?.en_price:menu[activePlate]?.ar_price}$</Price>
 
-        <Description>
-          Lorem Ipsum is simply dummy text of the printing and typesetting
-          industry. Lorem Ipsum has been the industry's standard dummy text ever
-          since the 1500s
+        <Description activeLanuguage={activeLanuguage}>
+        {activeLanuguage=="en"?menu[activePlate]?.en_description:menu[activePlate]?.ar_description}
         </Description>
       </PlateInfo>
       <ScrollContainer scrollChecker={scrollChecker}>

@@ -39,7 +39,7 @@ export default function Popup({
       <Title>Welcome To </Title>
       <ResName>Addict Burger</ResName>
       <BranchesContainer>
-        {restaurant?.branches.map((branch) => {
+        {restaurant?.branches?.map((branch) => {
           return (
             <Branch
               onClick={() => setActiveBranch(branch)}
@@ -54,7 +54,7 @@ export default function Popup({
       <BranchInfo>
         <InfoContainer>
           <LocationLogo />
-          <Info>{activeBranch.location}</Info>
+          <Info>{activeBranch?.location}</Info>
         </InfoContainer>
         <InfoContainer>
           <CallLogo />
@@ -62,7 +62,7 @@ export default function Popup({
         </InfoContainer>
         <InfoContainer>
           <MapsLogo />
-          <Info>{activeBranch.mapLink}</Info>
+          <Info>{activeBranch?.mapLink}</Info>
         </InfoContainer>
       </BranchInfo>
 

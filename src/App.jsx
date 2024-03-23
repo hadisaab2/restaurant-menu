@@ -9,9 +9,11 @@ function App() {
 
   return (
     <Provider store={store}>
-      <QueryClientProvider client={queryClient}>
-        <ApplicationRoutes />
-      </QueryClientProvider>
+      <PersistGate loading={null} persistor={persistor}>
+        <QueryClientProvider client={queryClient}>
+          <ApplicationRoutes />
+        </QueryClientProvider>
+      </PersistGate>
     </Provider>
   );
 }

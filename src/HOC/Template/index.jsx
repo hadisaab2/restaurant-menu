@@ -1,11 +1,12 @@
-import React, { useEffect } from "react";
-import { useDispatch } from "react-redux";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import Theme1 from "../../pages/theme1";
 import { useParams } from "react-router-dom";
 import { useGetRestaurant } from "../../apis/restaurants/getRestaurant";
-import { addmenu } from "../../redux/restaurant/restaurantActions";
+import { addmenu, changelanuage } from "../../redux/restaurant/restaurantActions";
 // import Template2 from "../../pages/template2";
 import { ThemeProvider } from "styled-components";
+import Loading from "./loading";
 
 export default function Template() {
   const dispatch = useDispatch();
@@ -14,18 +15,32 @@ export default function Template() {
     onSuccess: () => {},
     restaurantName: restaurantName,
   });
+  const restaurant = useSelector((state) => state.restaurant?.[restaurantName]);
+  const [isTrue, setIsTrue] = useState(true);
 
   useEffect(() => {
     if (!isLoading) {
       dispatch(addmenu(response?.data));
+      dispatch(changelanuage({name:restaurantName,activeLanguage:response?.data.languages.replace("&ar","")}))
+      // if english or arabic it stays the same
+      //if en&ar replace &ar by empty string to become en
     }
   }, [isLoading]);
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsTrue(false);
+    }, 2000); 
+    return () => clearTimeout(timer);
+  }, []); 
 
-  if (response?.data.template_id === 1) {
+  if (restaurant?.categories && !isLoading && !isTrue) {
     return (
       <ThemeProvider theme={JSON.parse(response.data.theme)}>
         <Theme1 />
       </ThemeProvider>
     );
+  }else{
+      return(<Loading/>)
+
   }
 }

@@ -1,8 +1,31 @@
-import React, { useState,useRef } from "react";
-import { Container,CarouselContainer,Carousel,CarouselItem,LineContainer, LineBox, Line } from "./styles";
-export default function Categories({categories,activeCategory,setactiveCategory,animationchange,setanimationchange}) {
+import React, { useState, useRef } from "react";
+import {
+  Container,
+  CarouselContainer,
+  Carousel,
+  CarouselItem,
+  LineContainer,
+  LineBox,
+  Line,
+} from "./styles";
+import { useSelector } from "react-redux";
+import { useParams } from "react-router-dom";
+
+
+export default function Categories({
+  categories,
+  activeCategory,
+  setactiveCategory,
+  animationchange,
+  setanimationchange,
+}) {
   const [carouselPosition, setcarouselPosition] = useState(0);
   const [scrollInProgress, setScrollInProgress] = useState(false);
+  const { restaurantName } = useParams();
+  const activeLanuguage = useSelector(
+    (state) => state.restaurant?.[restaurantName].activeLanguage
+  );
+
   const touchStartX = useRef(0);
 
   const handleTouchStart = (e) => {
@@ -37,8 +60,7 @@ export default function Categories({categories,activeCategory,setactiveCategory,
 
   const itemClick = (index) => {
     setactiveCategory(index);
-    setanimationchange(!animationchange)
-
+    setanimationchange(!animationchange);
   };
   return (
     <Container>
@@ -47,21 +69,31 @@ export default function Categories({categories,activeCategory,setactiveCategory,
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
       >
-
-        <Carousel carouselPosition={carouselPosition} >
+        <Carousel carouselPosition={carouselPosition}>
           {categories?.map((category, index) => {
             return (
-              <CarouselItem activeCategory={activeCategory} index={index} onClick={() => itemClick(index)}>{category.en_category}</CarouselItem>
+              <CarouselItem
+                activeLanuguage={activeLanuguage}
+                activeCategory={activeCategory}
+                index={index}
+                onClick={() => itemClick(index)}
+              >
+                {activeLanuguage == "en"
+                  ? category.en_category
+                  : category.ar_category}
+              </CarouselItem>
             );
           })}
         </Carousel>
         <LineContainer>
-          <LineBox activeCategory={activeCategory} carouselPosition={carouselPosition}>
-            <Line/>
+          <LineBox
+            activeCategory={activeCategory}
+            carouselPosition={carouselPosition}
+          >
+            <Line />
           </LineBox>
         </LineContainer>
       </CarouselContainer>
-      
     </Container>
   );
 }

@@ -25,7 +25,7 @@ export default function Menu({ menu, activeCategory, animationchange }) {
         }
       })}
 
-      <Plate activePlate={activePlate} menu={menu?.[activeCategory].products} scrollChecker={scrollChecker} />
+      {menu?.length!==0 &&<Plate activePlate={activePlate} menu={menu?.[activeCategory].products} scrollChecker={scrollChecker} /> }
     </Container>
   );
 }

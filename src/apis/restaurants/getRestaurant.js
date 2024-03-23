@@ -15,7 +15,6 @@ const getRestaurant = async (restaurantName) => {
 };
 
 export const useGetRestaurant = ({ onSuccess, restaurantName }) => {
-    console.log(restaurantName)
   const { error, isLoading, status, data} = useQuery({
     queryFn: () => getRestaurant(restaurantName),
     retry: false,
