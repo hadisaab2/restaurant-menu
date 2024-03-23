@@ -6,10 +6,13 @@ import { IoMdAdd } from "react-icons/io";
 import AddProduct from "./addproduct";
 import { useGetProducts } from "../../../apis/products/getProducts";
 import { getCookie } from "../../../utilities/manageCookies";
+import DeleteProductPopup from "./product/deleteProductPopup";
 
 export default function Products({ setProducts, products }) {
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [isFormOpen, setIsFormOpen] = useState(false);
+  const [selectedIdForAction, setSelectedIdForAction] = useState(null);
+  const [isDeletePopOpen, setIsDeletePopUpOpen] = useState(false);
   const storedUserInfo = getCookie("userInfo") || "{}";
   const [userInformation, setUserInformation] = useState(
     JSON.parse(storedUserInfo)
@@ -35,6 +38,13 @@ export default function Products({ setProducts, products }) {
     <Container>
       {!isFormOpen ? (
         <>
+          <DeleteProductPopup
+            isOpen={isDeletePopOpen}
+            setIsOpen={setIsDeletePopUpOpen}
+            refetchProducts={refetchProducts}
+            selectedIdForAction={selectedIdForAction}
+            setSelectedIdForAction={setSelectedIdForAction}
+          />
           <AddButton onClick={() => setIsFormOpen(true)}>
             <IoMdAdd />
             Add Product
@@ -46,6 +56,8 @@ export default function Products({ setProducts, products }) {
                   product={product}
                   setIsFormOpen={setIsFormOpen}
                   setSelectedProduct={setSelectedProduct}
+                  setSelectedIdForAction={setSelectedIdForAction}
+                  setIsDeletePopUpOpen={setIsDeletePopUpOpen}
                 />
               );
             })}

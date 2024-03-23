@@ -8,22 +8,26 @@ import {
   InfoContainer,
   Category,
 } from "./styles";
+import { useDeleteProductQuery } from "../../../../apis/products/deleteProduct";
 
 export default function Product({
   product,
   setIsFormOpen,
   setSelectedProduct,
+  setSelectedIdForAction,
+  setIsDeletePopUpOpen,
 }) {
   const { category, image } = product;
+
   return (
-    <Container
-      onClick={() => {
-        setSelectedProduct(product);
-        setIsFormOpen(true);
-      }}
-    >
+    <Container>
       <Wrapper>
-        <ImageWrapper>
+        <ImageWrapper
+          onClick={() => {
+            setSelectedProduct(product);
+            setIsFormOpen(true);
+          }}
+        >
           <Image
             src={`https://storage.googleapis.com/ecommerce-bucket-testing/${image?.url}`}
           />
@@ -33,6 +37,14 @@ export default function Product({
           <Category>
             {category?.en_category || category?.ar_category || "Offer"}
           </Category>
+          <button
+            onClick={() => {
+              setSelectedIdForAction(product.id);
+              setIsDeletePopUpOpen(true);
+            }}
+          >
+            delete
+          </button>
         </InfoContainer>
       </Wrapper>
     </Container>

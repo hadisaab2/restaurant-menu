@@ -28,7 +28,7 @@ import { useGetRestaurants } from "../../../apis/restaurants/getRestaurants";
 import { useEditRestaurantQuery } from "../../../apis/restaurants/editRestaurant";
 import { LoadingButton } from "@mui/lab";
 import { useEffect } from "react";
-import { isEmpty } from "lodash";
+import { isEmpty, rest } from "lodash";
 import DeleteRestaurantPopup from "./deleteRestauarantPopup";
 import { deleteCookie } from "../../../utilities/manageCookies";
 import { useNavigate } from "react-router-dom";
@@ -66,6 +66,7 @@ export default function Restaurants() {
   const { handleApiCall: handleEditApi, isPending: isEditing } =
     useEditRestaurantQuery({
       onSuccess: () => {
+        reset();
         setSelectedIdForAction(null);
         setSelectedProduct(null);
         refetchRestaurants();
@@ -75,6 +76,7 @@ export default function Restaurants() {
 
   const { handleApiCall, isPending } = useAddRestaurantQuery({
     onSuccess: () => {
+      rest();
       refetchRestaurants();
       setShowAddComponent(false);
     },
@@ -224,11 +226,11 @@ export default function Restaurants() {
               label="Password"
               variant="outlined"
               name="password"
-              {...register("password")}
-              error={!isEmpty(formState?.errors?.username)}
+              {...register("password", !isEditMode && { required: "Required" })}
+              error={!isEmpty(formState?.errors?.password)}
               helperText={
-                !isEmpty(formState?.errors?.username) &&
-                formState.errors?.username.message
+                !isEmpty(formState?.errors?.password) &&
+                formState.errors?.password.message
               }
             />
             <TextField
@@ -269,7 +271,8 @@ export default function Restaurants() {
                 <InputLabel>Language</InputLabel>
                 <Select
                   label="Language"
-                  {...register("languages")}
+                  {...register("languages", { required: "Required" })}
+                  error={!isEmpty(formState?.errors?.template_id)}
                   defaultValue={selectedProduct?.languages}
                 >
                   <MenuItem value="en">En</MenuItem>
@@ -283,7 +286,8 @@ export default function Restaurants() {
                 <InputLabel>Template</InputLabel>
                 <Select
                   label="mediaType"
-                  {...register("template_id")}
+                  {...register("template_id", { required: "Required" })}
+                  error={!isEmpty(formState?.errors?.template_id)}
                   onChange={handletemplate}
                   defaultValue={selectedProduct?.template_id}
                 >
@@ -302,7 +306,7 @@ export default function Restaurants() {
                     label={color}
                     name={color}
                     variant="outlined"
-                    {...register(`theme.[${color}]`)}
+                    {...register(`theme.[${color}]`, { required: "Required" })}
                     defaultValue={selectedProduct?.theme?.[color]}
                   />
                 );

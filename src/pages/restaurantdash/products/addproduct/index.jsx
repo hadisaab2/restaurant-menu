@@ -331,7 +331,7 @@ export default function AddProduct({
           {selectedProduct ? "Edit Product" : "Add Product"}
         </LoadingButton>
       </Row>
-      {selectedProduct && (
+      {/* {selectedProduct && (
         <Row>
           <LoadingButton
             disabled={isPending || isEditing}
@@ -343,7 +343,7 @@ export default function AddProduct({
             Delete Product
           </LoadingButton>
         </Row>
-      )}
+      )} */}
     </ProductInfo>
   );
 }

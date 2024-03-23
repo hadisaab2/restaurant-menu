@@ -7,17 +7,18 @@ const signIn = async (payload) => {
     const url = SIGNIN_URL;
 
     const response = await axios.post(url, payload);
-    
+
     return response;
   } catch (error) {
     throw error;
   }
 };
 
-export const useSignInQuery = ({ onSuccess }) => {
+export const useSignInQuery = ({ onSuccess, onError }) => {
   const { error, mutate, isLoading } = useMutation({
     mutationFn: signIn,
     onSuccess,
+    onError,
   });
 
   const handleApiCall = (data) => mutate(data);

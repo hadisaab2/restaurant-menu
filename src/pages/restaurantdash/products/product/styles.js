@@ -3,7 +3,7 @@ import { breakingPoints } from "../../../../styles/theme";
 
 export const Container = styled.div`
   width: 20%;
-  height: 200px;
+  height: auto;
   margin-top: 30px;
   display: flex;
   align-items: center;
@@ -29,10 +29,14 @@ export const ImageWrapper = styled.div`
   align-items: center;
   justify-content: center;
   margin-top: 10px;
+  object-fit: cover;
+  overflow: hidden;
 `;
 export const Image = styled.img`
-  width: 100px;
-  height: 100px;
+  /* width: 100px;
+  height: 100px; */
+  width: 100%;
+  height: 100%;
 `;
 
 export const InfoContainer = styled.div`

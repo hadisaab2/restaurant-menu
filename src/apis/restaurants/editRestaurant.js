@@ -6,6 +6,9 @@ import { getCookie } from "../../utilities/manageCookies";
 const editRestaurant = async (id, payload) => {
   try {
     const url = EDIT_RESTAURANT_URL(id);
+    if (payload?.password === "") {
+      delete payload?.password;
+    }
 
     const response = await axios.put(url, payload, {
       headers: {
