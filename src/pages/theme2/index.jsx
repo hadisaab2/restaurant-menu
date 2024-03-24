@@ -1,17 +1,28 @@
 import React, { useState } from 'react'
-import { Container,SideContainer } from './styles'
-import {menu} from "../../data"
-import Categories from './Categories'
-import Plates from './Plates'
+import { Container, MenuWrapper } from './styles';
+import Header from './Header';
+import { useParams } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+
 export default function Theme2() {
-  const [selectedCategory,setSelectedCategory]=useState(null)
-  return (
-    <Container>
-      <SideContainer />
-      <Categories selectedCategory={selectedCategory} menu={menu} setSelectedCategory={setSelectedCategory} />
-      {menu.map(({category,items})=>{
-        return(<Plates plates={items} categoryname={category} selectedCategory={selectedCategory} setSelectedCategory={setSelectedCategory}/>)
-      })}
-    </Container>
-  )
+    const [activeCategory, setactiveCategory] = useState(0);
+    const {restaurantName}=useParams();
+    const restaurant = useSelector((state) => state.restaurant?.[restaurantName]);
+    const [animationchange, setanimationchange] = useState(false);
+
+    return (
+      <Container>
+        <MenuWrapper >
+          
+              <Header
+                categories={restaurant.categories}
+                activeCategory={activeCategory}
+                setactiveCategory={setactiveCategory}
+                animationchange={animationchange}
+                setanimationchange={setanimationchange}
+              />
+        </MenuWrapper>
+
+      </Container>
+    )
 }

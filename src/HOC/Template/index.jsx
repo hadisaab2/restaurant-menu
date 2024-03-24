@@ -7,6 +7,7 @@ import { addmenu, changelanuage } from "../../redux/restaurant/restaurantActions
 // import Template2 from "../../pages/template2";
 import { ThemeProvider } from "styled-components";
 import Loading from "./loading";
+import Theme2 from "../../pages/theme2";
 
 export default function Template() {
   const dispatch = useDispatch();
@@ -37,6 +38,7 @@ export default function Template() {
     return (
       <ThemeProvider theme={JSON.parse(response.data.theme)}>
         <Theme1 />
+        {/* <Theme2/> */}
       </ThemeProvider>
     );
   }else{
