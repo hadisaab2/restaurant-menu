@@ -7,6 +7,8 @@ import {
   ImageWrapper,
   InfoContainer,
   Category,
+  DeleteButton,
+  Delete,
 } from "./styles";
 import { useDeleteProductQuery } from "../../../../apis/products/deleteProduct";
 
@@ -28,7 +30,8 @@ export default function Product({
             setIsFormOpen(true);
           }}
         >
-          <Image
+          {console.log(image?.url.includes("png"))}
+          <Image JPG={image?.url.includes("png")}
             src={`https://storage.googleapis.com/ecommerce-bucket-testing/${image?.url}`}
           />
         </ImageWrapper>
@@ -37,14 +40,14 @@ export default function Product({
           <Category>
             {category?.en_category || category?.ar_category || "Offer"}
           </Category>
-          <button
+          <DeleteButton
             onClick={() => {
               setSelectedIdForAction(product.id);
               setIsDeletePopUpOpen(true);
             }}
           >
-            delete
-          </button>
+            <Delete />
+          </DeleteButton>
         </InfoContainer>
       </Wrapper>
     </Container>

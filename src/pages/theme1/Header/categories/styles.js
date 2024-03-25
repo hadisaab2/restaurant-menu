@@ -3,8 +3,8 @@ import styled from "styled-components";
 export const Container = styled.div`
 display: flex;
 align-items: center;
-padding-left: 25px;
 height: 7vh;
+justify-content: center;
 `;
 export const CarouselContainer = styled.div`
   overflow: hidden;
@@ -15,7 +15,6 @@ export const CarouselContainer = styled.div`
   justify-content: center;
   flex-direction: column;
   gap: 4px;
-
 `;
 export const Carousel = styled.div`
   flex: 1;
@@ -34,10 +33,11 @@ export const CarouselItem = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: bold;
+  font-weight: 500;
   transition:all 0.2s ease-in-out;
   color:${props=>props.index==props.activeCategory?props.theme.categoryactive:props.theme.categoryunactive};
   line-height: ${props=>props.activeLanuguage=="ar"?"1.5":"null"};
+  font-size: 14px;
 `;
 export const LineContainer = styled.div`
 position: relative;

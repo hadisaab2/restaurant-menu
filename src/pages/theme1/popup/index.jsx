@@ -29,6 +29,11 @@ export default function Popup({
   popupHandler = { popupHandler },
 }) {
   const [activeBranch, setActiveBranch] = useState(restaurant?.branches[0]);
+  function capitalizeWords(str) {
+    return str.replace(/\b\w/g, function(char) {
+        return char.toUpperCase();
+    });
+}
   return (
     <Container showPopup={showPopup}>
       <Close
@@ -37,7 +42,7 @@ export default function Popup({
         }}
       />
       <Title>Welcome To </Title>
-      <ResName>Addict Burger</ResName>
+      <ResName>{capitalizeWords(restaurant?.name)}</ResName>
       <BranchesContainer>
         {restaurant?.branches?.map((branch) => {
           return (

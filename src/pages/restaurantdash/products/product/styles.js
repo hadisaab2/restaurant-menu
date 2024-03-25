@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import { breakingPoints } from "../../../../styles/theme";
+import { MdDelete } from "react-icons/md";
 
 export const Container = styled.div`
   width: 20%;
@@ -18,6 +19,9 @@ export const Wrapper = styled.div`
   flex-direction: column;
   box-shadow: 4px 0px 6px rgba(0, 0, 0, 0.1);
   align-items: center;
+  padding-bottom: 10px;
+  border-radius: 5px;
+
 `;
 
 export const ImageWrapper = styled.div`
@@ -33,16 +37,15 @@ export const ImageWrapper = styled.div`
   overflow: hidden;
 `;
 export const Image = styled.img`
-  /* width: 100px;
-  height: 100px; */
-  width: 100%;
-  height: 100%;
+  width:${props=>props.JPG?"100px":"100%"};
+  height: ${props=>props.JPG?"100px":"100%"};
 `;
 
 export const InfoContainer = styled.div`
   width: 90%;
   display: flex;
   flex-direction: column;
+  position: relative;
 `;
 export const Title = styled.span`
   font-size: 15px;
@@ -53,4 +56,21 @@ export const Category = styled.span`
   margin-top: 2px;
   font-size: 15px;
   font-weight: 300;
+`;
+
+export const DeleteButton = styled.button`
+  position: absolute;
+  right: 0px;
+  top:7px;
+  background-color: transparent;
+  outline: none;
+  border: 0;
+  cursor: pointer;
+`;
+
+
+export const Delete = styled(MdDelete)`
+&:hover{
+  color:red;
+}
 `;
