@@ -6,6 +6,7 @@ align-items: center;
 position: relative;
 height: 7vh;
 justify-content: space-between;
+width: 100%;
 `;
 export const Brand = styled.img`
 width: 100px;

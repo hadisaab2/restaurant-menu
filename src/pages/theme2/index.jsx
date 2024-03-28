@@ -3,6 +3,7 @@ import { Container, MenuWrapper } from './styles';
 import Header from './Header';
 import { useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
+import Products from './products';
 
 export default function Theme2() {
     const [activeCategory, setactiveCategory] = useState(0);
@@ -21,6 +22,11 @@ export default function Theme2() {
                 animationchange={animationchange}
                 setanimationchange={setanimationchange}
               />
+                <Products
+              menu={restaurant.categories}
+              activeCategory={activeCategory}
+              animationchange={animationchange}
+            />
         </MenuWrapper>
 
       </Container>

@@ -37,8 +37,9 @@ export default function Template() {
   if (restaurant?.categories && !isLoading && !isTrue) {
     return (
       <ThemeProvider theme={JSON.parse(response.data.theme)}>
-        <Theme1 />
-        {/* <Theme2/> */}
+        {restaurant?.template_id==1 &&<Theme1/> }
+        {restaurant?.template_id==2 &&<Theme2/> }
+
       </ThemeProvider>
     );
   }else{

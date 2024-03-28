@@ -39,6 +39,14 @@ export const CarouselItem = styled.div`
   line-height: ${props=>props.activeLanuguage=="ar"?"1.5":"null"};
   font-size: 14px;
 `;
+export const CategoryName = styled.span`
+    width: 100%;
+    /* overflow: hidden;
+    text-overflow: ellipsis; */
+    text-align: center;
+    white-space: normal;
+    word-wrap: break-word;
+`;
 export const LineContainer = styled.div`
 position: relative;
 width: 100%;
@@ -59,3 +67,4 @@ height: 2px;
 /* background-color:#FB4303; */
 background-color: ${props=>props.theme.maincolor};
 `;
+

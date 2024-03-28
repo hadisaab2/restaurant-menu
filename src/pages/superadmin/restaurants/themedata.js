@@ -7,7 +7,7 @@ export const templates = [
   {
     id: 2,
     name: "template2",
-    colors: ["popupcolor", "maincolor", "backgroundcolor", "textcolor"],
+    colors: ["maincolor", "backgroundcolor", "textcolor","categoryactive","categoryunactive","scrollanimator","testcolor"],
   },
   {
     id: 3,

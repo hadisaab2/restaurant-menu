@@ -7,6 +7,7 @@ import {
   LineContainer,
   LineBox,
   Line,
+  CategoryName
 } from "./styles";
 import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
@@ -78,9 +79,11 @@ export default function Categories({
                 index={index}
                 onClick={() => itemClick(index)}
               >
+                <CategoryName>
                 {activeLanuguage == "en"
                   ? category.en_category
                   : category.ar_category}
+                  </CategoryName>
               </CarouselItem>
             );
           })}

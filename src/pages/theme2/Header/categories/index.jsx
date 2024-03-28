@@ -4,12 +4,16 @@ import {
   CarouselContainer,
   Carousel,
   CarouselItem,
-  CarouselItemWrapper
+  CategoryName,
+  CategoryWrapper,
+  IconWrapper,
+  IconContainer,
+  TextContainer,
+  Icon,
 } from "./styles";
 import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
-
-
+import categoryicon from "./categoryicon.png";
 export default function Categories({
   categories,
   activeCategory,
@@ -70,22 +74,30 @@ export default function Categories({
         <Carousel carouselPosition={carouselPosition}>
           {categories?.map((category, index) => {
             return (
-              <CarouselItemWrapper>
               <CarouselItem
                 activeLanuguage={activeLanuguage}
                 activeCategory={activeCategory}
                 index={index}
                 onClick={() => itemClick(index)}
               >
-                {activeLanuguage == "en"
-                  ? category.en_category
-                  : category.ar_category}
+                <CategoryWrapper activeCategory={activeCategory} index={index}>
+                  <IconContainer >
+                    <IconWrapper activeCategory={activeCategory} index={index} >
+                      <Icon src={categoryicon} />
+                    </IconWrapper>
+                  </IconContainer>
+                  <TextContainer>
+                    <CategoryName activeCategory={activeCategory} index={index}>
+                      {activeLanuguage == "en"
+                        ? category.en_category
+                        : category.ar_category}
+                    </CategoryName>
+                  </TextContainer>
+                </CategoryWrapper>
               </CarouselItem>
-              </CarouselItemWrapper>
             );
           })}
         </Carousel>
-      
       </CarouselContainer>
     </Container>
   );

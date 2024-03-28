@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Container } from "./styles";
+import { Container, Text, TextContainer } from "./styles";
 import Categories from "./categories";
 import HeaderTop from "./headertop";
 
@@ -7,6 +7,11 @@ export default function Header({ activeCategory, setactiveCategory, categories,s
   return (
     <Container>
       <HeaderTop />
+      <TextContainer>
+      <Text>Main</Text>
+
+        <Text>Categories</Text>
+      </TextContainer>
       <Categories
         categories={categories}
         activeCategory={activeCategory}
