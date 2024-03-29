@@ -6,7 +6,7 @@ const slideAnimation = (x, y,width) => keyframes`
  0% { 
     left: ${x}px;
     
-    top:${y}px;
+    top:${y-window.scrollY}px;
     width:${width}px;
     height:20vh;
     border-radius: 10px;
@@ -47,7 +47,7 @@ left:30px;
   padding-right: 4px;
 padding-top: 3px;
 padding-bottom: 3px;
-animation: ${BackIconAnimation} 1s ease-in-out;
+animation: ${BackIconAnimation} 0.5s ease-in-out;
 
 `;
 
@@ -63,7 +63,7 @@ position:fixed;
   left:0;
   height: 70vh;
   overflow: hidden;
-  animation: ${({ x, y,width }) => slideAnimation(x, y,width)} 0.8s ease-in-out;
+  animation: ${({ x, y,width }) => slideAnimation(x, y,width)} 0.4s ease-in-out;
   z-index: 3;
   border-radius: 0px;
 
@@ -76,7 +76,7 @@ const InfoAnimation  = keyframes`
 }
 
  100% { 
-    bottom: 0;
+    bottom: -10vh;
 }
 `;
 
@@ -84,8 +84,8 @@ export const ItemInfo = styled.div`
 position:fixed;
 z-index: 4;
 
-  bottom:0;
-  height: 40vh;
+  bottom:-10vh;
+  height: 50vh;
   width: 100%;
   background-color:${props=>props.theme.backgroundColor};
   display: flex;
@@ -93,7 +93,7 @@ z-index: 4;
   border-radius: 30px;
   overflow: hidden;
   box-shadow: 0px -4px 8px rgba(0, 0, 0, 0.2); 
-  animation: ${InfoAnimation} 0.8s ease-in-out;
+  animation: ${InfoAnimation} 0.5s ease-in-out;
 `;
 export const ItemName = styled.span`
 font-size: 23px;
@@ -124,3 +124,32 @@ margin-left: 20px;
 
 
 `;
+
+// export const ItemInfo = styled.div`
+// position:fixed;
+// z-index: 4;
+
+//   bottom:-40vh;
+//   height: 40vh;
+//   width: 100%;
+//   background-color:${props=>props.theme.backgroundColor};
+//   display: flex;
+//   flex-direction: column;
+//   border-radius: 30px;
+//   overflow: hidden;
+//   box-shadow: 0px -4px 8px rgba(0, 0, 0, 0.2); 
+//   animation: ${InfoAnimation} 0.8s ease-in-out;
+// `;
+
+// export const ImageContainer = styled.div`
+// position:fixed;
+//   width: ${props=>props.index==props.activePlate?"100%":`${props.width}px`};
+//   top:${props=>props.index==props.activePlate?`0`:`${props.y}px`};
+//   left:${props=>props.index==props.activePlate?"0":`${props.x}px`};
+//   height: ${props=>props.index==props.activePlate?"100vh":"20vh"};
+//   overflow: hidden;
+//   z-index: 7;
+//   border-radius: 0px;
+//   transition:all 1s ease-in-out;
+
+// `;
