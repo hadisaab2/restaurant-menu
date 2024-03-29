@@ -14,7 +14,7 @@ export const Wrapper = styled.div`
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    background-color: white;
+    background-color: ${props=>props.theme.categoryUnactive};
     border-radius: 20px;
 
 `;
@@ -32,6 +32,7 @@ border-radius: 10px;
 overflow: hidden;
 margin-top: 10px;
 
+
 `;
 export const TextContainer = styled.div`
 width:90%;
@@ -45,8 +46,14 @@ margin-top: 5px;
 
 `;
 export const PlateName = styled.span`
+font-size: 14px;
+font-weight: 500;
+color:${props=>props.theme.textColor};
 
 `;
 export const PlatePrice = styled.span`
+color:${props=>props.theme.mainColor};
+font-size: 14px;
+
 
 `;

@@ -31,7 +31,7 @@ overflow: hidden;
 
 export const Wrapper = styled.div`
 width: 100%;
-background-color: ${props=>props.theme.maincolor};
+background-color: ${props=>props.theme.mainColor};
 opacity: 0.6;
 position: absolute;
 height: 100%;
@@ -43,7 +43,7 @@ border-radius: 10px;
 
 export const Ball = styled.div`
 position: absolute;
-background-color: ${props=>props.theme.maincolor};
+background-color: ${props=>props.theme.mainColor};
 left:${props=>props.activeLanguage=="en"?"0px":"32px"} ;
 transition:all ease-in-out 0.2s;
 height: 100%;
@@ -55,7 +55,7 @@ export const Language = styled.div`
 z-index: 3;
 flex:1;
 height: 100%;
-color:${props=>props.theme.textcolor};
+color:${props=>props.theme.textColor};
 text-align: center;
 display: flex;
 align-items: center;

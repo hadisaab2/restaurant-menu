@@ -3,8 +3,7 @@ import styled from "styled-components";
 export const Container = styled.div`
 min-height: 100vh;
 position: relative;
-/* background-color: ${props=>props.theme.backgroundcolor}; */
-background-color: rgb(247 247 247);
+background-color: ${props=>props.theme.backgroundColor};
 `;
 export const MenuWrapper = styled.div`
 width: 100%;

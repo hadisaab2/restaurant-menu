@@ -49,7 +49,7 @@ export const CategoryWrapper = styled.div`
   align-items: center;
   justify-content: center;
   flex-direction: column;
-  background-color:${props=>props.index==props.activeCategory?props.theme.categoryactive:props.theme.categoryunactive};
+  background-color:${props=>props.index==props.activeCategory?props.theme.categoryActive:props.theme.categoryUnactive};
   box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.1);
   transition: 0.2s all ease-in-out;
   color:${props=>props.index==props.activeCategory?"white":"black"};
@@ -71,7 +71,7 @@ background-color: black;
 display: flex;
 align-items: center;
 justify-content: center;
-background-color:${props=>props.index==props.activeCategory?"white":"#f1f1f1"};
+background-color:${props=>props.index==props.activeCategory?props.theme.categoryActiveIcon:props.theme.categoryUnactiveIcon};
 transition: 0.2s all ease-in-out;
 
 `;

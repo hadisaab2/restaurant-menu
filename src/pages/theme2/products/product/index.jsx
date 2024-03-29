@@ -11,15 +11,20 @@ import {
 import { useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 
-export default function Product({ plate }) {
+const Product = React.forwardRef(({ plate, setactivePlate, activePlate, index }, ref) => {
   const { restaurantName } = useParams();
   const activeLanuguage = useSelector(
     (state) => state.restaurant?.[restaurantName].activeLanguage
   );
+
+  const plateHandle = () => {
+    setactivePlate(index);
+  };
+
   return (
-    <Container>
+    <Container index={index} activePlate={activePlate}  >
       <Wrapper>
-        <ImageContainer>
+        <ImageContainer onClick={plateHandle}  ref={ref}>
           <Image
             src={`https://storage.googleapis.com/ecommerce-bucket-testing/${plate.image.url}`}
           />
@@ -28,9 +33,11 @@ export default function Product({ plate }) {
           <PlateName>
             {activeLanuguage === "en" ? plate.en_name : plate.ar_name}
           </PlateName>
-          <PlatePrice>{plate.en_price}</PlatePrice>
+          <PlatePrice>{plate.en_price}$</PlatePrice>
         </TextContainer>
       </Wrapper>
     </Container>
   );
-}
+});
+
+export default Product;

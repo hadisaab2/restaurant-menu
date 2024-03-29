@@ -11,6 +11,7 @@ export const ProductWrapper = styled.div`
   display: flex;
   align-content: flex-start;
   width: 100%;
-
+  opacity:${props=>props.activePlate!==null?"0":"1"};
+  transition:all 0.7s ease-in-out;
 `;
 
