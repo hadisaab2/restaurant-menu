@@ -47,7 +47,7 @@ left:30px;
   padding-right: 4px;
 padding-top: 3px;
 padding-bottom: 3px;
-animation: ${BackIconAnimation} 0.5s ease-in-out;
+animation: ${BackIconAnimation} 0.8s ease-in-out;
 
 `;
 
@@ -63,7 +63,7 @@ position:fixed;
   left:0;
   height: 70vh;
   overflow: hidden;
-  animation: ${({ x, y,width }) => slideAnimation(x, y,width)} 0.4s ease-in-out;
+  animation: ${({ x, y,width }) => slideAnimation(x, y,width)} 0.8s ease-in-out;
   z-index: 3;
   border-radius: 0px;
 
@@ -93,7 +93,7 @@ z-index: 4;
   border-radius: 30px;
   overflow: hidden;
   box-shadow: 0px -4px 8px rgba(0, 0, 0, 0.2); 
-  animation: ${InfoAnimation} 0.5s ease-in-out;
+  animation: ${InfoAnimation} 0.8s ease-in-out;
 `;
 export const ItemName = styled.span`
 font-size: 23px;
