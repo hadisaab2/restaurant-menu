@@ -2,23 +2,20 @@ import styled from "styled-components";
 import { keyframes } from "styled-components";
 import { IoIosArrowBack } from "react-icons/io";
 
+
 const slideAnimation = (x, y,width) => keyframes`
  0% { 
     left: ${x}px;
-    
     top:${y-window.scrollY}px;
     width:${width}px;
     height:20vh;
     border-radius: 10px;
-
-
 }
-
  100% { 
     left: 0;
     top:0;
     width:100%;
-    height: 70vh;
+    height: 100vh;
     border-radius: 0px;
 
 }
@@ -32,124 +29,187 @@ const BackIconAnimation  = keyframes`
 
  100% { 
     left:30px;
-    opacity:1;}
+    opacity:1
+    }
 `;
 
 export const BackIcon = styled(IoIosArrowBack)`
-position: fixed;
+position: absolute;
 z-index: 6;
-top:30px;
 left:30px;
-  font-size: 22px;
-  color:white;
-  background-color: ${props=>props.theme.mainColor};
-  padding-left: 4px;
-  padding-right: 4px;
-padding-top: 3px;
-padding-bottom: 3px;
+font-size: 22px;
+color:white;
+background-color: ${props=>props.theme.mainColor};
+padding: 4px;
+border-radius: 50%;
 animation: ${BackIconAnimation} 0.8s ease-in-out;
-
 `;
 
+export const ItemCategory = styled.div`
+width: 100%;
+height: 90px;
+position: absolute;
+top:0;
+color:black;
+display: ${props=>props.CloseAnimation?"flex":"none"};
+justify-content: center;
+align-items: center;
+
+`;
+const CategoryAnimation  = keyframes`
+ 0% { 
+    margin-top: -50px;
+    opacity: 0;
+}
+
+ 100% { 
+    margin-top: 0px;
+    opacity: 1;
+
+}
+`;
+export const Category = styled.span`
+ font-size: 17px;
+ font-weight: 600;
+ margin-top: 0px;
+ color:${props=>props.theme.textColor};
+ animation: ${CategoryAnimation} 1.3s ease-in-out;
+
+
+`;
 export const Image = styled.img`
   width: 100%;
   height: 100%;
   object-fit: cover;
 `;
-export const ImageContainer = styled.div`
+
+
+export const Wrapper = styled.div`
 position:fixed;
-  width: 100%;
-  top:0;
-  left:0;
-  height: 70vh;
+  width: ${props=>props.CloseAnimation?"100%":`${props.width}px`};
+  top:${props=>props.CloseAnimation?"0":`${props.y-window.scrollY}px`};
+left:${props=>props.CloseAnimation?"0":`${props.x}px`};
+  height: ${props=>props.CloseAnimation?"100vh":`20vh`};
   overflow: hidden;
+  transition:all 0.8s ease-in-out;
   animation: ${({ x, y,width }) => slideAnimation(x, y,width)} 0.8s ease-in-out;
   z-index: 3;
   border-radius: 0px;
-
+  background-color: ${props=>props.theme.backgroundColor};
+  display: flex;
+  justify-content: center;
 `;
-
-
-const InfoAnimation  = keyframes`
+const ImageAnimation  = keyframes`
  0% { 
-    bottom: -80vh;
+    width:100%;
+    height:100%;
+    border-radius: 10px;
+    top:0px;
 }
 
  100% { 
-    bottom: -10vh;
+    width:90%;
+    height:55%;
+    border-radius: 40px;
+    top:80px;
+
+    }
+`;
+export const ImageContainer = styled.div`
+  width: ${props=>props.CloseAnimation?"90%":"100%"};
+height:${props=>props.CloseAnimation?"55%":"100%"}; 
+position: absolute;
+border-radius: ${props=>props.CloseAnimation?"40px":"10px"};
+top:${props=>props.CloseAnimation?"80px":"0px"};
+overflow: hidden;
+transition:all 1s;
+animation:${ImageAnimation} 0.8s;
+box-shadow: 0px -4px 8px rgba(0, 0, 0, 0.1); 
+
+`
+
+
+
+
+export const ItemInfo = styled.div`
+  position:fixed;
+  z-index: 4;
+  bottom:0;
+  height: 30%;
+  width: 90%;
+  display: ${props=>props.CloseAnimation?"flex":"none"};
+  flex-direction: column;
+  border-radius: 30px;
+`;
+
+const NameAnimation  = keyframes`
+ 0% { 
+    margin-left: -50px;
+    opacity: 0;
+}
+
+ 100% { 
+    margin-left: 0px;
+    opacity: 1;
+
 }
 `;
 
-export const ItemInfo = styled.div`
-position:fixed;
-z-index: 4;
-
-  bottom:-10vh;
-  height: 50vh;
-  width: 100%;
-  background-color:${props=>props.theme.backgroundColor};
-  display: flex;
-  flex-direction: column;
-  border-radius: 30px;
-  overflow: hidden;
-  box-shadow: 0px -4px 8px rgba(0, 0, 0, 0.2); 
-  animation: ${InfoAnimation} 0.8s ease-in-out;
-`;
 export const ItemName = styled.span`
-font-size: 23px;
-font-weight: bold;
-width: 60%;
-margin-top: 40px;
-margin-left: 20px;
-
+ font-size: 23px;
+ font-weight: bold;
+ width: 60%;
+ margin-left: 0px;
+opacity: 1;
+ margin-top: 10px;
+ animation:${NameAnimation} 1s ease-in-out;
 `;
 
+const DescriptionAnimation  = keyframes`
+ 0% { 
+    margin-top: -20px;
+    opacity: 0;
+}
+
+ 100% { 
+    margin-top: 20px;
+    opacity: 1;
+
+}
+`;
 export const ItemDescription = styled.span`
 font-size: 16px;
 font-weight: 300;
-width: 80%;
+width: 90%;
 margin-top: 20px;
 word-spacing: 1px;
-margin-left: 20px;
+animation:${DescriptionAnimation} 1.3s ease-in-out;
+`;
+const PriceAnimation  = keyframes`
+ 0% { 
+    transform: scale(0);
+    opacity: 0;
+}
 
+ 100% { 
+    transform: scale(1);
+    opacity: 1;
 
+}
 `;
 export const ItemPrice = styled.span`
-font-size: 22px;
+font-size: 20px;
 font-weight: 500;
-width: 80%;
-margin-top: 20px;
-color:${props=>props.theme.mainColor};
-margin-left: 20px;
-
+word-spacing:3px;
+position: absolute;
+right: 0px;
+transform: scale(1);
+top:5px;
+color:white;
+padding: 10px;
+border-radius: 10px;
+background-color: ${props=>props.theme.mainColor};
+animation:${PriceAnimation} 1s ease-in-out;
 
 `;
 
-// export const ItemInfo = styled.div`
-// position:fixed;
-// z-index: 4;
-
-//   bottom:-40vh;
-//   height: 40vh;
-//   width: 100%;
-//   background-color:${props=>props.theme.backgroundColor};
-//   display: flex;
-//   flex-direction: column;
-//   border-radius: 30px;
-//   overflow: hidden;
-//   box-shadow: 0px -4px 8px rgba(0, 0, 0, 0.2); 
-//   animation: ${InfoAnimation} 0.8s ease-in-out;
-// `;
-
-// export const ImageContainer = styled.div`
-// position:fixed;
-//   width: ${props=>props.index==props.activePlate?"100%":`${props.width}px`};
-//   top:${props=>props.index==props.activePlate?`0`:`${props.y}px`};
-//   left:${props=>props.index==props.activePlate?"0":`${props.x}px`};
-//   height: ${props=>props.index==props.activePlate?"100vh":"20vh"};
-//   overflow: hidden;
-//   z-index: 7;
-//   border-radius: 0px;
-//   transition:all 1s ease-in-out;
-
-// `;

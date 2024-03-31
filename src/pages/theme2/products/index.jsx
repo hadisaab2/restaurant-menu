@@ -49,9 +49,9 @@ export default function Products({ menu, activeCategory, animationchange }) {
                 );
               })}
             </ProductWrapper>
-            {activePlate!==null && <ProductDetails  activePlate={activePlate} setactivePlate={setactivePlate} menu={singlemenu?.products}  productPositions={productPositions}/>}
+            {activePlate!==null && <ProductDetails menu={singlemenu}   activePlate={activePlate} setactivePlate={setactivePlate} plates={singlemenu?.products}  productPositions={productPositions}/>}
             </>
-          );
+          )
         }
       })}
 
