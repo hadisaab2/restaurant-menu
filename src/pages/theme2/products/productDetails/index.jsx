@@ -43,7 +43,6 @@ export default function ProductDetails({
         CloseAnimation={CloseAnimation}
       >
         <ItemCategory CloseAnimation={CloseAnimation}>
-          <BackIcon onClick={handleBack} />
           <Category>{menu?.en_category}</Category>
         </ItemCategory>
         <ImageContainer CloseAnimation={CloseAnimation}>
@@ -51,7 +50,10 @@ export default function ProductDetails({
             src={`https://storage.googleapis.com/ecommerce-bucket-testing/${plates[activePlate]?.image.url}`}
           />
         </ImageContainer>
-        <ItemInfoWrapper CloseAnimation={CloseAnimation}>
+        
+      </Wrapper>
+      <BackIcon CloseAnimation={CloseAnimation} onClick={handleBack} />
+      <ItemInfoWrapper CloseAnimation={CloseAnimation}>
         <ItemInfo >
           <ItemName>{plates[activePlate]?.en_name}</ItemName>
           <ItemDescription>
@@ -60,7 +62,6 @@ export default function ProductDetails({
           <ItemPrice>{plates[activePlate]?.en_price} $</ItemPrice>
         </ItemInfo>
         </ItemInfoWrapper>
-      </Wrapper>
     </>
   );
 }

@@ -34,14 +34,16 @@ const BackIconAnimation  = keyframes`
 `;
 
 export const BackIcon = styled(IoIosArrowBack)`
-position: absolute;
-z-index: 6;
+position: fixed;
+z-index: 7;
+top:30px;
 left:30px;
 font-size: 22px;
 color:white;
 background-color: ${props=>props.theme.mainColor};
 padding: 4px;
 border-radius: 50%;
+display: ${props=>props.CloseAnimation?"flex":"none"};
 animation: ${BackIconAnimation} 0.8s ease-in-out;
 `;
 
@@ -133,6 +135,7 @@ box-shadow: 0px -4px 8px rgba(0, 0, 0, 0.1);
 export const ItemInfoWrapper = styled.div`
   position:fixed;
   z-index: 4;
+  top:0;
   height: 100vh;
   width: 100%;
   display: ${props=>props.CloseAnimation?"flex":"none"};
