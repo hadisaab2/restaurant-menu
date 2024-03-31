@@ -7,6 +7,7 @@ import {
   ItemCategory,
   ItemDescription,
   ItemInfo,
+  ItemInfoWrapper,
   ItemName,
   ItemPrice,
   Wrapper,
@@ -50,13 +51,15 @@ export default function ProductDetails({
             src={`https://storage.googleapis.com/ecommerce-bucket-testing/${plates[activePlate]?.image.url}`}
           />
         </ImageContainer>
-        <ItemInfo CloseAnimation={CloseAnimation}>
+        <ItemInfoWrapper CloseAnimation={CloseAnimation}>
+        <ItemInfo >
           <ItemName>{plates[activePlate]?.en_name}</ItemName>
           <ItemDescription>
             {plates[activePlate]?.en_description}
           </ItemDescription>
           <ItemPrice>{plates[activePlate]?.en_price} $</ItemPrice>
         </ItemInfo>
+        </ItemInfoWrapper>
       </Wrapper>
     </>
   );

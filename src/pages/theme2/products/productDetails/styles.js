@@ -109,7 +109,7 @@ const ImageAnimation  = keyframes`
 
  100% { 
     width:90%;
-    height:55%;
+    height:50%;
     border-radius: 40px;
     top:80px;
 
@@ -117,7 +117,7 @@ const ImageAnimation  = keyframes`
 `;
 export const ImageContainer = styled.div`
   width: ${props=>props.CloseAnimation?"90%":"100%"};
-height:${props=>props.CloseAnimation?"55%":"100%"}; 
+height:${props=>props.CloseAnimation?"50%":"100%"}; 
 position: absolute;
 border-radius: ${props=>props.CloseAnimation?"40px":"10px"};
 top:${props=>props.CloseAnimation?"80px":"0px"};
@@ -130,16 +130,23 @@ box-shadow: 0px -4px 8px rgba(0, 0, 0, 0.1);
 
 
 
-
-export const ItemInfo = styled.div`
+export const ItemInfoWrapper = styled.div`
   position:fixed;
   z-index: 4;
-  bottom:0;
-  height: 30%;
-  width: 90%;
+  height: 100vh;
+  width: 100%;
   display: ${props=>props.CloseAnimation?"flex":"none"};
+  align-items: flex-end;
+  justify-content: center;
+`;
+
+export const ItemInfo = styled.div`
+  height: 35%;
+  width: 90%;
+  display:flex;
   flex-direction: column;
   border-radius: 30px;
+  position: relative;
 `;
 
 const NameAnimation  = keyframes`
