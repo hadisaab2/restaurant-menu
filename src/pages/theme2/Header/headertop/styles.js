@@ -4,13 +4,13 @@ export const Container = styled.div`
 display: flex;
 align-items: center;
 position: relative;
-height: 7vh;
+height: 10vh;
 justify-content: space-between;
 width: 100%;
 `;
 export const Brand = styled.img`
-width: 100px;
-height: 30px;
+width: 80px;
+height: 50px;
 margin-left: 20px;
 `;
 

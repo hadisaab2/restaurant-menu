@@ -42,7 +42,7 @@ export const CarouselItem = styled.div`
 `;
 
 export const CategoryWrapper = styled.div`
-  width:70%;
+  width:75%;
   height:100%;
   border-radius: 50px;
   display: flex;

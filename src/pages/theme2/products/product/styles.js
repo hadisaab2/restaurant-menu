@@ -39,6 +39,8 @@ width:90%;
 display: flex;
 justify-content: center;
 flex-direction: column;
+text-align: ${props=>props.activeLanuguage=="en"?"left":"right"};
+
 align-items: ${props=>props.activeLanuguage=="en"?"flex-start":"flex-end"};
 gap:5px;
 height: 10vh;
