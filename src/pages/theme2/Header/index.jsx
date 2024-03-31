@@ -24,9 +24,8 @@ export default function Header({
       <TextContainer activeLanuguage={activeLanuguage}>
         {activeLanuguage == "en" ? (
           <>
-            <Text>Main</Text>
+            <Text>Main Categories</Text>
 
-            <Text>Categories</Text>
           </>
         ) : (
           <Text>أشهر الأصنـاف</Text>
