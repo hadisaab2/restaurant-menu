@@ -19,6 +19,7 @@ const Product = React.forwardRef(({ plate, setactivePlate, activePlate, index },
 
   const plateHandle = () => {
     setactivePlate(index);
+    document.body.style.overflow = 'hidden';
   };
 
   return (

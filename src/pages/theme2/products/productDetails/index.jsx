@@ -29,10 +29,11 @@ export default function ProductDetails({
   const [CloseAnimation, setCloseAnimation] = useState(true);
   const handleBack = () => {
     setTimeout(() => {
-        setactivePlate(null);
-      }, 800);
-    setCloseAnimation(false);
+      setactivePlate(null);
+    }, 800);
+    document.body.style.overflow = 'auto';
 
+    setCloseAnimation(false);
   };
   return (
     <>
@@ -50,18 +51,17 @@ export default function ProductDetails({
             src={`https://storage.googleapis.com/ecommerce-bucket-testing/${plates[activePlate]?.image.url}`}
           />
         </ImageContainer>
-        
       </Wrapper>
       <BackIcon CloseAnimation={CloseAnimation} onClick={handleBack} />
       <ItemInfoWrapper CloseAnimation={CloseAnimation}>
-        <ItemInfo >
+        <ItemInfo>
           <ItemName>{plates[activePlate]?.en_name}</ItemName>
           <ItemDescription>
             {plates[activePlate]?.en_description}
           </ItemDescription>
           <ItemPrice>{plates[activePlate]?.en_price} $</ItemPrice>
         </ItemInfo>
-        </ItemInfoWrapper>
+      </ItemInfoWrapper>
     </>
   );
 }

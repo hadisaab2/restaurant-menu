@@ -8,6 +8,7 @@ export default function Products({ menu, activeCategory, animationchange }) {
   const productRefs = useRef([]);
   const [productPositions, setProductPositions] = useState([]);
   useEffect(() => {
+    window.scrollTo(0, 0);
     const positions = productRefs.current
       .filter((ref) => ref.current) // Filter out null refs
       .map((ref) => {
@@ -17,6 +18,27 @@ export default function Products({ menu, activeCategory, animationchange }) {
       console.log(positions)
     setProductPositions(positions);
   }, [productRefs.current]);
+
+  // useEffect(() => {
+  //   const handleScroll = () => {
+  //     const positions = productRefs.current
+  //       .filter((ref) => ref.current) // Filter out null refs
+  //       .map((ref) => {
+  //         const rect = ref.current.getBoundingClientRect();
+  //         return { x: rect.left, y: rect.top, width: rect.width };
+  //       });
+  //       console.log(positions)
+  //       setProductPositions(positions);
+  //   };
+  
+  //   // Attach event listener for scroll
+  //   window.addEventListener('scroll', handleScroll);
+  
+  //   // Remove event listener when component unmounts
+  //   return () => {
+  //     window.removeEventListener('scroll', handleScroll);
+  //   };
+  // }, [productRefs]);
 
   useEffect(() => {
     productRefs.current = menu?.map(() => createRef());
