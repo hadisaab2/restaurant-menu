@@ -2,50 +2,44 @@ import React, { createRef, useEffect, useRef, useState } from "react";
 import { Container, ProductWrapper } from "./styles";
 import Product from "./product";
 import ProductDetails from "./productDetails";
-export default function Products({ menu, activeCategory, animationchange }) {
+import { useSelector } from "react-redux";
+import { useParams } from "react-router-dom";
+export default function Products({ menu, activeCategory }) {
   const [activePlate, setactivePlate] = useState(null);
-  const [scrollChecker, setScrollChecker] = useState(false);
-  const productRefs = useRef([]);
-  const [productPositions, setProductPositions] = useState([]);
+  const { restaurantName } = useParams();
+  const productRefs = useRef([]);//ref for each image container
+  const [productPositions, setProductPositions] = useState([]); // x y and width of product
+  const activeLanuguage = useSelector(
+    (state) => state.restaurant?.[restaurantName].activeLanguage
+  );
+  //function to find or change the x and y of the products images
+  const changepositions= ()=>{
+    const positions = productRefs.current
+    .filter((ref) => ref.current) // Filter out null refs
+    .map((ref) => {
+      const rect = ref.current.getBoundingClientRect();
+      return { x: rect.left, y: rect.top,width: rect.width };
+    });
+  setProductPositions(positions);
+  }
+  
   useEffect(() => {
     window.scrollTo(0, 0);
-    const positions = productRefs.current
-      .filter((ref) => ref.current) // Filter out null refs
-      .map((ref) => {
-        const rect = ref.current.getBoundingClientRect();
-        return { x: rect.left, y: rect.top,width: rect.width };
-      });
-      console.log(positions)
-    setProductPositions(positions);
-  }, [productRefs.current]);
-
-  // useEffect(() => {
-  //   const handleScroll = () => {
-  //     const positions = productRefs.current
-  //       .filter((ref) => ref.current) // Filter out null refs
-  //       .map((ref) => {
-  //         const rect = ref.current.getBoundingClientRect();
-  //         return { x: rect.left, y: rect.top, width: rect.width };
-  //       });
-  //       console.log(positions)
-  //       setProductPositions(positions);
-  //   };
-  
-  //   // Attach event listener for scroll
-  //   window.addEventListener('scroll', handleScroll);
-  
-  //   // Remove event listener when component unmounts
-  //   return () => {
-  //     window.removeEventListener('scroll', handleScroll);
-  //   };
-  // }, [productRefs]);
+    changepositions()
+  }, [productRefs.current,activeLanuguage]);
 
   useEffect(() => {
-    productRefs.current = menu?.map(() => createRef());
-  }, [menu]);
-  // useEffect(()=>{
-  //   setactivePlate(0)
-  // },[activeCategory])
+    const handleScroll = () => {
+      changepositions()
+    };
+  
+    window.addEventListener('scroll', handleScroll);
+      return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
+
+
 
   useEffect(() => {
     productRefs.current = [];
@@ -71,7 +65,7 @@ export default function Products({ menu, activeCategory, animationchange }) {
                 );
               })}
             </ProductWrapper>
-            {activePlate!==null && <ProductDetails menu={singlemenu}   activePlate={activePlate} setactivePlate={setactivePlate} plates={singlemenu?.products}  productPositions={productPositions}/>}
+            {activePlate!==null && <ProductDetails menu={singlemenu} activePlate={activePlate} setactivePlate={setactivePlate}  plates={singlemenu?.products}  productPositions={productPositions}/>}
             </>
           )
         }

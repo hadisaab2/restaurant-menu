@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import {
+  BackBtn,
   BackIcon,
   Category,
   Image,
@@ -44,7 +45,8 @@ export default function ProductDetails({
         CloseAnimation={CloseAnimation}
       >
         <ItemCategory CloseAnimation={CloseAnimation}>
-          <Category>{menu?.en_category}</Category>
+          <Category>{activeLanuguage=="en"?menu?.en_category:menu?.ar_category}</Category>
+          
         </ItemCategory>
         <ImageContainer CloseAnimation={CloseAnimation}>
           <Image
@@ -52,12 +54,14 @@ export default function ProductDetails({
           />
         </ImageContainer>
       </Wrapper>
-      <BackIcon CloseAnimation={CloseAnimation} onClick={handleBack} />
+      <BackBtn onClick={handleBack} CloseAnimation={CloseAnimation} >
+      <BackIcon  />
+      </BackBtn>
       <ItemInfoWrapper CloseAnimation={CloseAnimation}>
         <ItemInfo>
-          <ItemName>{plates[activePlate]?.en_name}</ItemName>
+          <ItemName>{activeLanuguage=="en"?plates[activePlate]?.en_name:plates[activePlate]?.ar_name}</ItemName>
           <ItemDescription>
-            {plates[activePlate]?.en_description}
+            {activeLanuguage=="en"?plates[activePlate]?.en_description:plates[activePlate]?.ar_description}
           </ItemDescription>
           <ItemPrice>{plates[activePlate]?.en_price} $</ItemPrice>
         </ItemInfo>

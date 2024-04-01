@@ -6,10 +6,11 @@ import { IoIosArrowBack } from "react-icons/io";
 const slideAnimation = (x, y,width) => keyframes`
  0% { 
     left: ${x}px;
-    top:${y-window.scrollY}px;
+    top:${y}px;
     width:${width}px;
     height:20vh;
     border-radius: 10px;
+    
 }
  100% { 
     left: 0;
@@ -34,15 +35,20 @@ const BackIconAnimation  = keyframes`
 `;
 
 export const BackIcon = styled(IoIosArrowBack)`
-position: fixed;
-z-index: 7;
-top:30px;
-left:30px;
 font-size: 22px;
 color:white;
 background-color: ${props=>props.theme.mainColor};
 padding: 4px;
 border-radius: 50%;
+`;
+export const BackBtn =  styled.button`
+position: fixed;
+z-index: 7;
+top:30px;
+left:30px;
+outline: none;
+border:0;
+background-color: transparent;
 display: ${props=>props.CloseAnimation?"flex":"none"};
 animation: ${BackIconAnimation} 0.8s ease-in-out;
 `;
@@ -63,7 +69,10 @@ const CategoryAnimation  = keyframes`
     margin-top: -50px;
     opacity: 0;
 }
-
+50%{
+  margin-top: -50px;
+    opacity: 0;
+}
  100% { 
     margin-top: 0px;
     opacity: 1;
@@ -75,7 +84,7 @@ export const Category = styled.span`
  font-weight: 600;
  margin-top: 0px;
  color:${props=>props.theme.textColor};
- animation: ${CategoryAnimation} 1.3s ease-in-out;
+ animation: ${CategoryAnimation} 1.8s ease-in-out;
 
 
 `;
@@ -89,7 +98,7 @@ export const Image = styled.img`
 export const Wrapper = styled.div`
 position:fixed;
   width: ${props=>props.CloseAnimation?"100%":`${props.width}px`};
-  top:${props=>props.CloseAnimation?"0":`${props.y-window.scrollY}px`};
+  top:${props=>props.CloseAnimation?"0":`${props.y}px`};
 left:${props=>props.CloseAnimation?"0":`${props.x}px`};
   height: ${props=>props.CloseAnimation?"100vh":`20vh`};
   overflow: hidden;
@@ -157,7 +166,10 @@ const NameAnimation  = keyframes`
     margin-left: -50px;
     opacity: 0;
 }
-
+50%{
+  margin-left: -50px;
+    opacity: 0;
+}
  100% { 
     margin-left: 0px;
     opacity: 1;
@@ -172,7 +184,7 @@ export const ItemName = styled.span`
  margin-left: 0px;
 opacity: 1;
  margin-top: 10px;
- animation:${NameAnimation} 1s ease-in-out;
+ animation:${NameAnimation} 1.4s ease-in-out;
 `;
 
 const DescriptionAnimation  = keyframes`
@@ -180,7 +192,10 @@ const DescriptionAnimation  = keyframes`
     margin-top: -20px;
     opacity: 0;
 }
-
+50%{
+  margin-top: -20px;
+    opacity: 0;
+}
  100% { 
     margin-top: 20px;
     opacity: 1;
@@ -193,14 +208,17 @@ font-weight: 300;
 width: 90%;
 margin-top: 20px;
 word-spacing: 1px;
-animation:${DescriptionAnimation} 1.3s ease-in-out;
+animation:${DescriptionAnimation} 1.6s ease-in-out;
 `;
 const PriceAnimation  = keyframes`
  0% { 
     transform: scale(0);
     opacity: 0;
 }
-
+50% { 
+    transform: scale(0);
+    opacity: 0;
+}
  100% { 
     transform: scale(1);
     opacity: 1;
@@ -219,7 +237,7 @@ color:white;
 padding: 10px;
 border-radius: 10px;
 background-color: ${props=>props.theme.mainColor};
-animation:${PriceAnimation} 1s ease-in-out;
+animation:${PriceAnimation} 1.4s ease-in-out;
 
 `;
 

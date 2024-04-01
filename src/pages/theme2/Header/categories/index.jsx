@@ -20,8 +20,6 @@ export default function Categories({
   categories,
   activeCategory,
   setactiveCategory,
-  animationchange,
-  setanimationchange,
 }) {
   const [carouselPosition, setcarouselPosition] = useState(0);
   const [scrollInProgress, setScrollInProgress] = useState(false);
@@ -64,7 +62,6 @@ export default function Categories({
 
   const itemClick = (index) => {
     setactiveCategory(index);
-    setanimationchange(!animationchange);
   };
   return (
     <Container>

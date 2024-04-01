@@ -9,8 +9,6 @@ export default function Header({
   activeCategory,
   setactiveCategory,
   categories,
-  setanimationchange,
-  animationchange,
 }) {
   const { restaurantName } = useParams();
 
@@ -21,22 +19,10 @@ export default function Header({
     <Container>
       <HeaderTop />
 
-      <TextContainer activeLanuguage={activeLanuguage}>
-        {activeLanuguage == "en" ? (
-          <>
-            <Text>Main Categories</Text>
-
-          </>
-        ) : (
-          <Text>أشهر الأصنـاف</Text>
-        )}
-      </TextContainer>
       <Categories
         categories={categories}
         activeCategory={activeCategory}
         setactiveCategory={setactiveCategory}
-        setanimationchange={setanimationchange}
-        animationchange={animationchange}
       />
     </Container>
   );

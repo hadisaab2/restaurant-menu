@@ -9,8 +9,6 @@ export default function Theme2() {
     const [activeCategory, setactiveCategory] = useState(0);
     const {restaurantName}=useParams();
     const restaurant = useSelector((state) => state.restaurant?.[restaurantName]);
-    const [animationchange, setanimationchange] = useState(false);
-
     return (
       <Container>
         <MenuWrapper >
@@ -19,13 +17,10 @@ export default function Theme2() {
                 categories={restaurant.categories}
                 activeCategory={activeCategory}
                 setactiveCategory={setactiveCategory}
-                animationchange={animationchange}
-                setanimationchange={setanimationchange}
               />
                 <Products
               menu={restaurant.categories}
               activeCategory={activeCategory}
-              animationchange={animationchange}
             />
         </MenuWrapper>
 
