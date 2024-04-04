@@ -8,7 +8,7 @@ const slideAnimation = (x, y,width) => keyframes`
     left: ${x}px;
     top:${y}px;
     width:${width}px;
-    height:20vh;
+    min-height:20vh;
     border-radius: 10px;
     
 }
@@ -16,7 +16,7 @@ const slideAnimation = (x, y,width) => keyframes`
     left: 0;
     top:0;
     width:100%;
-    height: 100vh;
+    min-height: 110vh;
     border-radius: 0px;
 
 }
@@ -100,7 +100,7 @@ position:fixed;
   width: ${props=>props.CloseAnimation?"100%":`${props.width}px`};
   top:${props=>props.CloseAnimation?"0":`${props.y}px`};
 left:${props=>props.CloseAnimation?"0":`${props.x}px`};
-  height: ${props=>props.CloseAnimation?"100vh":`20vh`};
+  min-height: ${props=>props.CloseAnimation?"110vh":`20vh`};
   overflow: hidden;
   transition:all 0.8s ease-in-out;
   animation: ${({ x, y,width }) => slideAnimation(x, y,width)} 0.8s ease-in-out;
@@ -120,7 +120,7 @@ const ImageAnimation  = keyframes`
 
  100% { 
     width:90%;
-    height:50%;
+    height:45%;
     border-radius: 40px;
     top:80px;
 
@@ -128,7 +128,7 @@ const ImageAnimation  = keyframes`
 `;
 export const ImageContainer = styled.div`
   width: ${props=>props.CloseAnimation?"90%":"100%"};
-height:${props=>props.CloseAnimation?"50%":"100%"}; 
+height:${props=>props.CloseAnimation?"45%":"100%"}; 
 position: absolute;
 border-radius: ${props=>props.CloseAnimation?"40px":"10px"};
 top:${props=>props.CloseAnimation?"80px":"0px"};

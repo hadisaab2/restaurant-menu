@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled, { keyframes } from "styled-components";
 
 export const Container = styled.div`
     width:50%;
@@ -16,6 +16,9 @@ export const Wrapper = styled.div`
     justify-content: center;
     background-color: ${props=>props.theme.categoryUnactive};
     border-radius: 20px;
+    position: relative;
+
+    //cjhange loadeeerr wrappperr and this oneee colorrrr
 
 `;
 
@@ -57,5 +60,37 @@ export const PlatePrice = styled.span`
 color:${props=>props.theme.mainColor};
 font-size: 14px;
 
+
+`;
+const spin = keyframes`
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+`;
+
+export const Loader = styled.div`
+  border: 3px solid rgba(0, 0, 0, 0.1);
+  border-left-color: #333; /* Change color as needed */
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  animation: ${spin} 1s linear infinite; /* Apply animation */
+`;
+
+export const LoaderWrapper = styled.div`
+  display: flex;
+  position: absolute;
+  justify-content: center;
+  align-items: center;
+  width:91%;
+height: 20vh;
+border-radius: 10px;
+overflow: hidden;
+top: 10px;
+  z-index: 3;
+  background-color: ${props=>props.theme.categoryUnactive};
 
 `;

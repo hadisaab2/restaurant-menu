@@ -1,8 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Container,
   Image,
   ImageContainer,
+  Loader,
+  LoaderWrapper,
   PlateName,
   PlatePrice,
   TextContainer,
@@ -10,15 +12,22 @@ import {
 } from "./styles";
 import { useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
+import { useEffect } from "react";
 
 const Product = React.forwardRef(({ plate, setactivePlate, activePlate, index }, ref) => {
   const { restaurantName } = useParams();
   const activeLanuguage = useSelector(
     (state) => state.restaurant?.[restaurantName].activeLanguage
   );
+  const [imageLoaded, setimageLoaded] = useState(false);
+  const handleImageLoaded = () => {
+    setTimeout(() => {
+      setimageLoaded(true);
 
+    }, 10000);
+  };
   const plateHandle = () => {
-    if(activePlate==null){
+    if(activePlate==null && imageLoaded){
       setactivePlate(index);
       document.body.style.overflow = 'hidden';
 
@@ -26,10 +35,16 @@ const Product = React.forwardRef(({ plate, setactivePlate, activePlate, index },
   };
 
   return (
-    <Container index={index} activePlate={activePlate}  >
+    <Container index={index} activePlate={activePlate}   className="lazy-load">
       <Wrapper>
+      {!imageLoaded && (
+          <LoaderWrapper>
+            <Loader />
+          </LoaderWrapper>
+        )}
         <ImageContainer onClick={plateHandle}  ref={ref}>
           <Image
+          onLoad={handleImageLoaded}
             src={`https://storage.googleapis.com/ecommerce-bucket-testing/${plate.image.url}`}
           />
         </ImageContainer>
