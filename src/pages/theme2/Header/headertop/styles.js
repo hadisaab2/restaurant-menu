@@ -26,6 +26,7 @@ height: 25px;
 display: flex;
 align-items: center;
 justify-content: center;
+
 overflow: hidden;
 `;
 

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   BackBtn,
   BackIcon,
@@ -36,6 +36,18 @@ export default function ProductDetails({
 
     setCloseAnimation(false);
   };
+
+  useEffect(() => {
+    const handlePopstate = () => {
+      handleBack();
+    };
+
+    window.addEventListener('popstate', handlePopstate);
+
+    return () => {
+      window.removeEventListener('popstate', handlePopstate);
+    };
+  }, []);
   return (
     <>
       <Wrapper

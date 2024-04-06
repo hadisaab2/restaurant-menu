@@ -43,7 +43,7 @@ border-radius: 50%;
 `;
 export const BackBtn =  styled.button`
 position: fixed;
-z-index: 7;
+z-index: 8;
 top:30px;
 left:30px;
 outline: none;
@@ -104,7 +104,7 @@ left:${props=>props.CloseAnimation?"0":`${props.x}px`};
   overflow: hidden;
   transition:all 0.8s ease-in-out;
   animation: ${({ x, y,width }) => slideAnimation(x, y,width)} 0.8s ease-in-out;
-  z-index: 3;
+  z-index: 6;
   border-radius: 0px;
   background-color: ${props=>props.theme.backgroundColor};
   display: flex;
@@ -143,9 +143,9 @@ box-shadow: 0px -4px 8px rgba(0, 0, 0, 0.1);
 
 export const ItemInfoWrapper = styled.div`
   position:fixed;
-  z-index: 4;
+  z-index: 7;
   top:0;
-  height: 100vh;
+  min-height: 100vh;
   width: 100%;
   display: ${props=>props.CloseAnimation?"flex":"none"};
   align-items: flex-end;
@@ -153,7 +153,7 @@ export const ItemInfoWrapper = styled.div`
 `;
 
 export const ItemInfo = styled.div`
-  height: 35%;
+  height: 30vh;
   width: 90%;
   display:flex;
   flex-direction: column;

@@ -21,15 +21,12 @@ const Product = React.forwardRef(({ plate, setactivePlate, activePlate, index },
   );
   const [imageLoaded, setimageLoaded] = useState(false);
   const handleImageLoaded = () => {
-    setTimeout(() => {
       setimageLoaded(true);
-
-    }, 10000);
   };
   const plateHandle = () => {
     if(activePlate==null && imageLoaded){
       setactivePlate(index);
-      document.body.style.overflow = 'hidden';
+      // document.body.style.overflow = 'hidden';
 
     }
   };
