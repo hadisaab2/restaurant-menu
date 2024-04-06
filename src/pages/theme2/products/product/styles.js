@@ -14,7 +14,7 @@ export const Wrapper = styled.div`
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    background-color: ${props=>props.theme.categoryUnactive};
+    background-color: ${props=>props.theme.BoxColor};
     border-radius: 20px;
     position: relative;
 

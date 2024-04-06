@@ -32,8 +32,9 @@ export default function ProductDetails({
   const handleBack = () => {
     setTimeout(() => {
       setactivePlate(null);
+      document.body.style.overflow = 'auto';
+
     }, 800);
-    document.body.style.overflow = 'auto';
 
     setCloseAnimation(false);
   };

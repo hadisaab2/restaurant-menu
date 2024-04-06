@@ -13,8 +13,7 @@ export default function Products({
   const [activePlate, setactivePlate] = useState(null);
   const { restaurantName } = useParams();
   const [productPositions, setProductPositions] = useState([]); // x y and width of product
-  const [numProductsToShow, setNumProductsToShow] = useState(4); // Number of products to show initially
-  const [observer, setObserver] = useState(null); // IntersectionObserver instance
+
   const [productRefs, setProductRefs] = useState([]);
 
   const activeLanuguage = useSelector(

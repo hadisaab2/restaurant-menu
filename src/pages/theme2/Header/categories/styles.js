@@ -1,4 +1,5 @@
-import styled from "styled-components";
+import styled, { keyframes } from "styled-components";
+import { MdOutlineChevronRight } from "react-icons/md";
 
 export const Container = styled.div`
 display: flex;
@@ -6,6 +7,7 @@ align-items: center;
 justify-content: center;
 width: 100%;
 margin-top: 20px;
+position: relative;
 `;
 export const CarouselContainer = styled.div`
   overflow: hidden;
@@ -50,7 +52,7 @@ export const CategoryWrapper = styled.div`
   align-items: center;
   justify-content: center;
   flex-direction: column;
-  background-color:${props=>props.index==props.activeCategory?props.theme.categoryActive:props.theme.categoryUnactive};
+  background-color:${props=>props.index==props.activeCategory?props.theme.categoryActive:props.theme.BoxColor};
   box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.1);
   transition: 0.2s all ease-in-out;
   color:${props=>props.index==props.activeCategory?"white":"black"};
@@ -97,3 +99,10 @@ export const CategoryName = styled.span`
     font-size: 12px;
 `;
 
+
+export const ArrowIcon = styled(MdOutlineChevronRight)`
+position: absolute;
+font-size: 22px;
+right: 0px;
+color:${props=>props.theme.textColor};
+`;

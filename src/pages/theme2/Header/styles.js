@@ -44,7 +44,8 @@ height:100%;
 background-color: ${props=>props.theme.categoryUnactive};
 border: 0;
 outline: none;
-padding-left: 30px;
+padding-left: ${props=>props.activeLanguage=="en"?"30px":"0px"};
+padding-right: ${props=>props.activeLanguage=="en"?"0px":"30px"};
 color:${props=>props.theme.textColor};
 &::placeholder{
     color:${props=>props.theme.textColor};
@@ -54,7 +55,8 @@ color:${props=>props.theme.textColor};
 `;
 
 export const SearchIcon = styled(CiSearch)`
-
 position: absolute;
-left: 10px;
+left: ${props=>props.activeLanguage=="en"?"10px":null};
+right: ${props=>props.activeLanguage=="en"?null:"10px"};
+
 `;

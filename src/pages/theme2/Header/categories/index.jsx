@@ -10,6 +10,7 @@ import {
   IconContainer,
   TextContainer,
   Icon,
+  ArrowIcon,
 } from "./styles";
 import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
@@ -29,7 +30,11 @@ export default function Categories({
   );
 
   const touchStartX = useRef(0);
-
+  const handleArrow = ()=>{
+    if (carouselPosition < categories.length - 4) {
+      setcarouselPosition(carouselPosition + 1);
+    }
+  }
   const handleTouchStart = (e) => {
     touchStartX.current = e.touches[0].clientX;
   };
@@ -98,6 +103,7 @@ export default function Categories({
           })}
         </Carousel>
       </CarouselContainer>
+      <ArrowIcon onClick={handleArrow}/>
     </Container>
   );
 }

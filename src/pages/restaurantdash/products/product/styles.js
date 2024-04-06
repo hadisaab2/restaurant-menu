@@ -51,6 +51,7 @@ export const Title = styled.span`
   font-size: 15px;
   font-weight: 500;
   margin-top: 10px;
+  width:70%;
 `;
 export const Category = styled.span`
   margin-top: 2px;

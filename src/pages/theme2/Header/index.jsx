@@ -14,7 +14,7 @@ export default function Header({
 }) {
   const { restaurantName } = useParams();
 
-  const activeLanuguage = useSelector(
+  const activeLanguage = useSelector(
     (state) => state.restaurant?.[restaurantName].activeLanguage
   );
   const handlesearch=(e)=>{
@@ -31,8 +31,8 @@ export default function Header({
         setactiveCategory={setactiveCategory}
       />
       <SearchContainer>
-        <SearchIcon/>
-        <Search type="text" placeholder="Search Menu" onChange={handlesearch} value={searchText}/>
+        <SearchIcon  activeLanguage={activeLanguage}/>
+        <Search type="text" activeLanguage={activeLanguage} dir={activeLanguage=="en"?"ltr":"rtl"} placeholder={activeLanguage=="en"?"Search Menu":"قائمة البحث"} onChange={handlesearch} value={searchText}/>
       </SearchContainer>
     </Container>
   );
