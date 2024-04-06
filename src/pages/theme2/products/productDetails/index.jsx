@@ -3,6 +3,7 @@ import {
   BackBtn,
   BackIcon,
   Category,
+  FakeContainer,
   Image,
   ImageContainer,
   ItemCategory,
@@ -65,19 +66,19 @@ export default function ProductDetails({
             src={`https://storage.googleapis.com/ecommerce-bucket-testing/${plates[activePlate]?.image.url}`}
           />
         </ImageContainer>
-      </Wrapper>
-      <BackBtn onClick={handleBack} CloseAnimation={CloseAnimation} >
-      <BackIcon  />
-      </BackBtn>
-      <ItemInfoWrapper CloseAnimation={CloseAnimation}>
-        <ItemInfo>
+        <FakeContainer CloseAnimation={CloseAnimation}/>
+        <ItemInfo CloseAnimation={CloseAnimation}>
           <ItemName>{activeLanuguage=="en"?plates[activePlate]?.en_name:plates[activePlate]?.ar_name}</ItemName>
           <ItemDescription>
             {activeLanuguage=="en"?plates[activePlate]?.en_description:plates[activePlate]?.ar_description}
           </ItemDescription>
           <ItemPrice>{plates[activePlate]?.en_price} $</ItemPrice>
         </ItemInfo>
-      </ItemInfoWrapper>
+      </Wrapper>
+      <BackBtn onClick={handleBack} CloseAnimation={CloseAnimation} >
+      <BackIcon  />
+      </BackBtn>
+
     </>
   );
 }

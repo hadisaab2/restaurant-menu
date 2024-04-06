@@ -16,7 +16,7 @@ const slideAnimation = (x, y,width) => keyframes`
     left: 0;
     top:0;
     width:100%;
-    min-height: 110vh;
+    min-height: 100vh;
     border-radius: 0px;
 
 }
@@ -100,27 +100,28 @@ position:fixed;
   width: ${props=>props.CloseAnimation?"100%":`${props.width}px`};
   top:${props=>props.CloseAnimation?"0":`${props.y}px`};
 left:${props=>props.CloseAnimation?"0":`${props.x}px`};
-  min-height: ${props=>props.CloseAnimation?"110vh":`20vh`};
-  overflow: hidden;
+  min-height: ${props=>props.CloseAnimation?"100vh":`20vh`};
+  overflow: scroll;
   transition:all 0.8s ease-in-out;
   animation: ${({ x, y,width }) => slideAnimation(x, y,width)} 0.8s ease-in-out;
   z-index: 6;
   border-radius: 0px;
   background-color: ${props=>props.theme.backgroundColor};
   display: flex;
-  justify-content: center;
+  flex-direction:column;
+  align-items:center; 
 `;
 const ImageAnimation  = keyframes`
  0% { 
     width:100%;
-    height:100%;
+    height:20vh;
     border-radius: 10px;
     top:0px;
 }
 
  100% { 
     width:90%;
-    height:45%;
+    height:45vh;
     border-radius: 40px;
     top:80px;
 
@@ -128,17 +129,26 @@ const ImageAnimation  = keyframes`
 `;
 export const ImageContainer = styled.div`
   width: ${props=>props.CloseAnimation?"90%":"100%"};
-height:${props=>props.CloseAnimation?"45%":"100%"}; 
+height:${props=>props.CloseAnimation?"45vh":"20vh"}; 
 position: absolute;
 border-radius: ${props=>props.CloseAnimation?"40px":"10px"};
 top:${props=>props.CloseAnimation?"80px":"0px"};
 overflow: hidden;
-transition:all 1s;
+transition:all 0.8s;
 animation:${ImageAnimation} 0.8s;
 box-shadow: 0px -4px 8px rgba(0, 0, 0, 0.1); 
 
 `
+export const FakeContainer = styled.div`
+  width: ${props=>props.CloseAnimation?"90%":"100%"};
+  height:${props=>props.CloseAnimation?"45vh":"20vh"}; 
+border-radius: ${props=>props.CloseAnimation?"40px":"10px"};
+margin-top:${props=>props.CloseAnimation?"80px":"0px"};
+overflow: hidden;
+transition:all 1s;
+animation:${ImageAnimation} 0.8s;
 
+`
 
 
 export const ItemInfoWrapper = styled.div`
@@ -147,18 +157,17 @@ export const ItemInfoWrapper = styled.div`
   top:0;
   min-height: 100vh;
   width: 100%;
-  display: ${props=>props.CloseAnimation?"flex":"none"};
   align-items: flex-end;
   justify-content: center;
 `;
 
 export const ItemInfo = styled.div`
-  height: 30vh;
   width: 90%;
-  display:flex;
+  display: ${props=>props.CloseAnimation?"flex":"none"};
   flex-direction: column;
-  border-radius: 30px;
   position: relative;
+  margin-top: 20px;
+
 `;
 
 const NameAnimation  = keyframes`

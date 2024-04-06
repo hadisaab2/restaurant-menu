@@ -26,7 +26,7 @@ const Product = React.forwardRef(({ plate, setactivePlate, activePlate, index,sh
   const plateHandle = () => {
     if(activePlate==null && imageLoaded && !showPopup){
       setactivePlate(index);
-      // document.body.style.overflow = 'hidden';
+      document.body.style.overflow = 'hidden';
 
     }
   };
