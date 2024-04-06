@@ -39,15 +39,15 @@ export default function Products({ menu, activeCategory }) {
     }
   }, [menu, activeCategory]);
 
-  // useEffect(() => {
-  //   const handleScroll = () => {
-  //     changepositions()
-  //   };
-  //   window.addEventListener('scroll', handleScroll);
-  //     return () => {
-  //     window.removeEventListener('scroll', handleScroll);
-  //   };
-  // }, [productRefs]);
+  useEffect(() => {
+    const handleScroll = () => {
+      changepositions()
+    };
+    window.addEventListener('scroll', handleScroll);
+      return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, [productRefs]);
   return (
     <Container activeCategory={activeCategory}>
    {console.log(productPositions)} 
