@@ -22,28 +22,31 @@ export default function Products({
   );
   //function to find or change the x and y of the products images
   const changepositions = () => {
-    const positions = productRefs.map((ref) => {
-      const rect = ref.current.getBoundingClientRect();
-      return { x: rect.left, y: rect.top, width: rect.width };
-    });
-    setProductPositions(positions);
+      const positions = productRefs.map((ref) => {
+        const rect = ref.current.getBoundingClientRect();
+        return { x: rect.left, y: rect.top, width: rect.width };
+      });
+      setProductPositions(positions);
+    
   };
 
   useEffect(() => {
     window.scrollTo(0, 0);
     changepositions();
-  }, [productRefs, activeLanuguage]);
+  }, [productRefs]);
 
   useEffect(() => {
     if (menu && activeCategory !== null) {
       const refs = menu?.[activeCategory]?.products
         .filter((plate) =>
-          plate.en_name.toLowerCase().includes(searchText.toLowerCase())
+          plate[activeLanuguage === "en" ? "en_name" : "ar_name"]
+            .toLowerCase()
+            .includes(searchText.toLowerCase())
         )
         .map(() => React.createRef());
       setProductRefs(refs);
     }
-  }, [menu, activeCategory,searchText]);
+  }, [menu, activeCategory, searchText]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -55,44 +58,39 @@ export default function Products({
     };
   }, [productRefs]);
 
-
   const filteredProducts = menu?.[activeCategory]?.products.filter((plate) =>
-    plate.en_name.toLowerCase().includes(searchText.toLowerCase())
+    plate[activeLanuguage === "en" ? "en_name" : "ar_name"]
+      .toLowerCase()
+      .includes(searchText.toLowerCase())
   );
   return (
     <Container activeCategory={activeCategory}>
       {console.log(productRefs)}
-      {menu?.map((singlemenu, index) => {
-        if (activeCategory == index) {
+      {console.log(filteredProducts)}
+
+      <ProductWrapper activePlate={activePlate}>
+        {filteredProducts.map((plate, index) => {
           return (
-            <>
-              <ProductWrapper activePlate={activePlate}>
-                {filteredProducts.map((plate, index) => {
-                  return (
-                    <Product
-                      index={index}
-                      plate={plate}
-                      activePlate={activePlate}
-                      setactivePlate={setactivePlate}
-                      ref={productRefs[index]}
-                      showPopup={showPopup}
-                    />
-                  );
-                })}
-              </ProductWrapper>
-              {activePlate !== null && (
-                <ProductDetails
-                  menu={singlemenu}
-                  activePlate={activePlate}
-                  setactivePlate={setactivePlate}
-                  plates={filteredProducts}
-                  productPositions={productPositions}
-                />
-              )}
-            </>
+            <Product
+              index={index}
+              plate={plate}
+              activePlate={activePlate}
+              setactivePlate={setactivePlate}
+              ref={productRefs[index]}
+              showPopup={showPopup}
+            />
           );
-        }
-      })}
+        })}
+      </ProductWrapper>
+      {activePlate !== null && (
+        <ProductDetails
+          menu={menu?.[activeCategory]}
+          activePlate={activePlate}
+          setactivePlate={setactivePlate}
+          plates={filteredProducts}
+          productPositions={productPositions}
+        />
+      )}
     </Container>
   );
 }
