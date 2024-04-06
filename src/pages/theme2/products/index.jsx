@@ -4,7 +4,7 @@ import Product from "./product";
 import ProductDetails from "./productDetails";
 import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
-export default function Products({ menu, activeCategory }) {
+export default function Products({ menu, activeCategory,showPopup }) {
   const [activePlate, setactivePlate] = useState(null);
   const { restaurantName } = useParams();
   const [productPositions, setProductPositions] = useState([]); // x y and width of product
@@ -65,6 +65,7 @@ export default function Products({ menu, activeCategory }) {
                       activePlate={activePlate}
                       setactivePlate={setactivePlate}
                       ref={productRefs[index]}
+                      showPopup={showPopup}
                     />
                   );
                 })}

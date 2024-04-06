@@ -14,7 +14,7 @@ import { useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { useEffect } from "react";
 
-const Product = React.forwardRef(({ plate, setactivePlate, activePlate, index }, ref) => {
+const Product = React.forwardRef(({ plate, setactivePlate, activePlate, index,showPopup }, ref) => {
   const { restaurantName } = useParams();
   const activeLanuguage = useSelector(
     (state) => state.restaurant?.[restaurantName].activeLanguage
@@ -24,7 +24,7 @@ const Product = React.forwardRef(({ plate, setactivePlate, activePlate, index },
       setimageLoaded(true);
   };
   const plateHandle = () => {
-    if(activePlate==null && imageLoaded){
+    if(activePlate==null && imageLoaded && !showPopup){
       setactivePlate(index);
       // document.body.style.overflow = 'hidden';
 

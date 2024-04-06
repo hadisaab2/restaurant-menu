@@ -27,6 +27,7 @@ export default function Theme2() {
                 <Products
               menu={restaurant.categories}
               activeCategory={activeCategory}
+              showPopup={showPopup}
             />
         </MenuWrapper>
         <DetailsBtn onClick={() => popupHandler(true)}>
