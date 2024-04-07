@@ -12,7 +12,7 @@ export const Container = styled.div`
 position: fixed;
 bottom: ${props=>props.showPopup?"0%":"-100%"};
 height: 80vh;
-background-color: white;
+background-color: ${props=>props.theme.popupbackgroundColor};
 width: 100%;
 transition: all 0.8s ease-in-out;
 border-top-right-radius: 60px;
@@ -29,6 +29,8 @@ margin-top:60px;
 text-align: left;
 width: 70%;
 margin-left: 20px;
+color:${props=>props.theme.popupTextColor}
+
 `;
 export const ResName = styled.span`
 font-size: 30px;
@@ -37,6 +39,8 @@ margin-top:6px;
 text-align: left;
 width: 70%;
 margin-left: 20px;
+color:${props=>props.theme.popupTextColor}
+
 `;
 export const BranchesContainer = styled.div`
   flex-wrap: wrap;
@@ -52,7 +56,7 @@ export const BranchesContainer = styled.div`
 export const Branch = styled.span`
  font-size:18px;
  font-weight: 620;
- color:${props=>props.activeBranch==props.BranchId?props.theme.backgroundColor:"#bcb9b9"};
+ color:${props=>props.activeBranch==props.BranchId?props.theme.popupTextColor:props.theme.branchUnActive};
  border-bottom:${props=>props.activeBranch==props.BranchId?`2px solid ${props.theme.backgroundColor}`:"null"};
  transition:all 0.1s ease-in-out;
  height: 26px;
@@ -72,12 +76,14 @@ display: flex;
   flex-direction: row;
   gap:10px;
   align-items: center;
+  
 
 `;
 
 export const Info = styled.span`
 font-size:16px;
  font-weight: 620;
+ color:${props=>props.theme.popupTextColor}
 
 `;
 
@@ -85,15 +91,20 @@ font-size:16px;
 export const LocationLogo = styled(FaLocationArrow)`
 font-size: 25px;
 opacity: 0.8;
+color:${props=>props.theme.popupTextColor}
 `;
 
 export const CallLogo = styled(IoIosCall)`
 font-size: 25px;
 opacity: 0.8;
+color:${props=>props.theme.popupTextColor}
+
 `;
 export const MapsLogo = styled(MdLocationOn)`
 font-size: 25px;
 opacity: 0.8;
+color:${props=>props.theme.popupTextColor}
+
 `;
 
 export const Close = styled(IoMdClose)`
@@ -102,6 +113,8 @@ position: absolute;
 top: 30px;
 right:20px;
 cursor: pointer;
+color:${props=>props.theme.popupTextColor}
+
 `;
 
 export const SocialMediaContainer = styled.div`

@@ -30,7 +30,7 @@ display: flex;
 align-items: center;
 margin-top: 30px;
 font-weight: 600;
-color:${props=>props.theme.textColor};
+color:${props=>props.theme.searchTextColor};
 height: 40px;
 border-radius: 10px;
 overflow: hidden;
@@ -48,7 +48,7 @@ padding-left: ${props=>props.activeLanguage=="en"?"30px":"0px"};
 padding-right: ${props=>props.activeLanguage=="en"?"0px":"30px"};
 color:${props=>props.theme.textColor};
 &::placeholder{
-    color:${props=>props.theme.textColor};
+    color:${props=>props.theme.searchTextColor};
     opacity: 0.5;
 }
 

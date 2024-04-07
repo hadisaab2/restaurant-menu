@@ -18,7 +18,7 @@ export default function Theme2() {
       setshowPopup(show);
     };
     return (
-      <Container >
+      <Container id="wrapper">
         <MenuWrapper  >
         <BlurOverlay showPopup={showPopup} />
               <Header

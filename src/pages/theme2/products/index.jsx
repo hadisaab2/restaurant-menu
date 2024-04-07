@@ -13,20 +13,26 @@ export default function Products({
   const [activePlate, setactivePlate] = useState(null);
   const { restaurantName } = useParams();
   const [productPositions, setProductPositions] = useState([]); // x y and width of product
-
+  const [numProductsToShow, setNumProductsToShow] = useState(4);
   const [productRefs, setProductRefs] = useState([]);
 
   const activeLanuguage = useSelector(
     (state) => state.restaurant?.[restaurantName].activeLanguage
   );
+
+
+
   //function to find or change the x and y of the products images
   const changepositions = () => {
-      const positions = productRefs.map((ref) => {
-        const rect = ref.current.getBoundingClientRect();
+    const positions = productRefs.map((ref) => {
+      if (ref.current) {
+        const rect = ref.current?.getBoundingClientRect();
         return { x: rect.left, y: rect.top, width: rect.width };
-      });
-      setProductPositions(positions);
-    
+      } else {
+        return null;
+      }
+    });
+    setProductPositions(positions);
   };
 
   useEffect(() => {
@@ -35,6 +41,7 @@ export default function Products({
   }, [productRefs]);
 
   useEffect(() => {
+    setNumProductsToShow(4)
     if (menu && activeCategory !== null) {
       const refs = menu?.[activeCategory]?.products
         .filter((plate) =>
@@ -48,8 +55,15 @@ export default function Products({
   }, [menu, activeCategory, searchText]);
 
   useEffect(() => {
+
     const handleScroll = () => {
       changepositions();
+      const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
+
+      // Check if the user has scrolled to the bottom of the page
+      if (scrollTop + clientHeight >= scrollHeight - 1) {
+        setNumProductsToShow((prevNum) => prevNum + 4);
+      }
     };
     window.addEventListener("scroll", handleScroll);
     return () => {
@@ -57,28 +71,36 @@ export default function Products({
     };
   }, [productRefs]);
 
+  //filtering products based on search
   const filteredProducts = menu?.[activeCategory]?.products.filter((plate) =>
     plate[activeLanuguage === "en" ? "en_name" : "ar_name"]
       .toLowerCase()
       .includes(searchText.toLowerCase())
   );
   return (
-    <Container activeCategory={activeCategory}>
-      {console.log(productRefs)}
-      {console.log(filteredProducts)}
-
+    <Container activeCategory={activeCategory}> 
+    {        console.log(numProductsToShow)
+}
       <ProductWrapper activePlate={activePlate}>
-        {filteredProducts.map((plate, index) => {
+        {menu?.map((singlemenu, index) => {
+          if(activeCategory==index){
           return (
-            <Product
-              index={index}
-              plate={plate}
-              activePlate={activePlate}
-              setactivePlate={setactivePlate}
-              ref={productRefs[index]}
-              showPopup={showPopup}
-            />
+            <>
+              {filteredProducts.slice(0, numProductsToShow).map((plate, index) => {
+                return (
+                  <Product
+                    index={index}
+                    plate={plate}
+                    activePlate={activePlate}
+                    setactivePlate={setactivePlate}
+                    ref={productRefs[index]}
+                    showPopup={showPopup}
+                  />
+                );
+              })}
+            </>
           );
+            }
         })}
       </ProductWrapper>
       {activePlate !== null && (

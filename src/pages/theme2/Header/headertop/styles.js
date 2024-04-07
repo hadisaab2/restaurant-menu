@@ -56,7 +56,7 @@ export const Language = styled.div`
 z-index: 3;
 flex:1;
 height: 100%;
-color:${props=>props.theme.textColor};
+color:${props=>props.theme.languageTextColor};
 text-align: center;
 display: flex;
 align-items: center;

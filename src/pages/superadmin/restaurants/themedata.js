@@ -22,8 +22,14 @@ export const templates = [
       "categoryActiveText",
       "categoryActiveIcon",
       "BoxColor",
-      "categoryUnactiveText",
+      "BoxTextColor",
       "categoryUnactiveIcon",
+      "languageTextColor",
+      "searchTextColor",
+      "popupTextColor",
+      "popupbackgroundColor",
+      "branchUnActive"
+      
       // "plateBackground",
       // "plateName",
     ],
