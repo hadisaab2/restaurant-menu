@@ -21,6 +21,7 @@ import {
   MapsLogo,
   FacebookContainer,
   FacebookLogo,
+  MapLink,
 } from "./styles";
 
 export default function Popup({
@@ -63,11 +64,11 @@ export default function Popup({
         </InfoContainer>
         <InfoContainer>
           <CallLogo />
-          <Info>01274929 | 70771432 | 03615688</Info>
+          <Info>03875135</Info>
         </InfoContainer>
         <InfoContainer>
           <MapsLogo />
-          <Info>{activeBranch?.mapLink}</Info>
+          <MapLink href ={`https://${activeBranch?.mapLink}`}>{activeBranch?.mapLink}</MapLink>
         </InfoContainer>
       </BranchInfo>
 

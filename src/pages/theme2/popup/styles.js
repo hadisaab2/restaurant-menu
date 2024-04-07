@@ -29,7 +29,7 @@ margin-top:60px;
 text-align: left;
 width: 70%;
 margin-left: 20px;
-color:${props=>props.theme.popupTextColor}
+color:${props=>props.theme.mainColor}
 
 `;
 export const ResName = styled.span`
@@ -39,7 +39,7 @@ margin-top:6px;
 text-align: left;
 width: 70%;
 margin-left: 20px;
-color:${props=>props.theme.popupTextColor}
+color:${props=>props.theme.mainColor}
 
 `;
 export const BranchesContainer = styled.div`
@@ -57,7 +57,7 @@ export const Branch = styled.span`
  font-size:18px;
  font-weight: 620;
  color:${props=>props.activeBranch==props.BranchId?props.theme.popupTextColor:props.theme.branchUnActive};
- border-bottom:${props=>props.activeBranch==props.BranchId?`2px solid ${props.theme.backgroundColor}`:"null"};
+ border-bottom:${props=>props.activeBranch==props.BranchId?`1px solid ${props.theme.textColor}`:"null"};
  transition:all 0.1s ease-in-out;
  height: 26px;
  `;
@@ -86,7 +86,14 @@ font-size:16px;
  color:${props=>props.theme.popupTextColor}
 
 `;
+export const MapLink = styled.a`
+font-size:16px;
+ font-weight: 620;
+ color:${props=>props.theme.popupTextColor};
+ text-decoration: none;
 
+
+`;
 
 export const LocationLogo = styled(FaLocationArrow)`
 font-size: 25px;
