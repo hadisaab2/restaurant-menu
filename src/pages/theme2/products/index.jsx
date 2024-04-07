@@ -86,7 +86,7 @@ export default function Products({
           if(activeCategory==index){
           return (
             <>
-              {filteredProducts.slice(0, numProductsToShow).map((plate, index) => {
+              {filteredProducts.map((plate, index) => {
                 return (
                   <Product
                     index={index}
