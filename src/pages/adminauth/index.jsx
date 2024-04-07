@@ -56,7 +56,7 @@ export default function AdminSignin() {
     <Container>
       <FormContainer>
         <HeaderContainer>
-          <Title>Welcome To Plateau</Title>
+          <Title>Welcome To Menugic</Title>
           <SubTitle>
             Access the admin dashboard to manage and control your menu
             effortlessly.

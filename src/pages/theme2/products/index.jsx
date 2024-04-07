@@ -61,7 +61,7 @@ export default function Products({
       const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
 
       // Check if the user has scrolled to the bottom of the page
-      if (scrollTop + clientHeight >= scrollHeight - 10) {
+      if (scrollTop + clientHeight >= scrollHeight - 100) {
         setNumProductsToShow((prevNum) => prevNum + 4);
       }
     };
@@ -86,7 +86,7 @@ export default function Products({
           if(activeCategory==index){
           return (
             <>
-              {filteredProducts.map((plate, index) => {
+              {filteredProducts.slice(0, numProductsToShow).map((plate, index) => {
                 return (
                   <Product
                     index={index}

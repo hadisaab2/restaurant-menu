@@ -10,7 +10,6 @@ export default function Theme2() {
     const [activeCategory, setactiveCategory] = useState(0);
     const [showPopup, setshowPopup] = useState(false);
     const [searchText, setSearchText] = useState("");
-
     const {restaurantName}=useParams();
     const restaurant = useSelector((state) => state.restaurant?.[restaurantName]);
 
