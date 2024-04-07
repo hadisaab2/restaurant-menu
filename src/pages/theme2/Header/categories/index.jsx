@@ -16,6 +16,7 @@ import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import categoryicon from "./categoryicon.png";
 import categoryicon2 from "./categoryicon2.png";
+import perfume from "./perfume.png";
 
 export default function Categories({
   categories,
@@ -87,7 +88,7 @@ export default function Categories({
                 <CategoryWrapper activeCategory={activeCategory} index={index}>
                   <IconContainer >
                     <IconWrapper activeCategory={activeCategory} index={index} >
-                      <Icon src={restaurantName=="Mazar"?categoryicon:categoryicon2} />
+                      <Icon src={restaurantName=="Mazar"?categoryicon:perfume} />
                     </IconWrapper>
                   </IconContainer>
                   <TextContainer>
