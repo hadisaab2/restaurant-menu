@@ -78,7 +78,7 @@ export const Actions = styled.div`
 
 export const AddCategoryForm = styled.div`
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: 20px;
