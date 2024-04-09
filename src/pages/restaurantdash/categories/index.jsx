@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   Container,
   Category,
@@ -10,7 +10,7 @@ import {
   BackIcon,
   AddCategoryForm,
 } from "./styles";
-import { TextField } from "@mui/material";
+import { TextField, Button } from "@mui/material";
 import { getCookie } from "../../../utilities/manageCookies";
 import { LANGUAGES } from "../../../global";
 import { LoadingButton } from "@mui/lab";
@@ -27,6 +27,12 @@ import { useGetCategories } from "../../../apis/categories/getCategories";
 import { useEditCategoryQuery } from "../../../apis/categories/editCategory";
 import DeleteCategoryPopup from "./deleteCategoryPopup";
 import { useGetProducts } from "../../../apis/products/getProducts";
+import {
+  UploadBtn,
+  UploadImageText,
+  UploadPhoto,
+  UploadedImage,
+} from "../products/addproduct/styles";
 
 export default function Categories({ setProducts }) {
   const [showAddComponent, setShowAddComponent] = useState(false);
@@ -36,6 +42,11 @@ export default function Categories({ setProducts }) {
   const [userInformation, _] = useState(JSON.parse(storedUserInfo));
   const [categories, setCategories] = useState([]);
   const [selectedIdForAction, setSelectedIdForAction] = useState(null);
+  const [file, setFile] = useState(null);
+  const [fileErrMsg, setFileErrMsg] = useState("Please upload image");
+
+  const [imageUrl, setImageUrl] = useState(null);
+  const fileInputRef = useRef(null);
   const { refetch: refetchProducts } = useGetProducts({
     onSuccess: () => {},
     restaurantId: userInformation.restaurant_id,
@@ -54,15 +65,18 @@ export default function Categories({ setProducts }) {
   const displayArabic =
     userInformation.Lang === AR || userInformation.Lang === ENAR;
 
-  const { handleSubmit, register, formState, setValue, reset } = useForm({
-    resolver: yupResolver(schema),
-  });
+  const { handleSubmit, register, formState, setValue, reset, getValues } =
+    useForm({
+      resolver: yupResolver(schema),
+    });
   const { isPending, handleApiCall } = useAddCategoryQuery({
     onSuccess: () => {
       refetchCategories();
       refetchProductsHandler();
       reset();
       setShowAddComponent(false);
+      setFile(null);
+      setImageUrl(null);
     },
   });
 
@@ -73,6 +87,8 @@ export default function Categories({ setProducts }) {
         refetchProductsHandler();
         reset();
         setShowAddComponent(false);
+        setFile(null);
+        setImageUrl(null);
       },
     });
 
@@ -83,9 +99,10 @@ export default function Categories({ setProducts }) {
 
   const handleAddCategory = () => {
     handleSubmit((data) => {
-      const payload = {
+      let payload = {
         ...data,
         restaurant_id: userInformation.restaurant_id,
+        image: file,
       };
 
       !selectedIdForAction
@@ -112,6 +129,9 @@ export default function Categories({ setProducts }) {
 
     setSelectedIdForAction(category.id);
     setShowAddComponent(true);
+    setImageUrl(
+      `https://storage.googleapis.com/ecommerce-bucket-testing/${category?.image_url}`
+    );
   };
 
   const refetchCategories = () => {
@@ -144,6 +164,31 @@ export default function Categories({ setProducts }) {
     }
   };
 
+  const handleButtonClick = () => {
+    fileInputRef.current.click();
+  };
+  const handleOnDeleteImage = () => {
+    setImageUrl(null);
+    setFile(null);
+    setValue("image", null);
+  };
+  const handleFileChange = ({ target }) => {
+    if (target.files[0]) {
+      const uploadedFile = target.files[0];
+      const fileSizeInMB = uploadedFile.size / (1024 * 1024);
+      if (fileSizeInMB > 4) {
+        setFileErrMsg("Image is greater than 4MB");
+        return;
+      } else {
+        setFileErrMsg("Please upload image");
+      }
+      setFile(target.files[0]);
+      const url = URL.createObjectURL(target.files[0]);
+      setImageUrl(url);
+    }
+    target.value = null;
+  };
+
   return (
     <Container>
       <DeleteCategoryPopup
@@ -162,6 +207,27 @@ export default function Categories({ setProducts }) {
               setShowAddComponent(false);
             }}
           />
+          <UploadPhoto
+            type="file"
+            ref={fileInputRef}
+            onChange={handleFileChange}
+          />
+          {imageUrl ? (
+            <Button
+              variant="contained"
+              color="error"
+              style={{ width: "150px", height: "40px" }}
+              onClick={() => handleOnDeleteImage()}
+            >
+              Delete
+            </Button>
+          ) : (
+            <UploadBtn onClick={handleButtonClick}>Upload Image</UploadBtn>
+          )}
+          {!imageUrl && !getValues().image && (
+            <UploadImageText>{fileErrMsg}</UploadImageText>
+          )}
+          {imageUrl && <UploadedImage src={imageUrl} alt="Uploaded" />}
           {displayEnglish && (
             <TextField
               label="English category"
@@ -188,6 +254,20 @@ export default function Categories({ setProducts }) {
               }
             />
           )}
+          <TextField
+            label="Priority"
+            name="priority"
+            variant="outlined"
+            {...register("priority")}
+            error={!isEmpty(formState?.errors?.priority)}
+            helperText={
+              !isEmpty(formState?.errors?.priority) &&
+              formState.errors?.priority.message
+            }
+            type="number"
+            defaultValue={1}
+            inputProps={{ min: 1 }}
+          />
           <LoadingButton
             loading={isPending || isEditing}
             variant="contained"
@@ -210,6 +290,10 @@ export default function Categories({ setProducts }) {
                   return (
                     <Category>
                       {categoryText(category)}
+                      <img
+                        src={`https://storage.googleapis.com/ecommerce-bucket-testing/${category?.image_url}`}
+                        style={{ width: "50px", height: "50px" }}
+                      />
                       <Actions>
                         <Edit onClick={() => handleOnEdit(category)} />
                         <Delete
