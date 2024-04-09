@@ -233,6 +233,12 @@ export default function AddProduct({
       display: displayArabic,
       type: "number",
     },
+    {
+      name: "priority",
+      label: "Priority",
+      display: true,
+      type: "number",
+    },
   ];
 
   return (
