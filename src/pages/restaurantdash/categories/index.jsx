@@ -14,7 +14,7 @@ import { TextField } from "@mui/material";
 import { getCookie } from "../../../utilities/manageCookies";
 import { LANGUAGES } from "../../../global";
 import { LoadingButton } from "@mui/lab";
-import { isEmpty, isNull } from "lodash";
+import { isEmpty, isNull, min } from "lodash";
 import {
   EnArCategorySchema,
   arCategorySchema,
@@ -95,12 +95,15 @@ export default function Categories({ setProducts }) {
   };
 
   const handleOnEdit = (category) => {
+    setValue("priority", category?.priority);
     switch (userInformation.Lang) {
       case EN:
         setValue("en_category", category.en_category);
+
         break;
       case AR:
         setValue("ar_category", category.ar_category);
+
         break;
       case ENAR:
         setValue("en_category", category.en_category);
@@ -188,6 +191,20 @@ export default function Categories({ setProducts }) {
               }
             />
           )}
+          <TextField
+            label="Priority"
+            name="priority"
+            variant="outlined"
+            type="number"
+            defaultValue={1}
+            inputProps={{ min: 1 }}
+            {...register("priority")}
+            error={!isEmpty(formState?.errors?.priority)}
+            helperText={
+              !isEmpty(formState?.errors?.priority) &&
+              formState.errors?.priority.message
+            }
+          />
           <LoadingButton
             loading={isPending || isEditing}
             variant="contained"
