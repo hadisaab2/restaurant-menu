@@ -77,7 +77,7 @@ export default function Categories({
         onTouchEnd={handleTouchEnd}
       >
         <Carousel carouselPosition={carouselPosition}>
-          {categories?.map((category, index) => {
+          {categories?.sort((a, b) => b.priority - a.priority).map((category, index) => {
             return (
               <CarouselItem
                 activeLanuguage={activeLanuguage}
@@ -88,7 +88,7 @@ export default function Categories({
                 <CategoryWrapper activeCategory={activeCategory} index={index}>
                   <IconContainer >
                     <IconWrapper activeCategory={activeCategory} index={index} >
-                      <Icon src={restaurantName=="Mazar"?categoryicon:perfume} />
+                      <Icon src={`https://storage.googleapis.com/ecommerce-bucket-testing/${category.image_url}`} />
                     </IconWrapper>
                   </IconContainer>
                   <TextContainer>
@@ -104,7 +104,7 @@ export default function Categories({
           })}
         </Carousel>
       </CarouselContainer>
-      <ArrowIcon onClick={handleArrow}/>
+      {categories?.length>4 && <ArrowIcon onClick={handleArrow}/>}
     </Container>
   );
 }

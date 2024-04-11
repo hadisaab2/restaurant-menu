@@ -9,6 +9,7 @@ export default function Products({
   activeCategory,
   showPopup,
   searchText,
+  
 }) {
   const [activePlate, setactivePlate] = useState(null);
   const { restaurantName } = useParams();
@@ -79,7 +80,7 @@ export default function Products({
   );
   return (
     <Container activeCategory={activeCategory}> 
-    {        console.log(numProductsToShow)
+    {        console.log(activePlate)
 }
       <ProductWrapper activePlate={activePlate}>
         {menu?.map((singlemenu, index) => {

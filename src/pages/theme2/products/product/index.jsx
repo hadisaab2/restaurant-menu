@@ -39,8 +39,8 @@ const Product = React.forwardRef(({ plate, setactivePlate, activePlate, index,sh
             <Loader />
           </LoaderWrapper>
         )}
-        <ImageContainer onClick={plateHandle}  ref={ref}>
-          <Image
+        <ImageContainer onClick={plateHandle}  >
+          <Image ref={ref}
           onLoad={handleImageLoaded}
             src={`https://storage.googleapis.com/ecommerce-bucket-testing/${plate.image.url}`}
           />

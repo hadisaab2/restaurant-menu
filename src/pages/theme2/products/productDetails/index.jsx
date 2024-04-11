@@ -23,6 +23,7 @@ export default function ProductDetails({
   menu,
   plates,
   productPositions,
+  nbOfChanges
 }) {
   const { restaurantName } = useParams();
   const activeLanuguage = useSelector(
@@ -57,6 +58,7 @@ export default function ProductDetails({
         y={productPositions[activePlate]?.y}
         width={productPositions[activePlate]?.width}
         CloseAnimation={CloseAnimation}
+        
       >
         <ItemCategory CloseAnimation={CloseAnimation}>
           <Category>{activeLanuguage=="en"?menu?.en_category:menu?.ar_category}</Category>
@@ -65,9 +67,11 @@ export default function ProductDetails({
         <ImageContainer CloseAnimation={CloseAnimation}>
           <Image
             src={`https://storage.googleapis.com/ecommerce-bucket-testing/${plates[activePlate]?.image.url}`}
+            CloseAnimation={CloseAnimation} 
           />
         </ImageContainer>
         <FakeContainer CloseAnimation={CloseAnimation}/>
+        <ItemInfoWrapper>
         <ItemInfo CloseAnimation={CloseAnimation}>
           <ItemName>{activeLanuguage=="en"?plates[activePlate]?.en_name:plates[activePlate]?.ar_name}</ItemName>
           <ItemDescription>
@@ -75,6 +79,7 @@ export default function ProductDetails({
           </ItemDescription>
           <ItemPrice>{plates[activePlate]?.en_price} $</ItemPrice>
         </ItemInfo>
+        </ItemInfoWrapper>
       </Wrapper>
       <BackBtn onClick={handleBack} CloseAnimation={CloseAnimation} >
       <BackIcon  />

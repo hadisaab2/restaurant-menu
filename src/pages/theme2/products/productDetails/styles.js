@@ -27,51 +27,52 @@ position:fixed;
   width: ${props=>props.CloseAnimation?"100%":`${props.width}px`};
   top:${props=>props.CloseAnimation?"0":`${props.y}px`};
 left:${props=>props.CloseAnimation?"0":`${props.x}px`};
-  height: ${props=>props.CloseAnimation?"100vh":`20vh`};
-  overflow: hidden;
+height: ${props=>props.CloseAnimation?"100vh":`20vh`};
+border-radius: ${props=>props.CloseAnimation?"0px":`10px`};
+
+  overflow: scroll;
   transition:all 0.8s ;
   animation: ${({ x, y,width }) => slideAnimation(x, y,width)} 0.8s;
   z-index: 6;
-  border-radius: 0px;
   background-color: ${props=>props.theme.backgroundColor};
-  display: flex;
-  flex-direction:column;
-  align-items:center; 
+
 `;
 
 export const Image = styled.img`
-  width: 100%;
   height: 100%;
   object-fit: cover;
+  border-radius: ${props=>props.CloseAnimation?"40px":"10px"};
+  width: ${props=>props.CloseAnimation?"90%":"100%"};
+
+  transition:all 0.8s;
+  box-shadow: 0px -4px 8px rgba(0, 0, 0, 0.1);
+
+
 `;
 
 
 const ImageAnimation  = keyframes`
  0% { 
-    width:100%;
     height:20vh;
-    border-radius: 10px;
     top:0px;
 }
 
  100% { 
-    width:90%;
     height:45vh;
-    border-radius: 40px;
     top:80px;
 
     }
 `;
 export const ImageContainer = styled.div`
-  width: ${props=>props.CloseAnimation?"90%":"100%"};
+width: 100%;
 height:${props=>props.CloseAnimation?"45vh":"20vh"}; 
 position: absolute;
-border-radius: ${props=>props.CloseAnimation?"40px":"10px"};
 top:${props=>props.CloseAnimation?"80px":"0px"};
 overflow: hidden;
 transition:all 0.8s;
 animation:${ImageAnimation} 0.8s;
-box-shadow: 0px -4px 8px rgba(0, 0, 0, 0.1); 
+display: flex;
+justify-content: center;
 
 `
 const BackIconAnimation  = keyframes`
@@ -143,7 +144,7 @@ export const Category = styled.span`
 
 export const FakeContainer = styled.div`
   width: ${props=>props.CloseAnimation?"90%":"100%"};
-  height:${props=>props.CloseAnimation?"45vh":"20vh"}; 
+  height:${props=>props.CloseAnimation?"50vh":"20vh"}; 
 border-radius: ${props=>props.CloseAnimation?"40px":"10px"};
 margin-top:${props=>props.CloseAnimation?"80px":"0px"};
 display:${props=>props.CloseAnimation?"flex":"none"};
@@ -155,12 +156,8 @@ animation:${ImageAnimation} 0.8s;
 
 
 export const ItemInfoWrapper = styled.div`
-  position:fixed;
-  z-index: 7;
-  top:0;
-  min-height: 100vh;
   width: 100%;
-  align-items: flex-end;
+  display: flex;
   justify-content: center;
 `;
 
@@ -170,6 +167,7 @@ export const ItemInfo = styled.div`
   flex-direction: column;
   position: relative;
   margin-top: 20px;
+  padding-bottom: 20px;
 
 `;
 

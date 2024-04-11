@@ -51,7 +51,7 @@ export const fieldStyle = {
 };
 
 export const UploadImageText = styled.p`
-  align-self: flex-end;
+  /* align-self: flex-end; */
   margin-left: 20px;
   font-size: 13px;
   color: red;
