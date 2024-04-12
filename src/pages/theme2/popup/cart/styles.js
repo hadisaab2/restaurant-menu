@@ -1,5 +1,7 @@
 import styled from "styled-components";
 import { IoMdClose } from "react-icons/io";
+import { MdOutlineDelete } from "react-icons/md";
+
 
 
 export const Container = styled.div`
@@ -174,7 +176,7 @@ padding-bottom: 8px;
 
 `;
 
-export const DeleteIcon = styled(IoMdClose)`
+export const DeleteIcon = styled(MdOutlineDelete)`
 font-size: 15px;
 position: absolute;
 top: 0px;
