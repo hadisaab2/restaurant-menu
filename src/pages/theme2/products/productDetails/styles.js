@@ -251,3 +251,68 @@ animation:${PriceAnimation} 1.4s ease-in-out;
 
 `;
 
+export const ButtonWrapper = styled.div`
+width: 100%;
+display: flex;
+justify-content: center;
+flex-direction: row;
+align-items: center;
+gap:10px;
+animation:${NameAnimation} 1.4s ease-in-out;
+margin-top: 30px;
+height:35px;
+
+
+`;
+export const AddToCart = styled.button`
+flex:1;
+outline: none;
+border: 0;
+cursor: pointer;
+height: 100%;
+color: ${props=>props.theme.backgroundColor};
+font-weight: 400;
+background-color: ${props=>props.theme.mainColor};
+border-radius: 10px;
+
+`;
+
+
+
+export const QuantityWrapper = styled.div`
+flex:0.5;
+display: flex;
+flex-direction: row;
+height: 100%;
+background-color:${props=>props.theme.mainColor};
+color:${props=>props.theme.backgroundColor};
+border-radius: 10px;
+
+
+`;
+
+export const Plus = styled.div`
+display: flex;
+align-items: center;
+justify-content: center;
+flex:1;
+font-size: 11px;
+
+`;
+export const Minus = styled.div`
+display: flex;
+align-items: center;
+justify-content: center;
+flex:1;
+font-size: 11px;
+
+`;
+
+export const Quantity = styled.div`
+display: flex;
+align-items: center;
+justify-content: center;
+flex:1;
+font-size: 11px;
+
+`;

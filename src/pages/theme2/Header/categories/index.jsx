@@ -66,8 +66,8 @@ export default function Categories({
     setScrollInProgress(false);
   };
 
-  const itemClick = (index) => {
-    setactiveCategory(index);
+  const itemClick = (id) => {
+    setactiveCategory(id);
   };
   return (
     <Container>
@@ -82,17 +82,17 @@ export default function Categories({
               <CarouselItem
                 activeLanuguage={activeLanuguage}
                 activeCategory={activeCategory}
-                index={index}
-                onClick={() => itemClick(index)}
+                categoryId={category.id}
+                onClick={() => itemClick(category.id)}
               >
-                <CategoryWrapper activeCategory={activeCategory} index={index}>
+                <CategoryWrapper activeCategory={activeCategory} categoryId={category.id}>
                   <IconContainer >
-                    <IconWrapper activeCategory={activeCategory} index={index} >
+                    <IconWrapper activeCategory={activeCategory} categoryId={category.id} >
                       <Icon src={`https://storage.googleapis.com/ecommerce-bucket-testing/${category.image_url}`} />
                     </IconWrapper>
                   </IconContainer>
                   <TextContainer>
-                    <CategoryName activeCategory={activeCategory} index={index}>
+                    <CategoryName activeCategory={activeCategory} categoryId={category.id}>
                       {activeLanuguage == "en"
                         ? category.en_category
                         : category.ar_category}

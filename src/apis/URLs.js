@@ -10,6 +10,10 @@ export const EDIT_PRODUCT_URL = (id) => `${REACT_APP_BASE_URL}/products/${id}`;
 export const DELETE_PRODUCT_URL = (id) =>
   `${REACT_APP_BASE_URL}/products/${id}`;
 
+  export const GET_PRODUCTS_URL = (categoryId,page) =>
+  `${REACT_APP_BASE_URL}/products?categoryId=${categoryId}&page=${page}`;
+
+
 export const ADD_CATEGORY_URL = `${REACT_APP_BASE_URL}/categories`;
 export const GET_CATEGORIES_URL = (restaurantId) =>
   `${REACT_APP_BASE_URL}/categories?restaurantId=${restaurantId}`;

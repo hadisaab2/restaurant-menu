@@ -25,6 +25,7 @@ export const useGetProducts = ({ onSuccess, restaurantId }) => {
     retry: false,
     queryKey: [`products-${restaurantId}`],
     onSuccess,
+    refetchOnWindowFocus: false,
   });
 
   return { error, isLoading, status, response: data, refetch };

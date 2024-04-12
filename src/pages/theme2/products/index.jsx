@@ -4,6 +4,8 @@ import Product from "./product";
 import ProductDetails from "./productDetails";
 import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
+import { useGetProducts } from "../../../apis/products/getProductsByCategory";
+
 export default function Products({
   menu,
   activeCategory,
@@ -14,9 +16,14 @@ export default function Products({
   const [activePlate, setactivePlate] = useState(null);
   const { restaurantName } = useParams();
   const [productPositions, setProductPositions] = useState([]); // x y and width of product
-  const [numProductsToShow, setNumProductsToShow] = useState(4);
+  const [numProductsToShow, setNumProductsToShow] = useState(1);
   const [productRefs, setProductRefs] = useState([]);
-
+  const[page,setPage]=useState(0);
+  // const { isLoading, response } = useGetProducts({
+  //   onSuccess: () => {},
+  //   categoryId: activeCategory,
+  //   page:page
+  // });
   const activeLanuguage = useSelector(
     (state) => state.restaurant?.[restaurantName].activeLanguage
   );
@@ -44,7 +51,7 @@ export default function Products({
   useEffect(() => {
     setNumProductsToShow(4)
     if (menu && activeCategory !== null) {
-      const refs = menu?.[activeCategory]?.products
+      const refs = menu?.find(category => category.id === activeCategory)?.products
         .filter((plate) =>
           plate[activeLanuguage === "en" ? "en_name" : "ar_name"]
             .toLowerCase()
@@ -63,7 +70,9 @@ export default function Products({
 
       // Check if the user has scrolled to the bottom of the page
       if (scrollTop + clientHeight >= scrollHeight - 100) {
-        setNumProductsToShow((prevNum) => prevNum + 4);
+        // setNumProductsToShow((prevNum) => prevNum + 4);
+        setPage((currentPage) => currentPage + 1);
+
       }
     };
     window.addEventListener("scroll", handleScroll);
@@ -72,22 +81,28 @@ export default function Products({
     };
   }, [productRefs]);
 
-  //filtering products based on search
-  const filteredProducts = menu?.[activeCategory]?.products.filter((plate) =>
+  // filtering products based on search
+  const filteredProducts = menu?.find(category => category.id === activeCategory)?.products.filter((plate) =>
     plate[activeLanuguage === "en" ? "en_name" : "ar_name"]
       .toLowerCase()
       .includes(searchText.toLowerCase())
   );
+
+//   const filteredProducts = response?.data.filter((plate) =>
+//   plate[activeLanuguage === "en" ? "en_name" : "ar_name"]
+//     .toLowerCase()
+//     .includes(searchText.toLowerCase())
+// );
+
+
   return (
     <Container activeCategory={activeCategory}> 
-    {        console.log(activePlate)
-}
       <ProductWrapper activePlate={activePlate}>
         {menu?.map((singlemenu, index) => {
-          if(activeCategory==index){
+          if(activeCategory==singlemenu.id){
           return (
             <>
-              {filteredProducts.slice(0, numProductsToShow).map((plate, index) => {
+              {filteredProducts.map((plate, index) => {
                 return (
                   <Product
                     index={index}
@@ -106,7 +121,7 @@ export default function Products({
       </ProductWrapper>
       {activePlate !== null && (
         <ProductDetails
-          menu={menu?.[activeCategory]}
+          menu={menu?.find(category => category.id === activeCategory)}
           activePlate={activePlate}
           setactivePlate={setactivePlate}
           plates={filteredProducts}

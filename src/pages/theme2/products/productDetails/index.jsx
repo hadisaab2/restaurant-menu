@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from "react";
 import {
+  AddToCart,
   BackBtn,
   BackIcon,
+  ButtonWrapper,
   Category,
   FakeContainer,
   Image,
@@ -12,10 +14,15 @@ import {
   ItemInfoWrapper,
   ItemName,
   ItemPrice,
+  Minus,
+  Plus,
+  Quantity,
+  QuantityWrapper,
   Wrapper,
 } from "./styles";
 import { useParams } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { addToCart, adjustQuantity } from "../../../../redux/cart/cartActions";
 
 export default function ProductDetails({
   activePlate,
@@ -23,20 +30,23 @@ export default function ProductDetails({
   menu,
   plates,
   productPositions,
-  nbOfChanges
 }) {
   const { restaurantName } = useParams();
   const activeLanuguage = useSelector(
     (state) => state.restaurant?.[restaurantName].activeLanguage
   );
+
+  const dispatch = useDispatch();
+  const cart = useSelector((state) => state.cart);
+
+  const [quantity, setQuantity] = useState(1);
   const [CloseAnimation, setCloseAnimation] = useState(true);
+
   const handleBack = () => {
     setTimeout(() => {
       setactivePlate(null);
-      document.body.style.overflow = 'auto';
-
+      document.body.style.overflow = "auto";
     }, 800);
-
     setCloseAnimation(false);
   };
 
@@ -45,12 +55,32 @@ export default function ProductDetails({
       handleBack();
     };
 
-    window.addEventListener('popstate', handlePopstate);
+    window.addEventListener("popstate", handlePopstate);
 
     return () => {
-      window.removeEventListener('popstate', handlePopstate);
+      window.removeEventListener("popstate", handlePopstate);
     };
   }, []);
+
+  const handleAddToCart = () => {
+    setTimeout(() => {
+      setactivePlate(null);
+      document.body.style.overflow = "auto";
+    }, 800);
+    dispatch(addToCart(plates[activePlate], quantity));
+    setCloseAnimation(false);
+    setQuantity(1);
+  };
+
+  const handleIncrement = () => {
+    setQuantity(quantity + 1);
+  };
+
+  const handleDecrement = () => {
+    if (quantity > 1) {
+      setQuantity(quantity - 1);
+    }
+  };
   return (
     <>
       <Wrapper
@@ -58,33 +88,48 @@ export default function ProductDetails({
         y={productPositions[activePlate]?.y}
         width={productPositions[activePlate]?.width}
         CloseAnimation={CloseAnimation}
-        
       >
         <ItemCategory CloseAnimation={CloseAnimation}>
-          <Category>{activeLanuguage=="en"?menu?.en_category:menu?.ar_category}</Category>
-          
+          <Category>
+            {activeLanuguage == "en" ? menu?.en_category : menu?.ar_category}
+          </Category>
         </ItemCategory>
         <ImageContainer CloseAnimation={CloseAnimation}>
           <Image
             src={`https://storage.googleapis.com/ecommerce-bucket-testing/${plates[activePlate]?.image.url}`}
-            CloseAnimation={CloseAnimation} 
+            CloseAnimation={CloseAnimation}
           />
         </ImageContainer>
-        <FakeContainer CloseAnimation={CloseAnimation}/>
+        <FakeContainer CloseAnimation={CloseAnimation} />
         <ItemInfoWrapper>
-        <ItemInfo CloseAnimation={CloseAnimation}>
-          <ItemName>{activeLanuguage=="en"?plates[activePlate]?.en_name:plates[activePlate]?.ar_name}</ItemName>
-          <ItemDescription>
-            {activeLanuguage=="en"?plates[activePlate]?.en_description:plates[activePlate]?.ar_description}
-          </ItemDescription>
-          <ItemPrice>{plates[activePlate]?.en_price} $</ItemPrice>
-        </ItemInfo>
+          <ItemInfo CloseAnimation={CloseAnimation}>
+            <ItemName>
+              {activeLanuguage == "en"
+                ? plates[activePlate]?.en_name
+                : plates[activePlate]?.ar_name}
+            </ItemName>
+            <ItemDescription>
+              {activeLanuguage == "en"
+                ? plates[activePlate]?.en_description
+                : plates[activePlate]?.ar_description}
+            </ItemDescription>
+            <ItemPrice>{plates[activePlate]?.en_price} $</ItemPrice>
+
+            <ButtonWrapper>
+              <QuantityWrapper>
+                <Plus onClick={handleIncrement}>+</Plus>
+                <Quantity>{quantity}</Quantity>
+                <Minus onClick={handleDecrement}>-</Minus>
+              </QuantityWrapper>
+              <AddToCart onClick={handleAddToCart}>Add To Cart</AddToCart>
+            </ButtonWrapper>
+          </ItemInfo>
         </ItemInfoWrapper>
       </Wrapper>
-      <BackBtn onClick={handleBack} CloseAnimation={CloseAnimation} >
-      <BackIcon  />
-      </BackBtn>
 
+      <BackBtn onClick={handleBack} CloseAnimation={CloseAnimation}>
+        <BackIcon />
+      </BackBtn>
     </>
   );
 }
