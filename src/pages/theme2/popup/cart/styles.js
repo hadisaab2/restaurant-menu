@@ -107,7 +107,7 @@ width: 50%;
 display: flex;
 flex-direction: row;
 height: 20px;
-background-color:${props=>props.theme.popupTextColor};
+background-color:${props=>props.theme.mainColor};
 color:${props=>props.theme.popupbackgroundColor};
 border-radius: 20px;
 margin-right: 20px;

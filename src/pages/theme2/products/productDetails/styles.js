@@ -296,7 +296,7 @@ display: flex;
 align-items: center;
 justify-content: center;
 flex:1;
-font-size: 11px;
+font-size: 18px;
 
 `;
 export const Minus = styled.div`
@@ -304,7 +304,7 @@ display: flex;
 align-items: center;
 justify-content: center;
 flex:1;
-font-size: 11px;
+font-size: 18px;
 
 `;
 
@@ -313,6 +313,6 @@ display: flex;
 align-items: center;
 justify-content: center;
 flex:1;
-font-size: 11px;
+font-size: 14px;
 
 `;
