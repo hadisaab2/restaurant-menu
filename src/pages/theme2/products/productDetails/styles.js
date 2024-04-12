@@ -29,7 +29,6 @@ position:fixed;
 left:${props=>props.CloseAnimation?"0":`${props.x}px`};
 height: ${props=>props.CloseAnimation?"100vh":`20vh`};
 border-radius: ${props=>props.CloseAnimation?"0px":`10px`};
-
   overflow: scroll;
   transition:all 0.8s ;
   animation: ${({ x, y,width }) => slideAnimation(x, y,width)} 0.8s;
@@ -261,6 +260,7 @@ gap:10px;
 animation:${NameAnimation} 1.4s ease-in-out;
 margin-top: 30px;
 height:35px;
+padding-bottom: 40px;
 
 
 `;
