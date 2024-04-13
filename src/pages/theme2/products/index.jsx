@@ -11,24 +11,20 @@ export default function Products({
   activeCategory,
   showPopup,
   searchText,
-  
 }) {
   const [activePlate, setactivePlate] = useState(null);
   const { restaurantName } = useParams();
   const [productPositions, setProductPositions] = useState([]); // x y and width of product
   const [numProductsToShow, setNumProductsToShow] = useState(1);
   const [productRefs, setProductRefs] = useState([]);
-  const[page,setPage]=useState(0);
-  // const { isLoading, response } = useGetProducts({
-  //   onSuccess: () => {},
-  //   categoryId: activeCategory,
-  //   page:page
-  // });
+  const [page, setPage] = useState(0);
+
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, status } =
+    useGetProducts(activeCategory);
+
   const activeLanuguage = useSelector(
     (state) => state.restaurant?.[restaurantName].activeLanguage
   );
-
-
 
   //function to find or change the x and y of the products images
   const changepositions = () => {
@@ -49,10 +45,11 @@ export default function Products({
   }, [productRefs]);
 
   useEffect(() => {
-    setNumProductsToShow(4)
+    setNumProductsToShow(4);
     if (menu && activeCategory !== null) {
-      const refs = menu?.find(category => category.id === activeCategory)?.products
-        .filter((plate) =>
+      const refs = menu
+        ?.find((category) => category.id === activeCategory)
+        ?.products.filter((plate) =>
           plate[activeLanuguage === "en" ? "en_name" : "ar_name"]
             .toLowerCase()
             .includes(searchText.toLowerCase())
@@ -63,65 +60,97 @@ export default function Products({
   }, [menu, activeCategory, searchText]);
 
   useEffect(() => {
-
     const handleScroll = () => {
       changepositions();
-      const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
+      const { scrollTop, scrollHeight, clientHeight } =
+        document.documentElement;
 
       // Check if the user has scrolled to the bottom of the page
       if (scrollTop + clientHeight >= scrollHeight - 100) {
         // setNumProductsToShow((prevNum) => prevNum + 4);
-        setPage((currentPage) => currentPage + 1);
-
+        if (hasNextPage && !isFetchingNextPage) {
+          fetchNextPage();
+        }
+        // setPage((currentPage) => currentPage + 1);
       }
     };
     window.addEventListener("scroll", handleScroll);
     return () => {
       window.removeEventListener("scroll", handleScroll);
     };
-  }, [productRefs]);
+  }, [productRefs, hasNextPage, isFetchingNextPage, fetchNextPage]);
 
   // filtering products based on search
-  const filteredProducts = menu?.find(category => category.id === activeCategory)?.products.filter((plate) =>
-    plate[activeLanuguage === "en" ? "en_name" : "ar_name"]
-      .toLowerCase()
-      .includes(searchText.toLowerCase())
-  );
+  const filteredProducts = menu
+    ?.find((category) => category.id === activeCategory)
+    ?.products.filter((plate) =>
+      plate[activeLanuguage === "en" ? "en_name" : "ar_name"]
+        .toLowerCase()
+        .includes(searchText.toLowerCase())
+    );
 
-//   const filteredProducts = response?.data.filter((plate) =>
-//   plate[activeLanuguage === "en" ? "en_name" : "ar_name"]
-//     .toLowerCase()
-//     .includes(searchText.toLowerCase())
-// );
-
+  //   const filteredProducts = response?.data.filter((plate) =>
+  //   plate[activeLanuguage === "en" ? "en_name" : "ar_name"]
+  //     .toLowerCase()
+  //     .includes(searchText.toLowerCase())
+  // );
 
   return (
-    <Container activeCategory={activeCategory}> 
+    <Container activeCategory={activeCategory}>
+      {console.log(data)}
       <ProductWrapper activePlate={activePlate}>
         {menu?.map((singlemenu, index) => {
-          if(activeCategory==singlemenu.id){
-          return (
-            <>
-              {filteredProducts.map((plate, index) => {
-                return (
-                  <Product
-                    index={index}
-                    plate={plate}
-                    activePlate={activePlate}
-                    setactivePlate={setactivePlate}
-                    ref={productRefs[index]}
-                    showPopup={showPopup}
-                  />
-                );
-              })}
-            </>
-          );
-            }
+          if (activeCategory == singlemenu.id) {
+            // return (
+            //   <>
+            //     {data?.pages.map((page, index) => {
+            //       return(
+            //         <>
+            //       {
+            //         page.map((plate, i) => {
+            //           {console.log(plate)}
+            //           return (
+            //             <Product
+            //               index={index}
+            //               plate={plate}
+            //               activePlate={activePlate}
+            //               setactivePlate={setactivePlate}
+            //               ref={productRefs[index]}
+            //               showPopup={showPopup}
+            //             />
+            //           );
+            //         })
+            //       }
+            //       </>
+            //       )
+            //     })}
+            //   </>
+            // );
+            return (
+              <>
+                {filteredProducts.map((plate, index) => {
+                  
+                      {console.log(plate)}
+                      return (
+                        <Product
+                          index={index}
+                          plate={plate}
+                          activePlate={activePlate}
+                          setactivePlate={setactivePlate}
+                          ref={productRefs[index]}
+                          showPopup={showPopup}
+                        />
+                      );
+                  
+                })}
+              </>
+            );
+          }
         })}
       </ProductWrapper>
       {activePlate !== null && (
         <ProductDetails
-          menu={menu?.find(category => category.id === activeCategory)}
+          menu={menu?.find((category) => category.id === activeCategory)}
           activePlate={activePlate}
           setactivePlate={setactivePlate}
           plates={filteredProducts}
