@@ -44,11 +44,11 @@ export const useGetProducts = ( categoryId) => {
     queryKey: ['products', categoryId],
     queryFn: ({ pageParam = 0 }) => getProducts(categoryId, pageParam),
     getNextPageParam: (lastPage, allPages) => {
-      // Assume each response contains info whether there's a next page.
-      // You might need to adjust based on your actual API response.
-      // Example: if lastPage has less items than expected per page, no next page:
-      const maxPerPage = 10; // Example value, adjust according to your API
-      return lastPage.length < maxPerPage ? undefined : allPages.length + 1;
+      // Check if the number of products is less than 10 to determine if there's a next page
+      if (lastPage.length < 10) {
+        return undefined; // There are less than 10 items, so no next page
+      }
+      return allPages.length; // Returns the index for the next page, which is the length of the allPages array
     },
     keepPreviousData: true,
     retry: false,
