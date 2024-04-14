@@ -208,6 +208,9 @@ export default function Categories({ setProducts }) {
             onClick={() => {
               reset();
               setShowAddComponent(false);
+              setImageUrl(null);
+              setFile(null);
+              setSelectedIdForAction(null);
             }}
           />
           
@@ -244,8 +247,7 @@ export default function Categories({ setProducts }) {
             {...register("priority")}
             error={!isEmpty(formState?.errors?.priority)}
             helperText={
-              !isEmpty(formState?.errors?.priority) &&
-              formState.errors?.priority.message
+              !isEmpty(formState?.errors?.priority) && "Required Field"
             }
             type="number"
             defaultValue={1}

@@ -160,6 +160,7 @@ export default function AddProduct({
         `https://storage.googleapis.com/ecommerce-bucket-testing/${selectedProduct.image.url}`
       );
       setValue("category_id", selectedProduct.category_id);
+      setValue("priority", selectedProduct.priority);
     }
   }, []);
 
@@ -238,12 +239,6 @@ export default function AddProduct({
       display: displayArabic,
       type: "number",
     },
-    {
-      name: "priority",
-      label: "Priority",
-      display: true,
-      type: "number",
-    },
   ];
 
   return (
@@ -252,6 +247,8 @@ export default function AddProduct({
         onClick={() => {
           setSelectedProduct(null);
           setIsFormOpen(false);
+          setImageUrl(null);
+          setFile(null);
         }}
       />
       <Row
@@ -307,6 +304,18 @@ export default function AddProduct({
             />
           )
       )}
+      <TextField
+        label={"Priority"}
+        name={"priority"}
+        variant="outlined"
+        {...register("priority")}
+        style={fieldStyle}
+        error={!isEmpty(formState?.errors?.priority)}
+        helperText={!isEmpty(formState?.errors?.priority) && "Required Field"}
+        type="number"
+        defaultValue={1}
+        inputProps={{ min: 1 }}
+      />
 
       <Box style={fieldStyle}>
         <FormControl fullWidth>
