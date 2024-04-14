@@ -30,7 +30,6 @@ export default function Product({
             setIsFormOpen(true);
           }}
         >
-          {console.log(image?.url.includes("png"))}
           <Image JPG={image?.url.includes("png")}
             src={`https://storage.googleapis.com/ecommerce-bucket-testing/${image?.url}`}
           />

@@ -1,20 +1,30 @@
 import React, { useState } from 'react'
-import { BlurOverlay, Container, DetailsBtn, Location, MenuWrapper } from './styles';
+import { BlurOverlay, Cart, CartBtn, Container, DetailsBtn, Location, MenuWrapper, Number } from './styles';
 import Header from './Header';
 import { useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import Products from './products';
-import Popup from './popup';
+import LocationPopup from './popup/location';
+import CartPopup from './popup/cart';
 
 export default function Theme2() {
-    const [activeCategory, setactiveCategory] = useState(0);
-    const [showPopup, setshowPopup] = useState(false);
+    const [showPopup, setshowPopup] = useState(null);
     const [searchText, setSearchText] = useState("");
+    const itemCount = useSelector(state => 
+      state.cart.reduce((total, item) => total + item.quantity, 0)
+  );
     const {restaurantName}=useParams();
     const restaurant = useSelector((state) => state.restaurant?.[restaurantName]);
+    const [activeCategory, setactiveCategory] = useState(restaurant.categories[0].id);
 
-    const popupHandler = (show) => {
-      setshowPopup(show);
+    const popupHandler = (type) => {
+      if(type==null){
+        document.body.style.overflow="auto"
+      }else{
+        document.body.style.overflow="hidden"
+
+      }
+      setshowPopup(type);
     };
     return (
       <Container id="wrapper">
@@ -34,10 +44,16 @@ export default function Theme2() {
               searchText={searchText}
             />
         </MenuWrapper>
-        <DetailsBtn onClick={() => popupHandler(true)}>
+        <DetailsBtn onClick={() => popupHandler("location")}>
         <Location />
       </DetailsBtn>
-      <Popup restaurant={restaurant} showPopup={showPopup} popupHandler={popupHandler} />
+      <CartBtn onClick={() => popupHandler("cart")}>
+        <Number>{itemCount}</Number>
+        <Cart />
+      </CartBtn>
+      <LocationPopup restaurant={restaurant} showPopup={showPopup} popupHandler={popupHandler} />
+      <CartPopup restaurant={restaurant} showPopup={showPopup} popupHandler={popupHandler} />
+
       </Container>
     )
 }

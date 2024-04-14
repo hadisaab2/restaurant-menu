@@ -23,17 +23,20 @@ export const Wrapper = styled.div`
 `;
 
 export const Image = styled.img`
-width:100%;
+width:90%;
 height:100%;
 object-fit: cover;
-
+border-radius: 10px;
 `;
 export const ImageContainer = styled.div`
-width:90%;
+width:100%;
 height: 20vh;
-border-radius: 10px;
 overflow: hidden;
 margin-top: 10px;
+display: flex;
+justify-content: center;
+border-radius: 10px;
+
 
 
 `;

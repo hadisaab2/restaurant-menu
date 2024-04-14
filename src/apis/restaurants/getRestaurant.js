@@ -20,6 +20,7 @@ export const useGetRestaurant = ({ onSuccess, restaurantName }) => {
     retry: false,
     queryKey: ["restaurant"],
     onSuccess,
+    refetchOnWindowFocus: false,
   });
 
   return { error, isLoading, status, response: data };

@@ -66,8 +66,8 @@ export default function Categories({
     setScrollInProgress(false);
   };
 
-  const itemClick = (index) => {
-    setactiveCategory(index);
+  const itemClick = (id) => {
+    setactiveCategory(id);
   };
   return (
     <Container>
@@ -77,22 +77,24 @@ export default function Categories({
         onTouchEnd={handleTouchEnd}
       >
         <Carousel carouselPosition={carouselPosition}>
-          {categories?.map((category, index) => {
+          {categories?.sort((a, b) => b.priority - a.priority).map((category, index) => {
             return (
               <CarouselItem
                 activeLanuguage={activeLanuguage}
                 activeCategory={activeCategory}
-                index={index}
-                onClick={() => itemClick(index)}
+                categoryId={category.id}
+                onClick={() => itemClick(category.id)}
               >
-                <CategoryWrapper activeCategory={activeCategory} index={index}>
+                <CategoryWrapper activeCategory={activeCategory} categoryId={category.id}>
                   <IconContainer >
-                    <IconWrapper activeCategory={activeCategory} index={index} >
-                      <Icon src={restaurantName=="Mazar"?categoryicon:perfume} />
+                    <IconWrapper activeCategory={activeCategory} categoryId={category.id} >
+                      {/* <Icon src={`https://storage.googleapis.com/ecommerce-bucket-testing/${category.image_url}`} /> */}
+                      <Icon src={perfume} />
+
                     </IconWrapper>
                   </IconContainer>
                   <TextContainer>
-                    <CategoryName activeCategory={activeCategory} index={index}>
+                    <CategoryName activeCategory={activeCategory} categoryId={category.id}>
                       {activeLanuguage == "en"
                         ? category.en_category
                         : category.ar_category}
@@ -104,7 +106,7 @@ export default function Categories({
           })}
         </Carousel>
       </CarouselContainer>
-      <ArrowIcon onClick={handleArrow}/>
+      {categories?.length>4 && <ArrowIcon onClick={handleArrow}/>}
     </Container>
   );
 }

@@ -13,7 +13,8 @@ export default function Template() {
   const dispatch = useDispatch();
   const { restaurantName } = useParams();
   const { isLoading, response } = useGetRestaurant({
-    onSuccess: () => {},
+    onSuccess: () => {
+    },
     restaurantName: restaurantName,
   });
   const restaurant = useSelector((state) => state.restaurant?.[restaurantName]);
@@ -21,7 +22,6 @@ export default function Template() {
 
   useEffect(() => {
     if (!isLoading) {
-      console.log(response.data)
       dispatch(addmenu(response?.data));
       dispatch(changelanuage({name:restaurantName,activeLanguage:response?.data.languages.replace("&ar","")}))
       // if english or arabic it stays the same
@@ -34,7 +34,6 @@ export default function Template() {
     }, 2000); 
     return () => clearTimeout(timer);
   }, []); 
-  console.log(restaurant)
   if (restaurant?.categories && !isLoading && !isTrue) {
     return (
       <ThemeProvider theme={JSON.parse(response.data.theme)}>

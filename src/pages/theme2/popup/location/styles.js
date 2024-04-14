@@ -10,7 +10,7 @@ import { FaFacebookF } from "react-icons/fa";
 
 export const Container = styled.div`
 position: fixed;
-bottom: ${props=>props.showPopup?"0%":"-100%"};
+bottom: ${props=>props.showPopup=="location"?"0%":"-100%"};
 height: 80vh;
 background-color: ${props=>props.theme.popupbackgroundColor};
 width: 100%;

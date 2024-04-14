@@ -14,7 +14,7 @@ import { TextField, Button } from "@mui/material";
 import { getCookie } from "../../../utilities/manageCookies";
 import { LANGUAGES } from "../../../global";
 import { LoadingButton } from "@mui/lab";
-import { isEmpty, isNull } from "lodash";
+import { isEmpty, isNull, min } from "lodash";
 import {
   EnArCategorySchema,
   arCategorySchema,
@@ -112,12 +112,15 @@ export default function Categories({ setProducts }) {
   };
 
   const handleOnEdit = (category) => {
+    setValue("priority", category?.priority);
     switch (userInformation.Lang) {
       case EN:
         setValue("en_category", category.en_category);
+
         break;
       case AR:
         setValue("ar_category", category.ar_category);
+
         break;
       case ENAR:
         setValue("en_category", category.en_category);
@@ -210,27 +213,7 @@ export default function Categories({ setProducts }) {
               setSelectedIdForAction(null);
             }}
           />
-          <UploadPhoto
-            type="file"
-            ref={fileInputRef}
-            onChange={handleFileChange}
-          />
-          {imageUrl ? (
-            <Button
-              variant="contained"
-              color="error"
-              style={{ width: "150px", height: "40px" }}
-              onClick={() => handleOnDeleteImage()}
-            >
-              Delete
-            </Button>
-          ) : (
-            <UploadBtn onClick={handleButtonClick}>Upload Image</UploadBtn>
-          )}
-          {!imageUrl && !getValues().image && (
-            <UploadImageText>{fileErrMsg}</UploadImageText>
-          )}
-          {imageUrl && <UploadedImage src={imageUrl} alt="Uploaded" />}
+          
           {displayEnglish && (
             <TextField
               label="English category"
@@ -270,6 +253,27 @@ export default function Categories({ setProducts }) {
             defaultValue={1}
             inputProps={{ min: 1 }}
           />
+          <UploadPhoto
+            type="file"
+            ref={fileInputRef}
+            onChange={handleFileChange}
+          />
+          {imageUrl ? (
+            <Button
+              variant="contained"
+              color="error"
+              style={{ width: "150px", height: "40px" }}
+              onClick={() => handleOnDeleteImage()}
+            >
+              Delete
+            </Button>
+          ) : (
+            <UploadBtn onClick={handleButtonClick}>Upload Image</UploadBtn>
+          )}
+          {!imageUrl && !getValues().image && (
+            <UploadImageText>{fileErrMsg}</UploadImageText>
+          )}
+          {imageUrl && <UploadedImage src={imageUrl} alt="Uploaded" />}
           <LoadingButton
             loading={isPending || isEditing}
             variant="contained"
@@ -292,10 +296,7 @@ export default function Categories({ setProducts }) {
                   return (
                     <Category>
                       {categoryText(category)}
-                      <img
-                        src={`https://storage.googleapis.com/ecommerce-bucket-testing/${category?.image_url}`}
-                        style={{ width: "50px", height: "50px" }}
-                      />
+
                       <Actions>
                         <Edit onClick={() => handleOnEdit(category)} />
                         <Delete

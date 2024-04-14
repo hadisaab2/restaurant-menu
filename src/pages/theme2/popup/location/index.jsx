@@ -24,7 +24,7 @@ import {
   MapLink,
 } from "./styles";
 
-export default function Popup({
+export default function LocationPopup({
   restaurant,
   showPopup,
   popupHandler = { popupHandler },
@@ -39,7 +39,7 @@ export default function Popup({
     <Container showPopup={showPopup}>
       <Close
         onClick={() => {
-          popupHandler(false);
+          popupHandler(null);
         }}
       />
       <Title>Welcome To </Title>
