@@ -5,6 +5,7 @@ export const enProductSchema = yup.object().shape({
   en_description: yup.string().required("Required field"),
   en_price: yup.string().required("Required field"),
   category_id: yup.number().required("Required field"),
+  priority: yup.number().required("Required field"),
 });
 
 export const arProductSchema = yup.object().shape({
@@ -12,6 +13,7 @@ export const arProductSchema = yup.object().shape({
   ar_description: yup.string().required("Required field"),
   ar_price: yup.string().required("Required field"),
   category_id: yup.number().required("Required field"),
+  priority: yup.number().required("Required field"),
 });
 
 export const EnArProductSchema = yup.object().shape({
@@ -22,4 +24,5 @@ export const EnArProductSchema = yup.object().shape({
   en_description: yup.string().required("Required field"),
   en_price: yup.string().required("Required field"),
   category_id: yup.number().required("Required field"),
+  priority: yup.number().required("Required field"),
 });
