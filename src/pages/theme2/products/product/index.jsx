@@ -27,6 +27,7 @@ const Product = React.forwardRef(({ plate, setactivePlate, activePlate, index,sh
     if(activePlate==null && imageLoaded && !showPopup){
       setactivePlate(index);
       document.body.style.overflow = 'hidden';
+      window.history.pushState({ isZoomed: true }, '');
 
     }
   };

@@ -23,8 +23,7 @@ import {
 import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { addToCart, adjustQuantity } from "../../../../redux/cart/cartActions";
-import { createBrowserHistory } from 'history';
-
+import { createBrowserHistory } from "history";
 
 export default function ProductDetails({
   activePlate,
@@ -45,6 +44,7 @@ export default function ProductDetails({
   const [CloseAnimation, setCloseAnimation] = useState(true);
 
   const handleBack = () => {
+    window.history.pushState({ isZoomed: true }, "");
     setTimeout(() => {
       setactivePlate(null);
       document.body.style.overflow = "auto";
@@ -52,24 +52,25 @@ export default function ProductDetails({
     setCloseAnimation(false);
   };
 
+  const handleDeviceBack = () => {
+    window.history.back();
+  };
+
   useEffect(() => {
-    const history = createBrowserHistory();
-
-    // Push a new entry onto the history stack.
-    history.push(`/${restaurantName}`);
-
-    // Listen for changes to the current location.
-    const unlisten = history.listen((location, action) => {
-      if (action === 'POP') {
-        handleBack()
-        // Handle the back button action here.
-      }
-    });
-
-    return () => {
-      // Clean up the listener when the component unmounts
-      unlisten();
+    const handlePopState = () => {
+      // Revert to the normal view when back is pressed
+      setTimeout(() => {
+        setactivePlate(null);
+        document.body.style.overflow = "auto";
+      }, 800);
+      setCloseAnimation(false);
     };
+
+    // Add event listener for popstate
+    window.addEventListener("popstate", handlePopState);
+
+    // Cleanup event listener
+    return () => window.removeEventListener("popstate", handlePopState);
   }, []);
 
   const handleAddToCart = () => {
@@ -137,7 +138,7 @@ export default function ProductDetails({
         </ItemInfoWrapper>
       </Wrapper>
 
-      <BackBtn onClick={handleBack} CloseAnimation={CloseAnimation}>
+      <BackBtn onClick={handleDeviceBack} CloseAnimation={CloseAnimation}>
         <BackIcon />
       </BackBtn>
     </>
