@@ -56,14 +56,14 @@ export default function ProductDetails({
     setCloseAnimation(false);
   };
   useEffect(() => {
-    const handleBackButton = () => {
+    const handlePopstate = () => {
       handleBackk();
     };
 
-    window.addEventListener('popstate', handleBackButton);
+    window.addEventListener("popstate", handlePopstate);
 
     return () => {
-      window.removeEventListener('popstate', handleBackButton);
+      window.removeEventListener("popstate", handlePopstate);
     };
   }, []);
 
