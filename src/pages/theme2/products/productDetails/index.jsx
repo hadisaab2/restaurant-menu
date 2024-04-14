@@ -44,7 +44,6 @@ export default function ProductDetails({
   const [CloseAnimation, setCloseAnimation] = useState(true);
 
   const handleBack = () => {
-    window.history.pushState({ isZoomed: true }, "");
     setTimeout(() => {
       setactivePlate(null);
       document.body.style.overflow = "auto";
@@ -59,11 +58,7 @@ export default function ProductDetails({
   useEffect(() => {
     const handlePopState = () => {
       // Revert to the normal view when back is pressed
-      setTimeout(() => {
-        setactivePlate(null);
-        document.body.style.overflow = "auto";
-      }, 800);
-      setCloseAnimation(false);
+      handleBack()
     };
 
     // Add event listener for popstate
@@ -138,7 +133,7 @@ export default function ProductDetails({
         </ItemInfoWrapper>
       </Wrapper>
 
-      <BackBtn onClick={handleDeviceBack} CloseAnimation={CloseAnimation}>
+      <BackBtn onClick={handleBack} CloseAnimation={CloseAnimation}>
         <BackIcon />
       </BackBtn>
     </>
