@@ -23,6 +23,8 @@ import {
 import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { addToCart, adjustQuantity } from "../../../../redux/cart/cartActions";
+import { createBrowserHistory } from 'history';
+
 
 export default function ProductDetails({
   activePlate,
@@ -50,20 +52,23 @@ export default function ProductDetails({
     setCloseAnimation(false);
   };
 
-  const handleBackk= () => {
-      setactivePlate(null);
-      document.body.style.overflow = "auto";
-    setCloseAnimation(false);
-  };
   useEffect(() => {
-    const handleBackButton = () => {
-      handleBackk();
-    };
+    const history = createBrowserHistory();
 
-    window.addEventListener('popstate', handleBackButton);
+    // Push a new entry onto the history stack.
+    history.push(`/${restaurantName}`);
+
+    // Listen for changes to the current location.
+    const unlisten = history.listen((location, action) => {
+      if (action === 'POP') {
+        handleBack()
+        // Handle the back button action here.
+      }
+    });
 
     return () => {
-      window.removeEventListener('popstate', handleBackButton);
+      // Clean up the listener when the component unmounts
+      unlisten();
     };
   }, []);
 
