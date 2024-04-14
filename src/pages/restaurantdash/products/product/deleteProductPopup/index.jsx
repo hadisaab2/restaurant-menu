@@ -7,6 +7,7 @@ import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import { useDeleteProductQuery } from "../../../../../apis/products/deleteProduct";
 import { LoadingButton } from "@mui/lab";
+import { useQueryClient } from "@tanstack/react-query";
 
 export default function DeleteProductPopup({
   isOpen,
@@ -15,11 +16,14 @@ export default function DeleteProductPopup({
   setSelectedIdForAction,
   refetchProducts,
 }) {
+  const queryClient = useQueryClient();
+
   const { isPending, handleApiCall } = useDeleteProductQuery({
     onSuccess: () => {
       setSelectedIdForAction(null);
-      refetchProducts();
+      queryClient.resetQueries(['products'], { exact: true });
       setIsOpen(false);
+
     },
   });
   const handleClose = () => {

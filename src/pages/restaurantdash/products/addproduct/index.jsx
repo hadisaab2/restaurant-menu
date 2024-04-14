@@ -33,14 +33,16 @@ import { LoadingButton } from "@mui/lab";
 import { useGetCategories } from "../../../../apis/categories/getCategories";
 import { useEditProductQuery } from "../../../../apis/products/editProduct";
 import { useDeleteProductQuery } from "../../../../apis/products/deleteProduct";
+import { useQueryClient } from "@tanstack/react-query";
 
 export default function AddProduct({
   setIsFormOpen,
   selectedProduct,
   refetchProducts,
   setSelectedProduct,
-  userInformation,
+  userInformation
 }) {
+  const queryClient = useQueryClient();
   const [file, setFile] = useState(null);
   const [fileErrMsg, setFileErrMsg] = useState("Please upload image");
 
@@ -65,6 +67,8 @@ export default function AddProduct({
       setSelectedProduct(null);
       refetchProducts();
       setIsFormOpen(false);
+      // queryClient.invalidateQueries(['products'])
+      queryClient.resetQueries(['products'], { exact: true });
     },
   });
 
@@ -81,8 +85,9 @@ export default function AddProduct({
     useEditProductQuery({
       onSuccess: () => {
         setSelectedProduct(null);
-        refetchProducts();
         setIsFormOpen(false);
+        queryClient.resetQueries(['products'], { exact: true });
+
       },
     });
 

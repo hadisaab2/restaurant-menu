@@ -53,6 +53,7 @@ export const useGetProducts = ( categoryId) => {
     keepPreviousData: true,
     retry: false,
     refetchOnWindowFocus: false,
-    staleTime:0
+    staleTime:0,
+    enabled:!!categoryId
   });
 };
