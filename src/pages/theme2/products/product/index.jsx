@@ -30,8 +30,9 @@ const Product = React.forwardRef(({ plate, setactivePlate, activePlate, index,sh
       document.body.style.overflow = 'hidden';
 
     }
-  };
+  }
 
+  
   return (
     <Container index={index} activePlate={activePlate}   className="lazy-load">
       <Wrapper>
