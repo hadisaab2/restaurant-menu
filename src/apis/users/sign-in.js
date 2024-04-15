@@ -10,6 +10,7 @@ const signIn = async (payload) => {
 
     return response;
   } catch (error) {
+    console.error("API call failed:", error);
     throw error;
   }
 };

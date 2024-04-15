@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { AddBranchForm, BackIcon } from "./styles";
+import { AddBranchForm, BackIcon, Note } from "./styles";
 import { TextField } from "@mui/material";
 import { useForm } from "react-hook-form";
 import { useAddBranchQuery } from "../../../../../apis/branches/addBranch";
@@ -51,10 +51,11 @@ export default function AddEditBranch({
 
   useEffect(() => {
     if (selectedBranch) {
-      const { name, location, mapLink } = selectedBranch;
+      const { name, location, mapLink, phone_number } = selectedBranch;
       setValue("name", name);
       setValue("location", location);
       setValue("mapLink", mapLink);
+      setValue("phone_number", phone_number);
     }
   }, []);
 
@@ -64,53 +65,75 @@ export default function AddEditBranch({
   };
 
   return (
-    <AddBranchForm>
-      <BackIcon onClick={() => handleBack()} />
+    <>
+      <AddBranchForm>
+        <BackIcon onClick={() => handleBack()} />
 
-      <TextField
-        label="Name"
-        name="name"
-        variant="outlined"
-        {...register("name", { required: "Required" })}
-        error={!isEmpty(formState?.errors?.name)}
-        helperText={
-          !isEmpty(formState.errors.link) && formState?.errors?.name?.message
-        }
-      />
-      <TextField
-        label="Location"
-        variant="outlined"
-        name="location"
-        {...register("location", { required: "Required" })}
-        error={!isEmpty(formState?.errors?.location)}
-        helperText={
-          !isEmpty(formState.errors.location) &&
-          formState?.errors?.location?.message
-        }
-      />
-      <TextField
-        label="Maps"
-        variant="outlined"
-        name="mapLink"
-        {...register("mapLink", { required: "Required" })}
-        error={!isEmpty(formState?.errors?.mapLink)}
-        helperText={
-          !isEmpty(formState.errors.mapLink) &&
-          formState?.errors?.mapLink?.message
-        }
-      />
-      <LoadingButton
-        loading={isPending || isEditing}
-        onClick={() => handleAddBranch()}
-        style={{
-          backgroundColor: "turquoise",
-          color: "white",
-          width: "150px",
-          height: "40px",
-        }}
-      >
-        {selectedBranch ? "Edit Branch" : "Add Branch"}
-      </LoadingButton>
-    </AddBranchForm>
+        <TextField
+          label="Name"
+          name="name"
+          variant="outlined"
+          {...register("name", { required: "Required" })}
+          error={!isEmpty(formState?.errors?.name)}
+          helperText={
+            !isEmpty(formState.errors.link) && formState?.errors?.name?.message
+          }
+        />
+        <TextField
+          label="PhoneNumber"
+          name="phone_number"
+          variant="outlined"
+          {...register("phone_number", {
+            required: "Required",
+            pattern: {
+              value: /^(\d+\s)*\d+$/,
+              message: "Invalid phone number format.",
+            },
+          })}
+          error={!isEmpty(formState?.errors?.phone_number)}
+          helperText={
+            !isEmpty(formState.errors.phone_number) &&
+            formState?.errors?.phone_number?.message
+          }
+        />
+        <TextField
+          label="Location"
+          variant="outlined"
+          name="location"
+          {...register("location", { required: "Required" })}
+          error={!isEmpty(formState?.errors?.location)}
+          helperText={
+            !isEmpty(formState.errors.location) &&
+            formState?.errors?.location?.message
+          }
+        />
+        <TextField
+          label="Maps"
+          variant="outlined"
+          name="mapLink"
+          {...register("mapLink", { required: "Required" })}
+          error={!isEmpty(formState?.errors?.mapLink)}
+          helperText={
+            !isEmpty(formState.errors.mapLink) &&
+            formState?.errors?.mapLink?.message
+          }
+        />
+        <LoadingButton
+          loading={isPending || isEditing}
+          onClick={() => handleAddBranch()}
+          style={{
+            backgroundColor: "turquoise",
+            color: "white",
+            width: "150px",
+            height: "40px",
+          }}
+        >
+          {selectedBranch ? "Edit Branch" : "Add Branch"}
+        </LoadingButton>
+      </AddBranchForm>
+      <Note>
+      Note: When listing multiple phone numbers, please separate each with a single space.
+      </Note>
+    </>
   );
 }

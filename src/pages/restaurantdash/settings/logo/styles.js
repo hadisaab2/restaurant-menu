@@ -10,3 +10,12 @@ export const Container = styled.div`
   min-height: 60vh;
   margin-left: 20px;
 `;
+
+export const Note = styled.span`
+font-size: 12px;
+margin-top: 30px;
+width: 30%;
+font-weight: bold;
+
+
+`;

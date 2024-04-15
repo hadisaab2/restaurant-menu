@@ -57,7 +57,7 @@ export const Branch = styled.span`
  font-size:18px;
  font-weight: 620;
  color:${props=>props.activeBranch==props.BranchId?props.theme.popupTextColor:props.theme.branchUnActive};
- border-bottom:${props=>props.activeBranch==props.BranchId?`1px solid ${props.theme.textColor}`:"null"};
+ /* border-bottom:${props=>props.activeBranch==props.BranchId?`1px solid ${props.theme.textColor}`:"null"}; */
  transition:all 0.1s ease-in-out;
  height: 26px;
  `;

@@ -88,8 +88,9 @@ const BackIconAnimation  = keyframes`
 
 export const BackIcon = styled(IoIosArrowBack)`
 font-size: 22px;
-color:white;
 background-color: ${props=>props.theme.mainColor};
+color: ${props=>props.theme.backgroundColor};
+
 padding: 4px;
 border-radius: 50%;
 `;
@@ -166,7 +167,8 @@ export const ItemInfo = styled.div`
   flex-direction: column;
   position: relative;
   margin-top: 20px;
-  padding-bottom: 20px;
+  padding-bottom: 10vh;
+  color:${props=>props.theme.textColor};
 
 `;
 

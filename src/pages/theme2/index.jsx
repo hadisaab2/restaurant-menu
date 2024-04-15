@@ -15,7 +15,7 @@ export default function Theme2() {
   );
     const {restaurantName}=useParams();
     const restaurant = useSelector((state) => state.restaurant?.[restaurantName]);
-    const [activeCategory, setactiveCategory] = useState(restaurant.categories[0].id);
+    const [activeCategory, setactiveCategory] = useState(restaurant?.categories?.[0]?.id);
 
     const popupHandler = (type) => {
       if(type==null){

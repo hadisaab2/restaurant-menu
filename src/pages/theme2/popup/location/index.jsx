@@ -64,7 +64,7 @@ export default function LocationPopup({
         </InfoContainer>
         <InfoContainer>
           <CallLogo />
-          <Info>03875135</Info>
+          <Info>{activeBranch?.phone_number}</Info>
         </InfoContainer>
         <InfoContainer>
           <MapsLogo />
@@ -79,17 +79,17 @@ export default function LocationPopup({
           </InstagramContainer>
         )}
         {restaurant.socialMedia.find((media) => media.platform == "Whatsapp") && (
-          <WhatsappContainer>
+          <WhatsappContainer href={`https://${restaurant.socialMedia.find((media) => media.platform == "Whatsapp").link}`}>
           <WhatsappLogo />
         </WhatsappContainer>
         )}
       {restaurant.socialMedia.find((media) => media.platform == "Facebook") && (
-          <FacebookContainer>
+          <FacebookContainer href={`https://${restaurant.socialMedia.find((media) => media.platform == "Facebook").link}`}>
           <FacebookLogo />
         </FacebookContainer>
         )}
         {restaurant.socialMedia.find((media) => media.platform == "Tiktok") && (
-        <TiktokContainer>
+        <TiktokContainer href={`https://${restaurant.socialMedia.find((media) => media.platform == "Tiktok").link}`}>
         <TiktokLogo />
       </TiktokContainer>
         )}

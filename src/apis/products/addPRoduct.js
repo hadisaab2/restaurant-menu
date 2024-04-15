@@ -39,6 +39,7 @@ const addProduct = async (payload) => {
     formData.append("category_id", payload.category_id);
     formData.append(`image`, payload.image);
     formData.append(`priority`, payload.priority);
+    formData.append(`product_code`, payload.product_code);
 
     const response = await axios.post(url, formData, {
       headers: {

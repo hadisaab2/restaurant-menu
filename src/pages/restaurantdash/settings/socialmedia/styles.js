@@ -91,3 +91,13 @@ export const AddMedia = styled.button`
   font-size: 14px;
   margin-left: 20px;
 `;
+
+export const Note = styled.span`
+font-size: 12px;
+margin-left: 20px;
+margin-top: 30px;
+width: 30%;
+font-weight: bold;
+
+
+`;

@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { AddMedia, AddMediaForm, BackIcon } from "../styles";
+import { AddMedia, AddMediaForm, BackIcon, Note } from "../styles";
 import {
   Box,
   FormControl,
@@ -74,6 +74,7 @@ export default function AddEditMedia({
     media.some(({ platform }) => platform === platformToAdd);
 
   return (
+    <>
     <AddMediaForm>
       <BackIcon onClick={() => handleBack()} />
       <Box sx={{ minWidth: 120 }}>
@@ -130,5 +131,9 @@ export default function AddEditMedia({
         {selectedMedia ? "Edit Media" : "Add Media"}
       </LoadingButton>
     </AddMediaForm>
+          <Note>
+          Note: Media links should follow the format: www.instagram.com/...
+        </Note>
+      </>
   );
 }

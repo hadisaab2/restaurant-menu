@@ -161,6 +161,8 @@ export default function AddProduct({
       );
       setValue("category_id", selectedProduct.category_id);
       setValue("priority", selectedProduct.priority);
+      setValue("product_code", selectedProduct.product_code);
+
     }
   }, []);
 
@@ -316,7 +318,14 @@ export default function AddProduct({
         defaultValue={1}
         inputProps={{ min: 1 }}
       />
-
+      <TextField
+        label={"Product_code"}
+        name={"product_code"}
+        variant="outlined"
+        {...register("product_code")}
+        style={fieldStyle}
+        type="text"
+      />
       <Box style={fieldStyle}>
         <FormControl fullWidth>
           <InputLabel>Category</InputLabel>

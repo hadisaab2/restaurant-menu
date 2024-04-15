@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Container } from "./styles";
+import { Container, Note } from "./styles";
 import {
   Row,
   UploadBtn,
@@ -131,6 +131,10 @@ export default function Logo({ setSection }) {
       </Row>
 
       {imageUrl && <UploadedImage src={imageUrl} alt="Uploaded" />}
+      <Note>
+      Note: For optimal display, it is recommended that the logo be horizontal with dimensions of 80px in width and 50px in height.
+           </Note>
     </Container>
+
   );
 }

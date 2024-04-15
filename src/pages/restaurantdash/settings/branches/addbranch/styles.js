@@ -36,3 +36,12 @@ export const AddBranchForm = styled.div`
   padding-top: 40px;
 `;
 
+export const Note = styled.span`
+font-size: 12px;
+margin-left: 20px;
+margin-top: 30px;
+width: 30%;
+font-weight: bold;
+
+`;
+

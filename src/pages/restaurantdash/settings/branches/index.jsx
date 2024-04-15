@@ -72,6 +72,7 @@ export default function Branches() {
               <tr>
                 <Th>Name</Th>
                 <Th>Locations</Th>
+                <Th>PhoneNumber</Th>
                 <Th>Maps Link</Th>
                 <Th>Actions</Th>
               </tr>
@@ -82,9 +83,12 @@ export default function Branches() {
                   <tr>
                     <Td>{branch.name}</Td>
                     <Td>{branch.location}</Td>
+                    <Td>{branch.phone_number}</Td>
+
                     <Td>
                       <a href="#">{branch.mapLink}</a>
                     </Td>
+
                     <Td>
                       <EditDeleteIcons>
                         <Edit onClick={() => handleEdit(branch)} />
