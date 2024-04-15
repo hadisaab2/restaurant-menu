@@ -19,10 +19,11 @@ const deleteCategory = async (id) => {
   }
 };
 
-export const useDeleteCategoryQuery = ({ onSuccess }) => {
+export const useDeleteCategoryQuery = ({ onSuccess, onError = () => {} }) => {
   const { error, mutate, isPending } = useMutation({
     mutationFn: (id) => deleteCategory(id),
     onSuccess,
+    onError,
   });
 
   const handleApiCall = (id) => mutate(id);

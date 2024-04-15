@@ -7,6 +7,7 @@ import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import { useDeleteCategoryQuery } from "../../../../apis/categories/deleteCategory";
 import { LoadingButton } from "@mui/lab";
+import { toast } from "react-toastify";
 
 export default function DeleteCategoryPopup({
   isOpen,
@@ -22,6 +23,9 @@ export default function DeleteCategoryPopup({
       refetchProductsHandler();
       setIsOpen(false);
       setSelectedIdForAction(null);
+    },
+    onError: () => {
+      toast.error("Failed to delete category !!");
     },
   });
   const handleClose = () => {

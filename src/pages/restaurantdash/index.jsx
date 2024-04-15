@@ -29,13 +29,6 @@ export default function RestaurantDash() {
   const [userInformation, setUserInformation] = useState({});
   const navigate = useNavigate();
 
-  const handleLogout = () => {
-    localStorage.removeItem("isLoggedIn");
-    deleteCookie("accessToken");
-    deleteCookie("userInfo");
-    navigate(ADMINSIGNIN);
-  };
-
   useEffect(() => {
     const storedUserInfo = getCookie("userInfo") || "{}";
     setUserInformation(JSON.parse(storedUserInfo));
@@ -62,10 +55,8 @@ export default function RestaurantDash() {
           </Tab>
         </SidebarContent>
         <SidebarBottom>
-            <ProfileIcon />
-            <Username>{userInformation?.username || "user"}</Username>
-
-          
+          <ProfileIcon />
+          <Username>{userInformation?.username || "user"}</Username>
         </SidebarBottom>
       </Sidebar>
       <Content>

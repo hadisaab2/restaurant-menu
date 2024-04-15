@@ -20,7 +20,6 @@ const editProduct = async (id, payload) => {
       case AR:
         formData.append("ar_name", payload.ar_name);
         formData.append("ar_description", payload.ar_description);
-        formData.append("ar_price", payload.ar_price);
         break;
       case ENAR:
         formData.append("en_name", payload.en_name);
@@ -28,7 +27,6 @@ const editProduct = async (id, payload) => {
         formData.append("en_price", payload.en_price);
         formData.append("ar_name", payload.ar_name);
         formData.append("ar_description", payload.ar_description);
-        formData.append("ar_price", payload.ar_price);
         break;
       default:
         break;
@@ -53,10 +51,11 @@ const editProduct = async (id, payload) => {
   }
 };
 
-export const useEditProductQuery = ({ onSuccess }) => {
+export const useEditProductQuery = ({ onSuccess, onError = () => {} }) => {
   const { error, mutate, isPending } = useMutation({
     mutationFn: (params) => editProduct(params[0], params[1]),
     onSuccess,
+    onError,
   });
 
   const handleApiCall = (id, data) => mutate([id, data]);

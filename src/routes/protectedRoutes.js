@@ -4,10 +4,10 @@ import { ADMINSIGNIN } from "./URLs";
 import { getCookie } from "../utilities/manageCookies";
 
 const ProtectedRoute = ({ children, role }) => {
-  const { status } = useValidateTokenQueryQuery();
+  const { status, isSuccess } = useValidateTokenQueryQuery();
   const userInfo = JSON?.parse(getCookie("userInfo") || "{}");
 
-  if (status !== "pending") {
+  if (status !== "pending" || !isSuccess) {
     if (status === "error" || userInfo.role_id !== role) {
       return <Navigate to={ADMINSIGNIN} replace />;
     }
