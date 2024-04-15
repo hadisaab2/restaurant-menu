@@ -15,11 +15,8 @@ export default function Products({
   const [activePlate, setactivePlate] = useState(null);
   const { restaurantName } = useParams();
   const [productPositions, setProductPositions] = useState([]); // x y and width of product
-  // const [numProductsToShow, setNumProductsToShow] = useState(1);
   const [productRefs, setProductRefs] = useState([]);
-  // const [page, setPage] = useState(0);
   const loadMoreRef = useRef();
-
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, status } =
     useGetProducts(activeCategory);
 
@@ -40,57 +37,43 @@ export default function Products({
     setProductPositions(positions);
   };
 
+
+
   useEffect(() => {
     // window.scrollTo(0, 0);
     changepositions();
   }, [productRefs]);
 
-  // useEffect(() => {
-  //   if (menu && activeCategory !== null) {
-  //     const refs = data?.pages
-  //     ?.flat()
-  //     ?.filter((plate) =>
-  //       plate[activeLanguage === "en" ? "en_name" : "ar_name"]
-  //         .toLowerCase()
-  //         .includes(searchText.toLowerCase())
-  //     )?.map(() => React.createRef());
-  //     console.log(refs)
-  //     setProductRefs(refs);
-  //   }
-  // }, [menu, activeCategory, searchText,data]);
-  const filteredProducts = data?.pages
-  ?.flat()
-  ?.filter((plate) =>
-    plate[activeLanguage === "en" ? "en_name" : "ar_name"]
-      .toLowerCase()
-      .includes(searchText.toLowerCase())
-  ) || [];
+
 
   useEffect(() => {
-    if (filteredProducts.length>0) {
-      setProductRefs(filteredProducts.map(() => React.createRef()));
+    if (menu && activeCategory !== null && data?.pages?.flat().length > 0) {
+      const refs = data?.pages
+        ?.flat()
+        ?.filter((plate) =>
+          plate[activeLanguage === "en" ? "en_name" : "ar_name"]
+            .toLowerCase()
+            .includes(searchText.toLowerCase())
+        )
+        .map(() => React.createRef());
+      setProductRefs(refs);
     }
-  }, [filteredProducts]);
-  // useEffect(() => {
-  //   const handleScroll = () => {
-  //     changepositions();
-  //     const { scrollTop, scrollHeight, clientHeight } =
-  //       document.documentElement;
+  }, [menu, activeCategory, searchText, data]);
 
-  //     // Check if the user has scrolled to the bottom of the page
-  //     if (scrollTop + clientHeight >= scrollHeight - 100) {
-  //       // setNumProductsToShow((prevNum) => prevNum + 4);
-  //       if (hasNextPage && !isFetchingNextPage) {
-  //         fetchNextPage();
-  //       }
-  //       // setPage((currentPage) => currentPage + 1);
-  //     }
-  //   };
-  //   window.addEventListener("scroll", handleScroll);
-  //   return () => {
-  //     window.removeEventListener("scroll", handleScroll);
-  //   };
-  // }, [productRefs, hasNextPage, isFetchingNextPage, fetchNextPage]);
+
+
+  useEffect(() => {
+    const handleScroll = () => {
+      changepositions();
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, [productRefs]);
+
+
+
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
@@ -107,21 +90,16 @@ export default function Products({
     };
   }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
+
   // filtering products based on search
-  // const filteredProducts = menu
-  //   ?.find((category) => category.id === activeCategory)
-  //   ?.products.filter((plate) =>
-  //     plate[activeLanuguage === "en" ? "en_name" : "ar_name"]
-  //       .toLowerCase()
-  //       .includes(searchText.toLowerCase())
-  //   );
-
-
-  //   const filteredProducts = response?.data.filter((plate) =>
-  //   plate[activeLanuguage === "en" ? "en_name" : "ar_name"]
-  //     .toLowerCase()
-  //     .includes(searchText.toLowerCase())
-  // );
+  const filteredProducts =
+    data?.pages
+      ?.flat()
+      ?.filter((plate) =>
+        plate[activeLanguage === "en" ? "en_name" : "ar_name"]
+          .toLowerCase()
+          .includes(searchText.toLowerCase())
+      ) || [];
 
   return (
     <Container activeCategory={activeCategory}>
@@ -130,7 +108,7 @@ export default function Products({
           if (activeCategory == singlemenu.id) {
             return (
               <>
-                {filteredProducts?.map((plate, index) => {
+                {filteredProducts.map((plate, index) => {
                   return (
                     <Product
                       index={index}
@@ -146,9 +124,7 @@ export default function Products({
             );
           }
         })}
-        <div ref={loadMoreRef} style={{ height: "20px" }}>
-          
-        </div>
+        <div ref={loadMoreRef} style={{ height: "20px" }}></div>
       </ProductWrapper>
       {activePlate !== null && (
         <ProductDetails

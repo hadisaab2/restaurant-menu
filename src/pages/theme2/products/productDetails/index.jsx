@@ -22,7 +22,7 @@ import {
 } from "./styles";
 import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { addToCart, adjustQuantity } from "../../../../redux/cart/cartActions";
+import { addToCart } from "../../../../redux/cart/cartActions";
 
 export default function ProductDetails({
   activePlate,
@@ -37,7 +37,6 @@ export default function ProductDetails({
   );
 
   const dispatch = useDispatch();
-  const cart = useSelector((state) => state.cart);
 
   const [quantity, setQuantity] = useState(1);
   const [CloseAnimation, setCloseAnimation] = useState(true);
@@ -50,16 +49,21 @@ export default function ProductDetails({
     setCloseAnimation(false);
   };
 
+  const handleDeviceBack = () => {
+    window.history.back();
+  };
+
   useEffect(() => {
-    const handlePopstate = () => {
-      handleBack();
+    const handlePopState = () => {
+      // Revert to the normal view when back is pressed
+      handleBack()
     };
 
-    window.addEventListener("popstate", handlePopstate);
+    // Add event listener for popstate
+    window.addEventListener("popstate", handlePopState);
 
-    return () => {
-      window.removeEventListener("popstate", handlePopstate);
-    };
+    // Cleanup event listener
+    return () => window.removeEventListener("popstate", handlePopState);
   }, []);
 
   const handleAddToCart = () => {

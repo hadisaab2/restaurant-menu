@@ -1,14 +1,24 @@
 import React, { useEffect, useState } from "react";
-import { Container, Wrapper, AddButton } from "./styles";
+import {
+  Container,
+  Wrapper,
+  AddButton,
+  FormWrapper,
+  LoadWrapper,
+  LoadMore,
+  LoadBtnWrapper,
+} from "./styles";
 
 import Product from "./product";
 import { IoMdAdd } from "react-icons/io";
 import AddProduct from "./addproduct";
-import { useGetProducts } from "../../../apis/products/getProducts";
 import { getCookie } from "../../../utilities/manageCookies";
 import DeleteProductPopup from "./product/deleteProductPopup";
+import { Box, FormControl, InputLabel, MenuItem, Select } from "@mui/material";
+import { useGetCategories } from "../../../apis/categories/getCategories";
+import { useGetProducts } from "../../../apis/products/getProductsByCategory";
 
-export default function Products({ setProducts, products }) {
+export default function Products({}) {
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [selectedIdForAction, setSelectedIdForAction] = useState(null);
@@ -17,23 +27,37 @@ export default function Products({ setProducts, products }) {
   const [userInformation, setUserInformation] = useState(
     JSON.parse(storedUserInfo)
   );
-  const { isLoading, response, refetch } = useGetProducts({
+  const [categories, setCategories] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState(null);
+
+  const { isLoading, response, refetch } = useGetCategories({
     onSuccess: () => {},
     restaurantId: userInformation.restaurant_id,
   });
 
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, status } =
+    useGetProducts(selectedCategory);
+
   useEffect(() => {
     if (!isLoading) {
-      setProducts(response?.data);
+      setCategories(response?.data);
     }
   }, [isLoading]);
 
   const refetchProducts = () => {
-    refetch()
-      .then(({ data: { data } }) => setProducts(data))
-      .catch((err) => console.log(err));
+    // refetch()
+    //   .then(({ data: { data } }) => setProducts(data))
+    //   .catch((err) => console.log(err));
   };
 
+  const handlecategory = (e) => {
+    setSelectedCategory(e.target.value);
+  };
+  const loadMoreHandle = () => {
+    if (hasNextPage && !isFetchingNextPage) {
+      fetchNextPage();
+    }
+  };
   return (
     <Container>
       {!isFormOpen ? (
@@ -45,12 +69,37 @@ export default function Products({ setProducts, products }) {
             selectedIdForAction={selectedIdForAction}
             setSelectedIdForAction={setSelectedIdForAction}
           />
-          <AddButton onClick={() => setIsFormOpen(true)}>
-            <IoMdAdd />
-            Add Product
-          </AddButton>
+          <FormWrapper>
+            <Box sx={{ minWidth: 120,height: '50%' }}>
+              <FormControl fullWidth size="small">
+                <InputLabel id="demo-simple-select-label">Category</InputLabel>
+                <Select
+                  labelId="demo-simple-select-label"
+                  id="demo-simple-select"
+                  value={selectedCategory}
+                  label="Category"
+                  defaultValue={selectedCategory}
+                  onChange={handlecategory}
+                  // defaultValue={selectedMedia?.platform}
+                  // error={!isEmpty(formState?.errors?.platform)}
+                >
+                  {categories.map((category) => {
+                    return (
+                      <MenuItem value={category.id}>
+                        {category.en_category}
+                      </MenuItem>
+                    );
+                  })}
+                </Select>
+              </FormControl>
+            </Box>
+            <AddButton onClick={() => setIsFormOpen(true)}>
+              <IoMdAdd />
+              Add Product
+            </AddButton>
+          </FormWrapper>
           <Wrapper>
-            {products?.map((product) => {
+            {data?.pages?.flat().map((product) => {
               return (
                 <Product
                   product={product}
@@ -61,6 +110,14 @@ export default function Products({ setProducts, products }) {
                 />
               );
             })}
+
+            {hasNextPage && (
+              <LoadWrapper>
+                <LoadBtnWrapper>
+                  <LoadMore onClick={loadMoreHandle}>Load More</LoadMore>
+                </LoadBtnWrapper>
+              </LoadWrapper>
+            )}
           </Wrapper>
         </>
       ) : (

@@ -26,11 +26,13 @@ const Product = React.forwardRef(({ plate, setactivePlate, activePlate, index,sh
   const plateHandle = () => {
     if(activePlate==null && imageLoaded && !showPopup){
       setactivePlate(index);
+      window.history.pushState({ isZoomed: true }, '');
       document.body.style.overflow = 'hidden';
 
     }
-  };
+  }
 
+  
   return (
     <Container index={index} activePlate={activePlate}   className="lazy-load">
       <Wrapper>
