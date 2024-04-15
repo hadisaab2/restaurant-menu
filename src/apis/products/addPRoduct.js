@@ -21,7 +21,6 @@ const addProduct = async (payload) => {
       case AR:
         formData.append("ar_name", payload.ar_name);
         formData.append("ar_description", payload.ar_description);
-        formData.append("ar_price", payload.ar_price);
         break;
       case ENAR:
         formData.append("en_name", payload.en_name);
@@ -29,7 +28,6 @@ const addProduct = async (payload) => {
         formData.append("en_price", payload.en_price);
         formData.append("ar_name", payload.ar_name);
         formData.append("ar_description", payload.ar_description);
-        formData.append("ar_price", payload.ar_price);
         break;
       default:
         break;
@@ -52,10 +50,11 @@ const addProduct = async (payload) => {
   }
 };
 
-export const useAddProductQuery = ({ onSuccess }) => {
+export const useAddProductQuery = ({ onSuccess, onError = () => {} }) => {
   const { error, mutate, isPending } = useMutation({
     mutationFn: addProduct,
     onSuccess,
+    onError,
   });
 
   const handleApiCall = (data) => mutate(data);

@@ -41,10 +41,11 @@ const addCategory = async (payload) => {
   }
 };
 
-export const useAddCategoryQuery = ({ onSuccess }) => {
+export const useAddCategoryQuery = ({ onSuccess, onError = () => {} }) => {
   const { error, mutate, isPending } = useMutation({
     mutationFn: addCategory,
     onSuccess,
+    onError,
   });
 
   const handleApiCall = (data) => mutate(data);

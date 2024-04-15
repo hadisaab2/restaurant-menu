@@ -33,6 +33,7 @@ import {
   UploadPhoto,
   UploadedImage,
 } from "../products/addproduct/styles";
+import { toast } from "react-toastify";
 
 export default function Categories({ setProducts }) {
   const [showAddComponent, setShowAddComponent] = useState(false);
@@ -78,6 +79,9 @@ export default function Categories({ setProducts }) {
       setFile(null);
       setImageUrl(null);
     },
+    onError: () => {
+      toast.error("Failed to add category !!");
+    },
   });
 
   const { isPending: isEditing, handleApiCall: handleEditApi } =
@@ -89,6 +93,9 @@ export default function Categories({ setProducts }) {
         setShowAddComponent(false);
         setFile(null);
         setImageUrl(null);
+      },
+      onError: () => {
+        toast.error("Failed to add product !!");
       },
     });
 
@@ -213,7 +220,7 @@ export default function Categories({ setProducts }) {
               setSelectedIdForAction(null);
             }}
           />
-          
+
           {displayEnglish && (
             <TextField
               label="English category"

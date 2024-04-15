@@ -33,6 +33,7 @@ import { LoadingButton } from "@mui/lab";
 import { useGetCategories } from "../../../../apis/categories/getCategories";
 import { useEditProductQuery } from "../../../../apis/products/editProduct";
 import { useDeleteProductQuery } from "../../../../apis/products/deleteProduct";
+import { toast } from "react-toastify";
 
 export default function AddProduct({
   setIsFormOpen,
@@ -66,6 +67,9 @@ export default function AddProduct({
       refetchProducts();
       setIsFormOpen(false);
     },
+    onError: () => {
+      toast.error("Failed to add product !!");
+    },
   });
 
   const { handleApiCall: handleDeleteProduct, isPending: isDeleting } =
@@ -83,6 +87,9 @@ export default function AddProduct({
         setSelectedProduct(null);
         refetchProducts();
         setIsFormOpen(false);
+      },
+      onError: () => {
+        toast.error("Failed to edit product !!");
       },
     });
 
@@ -123,20 +130,13 @@ export default function AddProduct({
         setValue("en_description", en_description);
         setValue("en_price", en_price);
       } else if (userInformation.Lang === AR) {
-        const { ar_name, ar_description, ar_price } = selectedProduct;
+        const { ar_name, ar_description } = selectedProduct;
 
         setValue("ar_name", ar_name);
         setValue("ar_description", ar_description);
-        setValue("ar_price", ar_price);
       } else {
-        const {
-          en_name,
-          en_description,
-          en_price,
-          ar_name,
-          ar_description,
-          ar_price,
-        } = selectedProduct;
+        const { en_name, en_description, en_price, ar_name, ar_description } =
+          selectedProduct;
 
         setValue("en_name", en_name);
         setValue("en_description", en_description);
@@ -144,7 +144,6 @@ export default function AddProduct({
 
         setValue("ar_name", ar_name);
         setValue("ar_description", ar_description);
-        setValue("ar_price", ar_price);
       }
 
       setValue(
@@ -226,12 +225,6 @@ export default function AddProduct({
       name: "en_price",
       label: "English price",
       display: displayEnglish,
-      type: "number",
-    },
-    {
-      name: "ar_price",
-      label: "Arabic price",
-      display: displayArabic,
       type: "number",
     },
   ];
@@ -341,7 +334,6 @@ export default function AddProduct({
           variant="contained"
           style={{ backgroundColor: "turquoise" }}
           onClick={handleAddProduct}
-          disabled={isDeleting}
         >
           {selectedProduct ? "Edit Product" : "Add Product"}
         </LoadingButton>

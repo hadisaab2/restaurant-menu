@@ -28,7 +28,7 @@ const editCategory = async (id, payload) => {
 
     formData.append("image", payload.image);
     formData.append("priority", payload.priority);
-   
+
     const response = await axios.put(url, formData, {
       headers: {
         "Content-Type": "multipart/form-data",
@@ -42,10 +42,11 @@ const editCategory = async (id, payload) => {
   }
 };
 
-export const useEditCategoryQuery = ({ onSuccess }) => {
+export const useEditCategoryQuery = ({ onSuccess, onError = () => {} }) => {
   const { error, mutate, isPending } = useMutation({
     mutationFn: (params) => editCategory(params[0], params[1]),
     onSuccess,
+    onError,
   });
 
   const handleApiCall = (id, data) => mutate([id, data]);
