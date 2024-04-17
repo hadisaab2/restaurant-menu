@@ -46,13 +46,13 @@ export default function CartPopup({
     let message = `Hello *${restaurantName}*\n`;
     message += "I want to purchase the following items:\n";
     cart.forEach(item => {
-        message +=`• *${item.en_name}* ${item.quantity}\n`; // Add each item to the message
+        message +=`• ${item.quantity} of *${item.en_name}* \n`; // Add each item to the message
     });
     message += "Thank you.";
     
     const encodedMessage = encodeURIComponent(message);
     const phoneNumber = '96171112521'; // Replace with your business's phone number
-    const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
+    const whatsappUrl = `https://wa.me/${restaurant.phone_number}?text=${encodedMessage}`;
 
     window.open(whatsappUrl, '_blank'); // Open WhatsApp in a new tab/window
     dispatch(clearCart());

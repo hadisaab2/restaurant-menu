@@ -21,22 +21,21 @@ export const templates = [
       "categoryActive",
       "categoryActiveText",
       "categoryActiveIcon",
+      "categoryUnactiveIcon",
       "BoxColor",
       "BoxTextColor",
-      "categoryUnactiveIcon",
       "languageTextColor",
       "searchTextColor",
       "popupTextColor",
       "popupbackgroundColor",
       "branchUnActive"
-      
-      // "plateBackground",
-      // "plateName",
     ],
   },
   {
     id: 3,
     name: "template3",
     colors: ["maincolor", "backgroundcolor", "textcolor"],
-  },
-];
+  }
+
+
+]

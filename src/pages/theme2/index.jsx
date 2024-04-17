@@ -49,7 +49,7 @@ export default function Theme2() {
       </DetailsBtn>
       <CartBtn onClick={() => popupHandler("cart")}>
         <Number>{itemCount}</Number>
-        <Cart />
+        <Cart  />
       </CartBtn>
       <LocationPopup restaurant={restaurant} showPopup={showPopup} popupHandler={popupHandler} />
       <CartPopup restaurant={restaurant} showPopup={showPopup} popupHandler={popupHandler} />
