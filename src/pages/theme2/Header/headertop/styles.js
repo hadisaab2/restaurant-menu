@@ -9,8 +9,8 @@ justify-content: space-between;
 width: 100%;
 `;
 export const Brand = styled.img`
-width: 80px;
-height: 50px;
+max-width: 250px;
+max-height: 120px;
 margin-left: 20px;
 `;
 
