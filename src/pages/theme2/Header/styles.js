@@ -46,7 +46,7 @@ border: 0;
 outline: none;
 padding-left: ${props=>props.activeLanguage=="en"?"30px":"0px"};
 padding-right: ${props=>props.activeLanguage=="en"?"0px":"30px"};
-color:${props=>props.theme.textColor};
+color:${props=>props.theme.searchTextColor};
 &::placeholder{
     color:${props=>props.theme.searchTextColor};
     opacity: 0.5;
