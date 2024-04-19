@@ -38,7 +38,7 @@ export default function RestaurantDash() {
     <Container>
       <Sidebar>
         <SidebarTop>
-          <Title>PLATEAU</Title>
+          <Title>Menugic</Title>
         </SidebarTop>
         <SidebarContent>
           <Tab onClick={() => setSection("Categories")}>

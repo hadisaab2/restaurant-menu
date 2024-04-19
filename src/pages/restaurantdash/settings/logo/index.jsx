@@ -132,7 +132,7 @@ export default function Logo({ setSection }) {
 
       {imageUrl && <UploadedImage src={imageUrl} alt="Uploaded" />}
       <Note>
-      Note: For optimal display, it is recommended that the logo be horizontal with dimensions of 80px in width and 50px in height.
+      Note: For optimal display, it is recommended that the logo be horizontal of type svg with dimensions of 80px in width and 50px in height.
            </Note>
     </Container>
 

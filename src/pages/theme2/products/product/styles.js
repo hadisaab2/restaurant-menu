@@ -56,11 +56,11 @@ margin-top: 5px;
 export const PlateName = styled.span`
 font-size: 14px;
 font-weight: 500;
-color:${props=>props.theme.textColor};
+color:${props=>props.theme.BoxTextColor};
 
 `;
 export const PlatePrice = styled.span`
-color:${props=>props.theme.mainColor};
+color:${props=>props.theme.BoxPriceColor};
 font-size: 14px;
 
 

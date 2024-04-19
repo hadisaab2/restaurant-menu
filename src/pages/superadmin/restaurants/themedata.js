@@ -24,6 +24,7 @@ export const templates = [
       "categoryUnactiveIcon",
       "BoxColor",
       "BoxTextColor",
+      "BoxPriceColor",
       "languageTextColor",
       "searchTextColor",
       "popupTextColor",
