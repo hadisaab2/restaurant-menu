@@ -21,6 +21,7 @@ export const templates = [
       "categoryActive",
       "categoryActiveText",
       "categoryActiveIcon",
+      "categoryUnActive",
       "categoryUnactiveIcon",
       "BoxColor",
       "BoxTextColor",
