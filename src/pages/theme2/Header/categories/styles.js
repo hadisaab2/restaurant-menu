@@ -56,8 +56,8 @@ export const CategoryWrapper = styled.div`
   box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.1);
   transition: 0.2s all ease-in-out;
   color:${props=>props.categoryId==props.activeCategory?"white":"black"};
-
 `;
+
 
 export const IconContainer = styled.div`
 display: flex;

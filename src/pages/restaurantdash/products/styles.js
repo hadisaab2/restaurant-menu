@@ -6,6 +6,9 @@ export const Container = styled.div`
   align-items: flex-start;
   width: 90%;
   flex-direction: column;
+  @media (max-width: ${breakingPoints.sm}px) {
+   align-items: center;
+  }
 `;
 export const Wrapper = styled.div`
   width: 80%;
@@ -13,6 +16,10 @@ export const Wrapper = styled.div`
   flex-wrap: wrap;
   display: flex;
   align-content: flex-start;
+  @media (max-width: ${breakingPoints.sm}px) {
+    width: 100%;
+   justify-content: center;
+  }
 `;
 
 export const FormWrapper = styled.div`
@@ -21,6 +28,10 @@ flex-direction: row;
 gap:20px;
 margin-top: 20px;
 align-items: center;
+@media (max-width: ${breakingPoints.sm}px) {
+    justify-content: center;
+
+  }
 `;
 
 

@@ -10,6 +10,10 @@ export const Container = styled.div`
   align-items: center;
   justify-content: flex-start;
   cursor: pointer;
+  @media (max-width: ${breakingPoints.sm}px) {
+    width: 50%;
+    justify-content: center;
+  }
 `;
 export const Wrapper = styled.div`
   width: 80%;

@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Theme1 from "../../pages/theme1";
-import { useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useGetRestaurant } from "../../apis/restaurants/getRestaurant";
 import { addmenu, changelanuage } from "../../redux/restaurant/restaurantActions";
 // import Template2 from "../../pages/template2";
@@ -11,6 +11,8 @@ import Theme2 from "../../pages/theme2";
 
 export default function Template() {
   const dispatch = useDispatch();
+  const location = useLocation();
+  const previousLocation = useRef(null);
   const { restaurantName } = useParams();
   const navigate = useNavigate();
   const { isLoading, response,error } = useGetRestaurant({
@@ -22,6 +24,23 @@ export default function Template() {
       navigate('/error/notfound');
     }
   }, [error, navigate]);
+
+  // useEffect(() => {
+  //   previousLocation.current = location;
+  // }, [location]);
+
+  // useEffect(() => {
+  //   const unlisten = history.listen((newLocation) => {
+  //     // Check if the route has changed
+  //     if (previousLocation.current?.pathname !== newLocation.pathname) {
+  //       dispatch({ type: 'CLEAR_STATE' }); // Dispatch action to clear Redux state
+  //     }
+  //   });
+
+  //   return () => {
+  //     unlisten();
+  //   };
+  // }, [dispatch]);
 
 
   const restaurant = useSelector((state) => state.restaurant?.[restaurantName]);

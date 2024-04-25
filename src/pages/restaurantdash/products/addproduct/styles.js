@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import { MdOutlineKeyboardBackspace } from "react-icons/md";
+import { breakingPoints } from "../../../../styles/theme";
 
 export const ProductInfo = styled.div`
   display: flex;
@@ -10,6 +11,10 @@ export const ProductInfo = styled.div`
   padding-top: 40px;
   margin-top: 20px;
   width: 60%;
+  @media (max-width: ${breakingPoints.sm}px) {
+    width: 100%;
+
+  }
 `;
 
 export const BackIcon = styled(MdOutlineKeyboardBackspace)`

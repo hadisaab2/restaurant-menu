@@ -114,8 +114,8 @@ export default function ProductDetails({
             </ItemName>
             <ItemDescription>
               {activeLanuguage == "en"
-                ? plates[activePlate]?.en_description
-                : plates[activePlate]?.ar_description}
+                ? plates[activePlate]?.en_description.replace(/\\n/g, '\n')
+                : plates[activePlate]?.ar_description.replace(/\\n/g, '\n')}
             </ItemDescription>
             <ItemPrice>{plates[activePlate]?.en_price} $</ItemPrice>
 

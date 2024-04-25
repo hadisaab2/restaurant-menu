@@ -2,6 +2,7 @@ import styled from "styled-components";
 import { MdModeEditOutline } from "react-icons/md";
 import { MdDelete } from "react-icons/md";
 import { MdOutlineKeyboardBackspace } from "react-icons/md";
+import { breakingPoints } from "../../../styles/theme";
 
 export const Container = styled.div`
   display: flex;
@@ -21,6 +22,10 @@ export const CategoriesContainer = styled.div`
 
   gap: 20px;
   width: 30%;
+  @media (max-width: ${breakingPoints.sm}px) {
+    width: 80%;
+
+  }
 `;
 export const Category = styled.div`
   width: 100%;

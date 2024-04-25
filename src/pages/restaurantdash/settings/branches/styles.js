@@ -28,6 +28,11 @@ export const Table = styled.table`
   border-collapse: collapse;
   margin-top:30px;
   margin-left: 20px;
+  @media (max-width: ${breakingPoints.sm}px) {
+    margin-left: 0px;
+    width: 50%;
+
+  }
 `;
 
 export const Th = styled.th`

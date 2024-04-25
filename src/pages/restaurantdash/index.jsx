@@ -15,6 +15,9 @@ import {
   Header,
   Path,
   Logout,
+  BurgerIcon,
+  MobileSidebar,
+  CloseIcon
 } from "./style";
 import Products from "./products";
 import Settings from "./settings";
@@ -26,6 +29,8 @@ import { ADMINSIGNIN } from "../../routes/URLs";
 export default function RestaurantDash() {
   const [section, setSection] = useState("Products");
   const [products, setProducts] = useState([]);
+  const [showMobileSidebar, setShowMobileSidebar] = useState(false);
+
   const [userInformation, setUserInformation] = useState({});
   const navigate = useNavigate();
 
@@ -34,8 +39,42 @@ export default function RestaurantDash() {
     setUserInformation(JSON.parse(storedUserInfo));
   }, []);
 
+  const onClickBurger=()=>{
+    setShowMobileSidebar(!showMobileSidebar)
+  }
+
+  const handlesection= (section)=>{
+    setSection(section)
+    setShowMobileSidebar(!showMobileSidebar)
+
+  }
   return (
     <Container>
+      <MobileSidebar showMobileSidebar={showMobileSidebar}>
+      <SidebarTop>
+          <Title>Menugic</Title>
+          <CloseIcon onClick={onClickBurger}/>
+        </SidebarTop>
+        <SidebarContent>
+          <Tab onClick={() =>handlesection("Categories")}>
+            <CateogoryIcon />
+            <TabText>Categories</TabText>
+          </Tab>
+          <Tab  onClick={() =>handlesection("Products")}>
+            <CateogoryIcon />
+            <TabText>Products</TabText>
+          </Tab>
+          <Tab  onClick={() =>handlesection("Settings")}>
+            <CateogoryIcon />
+            <TabText>Settings</TabText>
+          </Tab>
+        </SidebarContent>
+        <SidebarBottom>
+          <ProfileIcon />
+          <Username>{userInformation?.username || "user"}</Username>
+        </SidebarBottom>
+
+      </MobileSidebar>
       <Sidebar>
         <SidebarTop>
           <Title>Menugic</Title>
@@ -69,9 +108,14 @@ export default function RestaurantDash() {
               deleteCookie("userInfo");
               navigate(ADMINSIGNIN);
             }}
+
+            
           >
             Logout
           </Logout>
+
+
+          <BurgerIcon onClick={onClickBurger}/>
         </Header>
         {section == "Products" && (
           <Products setProducts={setProducts} products={products} />

@@ -219,6 +219,7 @@ font-weight: 300;
 width: 90%;
 margin-top: 20px;
 word-spacing: 1px;
+white-space: pre-line;
 animation:${DescriptionAnimation} 1.6s ease-in-out;
 `;
 const PriceAnimation  = keyframes`
