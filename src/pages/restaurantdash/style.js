@@ -58,7 +58,7 @@ export const Tab = styled.div`
     background-color: #edeeef;
   }
   @media (max-width: ${breakingPoints.sm}px) {
-    font-size: 25px;
+    font-size: 22px;
   }
 `;
 export const TabText = styled.span``;
@@ -123,7 +123,7 @@ export const ProfileIcon = styled(IoPersonCircle)`
   font-size: 25px;
   margin-left: 20px;
   @media (max-width: ${breakingPoints.sm}px) {
-    font-size: 30px;
+    font-size: 24px;
 
   }
 `;
@@ -147,7 +147,7 @@ export const Username = styled.span`
   font-size: 14px;
   text-transform: capitalize;
   @media (max-width: ${breakingPoints.sm}px) {
-    font-size: 22px;
+    font-size: 18px;
 
   }
 `;
@@ -165,6 +165,28 @@ export const Logout = styled.button`
     display:none;
   }
 `;
+
+export const LogoutMobile = styled.button`
+  width:80px;
+  outline: none;
+  border:0;
+  border-radius: 20px;
+  height:50%;
+  margin-right: 20px;
+  font-size: 15px;
+  background-color: #edeeef;
+  cursor: pointer;
+  display: none;
+  @media (max-width: ${breakingPoints.sm}px) {
+    display:flex;
+    align-items:center;
+    justify-content: center;
+    position: absolute;
+    right: 10px;
+    bottom:20%
+  }
+`;
+
 
 
 

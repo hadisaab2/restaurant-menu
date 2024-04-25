@@ -17,7 +17,8 @@ import {
   Logout,
   BurgerIcon,
   MobileSidebar,
-  CloseIcon
+  CloseIcon,
+  LogoutMobile
 } from "./style";
 import Products from "./products";
 import Settings from "./settings";
@@ -72,6 +73,19 @@ export default function RestaurantDash() {
         <SidebarBottom>
           <ProfileIcon />
           <Username>{userInformation?.username || "user"}</Username>
+
+          <LogoutMobile
+            onClick={() => {
+              localStorage.removeItem("isLoggedIn");
+              deleteCookie("accessToken");
+              deleteCookie("userInfo");
+              navigate(ADMINSIGNIN);
+            }}
+
+            
+          >
+            Logout
+          </LogoutMobile>
         </SidebarBottom>
 
       </MobileSidebar>
