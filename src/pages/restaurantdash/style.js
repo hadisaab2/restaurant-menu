@@ -58,7 +58,7 @@ export const Tab = styled.div`
     background-color: #edeeef;
   }
   @media (max-width: ${breakingPoints.sm}px) {
-    font-size: 22px;
+    font-size: 18px;
   }
 `;
 export const TabText = styled.span``;
@@ -85,7 +85,10 @@ export const SidebarBottom = styled.div`
   gap: 10px;
   color: black;
   border-top: 1px solid rgb(0, 0, 0, 0.2);
+  @media (max-width: ${breakingPoints.sm}px) {
+    bottom: 5vh;
 
+  }
   
 `;
 export const Content = styled.div`
@@ -129,7 +132,7 @@ export const ProfileIcon = styled(IoPersonCircle)`
 `;
 
 export const CloseIcon = styled(IoMdClose )`
-  font-size: 22px;
+  font-size: 17px;
   position: absolute;
   right: 20px;
   top: 20px;
@@ -147,7 +150,7 @@ export const Username = styled.span`
   font-size: 14px;
   text-transform: capitalize;
   @media (max-width: ${breakingPoints.sm}px) {
-    font-size: 18px;
+    font-size: 15px;
 
   }
 `;
