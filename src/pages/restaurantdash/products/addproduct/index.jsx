@@ -8,6 +8,7 @@ import {
   Row,
   fieldStyle,
   UploadImageText,
+  Textarea,
 } from "./styles";
 import {
   TextField,
@@ -18,6 +19,7 @@ import {
   Select,
   FormHelperText,
   Button,
+  TextareaAutosize,
 } from "@mui/material";
 import { useForm } from "react-hook-form";
 import { LANGUAGES } from "../../../../global/index";
@@ -35,18 +37,18 @@ import { useEditProductQuery } from "../../../../apis/products/editProduct";
 import { useDeleteProductQuery } from "../../../../apis/products/deleteProduct";
 import { toast } from "react-toastify";
 import { useQueryClient } from "@tanstack/react-query";
-
+import ReactQuill from "react-quill";
+import 'react-quill/dist/quill.snow.css'; // Import Quill's CSS
 export default function AddProduct({
   setIsFormOpen,
   selectedProduct,
   refetchProducts,
   setSelectedProduct,
-  userInformation
+  userInformation,
 }) {
   const queryClient = useQueryClient();
   const [file, setFile] = useState(null);
   const [fileErrMsg, setFileErrMsg] = useState("Please upload image");
-
   const [imageUrl, setImageUrl] = useState(null);
   const [categories, setCategories] = useState([]);
   const fileInputRef = useRef(null);
@@ -69,7 +71,7 @@ export default function AddProduct({
       refetchProducts();
       setIsFormOpen(false);
       // queryClient.invalidateQueries(['products'])
-      queryClient.resetQueries(['products'], { exact: true });
+      queryClient.resetQueries(["products"], { exact: true });
     },
     onError: () => {
       toast.error("Failed to add product !!");
@@ -90,8 +92,7 @@ export default function AddProduct({
       onSuccess: () => {
         setSelectedProduct(null);
         setIsFormOpen(false);
-        queryClient.resetQueries(['products'], { exact: true });
-
+        queryClient.resetQueries(["products"], { exact: true });
       },
       onError: () => {
         toast.error("Failed to edit product !!");
@@ -161,7 +162,6 @@ export default function AddProduct({
       setValue("category_id", selectedProduct.category_id);
       setValue("priority", selectedProduct.priority);
       setValue("product_code", selectedProduct.product_code);
-
     }
   }, []);
 
@@ -170,6 +170,7 @@ export default function AddProduct({
   };
 
   const handleAddProduct = () => {
+
     handleSubmit((data) => {
       if (file || imageUrl) {
         if (selectedProduct) {
@@ -188,6 +189,9 @@ export default function AddProduct({
       }
     })();
   };
+  const handleTextChange = (name) => (value) => {
+    setValue(name, value);
+  };
 
   const handleOnDeleteImage = () => {
     setImageUrl(null);
@@ -195,9 +199,11 @@ export default function AddProduct({
     setValue("image", null);
   };
 
+  //check if display english is true
   const displayEnglish =
     userInformation.Lang === LANGUAGES.EN ||
     userInformation.Lang === LANGUAGES.ENAR;
+  //check if display arabic is true
 
   const displayArabic =
     userInformation.Lang === LANGUAGES.AR ||
@@ -209,32 +215,38 @@ export default function AddProduct({
       label: "English name",
       display: displayEnglish,
       type: "text",
+      mui_type: "textfield",
     },
     {
       name: "ar_name",
       label: "Arabic name",
       display: displayArabic,
       type: "text",
+      mui_type: "textfield",
     },
     {
       name: "en_description",
       label: "English description",
       display: displayEnglish,
       type: "text",
+      mui_type: "textarea",
     },
     {
       name: "ar_description",
       label: "Arabic description",
       display: displayArabic,
       type: "text",
+      mui_type: "textarea",
     },
     {
       name: "en_price",
       label: "English price",
       display: displayEnglish,
       type: "number",
+      mui_type: "textfield",
     },
   ];
+  const fieldsToDisplay = fields.filter(({ display }) => display); //all field with display ture
 
   return (
     <ProductInfo>
@@ -281,24 +293,52 @@ export default function AddProduct({
         </Row>
       )}
 
-      {fields.map(
-        ({ name, label, display, type }) =>
-          display && (
-            <TextField
-              label={label}
-              name={name}
-              variant="outlined"
-              {...register(name)}
-              style={fieldStyle}
-              type={type}
-              error={!isEmpty(formState?.errors?.[name])}
-              helperText={
-                !isEmpty(formState?.errors?.[name]) &&
-                formState.errors?.[name].message
-              }
-            />
-          )
+      {fieldsToDisplay.map(({ name, label, type, mui_type }) =>
+        mui_type === "textfield" ? (
+          <TextField
+            key={name}
+            label={label}
+            name={name}
+            variant="outlined"
+            {...register(name)}
+            style={fieldStyle}
+            type={type}
+            error={!isEmpty(formState?.errors?.[name])}
+            helperText={
+              !isEmpty(formState?.errors?.[name]) &&
+              formState.errors?.[name].message
+            }
+          />
+        ) : (
+          // <Textarea aria-label="minimum height" minRows={3} placeholder="Minimum 3 rows" />
+          <ReactQuill
+          value={getValues(name)} // Use the value from your form state
+          onChange={handleTextChange(name)}
+          placeholder={name}
+          modules={{
+            toolbar: [
+              [{ 'header': '1' }, { 'header': '2' }, { 'font': [] }],
+              [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+              ['bold', 'italic', 'underline'],
+              ['link'],
+              ['clean']
+            ],
+          }}
+          formats={[
+            'header',
+            'font',
+            'size',
+            'list',
+            'bullet',
+            'bold',
+            'italic',
+            'underline',
+            'link',
+          ]}
+        />
+        )
       )}
+
       <TextField
         label={"Priority"}
         name={"priority"}

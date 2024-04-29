@@ -85,6 +85,13 @@ export default function ProductDetails({
       setQuantity(quantity - 1);
     }
   };
+
+  const description =
+  activeLanuguage === 'en'
+    ? plates[activePlate]?.en_description
+    : plates[activePlate]?.ar_description;
+
+
   return (
     <>
       <Wrapper
@@ -112,11 +119,7 @@ export default function ProductDetails({
                 ? plates[activePlate]?.en_name
                 : plates[activePlate]?.ar_name}
             </ItemName>
-            <ItemDescription>
-              {activeLanuguage == "en"
-                ? plates[activePlate]?.en_description.replace(/\\n/g, '\n')
-                : plates[activePlate]?.ar_description.replace(/\\n/g, '\n')}
-            </ItemDescription>
+            <ItemDescription dangerouslySetInnerHTML={{ __html: description }} />
             <ItemPrice>{plates[activePlate]?.en_price} $</ItemPrice>
 
             <ButtonWrapper>
