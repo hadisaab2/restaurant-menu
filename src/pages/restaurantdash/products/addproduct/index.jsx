@@ -39,6 +39,7 @@ import { toast } from "react-toastify";
 import { useQueryClient } from "@tanstack/react-query";
 import ReactQuill from "react-quill";
 import 'react-quill/dist/quill.snow.css'; // Import Quill's CSS
+import './styles.css'
 export default function AddProduct({
   setIsFormOpen,
   selectedProduct,
