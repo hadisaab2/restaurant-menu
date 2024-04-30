@@ -38,8 +38,10 @@ import { useDeleteProductQuery } from "../../../../apis/products/deleteProduct";
 import { toast } from "react-toastify";
 import { useQueryClient } from "@tanstack/react-query";
 import ReactQuill from "react-quill";
-import 'react-quill/dist/quill.snow.css'; // Import Quill's CSS
-import './styles.css'
+import "react-quill/dist/quill.snow.css"; // Import Quill's CSS
+import "./styles.css";
+import { v4 as uuidv4 } from "uuid";
+
 export default function AddProduct({
   setIsFormOpen,
   selectedProduct,
@@ -49,6 +51,7 @@ export default function AddProduct({
 }) {
   const queryClient = useQueryClient();
   const [file, setFile] = useState(null);
+  const [images, setImages] = useState([]);
   const [fileErrMsg, setFileErrMsg] = useState("Please upload image");
   const [imageUrl, setImageUrl] = useState(null);
   const [categories, setCategories] = useState([]);
@@ -105,21 +108,41 @@ export default function AddProduct({
     restaurantId: userInformation.restaurant_id,
   });
 
-  const handleFileChange = ({ target }) => {
-    if (target.files[0]) {
-      const uploadedFile = target.files[0];
+  const handleFileChange = (event) => {
+    const files = event.target.files;
+    console.log(files);
+    if (!files || files.length === 0) {
+      return;
+    }
+
+    Array.from(files).forEach((file) => {
+      const uploadedFile = file;
       const fileSizeInMB = uploadedFile.size / (1024 * 1024);
       if (fileSizeInMB > 4) {
         setFileErrMsg("Image is greater than 4MB");
         return;
       } else {
-        setFileErrMsg("Please upload image");
+        setFileErrMsg("");
       }
-      setFile(target.files[0]);
-      const url = URL.createObjectURL(target.files[0]);
-      setImageUrl(url);
-    }
-    target.value = null;
+
+      const uniqueId = uuidv4();
+      const modifiedFileName = `${uniqueId}`;
+      const modifiedFile = new File([file], modifiedFileName, {
+        type: file.type,
+      });
+
+      setImages((prevImages) => [
+        ...prevImages,
+        {
+          url: URL.createObjectURL(file),
+          isDeleted: false,
+          file: modifiedFile,
+          id: uniqueId,
+        },
+      ]);
+    });
+
+    event.target.value = null;
   };
 
   useEffect(() => {
@@ -157,9 +180,11 @@ export default function AddProduct({
         "image",
         `https://storage.googleapis.com/ecommerce-bucket-testing/${selectedProduct.image.url}`
       );
+
       setImageUrl(
         `https://storage.googleapis.com/ecommerce-bucket-testing/${selectedProduct.image.url}`
       );
+      setValue("images", selectedProduct?.images);
       setValue("category_id", selectedProduct.category_id);
       setValue("priority", selectedProduct.priority);
       setValue("product_code", selectedProduct.product_code);
@@ -171,25 +196,23 @@ export default function AddProduct({
   };
 
   const handleAddProduct = () => {
-
     handleSubmit((data) => {
-      if (file || imageUrl) {
-        if (selectedProduct) {
-          handleEditApi(selectedProduct.id, {
-            ...data,
-            image: file,
-            restaurant_id: userInformation.restaurant_id,
-          });
-        } else {
-          handleApiCall({
-            ...data,
-            image: file,
-            restaurant_id: userInformation.restaurant_id,
-          });
-        }
+      if (selectedProduct) {
+        handleEditApi(selectedProduct.id, {
+          ...data,
+          images,
+          restaurant_id: userInformation.restaurant_id,
+        });
+      } else {
+        handleApiCall({
+          ...data,
+          images,
+          restaurant_id: userInformation.restaurant_id,
+        });
       }
     })();
   };
+
   const handleTextChange = (name) => (value) => {
     setValue(name, value);
   };
@@ -270,8 +293,9 @@ export default function AddProduct({
           type="file"
           ref={fileInputRef}
           onChange={handleFileChange}
+          multiple
         />
-        {imageUrl ? (
+        {!isEmpty(images) ? (
           <Button
             variant="contained"
             color="error"
@@ -281,16 +305,16 @@ export default function AddProduct({
             Delete
           </Button>
         ) : (
-          <UploadBtn onClick={handleButtonClick}>Upload Image</UploadBtn>
+          <UploadBtn onClick={handleButtonClick}>Upload Images</UploadBtn>
         )}
         {!file && !getValues().image && (
           <UploadImageText>{fileErrMsg}</UploadImageText>
         )}
       </Row>
 
-      {imageUrl && (
+      {!isEmpty(images) && (
         <Row>
-          <UploadedImage src={imageUrl} alt="Uploaded" />
+          <UploadedImage src={images[0]?.url} alt="Uploaded" />
         </Row>
       )}
 
@@ -313,30 +337,30 @@ export default function AddProduct({
         ) : (
           // <Textarea aria-label="minimum height" minRows={3} placeholder="Minimum 3 rows" />
           <ReactQuill
-          value={getValues(name)} // Use the value from your form state
-          onChange={handleTextChange(name)}
-          placeholder={name}
-          modules={{
-            toolbar: [
-              [{ 'header': '1' }, { 'header': '2' }, { 'font': [] }],
-              [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-              ['bold', 'italic', 'underline'],
-              ['link'],
-              ['clean']
-            ],
-          }}
-          formats={[
-            'header',
-            'font',
-            'size',
-            'list',
-            'bullet',
-            'bold',
-            'italic',
-            'underline',
-            'link',
-          ]}
-        />
+            value={getValues(name)} // Use the value from your form state
+            onChange={handleTextChange(name)}
+            placeholder={name}
+            modules={{
+              toolbar: [
+                [{ header: "1" }, { header: "2" }, { font: [] }],
+                [{ list: "ordered" }, { list: "bullet" }],
+                ["bold", "italic", "underline"],
+                ["link"],
+                ["clean"],
+              ],
+            }}
+            formats={[
+              "header",
+              "font",
+              "size",
+              "list",
+              "bullet",
+              "bold",
+              "italic",
+              "underline",
+              "link",
+            ]}
+          />
         )
       )}
 

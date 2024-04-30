@@ -35,7 +35,11 @@ const addProduct = async (payload) => {
 
     formData.append("restaurant_id", payload.restaurant_id);
     formData.append("category_id", payload.category_id);
-    formData.append(`image`, payload.image);
+    console.log(payload.images);
+    payload.images.forEach((imageData, index) => {
+      formData.append(`images[${index}][url]`, imageData.url);
+      formData.append(`images[${index}][file]`, imageData.file);
+    });
     formData.append(`priority`, payload.priority);
     formData.append(`product_code`, payload.product_code);
 
