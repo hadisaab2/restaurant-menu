@@ -38,8 +38,8 @@ import { useDeleteProductQuery } from "../../../../apis/products/deleteProduct";
 import { toast } from "react-toastify";
 import { useQueryClient } from "@tanstack/react-query";
 import ReactQuill from "react-quill";
-import 'react-quill/dist/quill.snow.css'; // Import Quill's CSS
-import './styles.css'
+import "react-quill/dist/quill.snow.css"; // Import Quill's CSS
+import "./styles.css";
 export default function AddProduct({
   setIsFormOpen,
   selectedProduct,
@@ -171,7 +171,6 @@ export default function AddProduct({
   };
 
   const handleAddProduct = () => {
-
     handleSubmit((data) => {
       if (file || imageUrl) {
         if (selectedProduct) {
@@ -311,32 +310,31 @@ export default function AddProduct({
             }
           />
         ) : (
-          // <Textarea aria-label="minimum height" minRows={3} placeholder="Minimum 3 rows" />
           <ReactQuill
-          value={getValues(name)} // Use the value from your form state
-          onChange={handleTextChange(name)}
-          placeholder={name}
-          modules={{
-            toolbar: [
-              [{ 'header': '1' }, { 'header': '2' }, { 'font': [] }],
-              [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-              ['bold', 'italic', 'underline'],
-              ['link'],
-              ['clean']
-            ],
-          }}
-          formats={[
-            'header',
-            'font',
-            'size',
-            'list',
-            'bullet',
-            'bold',
-            'italic',
-            'underline',
-            'link',
-          ]}
-        />
+            value={getValues(name)} // Use the value from your form state
+            onChange={handleTextChange(name)}
+            placeholder={name}
+            modules={{
+              toolbar: [
+                [{ header: "1" }, { header: "2" }, { font: [] }],
+                [{ list: "ordered" }, { list: "bullet" }],
+                ["bold", "italic", "underline"],
+                ["link"],
+                ["clean"],
+              ],
+            }}
+            formats={[
+              "header",
+              "font",
+              "size",
+              "list",
+              "bullet",
+              "bold",
+              "italic",
+              "underline",
+              "link",
+            ]}
+          />
         )
       )}
 
