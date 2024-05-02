@@ -182,6 +182,7 @@ export default function AddProduct({
       const formattedImages = selectedProduct.images.map((image) => ({
         url: image.url,
         isDeleted: false,
+        id:image.id
       }));
       setImages(formattedImages);
       setValue("images", formattedImages);

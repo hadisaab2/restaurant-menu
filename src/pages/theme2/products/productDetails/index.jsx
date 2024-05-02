@@ -150,7 +150,7 @@ export default function ProductDetails({
           </Category>
         </ItemCategory>
         <ImagesContainer CloseAnimation={CloseAnimation}>
-          <CarouselBack onClick={() => carouselIndex !== 0 && handleleft()} />
+          {images.length!==0 && <CarouselBack onClick={() => carouselIndex !== 0 && handleleft()} />}
           <Carousel
             carouselIndex={carouselIndex}
             ref={divRef}
@@ -170,11 +170,12 @@ export default function ProductDetails({
               );
             })}
           </Carousel>
-          <CarouselForward
+          {images.length!==0 && <CarouselForward
             onClick={() =>
               plates[activePlate].images.length > carouselIndex + 1 && handleright()
             }
           />
+}
         </ImagesContainer>
         <FakeContainer CloseAnimation={CloseAnimation} />
         <ItemInfoWrapper>

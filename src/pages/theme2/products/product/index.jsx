@@ -44,7 +44,7 @@ const Product = React.forwardRef(
             <Image
               ref={ref}
               onLoad={handleImageLoaded}
-              src={`https://storage.googleapis.com/ecommerce-bucket-testing/${
+              src={plate.images.length==0?`https://storage.googleapis.com/ecommerce-bucket-testing/${plate.images[0]}`:`https://storage.googleapis.com/ecommerce-bucket-testing/${
                 plate.images.find((image) => image.url.includes(plate.cover_id))
                   .url
               }`}
