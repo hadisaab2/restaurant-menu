@@ -95,7 +95,7 @@ const totalPrice = cart.reduce((total, item) => {
                   />
                   <ImageContainer>
                     <Image
-                      src={`https://storage.googleapis.com/ecommerce-bucket-testing/${item.image.url}`}
+                      src={`https://storage.googleapis.com/ecommerce-bucket-testing/${item.images[0].url}`}
                     />
                   </ImageContainer>
                   <PriceContainer>
