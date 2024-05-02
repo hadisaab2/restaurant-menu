@@ -13,6 +13,7 @@ import {
   Delete,
   ButtonsContainer,
   CoverImage,
+  UploadImageText,
 } from "./styles";
 import {
   TextField,
@@ -54,8 +55,7 @@ export default function AddProduct({
 }) {
   const queryClient = useQueryClient();
   const [images, setImages] = useState([]);
-  const [fileErrMsg, setFileErrMsg] = useState("Please upload image");
-  const [imageUrl, setImageUrl] = useState(null);
+  const [fileErrMsg, setFileErrMsg] = useState("");
   const [coverId, setCoverId] = useState(null);
 
   const [categories, setCategories] = useState([]);
@@ -200,6 +200,7 @@ export default function AddProduct({
   const handleAddProduct = () => {
     if (!coverId) {
       toast.error("Please select a cover for the product");
+      return
     }
     handleSubmit((data) => {
       if (selectedProduct) {
@@ -337,7 +338,6 @@ export default function AddProduct({
           <UploadedImage src={images[0]?.url} alt="Uploaded" />
         </Row>
       )} */}
-
       <ImagesContainer>
         <UploadedImageContainer>
           <UploadedImageWrapper>
@@ -372,6 +372,7 @@ export default function AddProduct({
           }
         })}
       </ImagesContainer>
+      <Row><UploadImageText>{fileErrMsg}</UploadImageText></Row>
 
       {fieldsToDisplay.map(({ name, label, type, mui_type }) =>
         mui_type === "textfield" ? (

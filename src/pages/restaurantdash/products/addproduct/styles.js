@@ -70,6 +70,9 @@ export const UploadedImageContainer = styled.div`
   display: flex;
   justify-content: center;
   margin-top: 20px;
+  @media (max-width: ${breakingPoints.sm}px) {
+    width: 50%;
+  }
 `;
 
 export const UploadedImageWrapper = styled.div`
