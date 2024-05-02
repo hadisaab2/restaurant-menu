@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import {
   AddToCart,
   BackBtn,
@@ -7,7 +7,7 @@ import {
   Category,
   FakeContainer,
   Image,
-  ImageContainer,
+  ImagesContainer,
   ItemCategory,
   ItemDescription,
   ItemInfo,
@@ -19,6 +19,11 @@ import {
   Quantity,
   QuantityWrapper,
   Wrapper,
+  Carousel,
+  ImageWrapper,
+  CarouselItem,
+  CarouselBack,
+  CarouselForward,
 } from "./styles";
 import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -40,23 +45,50 @@ export default function ProductDetails({
 
   const [quantity, setQuantity] = useState(1);
   const [CloseAnimation, setCloseAnimation] = useState(true);
-
+  const [carouselIndex, setcarouselIndex] = useState(0);
   const handleBack = () => {
     setTimeout(() => {
       setactivePlate(null);
       document.body.style.overflow = "auto";
     }, 800);
     setCloseAnimation(false);
+    setcarouselIndex(0);
   };
 
-  const handleDeviceBack = () => {
-    window.history.back();
+  const handleright = () => {
+    setcarouselIndex(carouselIndex + 1);
+  };
+  const handleleft = () => {
+    setcarouselIndex(carouselIndex - 1);
+  };
+
+  const divRef = useRef(null);
+  const [startX, setStartX] = useState(null);
+
+  const handleTouchStart = (event) => {
+    setStartX(event.touches[0].clientX);
+  };
+
+  const handleTouchMove = (event) => {
+    if (startX) {
+      const currentX = event.touches[0].clientX;
+      const deltaX = currentX - startX;
+
+      if (deltaX > 5) {
+        if (carouselIndex !== 0) handleleft();
+      } else if (deltaX < -5) {
+        if (plates[activePlate].images.length > carouselIndex + 1)
+          handleright();
+      }
+
+      setStartX(null);
+    }
   };
 
   useEffect(() => {
     const handlePopState = () => {
       // Revert to the normal view when back is pressed
-      handleBack()
+      handleBack();
     };
 
     // Add event listener for popstate
@@ -87,10 +119,9 @@ export default function ProductDetails({
   };
 
   const description =
-  activeLanuguage === 'en'
-    ? plates[activePlate]?.en_description
-    : plates[activePlate]?.ar_description;
-
+    activeLanuguage === "en"
+      ? plates[activePlate]?.en_description
+      : plates[activePlate]?.ar_description;
 
   return (
     <>
@@ -105,12 +136,33 @@ export default function ProductDetails({
             {activeLanuguage == "en" ? menu?.en_category : menu?.ar_category}
           </Category>
         </ItemCategory>
-        <ImageContainer CloseAnimation={CloseAnimation}>
-          <Image
-            src={`https://storage.googleapis.com/ecommerce-bucket-testing/${plates[activePlate]?.image.url}`}
-            CloseAnimation={CloseAnimation}
+        <ImagesContainer CloseAnimation={CloseAnimation}>
+          <CarouselBack onClick={() => carouselIndex !== 0 && handleleft()} />
+          <Carousel
+            carouselIndex={carouselIndex}
+            ref={divRef}
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
+          >
+            {plates[activePlate]?.images.map((image) => {
+              return (
+                <CarouselItem>
+                  <ImageWrapper>
+                    <Image
+                      src={`https://storage.googleapis.com/ecommerce-bucket-testing/${image.url}`}
+                      CloseAnimation={CloseAnimation}
+                    />
+                  </ImageWrapper>
+                </CarouselItem>
+              );
+            })}
+          </Carousel>
+          <CarouselForward
+            onClick={() =>
+              plates[activePlate].images.length > carouselIndex + 1 && handleright()
+            }
           />
-        </ImageContainer>
+        </ImagesContainer>
         <FakeContainer CloseAnimation={CloseAnimation} />
         <ItemInfoWrapper>
           <ItemInfo CloseAnimation={CloseAnimation}>
@@ -119,7 +171,9 @@ export default function ProductDetails({
                 ? plates[activePlate]?.en_name
                 : plates[activePlate]?.ar_name}
             </ItemName>
-            <ItemDescription dangerouslySetInnerHTML={{ __html: description }} />
+            <ItemDescription
+              dangerouslySetInnerHTML={{ __html: description }}
+            />
             <ItemPrice>{plates[activePlate]?.en_price} $</ItemPrice>
 
             <ButtonWrapper>

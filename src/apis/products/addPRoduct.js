@@ -35,13 +35,13 @@ const addProduct = async (payload) => {
 
     formData.append("restaurant_id", payload.restaurant_id);
     formData.append("category_id", payload.category_id);
-    console.log(payload.images);
     payload.images.forEach((imageData, index) => {
       formData.append(`images[${index}][url]`, imageData.url);
       formData.append(`images[${index}][file]`, imageData.file);
     });
     formData.append(`priority`, payload.priority);
     formData.append(`product_code`, payload.product_code);
+    formData.append(`cover_id`, payload.cover_id);
 
     const response = await axios.post(url, formData, {
       headers: {

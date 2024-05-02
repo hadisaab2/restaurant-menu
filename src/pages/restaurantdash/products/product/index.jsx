@@ -19,7 +19,7 @@ export default function Product({
   setSelectedIdForAction,
   setIsDeletePopUpOpen,
 }) {
-  const { category, image } = product;
+  const { category, images } = product;
 
   return (
     <Container>
@@ -30,8 +30,8 @@ export default function Product({
             setIsFormOpen(true);
           }}
         >
-          <Image JPG={image?.url.includes("png")}
-            src={`https://storage.googleapis.com/ecommerce-bucket-testing/${image?.url}`}
+          <Image JPG={images[0]?.url.includes("png")}
+            src={`https://storage.googleapis.com/ecommerce-bucket-testing/${images[0]?.url}`}
           />
         </ImageWrapper>
         <InfoContainer>

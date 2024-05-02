@@ -7,8 +7,12 @@ import {
   UploadedImage,
   Row,
   fieldStyle,
-  UploadImageText,
-  Textarea,
+  UploadedImageContainer,
+  UploadedImageWrapper,
+  ImagesContainer,
+  Delete,
+  ButtonsContainer,
+  CoverImage,
 } from "./styles";
 import {
   TextField,
@@ -18,8 +22,6 @@ import {
   FormControl,
   Select,
   FormHelperText,
-  Button,
-  TextareaAutosize,
 } from "@mui/material";
 import { useForm } from "react-hook-form";
 import { LANGUAGES } from "../../../../global/index";
@@ -41,6 +43,7 @@ import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css"; // Import Quill's CSS
 import "./styles.css";
 import { v4 as uuidv4 } from "uuid";
+import { FaPlus } from "react-icons/fa6";
 
 export default function AddProduct({
   setIsFormOpen,
@@ -50,10 +53,11 @@ export default function AddProduct({
   userInformation,
 }) {
   const queryClient = useQueryClient();
-  const [file, setFile] = useState(null);
   const [images, setImages] = useState([]);
   const [fileErrMsg, setFileErrMsg] = useState("Please upload image");
   const [imageUrl, setImageUrl] = useState(null);
+  const [coverId, setCoverId] = useState(null);
+
   const [categories, setCategories] = useState([]);
   const fileInputRef = useRef(null);
   const { AR, EN, ENAR } = LANGUAGES;
@@ -130,7 +134,6 @@ export default function AddProduct({
       const modifiedFile = new File([file], modifiedFileName, {
         type: file.type,
       });
-
       setImages((prevImages) => [
         ...prevImages,
         {
@@ -176,18 +179,17 @@ export default function AddProduct({
         setValue("ar_description", ar_description);
       }
 
-      setValue(
-        "image",
-        `https://storage.googleapis.com/ecommerce-bucket-testing/${selectedProduct.image.url}`
-      );
-
-      setImageUrl(
-        `https://storage.googleapis.com/ecommerce-bucket-testing/${selectedProduct.image.url}`
-      );
-      setValue("images", selectedProduct?.images);
+      const formattedImages = selectedProduct.images.map((image) => ({
+        url: image.url,
+        isDeleted: false,
+      }));
+      setImages(formattedImages);
+      setValue("images", formattedImages);
       setValue("category_id", selectedProduct.category_id);
       setValue("priority", selectedProduct.priority);
       setValue("product_code", selectedProduct.product_code);
+      setValue("cover_id", selectedProduct.cover_id);
+      setCoverId(selectedProduct.cover_id)
     }
   }, []);
 
@@ -196,18 +198,23 @@ export default function AddProduct({
   };
 
   const handleAddProduct = () => {
+    if (!coverId) {
+      toast.error("Please select a cover for the product");
+    }
     handleSubmit((data) => {
       if (selectedProduct) {
         handleEditApi(selectedProduct.id, {
           ...data,
           images,
           restaurant_id: userInformation.restaurant_id,
+          cover_id: coverId,
         });
       } else {
         handleApiCall({
           ...data,
           images,
           restaurant_id: userInformation.restaurant_id,
+          cover_id: coverId,
         });
       }
     })();
@@ -217,12 +224,42 @@ export default function AddProduct({
     setValue(name, value);
   };
 
-  const handleOnDeleteImage = () => {
-    setImageUrl(null);
-    setFile(null);
-    setValue("image", null);
+  const handleOnDeleteImage = (imageUrl) => {
+    //if coverid is the deleted one just return cover id to null based on 2 conditions old image and new image
+    const image = images.find(img => img.url === imageUrl);
+    
+    if (imageUrl.includes(coverId) || image.id===coverId) {
+      setCoverId(null);
+    }
+    let updatedimages;
+    if (imageUrl.includes("blob")) {
+      // if new image deleted then just remove from array
+      updatedimages = images.filter((image) => image.url !== imageUrl);
+    } else {
+      //if old image set key is deleted to true
+      updatedimages = images.map((image) => {
+        if (image.url === imageUrl) {
+          return { ...image, isDeleted: true };
+        }
+        return image;
+      });
+    }
+    //set images and form
+    setImages(updatedimages);
+    setValue("images", updatedimages);
   };
 
+  const handleCover = (url) => {
+    let id;
+    if(url.includes("blob")){
+      const image = images.find(img => img.url === url);
+      id=image?.id
+    }else{
+      id =url.replace(/^\d+-/, '');
+    }
+    setCoverId(id);
+    setValue("cover_id", id);
+  };
   //check if display english is true
   const displayEnglish =
     userInformation.Lang === LANGUAGES.EN ||
@@ -278,45 +315,63 @@ export default function AddProduct({
         onClick={() => {
           setSelectedProduct(null);
           setIsFormOpen(false);
-          setImageUrl(null);
-          setFile(null);
+          setImages(null);
+          setCoverId(null);
         }}
       />
-      <Row
-        style={{
-          display: "flex",
-          flexDirection: "row",
-          alignItems: "center",
-        }}
-      >
-        <UploadPhoto
-          type="file"
-          ref={fileInputRef}
-          onChange={handleFileChange}
-          multiple
-        />
-        {!isEmpty(images) ? (
-          <Button
-            variant="contained"
-            color="error"
-            style={{ width: "150px", height: "40px" }}
-            onClick={() => handleOnDeleteImage()}
-          >
-            Delete
-          </Button>
-        ) : (
-          <UploadBtn onClick={handleButtonClick}>Upload Images</UploadBtn>
-        )}
-        {!file && !getValues().image && (
-          <UploadImageText>{fileErrMsg}</UploadImageText>
-        )}
-      </Row>
 
-      {!isEmpty(images) && (
+      <UploadPhoto
+        type="file"
+        ref={fileInputRef}
+        onChange={handleFileChange}
+        multiple
+      />
+      {console.log(images)}
+      {console.log("cover-id",coverId)}
+
+      {/* {!file && !getValues().image && (
+          <UploadImageText>{fileErrMsg}</UploadImageText>
+        )} */}
+      {/* {!isEmpty(images) && (
         <Row>
           <UploadedImage src={images[0]?.url} alt="Uploaded" />
         </Row>
-      )}
+      )} */}
+
+      <ImagesContainer>
+        <UploadedImageContainer>
+          <UploadedImageWrapper>
+            <UploadBtn onClick={handleButtonClick}>
+              Upload Image
+              <FaPlus style={{ fontSize: "20px" }} />
+            </UploadBtn>
+          </UploadedImageWrapper>
+        </UploadedImageContainer>
+        {images.map(({ url, isDeleted, id }) => {
+          const imageUrl = url.includes("blob")
+            ? url
+            : `https://storage.googleapis.com/ecommerce-bucket-testing/${url}`;
+          if (!isDeleted) {
+            return (
+              <UploadedImageContainer>
+                <UploadedImageWrapper>
+                  <UploadedImage src={imageUrl} alt="Uploaded" />
+                  <ButtonsContainer>
+                    <CoverImage onClick={() => handleCover(url)}>
+                      {coverId === id || url.includes(coverId)  ? "Selected" : "Select Cover"}
+                    </CoverImage>
+                    <Delete
+                      onClick={() => {
+                        handleOnDeleteImage(url);
+                      }}
+                    />
+                  </ButtonsContainer>
+                </UploadedImageWrapper>
+              </UploadedImageContainer>
+            );
+          }
+        })}
+      </ImagesContainer>
 
       {fieldsToDisplay.map(({ name, label, type, mui_type }) =>
         mui_type === "textfield" ? (

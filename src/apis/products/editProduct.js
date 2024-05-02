@@ -34,10 +34,16 @@ const editProduct = async (id, payload) => {
 
     formData.append("restaurant_id", payload.restaurant_id);
     formData.append("category_id", payload.category_id);
-    formData.append(`image`, payload.image);
+    payload.images.forEach((imageData, index) => {
+      formData.append(`images[${index}][url]`, imageData.url);
+      formData.append(`images[${index}][file]`, imageData?.file);
+      formData.append(`images[${index}][isDeleted]`, imageData.isDeleted);
+    });
+
     formData.append(`priority`, payload.priority);
     formData.append(`product_code`, payload.product_code);
-
+    formData.append(`cover_id`, payload.cover_id);
+    
     const response = await axios.put(url, formData, {
       headers: {
         "Content-Type": "multipart/form-data",
