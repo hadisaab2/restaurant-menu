@@ -122,15 +122,16 @@ export default function ProductDetails({
   let images = [...plates[activePlate]?.images];
 
   // Find the index of the image that should be first
-  const index = images.findIndex(image => image.url.includes(plates[activePlate].cover_id));
-  
+  const index = images.findIndex((image) =>
+    image.url.includes(plates[activePlate].cover_id)
+  );
+
   // If the image is found and it's not already the first element, move it to the front
   if (index > 0) {
-      const [imageToBeFirst] = images.splice(index, 1); // Remove the image from its current position
-      images.unshift(imageToBeFirst); // Add it to the beginning of the array
+    const [imageToBeFirst] = images.splice(index, 1); // Remove the image from its current position
+    images.unshift(imageToBeFirst); // Add it to the beginning of the array
   }
 
-  
   const description =
     activeLanuguage === "en"
       ? plates[activePlate]?.en_description
@@ -150,7 +151,9 @@ export default function ProductDetails({
           </Category>
         </ItemCategory>
         <ImagesContainer CloseAnimation={CloseAnimation}>
-          {images.length!==0 && <CarouselBack onClick={() => carouselIndex !== 0 && handleleft()} />}
+          {images.length !== 1 && (
+            <CarouselBack onClick={() => carouselIndex !== 0 && handleleft()} />
+          )}
           <Carousel
             carouselIndex={carouselIndex}
             ref={divRef}
@@ -170,12 +173,14 @@ export default function ProductDetails({
               );
             })}
           </Carousel>
-          {images.length!==0 && <CarouselForward
-            onClick={() =>
-              plates[activePlate].images.length > carouselIndex + 1 && handleright()
-            }
-          />
-}
+          {images.length !== 1 && (
+            <CarouselForward
+              onClick={() =>
+                plates[activePlate].images.length > carouselIndex + 1 &&
+                handleright()
+              }
+            />
+          )}
         </ImagesContainer>
         <FakeContainer CloseAnimation={CloseAnimation} />
         <ItemInfoWrapper>
