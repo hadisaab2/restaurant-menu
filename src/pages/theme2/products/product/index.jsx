@@ -54,7 +54,7 @@ const Product = React.forwardRef(
             <PlateName>
               {activeLanuguage === "en" ? plate.en_name : plate.ar_name}
             </PlateName>
-            <PlatePrice>{plate.en_price}$</PlatePrice>
+            {plate.en_price!== "" && <PlatePrice>{plate.en_price}$</PlatePrice>}
           </TextContainer>
         </Wrapper>
       </Container>

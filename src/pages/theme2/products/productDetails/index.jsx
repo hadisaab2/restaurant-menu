@@ -193,7 +193,7 @@ export default function ProductDetails({
             <ItemDescription
               dangerouslySetInnerHTML={{ __html: description }}
             />
-            <ItemPrice>{plates[activePlate]?.en_price} $</ItemPrice>
+            {plates[activePlate]?.en_price!== "" && <ItemPrice>{plates[activePlate]?.en_price} $</ItemPrice>}
 
             <ButtonWrapper>
               <QuantityWrapper>
