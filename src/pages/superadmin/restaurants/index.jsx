@@ -112,15 +112,18 @@ export default function Restaurants() {
     template_id,
     theme: themeString,
     restaurant_id,
+    currency
   }) => {
+    console.log(currency)
     const theme = JSON.parse(themeString);
-    setSelectedProduct({ languages, template_id, theme, restaurant_id });
+    setSelectedProduct({ languages, template_id, theme, restaurant_id,currency });
     setIsEditMode(true);
     setTemplate(template_id);
     setValue("username", username);
     setValue("phone_number", phone_number);
     setValue("email", email);
     setValue("name", restaurantName);
+    setValue("currency", currency);
     setShowAddComponent(true);
   };
 
@@ -272,12 +275,29 @@ export default function Restaurants() {
                 <Select
                   label="Language"
                   {...register("languages", { required: "Required" })}
-                  error={!isEmpty(formState?.errors?.template_id)}
+                  error={!isEmpty(formState?.errors?.languages)}
                   defaultValue={selectedProduct?.languages}
                 >
                   <MenuItem value="en">En</MenuItem>
                   <MenuItem value="ar">Ar</MenuItem>
                   <MenuItem value="en&ar">En/Ar</MenuItem>
+                </Select>
+              </FormControl>
+            </Box>
+            <Box sx={{ minWidth: 120 }}>
+              <FormControl fullWidth>
+                <InputLabel>Currency</InputLabel>
+                <Select
+                  label="Currency"
+                  {...register("currency", { required: "Required" })}
+                  error={!isEmpty(formState?.errors?.currency)}
+                  defaultValue={selectedProduct?.currency}
+                >
+                  <MenuItem value="dollar">Dollar</MenuItem>
+                  <MenuItem value="lb">Lb</MenuItem>
+                  <MenuItem value="gram">Gram</MenuItem>
+                  <MenuItem value="killogram">KilloGram</MenuItem>
+
                 </Select>
               </FormControl>
             </Box>

@@ -10,10 +10,11 @@ import CartPopup from './popup/cart';
 export default function Theme2() {
     const [showPopup, setshowPopup] = useState(null);
     const [searchText, setSearchText] = useState("");
-    const itemCount = useSelector(state => 
-      state.cart.reduce((total, item) => total + item.quantity, 0)
-  );
     const {restaurantName}=useParams();
+    const itemCount = useSelector(state => {
+      const items = state.cart[restaurantName] || []; // Access cart by restaurant name, default to empty array if not found
+      return items.reduce((total, item) => total + item.quantity, 0); // Sum up all quantities in the restaurant's cart
+    });
     const restaurant = useSelector((state) => state.restaurant?.[restaurantName]);
     const [activeCategory, setactiveCategory] = useState(restaurant?.categories?.[0]?.id);
 

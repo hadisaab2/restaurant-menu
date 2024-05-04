@@ -37,9 +37,7 @@ export default function ProductDetails({
   productPositions,
 }) {
   const { restaurantName } = useParams();
-  const activeLanuguage = useSelector(
-    (state) => state.restaurant?.[restaurantName].activeLanguage
-  );
+  const restaurant = useSelector((state) => state.restaurant?.[restaurantName]);
 
   const dispatch = useDispatch();
 
@@ -103,7 +101,7 @@ export default function ProductDetails({
       setactivePlate(null);
       document.body.style.overflow = "auto";
     }, 800);
-    dispatch(addToCart(plates[activePlate], quantity));
+    dispatch(addToCart(restaurantName, plates[activePlate], quantity));
     setCloseAnimation(false);
     setQuantity(1);
   };
@@ -133,10 +131,27 @@ export default function ProductDetails({
   }
 
   const description =
-    activeLanuguage === "en"
+    restaurant?.activeLanuguage === "en"
       ? plates[activePlate]?.en_description
       : plates[activePlate]?.ar_description;
 
+  let currencySymbol;
+  switch (restaurant?.currency) {
+    case "dollar":
+      currencySymbol = "$";
+      break;
+    case "lb":
+      currencySymbol = "L.L.";
+      break;
+    case "gram":
+      currencySymbol = "g";
+      break;
+    case "kilogram":
+      currencySymbol = "kg";
+      break;
+    default:
+      currencySymbol = ""; // No currency or unsupported currency
+  }
   return (
     <>
       <Wrapper
@@ -147,7 +162,9 @@ export default function ProductDetails({
       >
         <ItemCategory CloseAnimation={CloseAnimation}>
           <Category>
-            {activeLanuguage == "en" ? menu?.en_category : menu?.ar_category}
+            {restaurant.activeLanuguage == "en"
+              ? menu?.en_category
+              : menu?.ar_category}
           </Category>
         </ItemCategory>
         <ImagesContainer CloseAnimation={CloseAnimation}>
@@ -186,14 +203,16 @@ export default function ProductDetails({
         <ItemInfoWrapper>
           <ItemInfo CloseAnimation={CloseAnimation}>
             <ItemName>
-              {activeLanuguage == "en"
+              {restaurant.activeLanuguage == "en"
                 ? plates[activePlate]?.en_name
                 : plates[activePlate]?.ar_name}
             </ItemName>
             <ItemDescription
               dangerouslySetInnerHTML={{ __html: description }}
             />
-            {plates[activePlate]?.en_price!== "" && <ItemPrice>{plates[activePlate]?.en_price} $</ItemPrice>}
+            {plates[activePlate]?.en_price !== "" && (
+              <ItemPrice>{plates[activePlate]?.en_price} {currencySymbol}</ItemPrice>
+            )}
 
             <ButtonWrapper>
               <QuantityWrapper>

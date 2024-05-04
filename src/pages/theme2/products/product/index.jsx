@@ -17,9 +17,10 @@ import { useEffect } from "react";
 const Product = React.forwardRef(
   ({ plate, setactivePlate, activePlate, index, showPopup }, ref) => {
     const { restaurantName } = useParams();
-    const activeLanuguage = useSelector(
-      (state) => state.restaurant?.[restaurantName].activeLanguage
+    const restaurant = useSelector(
+      (state) => state.restaurant?.[restaurantName]
     );
+    
     const [imageLoaded, setimageLoaded] = useState(false);
     const handleImageLoaded = () => {
       setimageLoaded(true);
@@ -31,7 +32,23 @@ const Product = React.forwardRef(
         document.body.style.overflow = "hidden";
       }
     };
-
+    let currencySymbol;
+    switch (restaurant?.currency) {
+      case 'dollar':
+        currencySymbol = '$';
+        break;
+      case 'lb':
+        currencySymbol = 'L.L.';
+        break;
+      case 'gram':
+        currencySymbol = 'g';
+        break;
+      case 'kilogram':
+        currencySymbol = 'kg';
+        break;
+      default:
+        currencySymbol = ''; // No currency or unsupported currency
+    }
     return (
       <Container index={index} activePlate={activePlate} className="lazy-load">
         <Wrapper>
@@ -50,11 +67,11 @@ const Product = React.forwardRef(
               }`}
             />
           </ImageContainer>
-          <TextContainer activeLanuguage={activeLanuguage}>
+          <TextContainer activeLanuguage={restaurant?.activeLanuguage}>
             <PlateName>
-              {activeLanuguage === "en" ? plate.en_name : plate.ar_name}
+              {restaurant?.activeLanuguage === "en" ? plate.en_name : plate.ar_name}
             </PlateName>
-            {plate.en_price!== "" && <PlatePrice>{plate.en_price}$</PlatePrice>}
+            {plate.en_price!== "" && <PlatePrice>{plate.en_price} {currencySymbol}</PlatePrice>}
           </TextContainer>
         </Wrapper>
       </Container>
