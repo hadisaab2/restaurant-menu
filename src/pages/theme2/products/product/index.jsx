@@ -20,7 +20,9 @@ const Product = React.forwardRef(
     const restaurant = useSelector(
       (state) => state.restaurant?.[restaurantName]
     );
-    
+    const activeLanguage = useSelector(
+      (state) => state.restaurant?.[restaurantName].activeLanguage
+    );
     const [imageLoaded, setimageLoaded] = useState(false);
     const handleImageLoaded = () => {
       setimageLoaded(true);
@@ -67,9 +69,9 @@ const Product = React.forwardRef(
               }`}
             />
           </ImageContainer>
-          <TextContainer activeLanuguage={restaurant?.activeLanuguage}>
+          <TextContainer activeLanuguage={restaurant?.activeLanguage}>
             <PlateName>
-              {restaurant?.activeLanuguage === "en" ? plate.en_name : plate.ar_name}
+              {restaurant?.activeLanguage === "en" ? plate.en_name : plate.ar_name}
             </PlateName>
             {plate.en_price!== "" && <PlatePrice>{plate.en_price} {currencySymbol}</PlatePrice>}
           </TextContainer>

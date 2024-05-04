@@ -131,7 +131,7 @@ export default function ProductDetails({
   }
 
   const description =
-    restaurant?.activeLanuguage === "en"
+    restaurant?.activeLanguage === "en"
       ? plates[activePlate]?.en_description
       : plates[activePlate]?.ar_description;
 
@@ -162,7 +162,7 @@ export default function ProductDetails({
       >
         <ItemCategory CloseAnimation={CloseAnimation}>
           <Category>
-            {restaurant.activeLanuguage == "en"
+            {restaurant.activeLanguage == "en"
               ? menu?.en_category
               : menu?.ar_category}
           </Category>
@@ -203,7 +203,7 @@ export default function ProductDetails({
         <ItemInfoWrapper>
           <ItemInfo CloseAnimation={CloseAnimation}>
             <ItemName>
-              {restaurant.activeLanuguage == "en"
+              {restaurant.activeLanguage == "en"
                 ? plates[activePlate]?.en_name
                 : plates[activePlate]?.ar_name}
             </ItemName>
