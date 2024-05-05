@@ -44,14 +44,14 @@ const ImageAnimation = keyframes`
 }
 
  100% { 
-    height:45vh;
+    height:55vh;
     top:80px;
 
     }
 `;
 export const ImagesContainer = styled.div`
   width: 100%;
-  height: ${(props) => (props.CloseAnimation ? "45vh" : "20vh")};
+  height: ${(props) => (props.CloseAnimation ? "55vh" : "20vh")};
   position: absolute;
   top: ${(props) => (props.CloseAnimation ? "80px" : "0px")};
   
@@ -67,7 +67,7 @@ export const Carousel = styled.div`
   white-space: nowrap;
   position:relative;
   transform: ${(props) => `translateX(-${props.carouselIndex * 100}%)`};
-  transition: all 0.3s ease-in-out;
+  transition: all 0.2s ease;
 `;
 export const CarouselItem = styled.div`
   height: 100%;
@@ -82,16 +82,45 @@ export const ImageWrapper = styled.div`
   display:flex;
   align-items:center;
   justify-content:center;
+  position: relative;
 
 `;
+
+const spin = keyframes`
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+`;
+
+
+export const Loader = styled.div`
+  border: 3px solid rgba(0, 0, 0, 0.1);
+  border-left-color: ${(props) => props.theme.mainColor}; /* Change color as needed */
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  animation: ${spin} 1s linear infinite; /* Apply animation */
+`;
+
+export const LoaderWrapper = styled.div`
+  display: flex;
+  position: absolute;
+  justify-content: center;
+  align-items: center;
+  width:100%;
+height: 100%;
+`;
+
 export const Image = styled.img`
   height: 100%;
   object-fit: cover;
   border-radius: ${(props) => (props.CloseAnimation ? "40px" : "10px")};
   width: ${(props) => (props.CloseAnimation ? "90%" : "100%")};
-
+  display:${props=>props.Loaded ? 'block':'none'};
   transition: all 0.8s;
-  box-shadow: 0px -4px 8px rgba(0, 0, 0, 0.1);
 `;
 const BackIconAnimation = keyframes`
  0% { 
@@ -181,7 +210,7 @@ export const Category = styled.span`
 
 export const FakeContainer = styled.div`
   width: ${(props) => (props.CloseAnimation ? "90%" : "100%")};
-  height: ${(props) => (props.CloseAnimation ? "45vh" : "25vh")};
+  height: ${(props) => (props.CloseAnimation ? "55vh" : "25vh")};
   border-radius: ${(props) => (props.CloseAnimation ? "40px" : "10px")};
   margin-top: ${(props) => (props.CloseAnimation ? "80px" : "0px")};
   display: ${(props) => (props.CloseAnimation ? "flex" : "none")};

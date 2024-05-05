@@ -114,11 +114,13 @@ export default function AddProduct({
 
   const handleFileChange = (event) => {
     const files = event.target.files;
-    console.log(files);
     if (!files || files.length === 0) {
       return;
     }
-
+    if(files.length + images.length >8){
+      setFileErrMsg("Limit 8 images");
+      return
+    }
     Array.from(files).forEach((file) => {
       const uploadedFile = file;
       const fileSizeInMB = uploadedFile.size / (1024 * 1024);

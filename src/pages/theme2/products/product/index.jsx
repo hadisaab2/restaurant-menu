@@ -67,6 +67,8 @@ const Product = React.forwardRef(
                 plate.images.find((image) => image.url.includes(plate.cover_id))
                   .url
               }`}
+              imageLoaded={imageLoaded}
+
             />
           </ImageContainer>
           <TextContainer activeLanuguage={restaurant?.activeLanguage}>

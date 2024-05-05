@@ -27,6 +27,7 @@ width:90%;
 height:100%;
 object-fit: cover;
 border-radius: 10px;
+/* display:${props=>props.imageLoaded?"block":"none"} */
 `;
 export const ImageContainer = styled.div`
 width:100%;

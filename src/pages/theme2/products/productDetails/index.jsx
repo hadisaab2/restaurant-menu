@@ -24,6 +24,8 @@ import {
   CarouselItem,
   CarouselBack,
   CarouselForward,
+  LoaderWrapper,
+  Loader,
 } from "./styles";
 import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -60,6 +62,8 @@ export default function ProductDetails({
   const handleleft = () => {
     setcarouselIndex(carouselIndex - 1);
   };
+
+
 
   const divRef = useRef(null);
   const [startX, setStartX] = useState(null);
@@ -131,6 +135,15 @@ export default function ProductDetails({
     images.unshift(imageToBeFirst); // Add it to the beginning of the array
   }
 
+  const [loadedIndices, setLoadedIndices] = useState({});
+
+  const handleImageLoad = (index) => {
+    setLoadedIndices((prev) => ({
+      ...prev,
+      [index]: true
+    }));
+  };
+
   const description =
     restaurant?.activeLanguage === "en"
       ? plates[activePlate]?.en_description
@@ -170,7 +183,10 @@ export default function ProductDetails({
         </ItemCategory>
         <ImagesContainer CloseAnimation={CloseAnimation}>
           {images.length !== 1 && (
-            <CarouselBack CloseAnimation={CloseAnimation} onClick={() => carouselIndex !== 0 && handleleft()} />
+            <CarouselBack
+              CloseAnimation={CloseAnimation}
+              onClick={() => carouselIndex !== 0 && handleleft()}
+            />
           )}
           <Carousel
             carouselIndex={carouselIndex}
@@ -178,13 +194,27 @@ export default function ProductDetails({
             onTouchStart={handleTouchStart}
             onTouchMove={handleTouchMove}
           >
-            {images.map((image) => {
+            {images.map((image, index) => {
               return (
                 <CarouselItem>
                   <ImageWrapper>
+                    {!loadedIndices[index] && (
+                      <LoaderWrapper>
+                        <Loader />
+                      </LoaderWrapper>
+                    )}
                     <Image
-                      src={`https://storage.googleapis.com/ecommerce-bucket-testing/${image.url}`}
+                      // src={`https://storage.googleapis.com/ecommerce-bucket-testing/${image.url}`}
+                      src={loadedIndices[index] || index === carouselIndex ? `https://storage.googleapis.com/ecommerce-bucket-testing/${image.url}` : ""}
+                      // src={
+                        
+                      //      `https://storage.googleapis.com/ecommerce-bucket-testing/${image.url}`
+                          
+                      // }
+                      onLoad={() => handleImageLoad(index)}
                       CloseAnimation={CloseAnimation}
+                      Loaded={loadedIndices[index]}
+                      alt={`Image ${index}`}
                     />
                   </ImageWrapper>
                 </CarouselItem>
@@ -193,7 +223,7 @@ export default function ProductDetails({
           </Carousel>
           {images.length !== 1 && (
             <CarouselForward
-            CloseAnimation={CloseAnimation}
+              CloseAnimation={CloseAnimation}
               onClick={() =>
                 plates[activePlate].images.length > carouselIndex + 1 &&
                 handleright()
@@ -202,10 +232,15 @@ export default function ProductDetails({
           )}
         </ImagesContainer>
         <FakeContainer CloseAnimation={CloseAnimation} />
-        {images.length!==1 && <CarouselLoader images={images} carouselIndex={carouselIndex}  CloseAnimation={CloseAnimation}/>}
+        {images.length !== 1 && (
+          <CarouselLoader
+            images={images}
+            carouselIndex={carouselIndex}
+            CloseAnimation={CloseAnimation}
+          />
+        )}
         <ItemInfoWrapper>
           <ItemInfo CloseAnimation={CloseAnimation}>
-          
             <ItemName>
               {restaurant.activeLanguage == "en"
                 ? plates[activePlate]?.en_name
@@ -215,7 +250,9 @@ export default function ProductDetails({
               dangerouslySetInnerHTML={{ __html: description }}
             />
             {plates[activePlate]?.en_price !== "" && (
-              <ItemPrice>{plates[activePlate]?.en_price} {currencySymbol}</ItemPrice>
+              <ItemPrice>
+                {plates[activePlate]?.en_price} {currencySymbol}
+              </ItemPrice>
             )}
 
             <ButtonWrapper>
