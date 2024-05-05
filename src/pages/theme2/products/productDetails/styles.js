@@ -121,6 +121,7 @@ export const CarouselBack = styled(IoIosArrowBack)`
   left:7%;
   top:45%;
   z-index:20;
+  display: ${(props) => (props.CloseAnimation ? "flex" : "none")};
 
 `;
 
@@ -131,6 +132,7 @@ export const CarouselForward = styled(IoIosArrowForward)`
   right:7%;
   top:45%;
   z-index:20;
+  display: ${(props) => (props.CloseAnimation ? "flex" : "none")};
 `;
 export const BackBtn = styled.button`
   position: fixed;
@@ -179,13 +181,14 @@ export const Category = styled.span`
 
 export const FakeContainer = styled.div`
   width: ${(props) => (props.CloseAnimation ? "90%" : "100%")};
-  height: ${(props) => (props.CloseAnimation ? "50vh" : "20vh")};
+  height: ${(props) => (props.CloseAnimation ? "45vh" : "25vh")};
   border-radius: ${(props) => (props.CloseAnimation ? "40px" : "10px")};
   margin-top: ${(props) => (props.CloseAnimation ? "80px" : "0px")};
   display: ${(props) => (props.CloseAnimation ? "flex" : "none")};
   overflow: hidden;
   transition: all 1s;
   animation: ${ImageAnimation} 0.8s;
+  /* background-color: red; */
 `;
 
 export const ItemInfoWrapper = styled.div`

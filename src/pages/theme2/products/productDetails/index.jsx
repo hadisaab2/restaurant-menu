@@ -28,6 +28,7 @@ import {
 import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { addToCart } from "../../../../redux/cart/cartActions";
+import CarouselLoader from "./carouselLoader";
 
 export default function ProductDetails({
   activePlate,
@@ -169,7 +170,7 @@ export default function ProductDetails({
         </ItemCategory>
         <ImagesContainer CloseAnimation={CloseAnimation}>
           {images.length !== 1 && (
-            <CarouselBack onClick={() => carouselIndex !== 0 && handleleft()} />
+            <CarouselBack CloseAnimation={CloseAnimation} onClick={() => carouselIndex !== 0 && handleleft()} />
           )}
           <Carousel
             carouselIndex={carouselIndex}
@@ -192,6 +193,7 @@ export default function ProductDetails({
           </Carousel>
           {images.length !== 1 && (
             <CarouselForward
+            CloseAnimation={CloseAnimation}
               onClick={() =>
                 plates[activePlate].images.length > carouselIndex + 1 &&
                 handleright()
@@ -200,8 +202,10 @@ export default function ProductDetails({
           )}
         </ImagesContainer>
         <FakeContainer CloseAnimation={CloseAnimation} />
+        {images.length!==1 && <CarouselLoader images={images} carouselIndex={carouselIndex}  CloseAnimation={CloseAnimation}/>}
         <ItemInfoWrapper>
           <ItemInfo CloseAnimation={CloseAnimation}>
+          
             <ItemName>
               {restaurant.activeLanguage == "en"
                 ? plates[activePlate]?.en_name
