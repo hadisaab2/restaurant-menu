@@ -45,6 +45,7 @@ import "react-quill/dist/quill.snow.css"; // Import Quill's CSS
 import "./styles.css";
 import { v4 as uuidv4 } from "uuid";
 import { FaPlus } from "react-icons/fa6";
+import imageCompression from 'browser-image-compression';
 
 export default function AddProduct({
   setIsFormOpen,
@@ -112,41 +113,101 @@ export default function AddProduct({
     restaurantId: userInformation.restaurant_id,
   });
 
-  const handleFileChange = (event) => {
+  // const handleFileChange = (event) => {
+  //   const files = event.target.files;
+  //   if (!files || files.length === 0) {
+  //     return;
+  //   }
+  //   if(files.length + images.length >8){
+  //     setFileErrMsg("Limit 8 images");
+  //     return
+  //   }
+  //   Array.from(files).forEach((file) => {
+  //     const uploadedFile = file;
+  //     const fileSizeInMB = uploadedFile.size / (1024 * 1024);
+  //     if (fileSizeInMB > 4) {
+  //       setFileErrMsg("Image is greater than 4MB");
+  //       return;
+  //     } else {
+  //       setFileErrMsg("");
+  //     }
+
+  //     const uniqueId = uuidv4();
+  //     const modifiedFileName = `${uniqueId}`;
+  //     const modifiedFile = new File([file], modifiedFileName, {
+  //       type: file.type,
+  //     });
+  //     setImages((prevImages) => [
+  //       ...prevImages,
+  //       {
+  //         url: URL.createObjectURL(file),
+  //         isDeleted: false,
+  //         file: modifiedFile,
+  //         id: uniqueId,
+  //       },
+  //     ]);
+  //   });
+
+  //   event.target.value = null;
+  // };
+
+
+  const handleFileChange = async (event) => {
     const files = event.target.files;
     if (!files || files.length === 0) {
       return;
     }
-    if(files.length + images.length >8){
+  
+    if (files.length + images.length > 8) {
       setFileErrMsg("Limit 8 images");
-      return
+      return;
     }
-    Array.from(files).forEach((file) => {
-      const uploadedFile = file;
-      const fileSizeInMB = uploadedFile.size / (1024 * 1024);
-      if (fileSizeInMB > 4) {
-        setFileErrMsg("Image is greater than 4MB");
-        return;
-      } else {
-        setFileErrMsg("");
+  
+    let hasError = false;
+    for (const file of files) {
+      const fileSizeInMB = file.size / (1024 * 1024); // Convert bytes to MB
+      // if (fileSizeInMB > 4) {
+      //   setFileErrMsg("Image is greater than 4MB");
+      //   hasError = true;
+      //   break; // Break the loop as we don't process files larger than 4MB
+      // }
+  
+      try {
+        const options = {
+          maxSizeMB: 1, // Maximum file size (MB)
+          maxWidthOrHeight: 1920, // Compressed file's maximum width or height
+          useWebWorker: true // Use multi-threading for better performance
+        };
+  
+        const compressedFile = await imageCompression(file, options);
+  
+        // Generate a unique ID and create a new file object with a modified file name
+        const uniqueId = uuidv4();
+        const modifiedFile = new File([compressedFile], `${uniqueId}`, { type: compressedFile.type });
+  
+        // Add new image object to the images state
+        setImages((prevImages) => [
+          ...prevImages,
+          {
+            url: URL.createObjectURL(file),
+            isDeleted: false,
+            file: modifiedFile,
+            id: uniqueId,
+          },
+        ]);
+      } catch (error) {
+        console.error('Error compressing image:', error);
+        setFileErrMsg('Error compressing image');
+        hasError = true;
+        break;
       }
-
-      const uniqueId = uuidv4();
-      const modifiedFileName = `${uniqueId}`;
-      const modifiedFile = new File([file], modifiedFileName, {
-        type: file.type,
-      });
-      setImages((prevImages) => [
-        ...prevImages,
-        {
-          url: URL.createObjectURL(file),
-          isDeleted: false,
-          file: modifiedFile,
-          id: uniqueId,
-        },
-      ]);
-    });
-
+    }
+  
+    if (!hasError) {
+      setFileErrMsg("");
+    }
+  
+    // Clear the input after the files have been handled
     event.target.value = null;
   };
 
