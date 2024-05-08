@@ -16,7 +16,7 @@ export const Text = styled.span`
 font-size: 16px;
 font-weight: 400;
 margin-top: 10px;
-color:#fed170;
+color:white;
 /* color:#f4c257; */
 
 

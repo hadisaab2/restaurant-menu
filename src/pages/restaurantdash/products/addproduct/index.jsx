@@ -174,7 +174,7 @@ export default function AddProduct({
   
       try {
         const options = {
-          maxSizeMB: 1, // Maximum file size (MB)
+          maxSizeMB: 0.3, // Maximum file size (MB)
           maxWidthOrHeight: 1920, // Compressed file's maximum width or height
           useWebWorker: true // Use multi-threading for better performance
         };
@@ -231,6 +231,8 @@ export default function AddProduct({
         setValue("ar_name", ar_name);
         setValue("ar_description", ar_description);
       } else {
+      
+        
         const { en_name, en_description, en_price, ar_name, ar_description } =
           selectedProduct;
 

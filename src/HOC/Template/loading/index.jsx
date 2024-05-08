@@ -7,7 +7,7 @@ export default function Loading() {
     <Container>
       {/* <Logo src={menugic} /> */}
       <Text> Bringing Your Menu to Life.</Text>
-      <PulseLoader style={{marginTop:"20px"}}  speedMultiplier={0.7} size={10} color="#fed170" />
+      <PulseLoader style={{marginTop:"20px"}}  speedMultiplier={0.7} size={10} color="white" />
 
     </Container>
   );
