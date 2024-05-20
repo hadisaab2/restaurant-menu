@@ -122,8 +122,7 @@ export default function ProductDetails({
   };
 
   // this code is to put the image cover at the beggining of the array
-  let images = [...plates[activePlate]?.images];
-
+  let images = [...(plates[activePlate]?.images ?? [])];
   // Find the index of the image that should be first
   const index = images.findIndex((image) =>
     image.url.includes(plates[activePlate].cover_id)
