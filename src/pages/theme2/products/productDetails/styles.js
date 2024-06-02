@@ -21,6 +21,24 @@ const slideAnimation = (x, y, width) => keyframes`
 }
 `;
 
+const slideAnimationScreen = (x, y, width) => keyframes`
+ 0% { 
+    left: ${x}px;
+    top:${y}px;
+    width:${width}px;
+    height:30vh;
+    border-radius: 10px;
+    
+}
+ 100% { 
+    left: 0;
+    top:0;
+    width:100%;
+    height: 100vh;
+    border-radius: 0px;
+
+}
+`;
 export const Wrapper = styled.div`
   position: fixed;
   width: ${(props) => (props.CloseAnimation ? "100%" : `${props.width}px`)};
@@ -33,6 +51,13 @@ export const Wrapper = styled.div`
   animation: ${({ x, y, width }) => slideAnimation(x, y, width)} 0.8s;
   z-index: 6;
   background-color: ${(props) => props.theme.backgroundColor};
+  @media (min-width: 1024px) {
+    animation: ${({ x, y, width }) => slideAnimationScreen(x, y, width)} 0.8s;
+    height: ${(props) => (props.CloseAnimation ? "100vh" : `30vh`)};
+
+
+
+    }
 `;
 
 
@@ -49,6 +74,19 @@ const ImageAnimation = keyframes`
 
     }
 `;
+const ImageAnimationScreen = keyframes`
+ 0% { 
+    height:30vh;
+    top:0px;
+}
+
+ 100% { 
+    height:70vh;
+    top:80px;
+
+    }
+`;
+
 export const ImagesContainer = styled.div`
   width: 100%;
   height: ${(props) => (props.CloseAnimation ? "55vh" : "20vh")};
@@ -60,6 +98,11 @@ export const ImagesContainer = styled.div`
   display: flex;
   justify-content: center;
   overflow: hidden;
+  @media (min-width: 1024px) {
+    height: ${(props) => (props.CloseAnimation ? "70vh" : "30vh")};
+    animation: ${ImageAnimationScreen} 0.8s;
+
+    }
 `;
 export const Carousel = styled.div`
   width: 100%;
@@ -121,6 +164,11 @@ export const Image = styled.img`
   width: ${(props) => (props.CloseAnimation ? "90%" : "100%")};
   display:${props=>props.Loaded ? 'block':'none'};
   transition: all 0.8s;
+    @media (min-width: 1024px) {
+      width: ${(props) => (props.CloseAnimation ? "50%" : "100%")};
+
+
+    }
 `;
 const BackIconAnimation = keyframes`
  0% { 
@@ -151,6 +199,11 @@ export const CarouselBack = styled(IoIosArrowBack)`
   top:45%;
   z-index:20;
   display: ${(props) => (props.CloseAnimation ? "flex" : "none")};
+  @media (min-width: 1024px) {
+    left:27%;
+
+
+    }
 
 `;
 
@@ -162,6 +215,11 @@ export const CarouselForward = styled(IoIosArrowForward)`
   top:45%;
   z-index:20;
   display: ${(props) => (props.CloseAnimation ? "flex" : "none")};
+  @media (min-width: 1024px) {
+    right:27%;
+
+
+    }
 `;
 export const BackBtn = styled.button`
   position: fixed;
@@ -217,6 +275,9 @@ export const FakeContainer = styled.div`
   overflow: hidden;
   transition: all 1s;
   animation: ${ImageAnimation} 0.8s;
+  @media (min-width: 1024px) {
+    height: ${(props) => (props.CloseAnimation ? "70vh" : "30vh")};
+    }
   /* background-color: red; */
 `;
 

@@ -6,7 +6,9 @@ export const Container = styled.div`
     align-items: center;
     justify-content: center;
     margin-top: 10px;
-
+    @media (min-width: 1024px) {
+        width: 25%;
+    }
 `;
 export const Wrapper = styled.div`
     width: 90%;
@@ -38,7 +40,9 @@ margin-top: 10px;
 display: flex;
 justify-content: center;
 border-radius: 10px;
-
+@media (min-width: 1024px) {
+  height: 30vh;
+    }
 
 
 `;

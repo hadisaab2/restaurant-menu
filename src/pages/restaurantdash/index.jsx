@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState,useRef } from "react";
 import {
   CateogoryIcon,
   Container,
@@ -27,12 +27,15 @@ import { getCookie, deleteCookie } from "../../utilities/manageCookies";
 import { useNavigate } from "react-router-dom";
 import { ADMINSIGNIN } from "../../routes/URLs";
 
+
+
 export default function RestaurantDash() {
   const [section, setSection] = useState("Products");
   const [products, setProducts] = useState([]);
   const [showMobileSidebar, setShowMobileSidebar] = useState(false);
-
   const [userInformation, setUserInformation] = useState({});
+
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -49,6 +52,10 @@ export default function RestaurantDash() {
     setShowMobileSidebar(!showMobileSidebar)
 
   }
+
+  
+
+
   return (
     <Container>
       <MobileSidebar showMobileSidebar={showMobileSidebar}>
@@ -69,6 +76,7 @@ export default function RestaurantDash() {
             <CateogoryIcon />
             <TabText>Settings</TabText>
           </Tab>
+
         </SidebarContent>
         <SidebarBottom>
           <ProfileIcon />
@@ -134,7 +142,7 @@ export default function RestaurantDash() {
         {section == "Products" && (
           <Products setProducts={setProducts} products={products} />
         )}
-        {section == "Settings" && <Settings setSection={setSection} />}
+        {section == "Settings" && <Settings userInformation={userInformation} setSection={setSection} />}
         {section == "Categories" && <Categories setProducts={setProducts} />}
       </Content>
     </Container>

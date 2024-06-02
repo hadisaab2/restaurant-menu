@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import { breakingPoints } from "../../../styles/theme";
 
 export const Container = styled.div`
   display: flex;
@@ -8,6 +9,7 @@ export const Container = styled.div`
   background-color: white;
   margin-top:20px;
   min-height:100vh;
+  
 `;
 
 export const TabContainer = styled.div`
@@ -24,5 +26,9 @@ font-size: 18px;
 font-weight:500;
 color:${props=>props.tab==props.activetab?"black":"lightgray"};
 cursor: pointer;
+@media (max-width: ${breakingPoints.sm}px) {
+  font-size: 14px;
+
+  }
 `;
 

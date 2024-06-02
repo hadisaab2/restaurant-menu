@@ -82,4 +82,9 @@ width: 150px;
   font-weight: 500;
   font-size: 14px;
   margin-left: 20px;
+  @media (max-width: ${breakingPoints.sm}px) {
+  font-size: 11px;
+  width: 100px;
+  height: 30px;
+  }
 `;

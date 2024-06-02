@@ -58,14 +58,17 @@ export default function LocationPopup({
         })}
       </BranchesContainer>
       <BranchInfo>
+        {activeBranch?.location && 
         <InfoContainer>
           <LocationLogo />
           <Info>{activeBranch?.location}</Info>
         </InfoContainer>
+        }
         <InfoContainer>
           <CallLogo />
           <Info>{activeBranch?.phone_number}</Info>
         </InfoContainer>
+
         <InfoContainer>
           <MapsLogo />
           <MapLink href ={`https://${activeBranch?.mapLink}`}>{activeBranch?.mapLink}</MapLink>

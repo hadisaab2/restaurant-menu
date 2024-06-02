@@ -12,6 +12,7 @@ export const Brand = styled.img`
 max-width: 250px;
 max-height: 120px;
 margin-left: 20px;
+
 `;
 
 
