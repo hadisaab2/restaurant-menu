@@ -42,6 +42,12 @@
     "web-vitals": "^2.1.4",
     "yup": "^1.4.0"
   },
+  "overrides": {
+    "react-formio": {
+      "react": "$react",
+      "react-dom": "$react-dom"
+    }
+  },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
