@@ -14,6 +14,8 @@ import {
   ButtonsContainer,
   CoverImage,
   UploadImageText,
+  Tabs,
+  Tab
 } from "./styles";
 import {
   TextField,
@@ -42,10 +44,11 @@ import { toast } from "react-toastify";
 import { useQueryClient } from "@tanstack/react-query";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css"; // Import Quill's CSS
-import "./styles.css";
 import { v4 as uuidv4 } from "uuid";
 import { FaPlus } from "react-icons/fa6";
-import imageCompression from 'browser-image-compression';
+import imageCompression from "browser-image-compression";
+
+import FormBuilder from "./formbuilder";
 
 export default function AddProduct({
   setIsFormOpen,
@@ -58,7 +61,8 @@ export default function AddProduct({
   const [images, setImages] = useState([]);
   const [fileErrMsg, setFileErrMsg] = useState("");
   const [coverId, setCoverId] = useState(null);
-
+  const [jsonString, setJsonString] = useState("{}");
+  const [activeTab,setActiveTab]=useState("productinfo")
   const [categories, setCategories] = useState([]);
   const fileInputRef = useRef(null);
   const { AR, EN, ENAR } = LANGUAGES;
@@ -79,7 +83,6 @@ export default function AddProduct({
       setSelectedProduct(null);
       refetchProducts();
       setIsFormOpen(false);
-      // queryClient.invalidateQueries(['products'])
       queryClient.resetQueries(["products"], { exact: true });
     },
     onError: () => {
@@ -113,78 +116,37 @@ export default function AddProduct({
     restaurantId: userInformation.restaurant_id,
   });
 
-  // const handleFileChange = (event) => {
-  //   const files = event.target.files;
-  //   if (!files || files.length === 0) {
-  //     return;
-  //   }
-  //   if(files.length + images.length >8){
-  //     setFileErrMsg("Limit 8 images");
-  //     return
-  //   }
-  //   Array.from(files).forEach((file) => {
-  //     const uploadedFile = file;
-  //     const fileSizeInMB = uploadedFile.size / (1024 * 1024);
-  //     if (fileSizeInMB > 4) {
-  //       setFileErrMsg("Image is greater than 4MB");
-  //       return;
-  //     } else {
-  //       setFileErrMsg("");
-  //     }
-
-  //     const uniqueId = uuidv4();
-  //     const modifiedFileName = `${uniqueId}`;
-  //     const modifiedFile = new File([file], modifiedFileName, {
-  //       type: file.type,
-  //     });
-  //     setImages((prevImages) => [
-  //       ...prevImages,
-  //       {
-  //         url: URL.createObjectURL(file),
-  //         isDeleted: false,
-  //         file: modifiedFile,
-  //         id: uniqueId,
-  //       },
-  //     ]);
-  //   });
-
-  //   event.target.value = null;
-  // };
-
 
   const handleFileChange = async (event) => {
     const files = event.target.files;
     if (!files || files.length === 0) {
       return;
     }
-  
+
     if (files.length + images.length > 8) {
       setFileErrMsg("Limit 8 images");
       return;
     }
-  
+
     let hasError = false;
     for (const file of files) {
       const fileSizeInMB = file.size / (1024 * 1024); // Convert bytes to MB
-      // if (fileSizeInMB > 4) {
-      //   setFileErrMsg("Image is greater than 4MB");
-      //   hasError = true;
-      //   break; // Break the loop as we don't process files larger than 4MB
-      // }
-  
+
       try {
         const options = {
           maxSizeMB: 0.3, // Maximum file size (MB)
           maxWidthOrHeight: 1920, // Compressed file's maximum width or height
-          useWebWorker: true // Use multi-threading for better performance
+          useWebWorker: true, // Use multi-threading for better performance
         };
-  
+
         const compressedFile = await imageCompression(file, options);
-  
+
         // Generate a unique ID and create a new file object with a modified file name
         const uniqueId = uuidv4();
-        const modifiedFile = new File([compressedFile], `${uniqueId}`, { type: compressedFile.type });
-  
+        const modifiedFile = new File([compressedFile], `${uniqueId}`, {
+          type: compressedFile.type,
+        });
+
         // Add new image object to the images state
         setImages((prevImages) => [
           ...prevImages,
@@ -196,17 +158,17 @@ export default function AddProduct({
           },
         ]);
       } catch (error) {
-        console.error('Error compressing image:', error);
-        setFileErrMsg('Error compressing image');
+        console.error("Error compressing image:", error);
+        setFileErrMsg("Error compressing image");
         hasError = true;
         break;
       }
     }
-  
+
     if (!hasError) {
       setFileErrMsg("");
     }
-  
+
     // Clear the input after the files have been handled
     event.target.value = null;
   };
@@ -231,8 +193,6 @@ export default function AddProduct({
         setValue("ar_name", ar_name);
         setValue("ar_description", ar_description);
       } else {
-      
-        
         const { en_name, en_description, en_price, ar_name, ar_description } =
           selectedProduct;
 
@@ -247,7 +207,7 @@ export default function AddProduct({
       const formattedImages = selectedProduct.images.map((image) => ({
         url: image.url,
         isDeleted: false,
-        id:image.id
+        id: image.id,
       }));
       setImages(formattedImages);
       setValue("images", formattedImages);
@@ -255,7 +215,9 @@ export default function AddProduct({
       setValue("priority", selectedProduct.priority);
       setValue("product_code", selectedProduct.product_code);
       setValue("cover_id", selectedProduct.cover_id);
-      setCoverId(selectedProduct.cover_id)
+      selectedProduct.form_json && setValue("form_json", selectedProduct.form_json);
+      setCoverId(selectedProduct.cover_id);
+      selectedProduct.form_json && setJsonString(selectedProduct.form_json)
     }
   }, []);
 
@@ -266,7 +228,7 @@ export default function AddProduct({
   const handleAddProduct = () => {
     if (!coverId) {
       toast.error("Please select a cover for the product");
-      return
+      return;
     }
     handleSubmit((data) => {
       if (selectedProduct) {
@@ -275,6 +237,8 @@ export default function AddProduct({
           images,
           restaurant_id: userInformation.restaurant_id,
           cover_id: coverId,
+          form_json:jsonString
+
         });
       } else {
         handleApiCall({
@@ -282,6 +246,7 @@ export default function AddProduct({
           images,
           restaurant_id: userInformation.restaurant_id,
           cover_id: coverId,
+          form_json:jsonString
         });
       }
     })();
@@ -293,9 +258,9 @@ export default function AddProduct({
 
   const handleOnDeleteImage = (imageUrl) => {
     //if coverid is the deleted one just return cover id to null based on 2 conditions old image and new image
-    const image = images.find(img => img.url === imageUrl);
-    
-    if (imageUrl.includes(coverId) || image.id===coverId) {
+    const image = images.find((img) => img.url === imageUrl);
+
+    if (imageUrl.includes(coverId) || image.id === coverId) {
       setCoverId(null);
     }
     let updatedimages;
@@ -318,11 +283,11 @@ export default function AddProduct({
 
   const handleCover = (url) => {
     let id;
-    if(url.includes("blob")){
-      const image = images.find(img => img.url === url);
-      id=image?.id
-    }else{
-      id =url.replace(/^\d+-/, '');
+    if (url.includes("blob")) {
+      const image = images.find((img) => img.url === url);
+      id = image?.id;
+    } else {
+      id = url.replace(/^\d+-/, "");
     }
     setCoverId(id);
     setValue("cover_id", id);
@@ -377,180 +342,173 @@ export default function AddProduct({
   const fieldsToDisplay = fields.filter(({ display }) => display); //all field with display ture
 
   return (
-    <ProductInfo>
-      <BackIcon
-        onClick={() => {
-          setSelectedProduct(null);
-          setIsFormOpen(false);
-          setImages(null);
-          setCoverId(null);
-        }}
-      />
+    <>
+      <ProductInfo activeTab={activeTab} >
+        <BackIcon
+          onClick={() => {
+            setSelectedProduct(null);
+            setIsFormOpen(false);
+            setImages(null);
+            setCoverId(null);
+          }}
+        />
+        <Tabs>
+          <Tab activeTab={activeTab} tab={"productinfo"} onClick={()=>{setActiveTab("productinfo")}}>Product Details</Tab>
+          <Tab activeTab={activeTab} tab={"formbuilder"} onClick={()=>{setActiveTab("formbuilder")}}>Form Builder</Tab>
+        </Tabs>
+        {activeTab=="productinfo" ?
+        <>
+        <UploadPhoto
+          type="file"
+          ref={fileInputRef}
+          onChange={handleFileChange}
+          multiple
+        />
 
-      <UploadPhoto
-        type="file"
-        ref={fileInputRef}
-        onChange={handleFileChange}
-        multiple
-      />
-      {console.log(images)}
-      {console.log("cover-id",coverId)}
-
-      {/* {!file && !getValues().image && (
-          <UploadImageText>{fileErrMsg}</UploadImageText>
-        )} */}
-      {/* {!isEmpty(images) && (
-        <Row>
-          <UploadedImage src={images[0]?.url} alt="Uploaded" />
-        </Row>
-      )} */}
-      <ImagesContainer>
-        <UploadedImageContainer>
-          <UploadedImageWrapper>
-            <UploadBtn onClick={handleButtonClick}>
-              Upload Image
-              <FaPlus style={{ fontSize: "20px" }} />
-            </UploadBtn>
-          </UploadedImageWrapper>
-        </UploadedImageContainer>
-        {images.map(({ url, isDeleted, id }) => {
-          const imageUrl = url.includes("blob")
-            ? url
-            : `https://storage.googleapis.com/ecommerce-bucket-testing/${url}`;
-          if (!isDeleted) {
-            return (
-              <UploadedImageContainer>
-                <UploadedImageWrapper>
-                  <UploadedImage src={imageUrl} alt="Uploaded" />
-                  <ButtonsContainer>
-                    <CoverImage onClick={() => handleCover(url)}>
-                      {coverId === id || url.includes(coverId)  ? "Selected" : "Select Cover"}
-                    </CoverImage>
-                    <Delete
-                      onClick={() => {
-                        handleOnDeleteImage(url);
-                      }}
-                    />
-                  </ButtonsContainer>
-                </UploadedImageWrapper>
-              </UploadedImageContainer>
-            );
-          }
-        })}
-      </ImagesContainer>
-      <Row><UploadImageText>{fileErrMsg}</UploadImageText></Row>
-
-      {fieldsToDisplay.map(({ name, label, type, mui_type }) =>
-        mui_type === "textfield" ? (
-          <TextField
-            key={name}
-            label={label}
-            name={name}
-            variant="outlined"
-            {...register(name)}
-            style={fieldStyle}
-            type={type}
-            error={!isEmpty(formState?.errors?.[name])}
-            helperText={
-              !isEmpty(formState?.errors?.[name]) &&
-              formState.errors?.[name].message
+        <ImagesContainer>
+          <UploadedImageContainer>
+            <UploadedImageWrapper>
+              <UploadBtn onClick={handleButtonClick}>
+                Upload Image
+                <FaPlus style={{ fontSize: "20px" }} />
+              </UploadBtn>
+            </UploadedImageWrapper>
+          </UploadedImageContainer>
+          {images.map(({ url, isDeleted, id }) => {
+            const imageUrl = url.includes("blob")
+              ? url
+              : `https://storage.googleapis.com/ecommerce-bucket-testing/${url}`;
+            if (!isDeleted) {
+              return (
+                <UploadedImageContainer>
+                  <UploadedImageWrapper>
+                    <UploadedImage src={imageUrl} alt="Uploaded" />
+                    <ButtonsContainer>
+                      <CoverImage onClick={() => handleCover(url)}>
+                        {coverId === id || url.includes(coverId)
+                          ? "Selected"
+                          : "Select Cover"}
+                      </CoverImage>
+                      <Delete
+                        onClick={() => {
+                          handleOnDeleteImage(url);
+                        }}
+                      />
+                    </ButtonsContainer>
+                  </UploadedImageWrapper>
+                </UploadedImageContainer>
+              );
             }
-          />
-        ) : (
-          <ReactQuill
-            value={getValues(name)} // Use the value from your form state
-            onChange={handleTextChange(name)}
-            placeholder={name}
-            modules={{
-              toolbar: [
-                [{ header: "1" }, { header: "2" }, { font: [] }],
-                [{ list: "ordered" }, { list: "bullet" }],
-                ["bold", "italic", "underline"],
-                ["link"],
-                ["clean"],
-              ],
-            }}
-            formats={[
-              "header",
-              "font",
-              "size",
-              "list",
-              "bullet",
-              "bold",
-              "italic",
-              "underline",
-              "link",
-            ]}
-          />
-        )
-      )}
+          })}
+        </ImagesContainer>
+        <Row>
+          <UploadImageText>{fileErrMsg}</UploadImageText>
+        </Row>
 
-      <TextField
-        label={"Priority"}
-        name={"priority"}
-        variant="outlined"
-        {...register("priority")}
-        style={fieldStyle}
-        error={!isEmpty(formState?.errors?.priority)}
-        helperText={!isEmpty(formState?.errors?.priority) && "Required Field"}
-        type="number"
-        defaultValue={1}
-        inputProps={{ min: 1 }}
-      />
-      <TextField
-        label={"Product_code"}
-        name={"product_code"}
-        variant="outlined"
-        {...register("product_code")}
-        style={fieldStyle}
-        type="text"
-      />
-      <Box style={fieldStyle}>
-        <FormControl fullWidth>
-          <InputLabel>Category</InputLabel>
-          <Select
-            label="Category"
-            {...register("category_id")}
-            error={!isEmpty(formState?.errors?.category_id)}
-            defaultValue={selectedProduct?.category_id}
-          >
-            <MenuItem value={0}>Offer</MenuItem>
-            {categories.map(({ id, en_category, ar_category }) => (
-              <MenuItem value={id} key={id}>
-                {en_category || ar_category}
-              </MenuItem>
-            ))}
-          </Select>
-          {!isEmpty(formState?.errors?.category_id) && (
-            <FormHelperText style={{ color: "#d64241" }}>
-              Required field
-            </FormHelperText>
-          )}
-        </FormControl>
-      </Box>
-      <Row>
-        <LoadingButton
-          loading={isPending || isEditing}
-          variant="contained"
-          style={{ backgroundColor: "turquoise" }}
-          onClick={handleAddProduct}
-        >
-          {selectedProduct ? "Edit Product" : "Add Product"}
-        </LoadingButton>
-      </Row>
-      {/* {selectedProduct && (
+        {fieldsToDisplay.map(({ name, label, type, mui_type }) =>
+          mui_type === "textfield" ? (
+            <TextField
+              key={name}
+              label={label}
+              name={name}
+              variant="outlined"
+              {...register(name)}
+              style={fieldStyle}
+              type={type}
+              error={!isEmpty(formState?.errors?.[name])}
+              helperText={
+                !isEmpty(formState?.errors?.[name]) &&
+                formState.errors?.[name].message
+              }
+            />
+          ) : (
+            <ReactQuill
+              value={getValues(name)} // Use the value from your form state
+              onChange={handleTextChange(name)}
+              placeholder={name}
+              modules={{
+                toolbar: [
+                  [{ header: "1" }, { header: "2" }, { font: [] }],
+                  [{ list: "ordered" }, { list: "bullet" }],
+                  ["bold", "italic", "underline"],
+                  ["link"],
+                  ["clean"],
+                ],
+              }}
+              formats={[
+                "header",
+                "font",
+                "size",
+                "list",
+                "bullet",
+                "bold",
+                "italic",
+                "underline",
+                "link",
+              ]}
+            />
+          )
+        )}
+
+        <TextField
+          label={"Priority"}
+          name={"priority"}
+          variant="outlined"
+          {...register("priority")}
+          style={fieldStyle}
+          error={!isEmpty(formState?.errors?.priority)}
+          helperText={!isEmpty(formState?.errors?.priority) && "Required Field"}
+          type="number"
+          defaultValue={1}
+          inputProps={{ min: 1 }}
+        />
+        <TextField
+          label={"Product_code"}
+          name={"product_code"}
+          variant="outlined"
+          {...register("product_code")}
+          style={fieldStyle}
+          type="text"
+        />
+        <Box style={fieldStyle}>
+          <FormControl fullWidth>
+            <InputLabel>Category</InputLabel>
+            <Select
+              label="Category"
+              {...register("category_id")}
+              error={!isEmpty(formState?.errors?.category_id)}
+              defaultValue={selectedProduct?.category_id}
+            >
+              <MenuItem value={0}>Offer</MenuItem>
+              {categories.map(({ id, en_category, ar_category }) => (
+                <MenuItem value={id} key={id}>
+                  {en_category || ar_category}
+                </MenuItem>
+              ))}
+            </Select>
+            {!isEmpty(formState?.errors?.category_id) && (
+              <FormHelperText style={{ color: "#d64241" }}>
+                Required field
+              </FormHelperText>
+            )}
+          </FormControl>
+        </Box>
+
         <Row>
           <LoadingButton
-            disabled={isPending || isEditing}
-            loading={isDeleting}
+            loading={isPending || isEditing}
             variant="contained"
             style={{ backgroundColor: "turquoise" }}
-            onClick={() => handleDeleteProduct(selectedProduct.id)}
+            onClick={handleAddProduct}
           >
-            Delete Product
+            {selectedProduct ? "Edit Product" : "Add Product"}
           </LoadingButton>
         </Row>
-      )} */}
-    </ProductInfo>
+        </>:<FormBuilder jsonString={jsonString} setJsonString={setJsonString}/>
+}
+
+      </ProductInfo>
+      
+    </>
   );
 }

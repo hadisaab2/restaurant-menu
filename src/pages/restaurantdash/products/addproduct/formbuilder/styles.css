@@ -1,0 +1,30 @@
+.ql-container{
+    height:150px
+}
+
+.formwrapper {
+    font-family: sans-serif;
+    text-align: center;
+    width: 100%;
+  }
+  
+  .float-right {
+    float: right;
+  }
+  .float-left {
+    float: left;
+  }
+
+  .blue {
+    background-color: blue;
+    color: white;
+    border: none;
+    padding: 8px;
+  }
+  .btn-toolbar {
+    padding-bottom: 10px;
+    /* margin: auto; */
+  }
+  .btn-primary{
+    background-color:turquoise !important;
+  }

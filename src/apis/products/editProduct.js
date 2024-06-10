@@ -44,7 +44,9 @@ const editProduct = async (id, payload) => {
     formData.append(`priority`, payload.priority);
     formData.append(`product_code`, payload.product_code);
     formData.append(`cover_id`, payload.cover_id);
+    formData.append(`form_json`, payload.form_json);
 
+    
     const response = await axios.put(url, formData, {
       headers: {
         "Content-Type": "multipart/form-data",

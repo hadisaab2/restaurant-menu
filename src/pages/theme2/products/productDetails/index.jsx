@@ -31,6 +31,9 @@ import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { addToCart } from "../../../../redux/cart/cartActions";
 import CarouselLoader from "./carouselLoader";
+import { Form } from 'react-formio';
+
+import 'formiojs/dist/formio.full.css';
 
 export default function ProductDetails({
   activePlate,
@@ -41,7 +44,7 @@ export default function ProductDetails({
 }) {
   const { restaurantName } = useParams();
   const restaurant = useSelector((state) => state.restaurant?.[restaurantName]);
-
+  const [formSchema, setFormSchema] = useState(JSON.parse(plates[activePlate]?.form_json));
   const dispatch = useDispatch();
 
   const [quantity, setQuantity] = useState(1);
@@ -248,6 +251,7 @@ export default function ProductDetails({
             <ItemDescription
               dangerouslySetInnerHTML={{ __html: description }}
             />
+            <Form form={formSchema} />
             {plates[activePlate]?.en_price !== "" && (
               <ItemPrice>
                 {plates[activePlate]?.en_price} {currencySymbol}

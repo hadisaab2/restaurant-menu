@@ -11,7 +11,7 @@ export const ProductInfo = styled.div`
   position: relative;
   padding-top: 40px;
   margin-top: 20px;
-  width: 60%;
+  width:${props=>props.activeTab=="formbuilder"?"100%":"60%"};
   @media (max-width: ${breakingPoints.sm}px) {
     width: 100%;
   }
@@ -116,5 +116,20 @@ export const UploadImageText = styled.p`
   font-size: 13px;
   color: red;
 `;
+export const Tabs = styled.div`
+  display: flex;
+  flex-direction: row;
+  gap:10px;
+  justify-content: center;
+  align-items: center;
+`;
+ 
 
+export const Tab = styled.div`
+padding: 10px;
+border-radius: 5px;
+background-color:${props=>props.activeTab==props.tab?"turquoise":"null"};
+color:${props=>props.activeTab==props.tab?"white":"black"};
+
+`;
  

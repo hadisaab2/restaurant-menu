@@ -386,7 +386,7 @@ export const ButtonWrapper = styled.div`
   gap: 10px;
   animation: ${NameAnimation} 1.4s ease-in-out;
   margin-top: 30px;
-  height: 35px;
+  /* height: 35px; */
   padding-bottom: 40px;
 `;
 export const AddToCart = styled.button`
