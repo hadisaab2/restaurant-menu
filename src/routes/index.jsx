@@ -14,6 +14,14 @@ import Template from "../HOC/Template";
 import NotFound from "../pages/notfound";
 
 export default function ApplicationRoutes() {
+  const hostnameParts = window.location.hostname.split('.');
+  let subdomain = hostnameParts[0];
+  
+  if (subdomain === 'www' && hostnameParts.length > 2) {
+    subdomain = hostnameParts[1];
+  }
+  
+  console.log(subdomain);
   return (
     <BrowserRouter>
       <RoutesWrapper>

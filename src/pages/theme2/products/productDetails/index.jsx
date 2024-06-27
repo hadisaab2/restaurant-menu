@@ -45,6 +45,8 @@ export default function ProductDetails({
   const { restaurantName } = useParams();
   const restaurant = useSelector((state) => state.restaurant?.[restaurantName]);
   const [formSchema, setFormSchema] = useState(JSON.parse(plates[activePlate]?.form_json));
+  const [formData, setFormData] = useState(null);
+
   const dispatch = useDispatch();
 
   const [quantity, setQuantity] = useState(1);
@@ -105,11 +107,12 @@ export default function ProductDetails({
   }, []);
 
   const handleAddToCart = () => {
+    console.log(formData)
     setTimeout(() => {
       setactivePlate(null);
       document.body.style.overflow = "auto";
     }, 800);
-    dispatch(addToCart(restaurantName, plates[activePlate], quantity));
+    dispatch(addToCart(restaurantName, plates[activePlate], quantity,formData));
     setCloseAnimation(false);
     setQuantity(1);
   };
@@ -124,6 +127,11 @@ export default function ProductDetails({
     }
   };
 
+  const handleFormChange = (submission) => {
+    console.log(submission.data)
+
+    setFormData(submission.data);
+  };
   // this code is to put the image cover at the beggining of the array
   let images = [...(plates[activePlate]?.images ?? [])];
   // Find the index of the image that should be first
@@ -251,7 +259,7 @@ export default function ProductDetails({
             <ItemDescription
               dangerouslySetInnerHTML={{ __html: description }}
             />
-            <Form form={formSchema} />
+            <Form form={formSchema} onChange={handleFormChange} />
             {plates[activePlate]?.en_price !== "" && (
               <ItemPrice>
                 {plates[activePlate]?.en_price} {currencySymbol}

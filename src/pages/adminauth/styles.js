@@ -47,6 +47,8 @@ export const Title = styled.p`
   font-size: 24px;
   font-weight: bold;
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  margin-bottom: 0;
+  margin-top: 30px;
   @media (max-width: ${breakingPoints.sm}px) {
     font-size: 20px;
   }
@@ -55,6 +57,9 @@ export const SubTitle = styled.p`
   font-size: 15px;
   font-family: Arial, Helvetica, sans-serif;
   color: gray;
+  margin-bottom: 0;
+  margin-top: 10px;
+
   @media (max-width: ${breakingPoints.sm}px) {
     font-size: 13px;
   }
@@ -64,4 +69,7 @@ export const inputStyle = { width: "80%" };
 
 export const ErrorMessage = styled.p`
   color: red;
+  margin-bottom: 0;
+  margin-top: 20px;
+
 `;

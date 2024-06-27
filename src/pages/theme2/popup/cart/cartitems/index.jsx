@@ -38,21 +38,21 @@ export default function CartItems({setblock}) {
   const activeLanuguage = useSelector(
     (state) => state.restaurant?.[restaurantName].activeLanguage
   );
-  const handleRemove = (id) => {
-    dispatch(removeFromCart(restaurantName,id));
+  const handleRemove = (uniqueId) => {
+    dispatch(removeFromCart(restaurantName,uniqueId));
   };
 
   const handlePurchase = () => {
     setblock("order")
   };
 
-  const handleIncrement = (id, quantity) => {
-    dispatch(adjustQuantity(restaurantName,id, quantity + 1));
+  const handleIncrement = (uniqueId, quantity) => {
+    dispatch(adjustQuantity(restaurantName,uniqueId, quantity + 1));
   };
 
-  const handleDecrement = (id, quantity) => {
+  const handleDecrement = (uniqueId, quantity) => {
     if (quantity > 1) {
-      dispatch(adjustQuantity(restaurantName,id, quantity - 1));
+      dispatch(adjustQuantity(restaurantName,uniqueId, quantity - 1));
     }
   };
   return (
@@ -68,7 +68,7 @@ export default function CartItems({setblock}) {
                     <ItemsContainer>
                       <DeleteIcon
                         onClick={() => {
-                          handleRemove(item.id);
+                          handleRemove(item.uniqueId);
                         }}
                       />
                       <ImageContainer>
@@ -88,7 +88,7 @@ export default function CartItems({setblock}) {
                         <QuantityWrapper>
                           <Plus
                             onClick={() => {
-                              handleIncrement(item.id, item.quantity);
+                              handleIncrement(item.uniqueId, item.quantity);
                             }}
                           >
                             +
@@ -96,7 +96,7 @@ export default function CartItems({setblock}) {
                           <Quantity>{item.quantity}</Quantity>
                           <Minus
                             onClick={() => {
-                              handleDecrement(item.id, item.quantity);
+                              handleDecrement(item.uniqueId, item.quantity);
                             }}
                           >
                             -
