@@ -1,3 +1,4 @@
+import React from "react";
 import {
   Route,
   BrowserRouter,
@@ -12,28 +13,29 @@ import { withRedirection } from "../HOC/sign-in";
 import SuperAdmin from "../pages/superadmin";
 import Template from "../HOC/Template";
 import NotFound from "../pages/notfound";
+import SubDomainTemplate from "../HOC/SubDomainTemplate";
 
 export default function ApplicationRoutes() {
-  const hostnameParts = window.location.hostname.split('.');
-  let subdomain = hostnameParts[0];
-  
-  if (subdomain === 'www' && hostnameParts.length > 2) {
-    subdomain = hostnameParts[1];
-  }
-  
-  console.log(subdomain);
+  const subdomain = window.location.hostname.split('.')[0];
+  console.log(subdomain)
+  console.log("hi")
+
   return (
     <BrowserRouter>
       <RoutesWrapper>
-        <Route path={RESTAURANT} element={<Template />} />
-        <Route path={NOTFOUND} element={<NotFound />} />
-
-        <Route path={ADMINSIGNIN} Component={withRedirection(AdminSignin)} />
-        <Route
-          path={RESTAURANTDASH}
-          Component={AdminLayout(RestaurantDash, 2)}
-        />
-        <Route path={SUPERADMIN} Component={AdminLayout(SuperAdmin, 1)} />
+        {/* Handle subdomain routing */}
+        {subdomain !== "www" && subdomain !== "menugic" && subdomain!="localhost" ? (
+          <Route path="/" element={<SubDomainTemplate restaurantName={subdomain} />} />
+        ) : (
+          <>
+            {/* Existing routes */}
+            <Route path={RESTAURANT} element={<Template />} />
+            <Route path={NOTFOUND} element={<NotFound />} />
+            <Route path={ADMINSIGNIN} Component={withRedirection(AdminSignin)} />
+            <Route path={RESTAURANTDASH} Component={AdminLayout(RestaurantDash, 2)} />
+            <Route path={SUPERADMIN} Component={AdminLayout(SuperAdmin, 1)} />
+          </>
+        )}
       </RoutesWrapper>
     </BrowserRouter>
   );
