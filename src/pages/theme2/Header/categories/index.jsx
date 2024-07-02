@@ -25,8 +25,17 @@ export default function Categories({
 }) {
   const [carouselPosition, setcarouselPosition] = useState(0);
   const [scrollInProgress, setScrollInProgress] = useState(false);
-  const { restaurantName } = useParams();
-  const activeLanuguage = useSelector(
+  const { restaurantName: paramRestaurantName } = useParams();
+  
+  const hostname = window.location.hostname;
+  const subdomain = hostname.split('.')[0];
+
+  // Determine the restaurant name to use
+  const restaurantName = (subdomain !== "menugic" && subdomain !== "localhost" && subdomain !== "www") 
+    ? subdomain 
+    : paramRestaurantName;
+    
+    const activeLanuguage = useSelector(
     (state) => state.restaurant?.[restaurantName].activeLanguage
   );
 

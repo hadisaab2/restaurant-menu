@@ -31,9 +31,9 @@ import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { addToCart } from "../../../../redux/cart/cartActions";
 import CarouselLoader from "./carouselLoader";
-import { Form } from 'react-formio';
+import { Form } from "react-formio";
 
-import 'formiojs/dist/formio.full.css';
+import "formiojs/dist/formio.full.css";
 
 export default function ProductDetails({
   activePlate,
@@ -42,9 +42,21 @@ export default function ProductDetails({
   plates,
   productPositions,
 }) {
-  const { restaurantName } = useParams();
+  const { restaurantName: paramRestaurantName } = useParams();
+
+  const hostname = window.location.hostname;
+  const subdomain = hostname.split(".")[0];
+
+  // Determine the restaurant name to use
+  const restaurantName =
+    subdomain !== "menugic" && subdomain !== "localhost" && subdomain !== "www"
+      ? subdomain
+      : paramRestaurantName;
+
   const restaurant = useSelector((state) => state.restaurant?.[restaurantName]);
-  const [formSchema, setFormSchema] = useState(JSON.parse(plates[activePlate]?.form_json));
+  const [formSchema, setFormSchema] = useState(
+    JSON.parse(plates[activePlate]?.form_json)
+  );
   const [formData, setFormData] = useState(null);
 
   const dispatch = useDispatch();
@@ -67,8 +79,6 @@ export default function ProductDetails({
   const handleleft = () => {
     setcarouselIndex(carouselIndex - 1);
   };
-
-
 
   const divRef = useRef(null);
   const [startX, setStartX] = useState(null);
@@ -107,12 +117,14 @@ export default function ProductDetails({
   }, []);
 
   const handleAddToCart = () => {
-    console.log(formData)
+    console.log(formData);
     setTimeout(() => {
       setactivePlate(null);
       document.body.style.overflow = "auto";
     }, 800);
-    dispatch(addToCart(restaurantName, plates[activePlate], quantity,formData));
+    dispatch(
+      addToCart(restaurantName, plates[activePlate], quantity, formData)
+    );
     setCloseAnimation(false);
     setQuantity(1);
   };
@@ -128,7 +140,7 @@ export default function ProductDetails({
   };
 
   const handleFormChange = (submission) => {
-    console.log(submission.data)
+    console.log(submission.data);
 
     setFormData(submission.data);
   };
@@ -150,7 +162,7 @@ export default function ProductDetails({
   const handleImageLoad = (index) => {
     setLoadedIndices((prev) => ({
       ...prev,
-      [index]: true
+      [index]: true,
     }));
   };
 
@@ -215,11 +227,15 @@ export default function ProductDetails({
                     )}
                     <Image
                       // src={`https://storage.googleapis.com/ecommerce-bucket-testing/${image.url}`}
-                      src={loadedIndices[index] || index === carouselIndex ? `https://storage.googleapis.com/ecommerce-bucket-testing/${image.url}` : ""}
+                      src={
+                        loadedIndices[index] || index === carouselIndex
+                          ? `https://storage.googleapis.com/ecommerce-bucket-testing/${image.url}`
+                          : ""
+                      }
                       // src={
-                        
+
                       //      `https://storage.googleapis.com/ecommerce-bucket-testing/${image.url}`
-                          
+
                       // }
                       onLoad={() => handleImageLoad(index)}
                       CloseAnimation={CloseAnimation}

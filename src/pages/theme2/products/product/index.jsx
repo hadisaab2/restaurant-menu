@@ -16,7 +16,19 @@ import { useEffect } from "react";
 
 const Product = React.forwardRef(
   ({ plate, setactivePlate, activePlate, index, showPopup }, ref) => {
-    const { restaurantName } = useParams();
+    const { restaurantName: paramRestaurantName } = useParams();
+
+    const hostname = window.location.hostname;
+    const subdomain = hostname.split(".")[0];
+
+    // Determine the restaurant name to use
+    const restaurantName =
+      subdomain !== "menugic" &&
+      subdomain !== "localhost" &&
+      subdomain !== "www"
+        ? subdomain
+        : paramRestaurantName;
+
     const restaurant = useSelector(
       (state) => state.restaurant?.[restaurantName]
     );
@@ -36,20 +48,20 @@ const Product = React.forwardRef(
     };
     let currencySymbol;
     switch (restaurant?.currency) {
-      case 'dollar':
-        currencySymbol = '$';
+      case "dollar":
+        currencySymbol = "$";
         break;
-      case 'lb':
-        currencySymbol = 'L.L.';
+      case "lb":
+        currencySymbol = "L.L.";
         break;
-      case 'gram':
-        currencySymbol = 'g';
+      case "gram":
+        currencySymbol = "g";
         break;
-      case 'kilogram':
-        currencySymbol = 'kg';
+      case "kilogram":
+        currencySymbol = "kg";
         break;
       default:
-        currencySymbol = ''; // No currency or unsupported currency
+        currencySymbol = ""; // No currency or unsupported currency
     }
     return (
       <Container index={index} activePlate={activePlate} className="lazy-load">
@@ -63,19 +75,29 @@ const Product = React.forwardRef(
             <Image
               ref={ref}
               onLoad={handleImageLoaded}
-              src={plate.images.length==0?`https://storage.googleapis.com/ecommerce-bucket-testing/${plate.images[0]}`:`https://storage.googleapis.com/ecommerce-bucket-testing/${
-                plate.images.find((image) => image.url.includes(plate.cover_id))
-                  .url
-              }`}
+              src={
+                plate.images.length == 0
+                  ? `https://storage.googleapis.com/ecommerce-bucket-testing/${plate.images[0]}`
+                  : `https://storage.googleapis.com/ecommerce-bucket-testing/${
+                      plate.images.find((image) =>
+                        image.url.includes(plate.cover_id)
+                      ).url
+                    }`
+              }
               imageLoaded={imageLoaded}
-
             />
           </ImageContainer>
           <TextContainer activeLanuguage={restaurant?.activeLanguage}>
             <PlateName>
-              {restaurant?.activeLanguage === "en" ? plate.en_name : plate.ar_name}
+              {restaurant?.activeLanguage === "en"
+                ? plate.en_name
+                : plate.ar_name}
             </PlateName>
-            {plate.en_price!== "" && <PlatePrice>{plate.en_price} {currencySymbol}</PlatePrice>}
+            {plate.en_price !== "" && (
+              <PlatePrice>
+                {plate.en_price} {currencySymbol}
+              </PlatePrice>
+            )}
           </TextContainer>
         </Wrapper>
       </Container>

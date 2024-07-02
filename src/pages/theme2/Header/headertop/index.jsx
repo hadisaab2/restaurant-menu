@@ -4,8 +4,17 @@ import { useDispatch, useSelector } from 'react-redux';
 import { changelanuage } from '../../../../redux/restaurant/restaurantActions';
 import { useParams } from 'react-router-dom';
 export default function HeaderTop() {
-  const { restaurantName } = useParams();
+  const { restaurantName: paramRestaurantName } = useParams();
+  
+  const hostname = window.location.hostname;
+  const subdomain = hostname.split('.')[0];
 
+  // Determine the restaurant name to use
+  const restaurantName = (subdomain !== "menugic" && subdomain !== "localhost" && subdomain !== "www") 
+    ? subdomain 
+    : paramRestaurantName;
+
+    
   const restaurant = useSelector((state) => state.restaurant?.[restaurantName]);
   const dispatch=useDispatch()
   const handlelanguage = (lang)=>{

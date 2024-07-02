@@ -1,13 +1,22 @@
 import React, { useState } from "react";
-import { Wrapper,Input, Purchase,Title, BackIcon } from "./styles";
+import { Wrapper, Input, Purchase, Title, BackIcon } from "./styles";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import { clearCart } from "../../../../../redux/cart/cartActions";
 
-export default function Order({setblock,popupHandler,restaurant}) {
-    const { restaurantName } = useParams();
-    const cart = useSelector((state) => state.cart[restaurantName] || []); // Fetch the cart for the specific restaurant
-    const dispatch = useDispatch();
+export default function Order({ setblock, popupHandler, restaurant }) {
+  const { restaurantName: paramRestaurantName } = useParams();
+
+  const hostname = window.location.hostname;
+  const subdomain = hostname.split(".")[0];
+
+  // Determine the restaurant name to use
+  const restaurantName =
+    subdomain !== "menugic" && subdomain !== "localhost" && subdomain !== "www"
+      ? subdomain
+      : paramRestaurantName;
+  const cart = useSelector((state) => state.cart[restaurantName] || []); // Fetch the cart for the specific restaurant
+  const dispatch = useDispatch();
 
   const [details, setDetails] = useState({
     fullName: "",
@@ -24,7 +33,7 @@ export default function Order({setblock,popupHandler,restaurant}) {
   };
 
   const handlePurchase = () => {
-    setblock("order")
+    setblock("order");
     let message = `Hello *${restaurantName}*\n`;
     message += `Its *${details.fullName}* and I want to purchase the following items:\n`;
     cart.forEach((item) => {
@@ -45,34 +54,35 @@ export default function Order({setblock,popupHandler,restaurant}) {
 
   return (
     <Wrapper>
-        <BackIcon onClick={()=>{setblock("cart")}}/>
-        <Title>Enter Your Details</Title>
-        <Input
-          type="text"
-          name="fullName"
-          value={details.fullName}
-          onChange={handleChange}
-          placeholder="Full Name"
-        />
+      <BackIcon
+        onClick={() => {
+          setblock("cart");
+        }}
+      />
+      <Title>Enter Your Details</Title>
+      <Input
+        type="text"
+        name="fullName"
+        value={details.fullName}
+        onChange={handleChange}
+        placeholder="Full Name"
+      />
 
-        <Input
-          type="text"
-          name="phoneNumber"
-          value={details.phoneNumber}
-          onChange={handleChange}
-          placeholder="PhoneNumber"
-
-        />
-        <Input
-          type="text"
-          name="fullAddress"
-          value={details.fullAddress}
-          onChange={handleChange}
-          placeholder="Full Address"
-
-        />
-        <Purchase onClick={handlePurchase}>Purchase</Purchase>
-
+      <Input
+        type="text"
+        name="phoneNumber"
+        value={details.phoneNumber}
+        onChange={handleChange}
+        placeholder="PhoneNumber"
+      />
+      <Input
+        type="text"
+        name="fullAddress"
+        value={details.fullAddress}
+        onChange={handleChange}
+        placeholder="Full Address"
+      />
+      <Purchase onClick={handlePurchase}>Purchase</Purchase>
     </Wrapper>
   );
 }

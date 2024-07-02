@@ -11,7 +11,18 @@ export default function Theme1() {
   const [activeCategory, setactiveCategory] = useState(0);
   const [animationchange, setanimationchange] = useState(false);
   const [showPopup, setshowPopup] = useState(false);
-  const {restaurantName}=useParams();
+
+
+  const { restaurantName: paramRestaurantName } = useParams();
+  
+  const hostname = window.location.hostname;
+  const subdomain = hostname.split('.')[0];
+
+  // Determine the restaurant name to use
+  const restaurantName = (subdomain !== "menugic" && subdomain !== "localhost" && subdomain !== "www") 
+    ? subdomain 
+    : paramRestaurantName;
+
   const restaurant = useSelector((state) => state.restaurant?.[restaurantName]);
   
   const popupHandler = (show) => {

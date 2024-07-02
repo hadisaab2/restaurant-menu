@@ -10,7 +10,17 @@ import CartPopup from './popup/cart';
 export default function Theme2() {
     const [showPopup, setshowPopup] = useState(null);
     const [searchText, setSearchText] = useState("");
-    const {restaurantName}=useParams();
+    
+    const { restaurantName: paramRestaurantName } = useParams();
+  
+    const hostname = window.location.hostname;
+    const subdomain = hostname.split('.')[0];
+  
+    // Determine the restaurant name to use
+    const restaurantName = (subdomain !== "menugic" && subdomain !== "localhost" && subdomain !== "www") 
+      ? subdomain 
+      : paramRestaurantName;
+
     const itemCount = useSelector(state => {
       const items = state.cart[restaurantName] || []; // Access cart by restaurant name, default to empty array if not found
       return items.reduce((total, item) => total + item.quantity, 0); // Sum up all quantities in the restaurant's cart

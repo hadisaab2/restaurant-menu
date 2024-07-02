@@ -13,7 +13,17 @@ export default function Products({
   searchText,
 }) {
   const [activePlate, setactivePlate] = useState(null);
-  const { restaurantName } = useParams();
+  const { restaurantName: paramRestaurantName } = useParams();
+
+  const hostname = window.location.hostname;
+  const subdomain = hostname.split(".")[0];
+
+  // Determine the restaurant name to use
+  const restaurantName =
+    subdomain !== "menugic" && subdomain !== "localhost" && subdomain !== "www"
+      ? subdomain
+      : paramRestaurantName;
+
   const [productPositions, setProductPositions] = useState([]); // x y and width of product
   const [productRefs, setProductRefs] = useState([]);
   const loadMoreRef = useRef();
@@ -37,14 +47,10 @@ export default function Products({
     setProductPositions(positions);
   };
 
-
-
   useEffect(() => {
     // window.scrollTo(0, 0);
     changepositions();
   }, [productRefs]);
-
-
 
   useEffect(() => {
     if (menu && activeCategory !== null && data?.pages?.flat().length > 0) {
@@ -60,8 +66,6 @@ export default function Products({
     }
   }, [menu, activeCategory, searchText, data]);
 
-
-
   useEffect(() => {
     const handleScroll = () => {
       changepositions();
@@ -71,8 +75,6 @@ export default function Products({
       window.removeEventListener("scroll", handleScroll);
     };
   }, [productRefs]);
-
-
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -89,7 +91,6 @@ export default function Products({
       if (loadMoreRef.current) observer.unobserve(loadMoreRef.current);
     };
   }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
-
 
   // filtering products based on search
   const filteredProducts =

@@ -13,8 +13,16 @@ import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 
 export default function Plate({ menu, activePlate, scrollChecker }) {
-  const { restaurantName } = useParams();
+  const { restaurantName: paramRestaurantName } = useParams();
+  
+  const hostname = window.location.hostname;
+  const subdomain = hostname.split('.')[0];
 
+  // Determine the restaurant name to use
+  const restaurantName = (subdomain !== "menugic" && subdomain !== "localhost" && subdomain !== "www") 
+    ? subdomain 
+    : paramRestaurantName;
+    
   const activeLanuguage = useSelector(
     (state) => state.restaurant?.[restaurantName].activeLanguage
   );

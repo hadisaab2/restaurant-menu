@@ -26,8 +26,16 @@ import {
 
 export default function CartItems({setblock}) {
     const dispatch = useDispatch();
-  const { restaurantName } = useParams();
-
+    const { restaurantName: paramRestaurantName } = useParams();
+  
+    const hostname = window.location.hostname;
+    const subdomain = hostname.split('.')[0];
+  
+    // Determine the restaurant name to use
+    const restaurantName = (subdomain !== "menugic" && subdomain !== "localhost" && subdomain !== "www") 
+      ? subdomain 
+      : paramRestaurantName;
+      
   const cart = useSelector((state) => state.cart[restaurantName] || []); // Fetch the cart for the specific restaurant
 
   // Calculate total price for the specific restaurant's cart
