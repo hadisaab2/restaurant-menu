@@ -288,7 +288,7 @@ export default function ProductDetails({
             />
             {/* <Form form={formSchema} onChange={handleFormChange} /> */}
             {console.log(totalPrice)}
-            <ProductForm formSchema={formSchema} onPriceChange={handlePriceChange} basePrice={plates[activePlate]?.en_price}/>
+            {/* <ProductForm formSchema={formSchema} onPriceChange={handlePriceChange} basePrice={plates[activePlate]?.en_price}/> */}
             {plates[activePlate]?.en_price !== "" && (
               <ItemPrice>
                 {totalPrice} {currencySymbol}
