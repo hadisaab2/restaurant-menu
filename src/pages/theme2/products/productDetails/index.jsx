@@ -34,6 +34,7 @@ import CarouselLoader from "./carouselLoader";
 import { Form } from "react-formio";
 
 import "formiojs/dist/formio.full.css";
+import ProductForm from "./Form";
 
 export default function ProductDetails({
   activePlate,
@@ -62,6 +63,15 @@ export default function ProductDetails({
   const dispatch = useDispatch();
 
   const [quantity, setQuantity] = useState(1);
+
+  const basePrice = parseFloat(plates[activePlate]?.en_price || 0);
+  const [totalPrice, setTotalPrice] = useState(basePrice); // Example base price
+
+  const handlePriceChange = (newPrice) => {
+    setTotalPrice(newPrice);
+  };
+
+
   const [CloseAnimation, setCloseAnimation] = useState(true);
   const [carouselIndex, setcarouselIndex] = useState(0);
   const handleBack = () => {
@@ -190,6 +200,7 @@ export default function ProductDetails({
   }
   return (
     <>
+
       <Wrapper
         x={productPositions[activePlate]?.x}
         y={productPositions[activePlate]?.y}
@@ -275,10 +286,12 @@ export default function ProductDetails({
             <ItemDescription
               dangerouslySetInnerHTML={{ __html: description }}
             />
-            <Form form={formSchema} onChange={handleFormChange} />
+            {/* <Form form={formSchema} onChange={handleFormChange} /> */}
+            {console.log(totalPrice)}
+            <ProductForm formSchema={formSchema} onPriceChange={handlePriceChange} basePrice={plates[activePlate]?.en_price}/>
             {plates[activePlate]?.en_price !== "" && (
               <ItemPrice>
-                {plates[activePlate]?.en_price} {currencySymbol}
+                {totalPrice} {currencySymbol}
               </ItemPrice>
             )}
 
