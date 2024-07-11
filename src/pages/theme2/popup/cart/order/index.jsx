@@ -33,15 +33,31 @@ export default function Order({ setblock, popupHandler, restaurant }) {
   };
 
   const handlePurchase = () => {
+    console.log(cart);
     setblock("order");
     let message = `Hello *${restaurantName}*\n`;
-    message += `Its *${details.fullName}* and I want to purchase the following items:\n`;
+    message += `It's *${details.fullName}* and I want to purchase the following items:\n`;
+    
     cart.forEach((item) => {
-      message += `• ${item.quantity} of *${item.en_name}* \n`; // Add each item to the message
+        message += `• ${item.quantity} of *${item.en_name}* \n`;
+        
+        // Extract and format the formData details dynamically
+        if (item.formData) {
+            Object.keys(item.formData).forEach(key => {
+                const value = item.formData[key];
+                if (Array.isArray(value)) {
+                    message += `  - ${key}: ${value.join(', ')}\n`;
+                } else {
+                    message += `  - ${key}: ${value}\n`;
+                }
+            });
+        }
+        
+        message += `  - Price: ${item.price}\n`;
     });
+
     message += `I live in: *${details.fullAddress}* \n`;
     message += `You can contact me on this number: *${details.phoneNumber}* \n`;
-
     message += "Thank you.";
 
     const encodedMessage = encodeURIComponent(message);
@@ -50,7 +66,7 @@ export default function Order({ setblock, popupHandler, restaurant }) {
     window.open(whatsappUrl, "_blank"); // Open WhatsApp in a new tab/window
     dispatch(clearCart());
     popupHandler(null);
-  };
+};
 
   return (
     <Wrapper>

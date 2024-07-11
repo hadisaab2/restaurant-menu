@@ -14,7 +14,7 @@ const hashFormData = (formData) => {
     }, 0);
 };
 // Action Creators
-export const addToCart = (restaurantName, itemDetails, quantity, formData) => {
+export const addToCart = (restaurantName, itemDetails, quantity, formData,price) => {
   const uniqueId = `${itemDetails.id}_${hashFormData(formData)}`;
   return {
     type: ADD_TO_CART,
@@ -24,7 +24,8 @@ export const addToCart = (restaurantName, itemDetails, quantity, formData) => {
         ...itemDetails,
         quantity,
         formData,
-        uniqueId // Include unique identifier in the payload
+        uniqueId,// Include unique identifier in the payload
+        price 
       }
     }
   };

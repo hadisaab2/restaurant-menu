@@ -9,8 +9,7 @@ import {
   RadioLabel,
 } from "./styles";
 
-export default function ProductForm({ formSchema, onPriceChange, basePrice }) {
-  const [formData, setFormData] = useState({});
+export default function ProductForm({ formSchema, onPriceChange, basePrice,formData,setFormData }) {
 
   useEffect(() => {
     calculateTotalPrice(formData);
@@ -26,7 +25,7 @@ export default function ProductForm({ formSchema, onPriceChange, basePrice }) {
   const calculateTotalPrice = (data) => {
     let newPrice = parseFloat(basePrice) || 0; // Use base price from form schema
     let addOnsPrice = 0;
-    formSchema.components.forEach((component) => {
+    formSchema?.components.forEach((component) => {
       if (data[component.key]) {
         if (component.type === "selectboxes" && component.values) {
           data[component.key].forEach((label) => {
@@ -156,7 +155,7 @@ export default function ProductForm({ formSchema, onPriceChange, basePrice }) {
   return (
     <form>
       {console.log(formData)}
-      {formSchema.components.map((component) => renderComponent(component))}
+      {formSchema?.components.map((component) => renderComponent(component))}
     </form>
   );
 }

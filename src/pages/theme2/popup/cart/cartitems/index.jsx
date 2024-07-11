@@ -40,7 +40,7 @@ export default function CartItems({setblock}) {
 
   // Calculate total price for the specific restaurant's cart
   const totalPrice = cart.reduce((total, item) => {
-    return total + item.en_price * item.quantity;
+    return total + item.price * item.quantity;
   }, 0);
 
   const activeLanuguage = useSelector(
@@ -90,7 +90,7 @@ export default function CartItems({setblock}) {
                             ? item.en_name
                             : item.ar_name}
                         </Name>
-                        <Price>{item.en_price} $</Price>
+                        <Price>{item.price} $</Price>
                       </PriceContainer>
                       <QuantityContainer>
                         <QuantityWrapper>

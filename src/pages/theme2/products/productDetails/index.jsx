@@ -58,7 +58,7 @@ export default function ProductDetails({
   const [formSchema, setFormSchema] = useState(
     JSON.parse(plates[activePlate]?.form_json)
   );
-  const [formData, setFormData] = useState(null);
+  const [formData, setFormData] = useState({});
 
   const dispatch = useDispatch();
 
@@ -133,7 +133,7 @@ export default function ProductDetails({
       document.body.style.overflow = "auto";
     }, 800);
     dispatch(
-      addToCart(restaurantName, plates[activePlate], quantity, formData)
+      addToCart(restaurantName, plates[activePlate], quantity, formData,totalPrice)
     );
     setCloseAnimation(false);
     setQuantity(1);
@@ -288,7 +288,7 @@ export default function ProductDetails({
             />
             {/* <Form form={formSchema} onChange={handleFormChange} /> */}
             {console.log(totalPrice)}
-            {/* <ProductForm formSchema={formSchema} onPriceChange={handlePriceChange} basePrice={plates[activePlate]?.en_price}/> */}
+            {formSchema?.components && <ProductForm formSchema={formSchema} onPriceChange={handlePriceChange} formData={formData} setFormData={setFormData} basePrice={plates[activePlate]?.en_price}/>}
             {plates[activePlate]?.en_price !== "" && (
               <ItemPrice>
                 {totalPrice} {currencySymbol}
