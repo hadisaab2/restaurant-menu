@@ -53,7 +53,7 @@ export default function Order({ setblock, popupHandler, restaurant }) {
             });
         }
         
-        message += `  - Price: ${item.price}\n`;
+        message += `  - Price: ${item.price * item.quantity}\n`;
     });
 
     message += `I live in: *${details.fullAddress}* \n`;

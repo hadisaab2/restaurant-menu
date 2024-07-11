@@ -90,7 +90,7 @@ export default function CartItems({setblock}) {
                             ? item.en_name
                             : item.ar_name}
                         </Name>
-                        <Price>{item.price} $</Price>
+                        <Price>{item.price * item.quantity} $</Price>
                       </PriceContainer>
                       <QuantityContainer>
                         <QuantityWrapper>
