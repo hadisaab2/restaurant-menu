@@ -125,7 +125,8 @@ export default function Products({
             );
           }
         })}
-        <div ref={loadMoreRef} style={{ height: "20px" }}></div>
+        <div ref={loadMoreRef} style={{ height: "20px" }}>
+        </div>
       </ProductWrapper>
       {activePlate !== null && (
         <ProductDetails

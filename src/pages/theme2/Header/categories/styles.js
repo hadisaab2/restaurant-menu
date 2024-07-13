@@ -25,7 +25,7 @@ export const Carousel = styled.div`
   display: flex;
   flex-direction: row;
   height: 100%;
-  transition: transform 0.6s ease-in-out;
+  transition: transform 0.3s ease-in-out;
   width: 100%;
   transform: ${(props) =>
     `translateX(-${(props.carouselPosition) * 100/4}%)`};

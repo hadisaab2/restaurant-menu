@@ -5,11 +5,15 @@ import {
   CLEAR_CART,
 } from "../cart/cartActions";
 
+import { deepEqual } from "./utils";
 const initialState = {};
 
 // Helper function to check if two formData objects are equal
+
+
+
 const isEqualFormData = (formData1, formData2) => {
-  return JSON.stringify(formData1) === JSON.stringify(formData2);
+  return deepEqual(formData1, formData2);
 };
 
 const cartReducer = (state = initialState, action) => {

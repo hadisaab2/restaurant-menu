@@ -57,7 +57,7 @@ export default function Template() {
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsTrue(false);
-    }, 2000); 
+    }, 4000); 
     return () => clearTimeout(timer);
   }, []); 
   if (restaurant?.categories && !isLoading && !isTrue) {

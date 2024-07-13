@@ -44,7 +44,7 @@ export default function ProductForm({ formSchema, onPriceChange, basePrice,formD
           component.data.values
         ) {
           const option = component.data.values.find(
-            (opt) => opt.value === data[component.key]
+            (opt) => opt.value === data[component.key]?.value
           );
           if (option) {
             if (option.value.startsWith("+")) {
@@ -57,7 +57,7 @@ export default function ProductForm({ formSchema, onPriceChange, basePrice,formD
           }
         } else if (component.type === "radio" && component.values) {
           const option = component.values.find(
-            (opt) => opt.value === data[component.key]
+            (opt) => opt.value === data[component.key]?.value
           );
           if (option) {
             if (option.value.startsWith("+")) {
@@ -108,45 +108,53 @@ export default function ProductForm({ formSchema, onPriceChange, basePrice,formD
             ))}
           </FormGroup>
         );
-      case "select":
-        return (
-          <FormGroup key={component.key}>
-            <Label>{component.label}</Label>
-            <Select
-              value={formData[component.key] || ""}
-              onChange={(e) => handleChange(component.key, e.target.value)}
-            >
-              <option value="">Select...</option>
-              {component.data.values.map((option) => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </Select>
-          </FormGroup>
-        );
-      case "radio":
-        return (
-          <FormGroup key={component.key}>
-            <Label>{component.label}</Label>
-            <RadioGroup>
-              {component.values.map((option) => (
-                <RadioLabel key={option.value}>
-                  <input
-                    type="radio"
-                    name={component.key}
-                    value={option.value}
-                    checked={formData[component.key] === option.value}
-                    onChange={(e) =>
-                      handleChange(component.key, e.target.value)
-                    }
-                  />
-                  {option.label}
-                </RadioLabel>
-              ))}
-            </RadioGroup>
-          </FormGroup>
-        );
+        case "select":
+          return (
+            <FormGroup key={component.key}>
+              <Label>{component.label}</Label>
+              <Select
+                value={formData[component.key]?.value || ""}
+                onChange={(e) => {
+                  const selectedOption = component.data.values.find(
+                    (option) => option.value === e.target.value
+                  );
+                  handleChange(component.key, selectedOption);
+                }}
+              >
+                <option value="">Select...</option>
+                {component.data.values.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </Select>
+            </FormGroup>
+          );
+          case "radio":
+            return (
+              <FormGroup key={component.key}>
+                <Label>{component.label}</Label>
+                <RadioGroup>
+                  {component.values.map((option) => (
+                    <RadioLabel key={option.value}>
+                      <input
+                        type="radio"
+                        name={component.key}
+                        value={option.value}
+                        checked={formData[component.key]?.value === option.value}
+                        onChange={(e) => {
+                          const selectedOption = component.values.find(
+                            (opt) => opt.value === e.target.value
+                          );
+                          handleChange(component.key, selectedOption);
+                        }}
+                      />
+                      {option.label}
+                    </RadioLabel>
+                  ))}
+                </RadioGroup>
+              </FormGroup>
+            );
       default:
         return null;
     }

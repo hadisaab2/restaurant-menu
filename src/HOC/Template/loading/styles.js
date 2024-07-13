@@ -8,9 +8,9 @@ export const Container = styled.div`
     color:white;
     flex-direction: column;
     /* background-color: black; */
-    background: radial-gradient(circle at 24.1% 68.8%, rgb(50, 50, 50) 0%, rgb(0, 0, 0) 99.4%);
-
-`;
+    /* background: radial-gradient(circle at 24.1% 68.8%, rgb(50, 50, 50) 0%, rgb(0, 0, 0) 99.4%); */
+    background-color: black;
+    `;
 
 export const Text = styled.span`
 font-size: 16px;
