@@ -63,6 +63,13 @@ const Product = React.forwardRef(
       default:
         currencySymbol = ""; // No currency or unsupported currency
     }
+    const truncateText = (text, maxLength) => {
+      if (text.length <= maxLength) {
+        return text;
+      }
+      return text.slice(0, maxLength) + "...";
+    };
+
     return (
       <Container index={index} activePlate={activePlate} className="lazy-load">
         <Wrapper>
@@ -90,8 +97,8 @@ const Product = React.forwardRef(
           <TextContainer activeLanuguage={restaurant?.activeLanguage}>
             <PlateName>
               {restaurant?.activeLanguage === "en"
-                ? plate.en_name
-                : plate.ar_name}
+                ? truncateText(plate.en_name, 30)
+                : truncateText(plate.ar_name, 30)}
             </PlateName>
             {plate.en_price !== "" && (
               <PlatePrice>
