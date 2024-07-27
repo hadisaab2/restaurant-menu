@@ -1,5 +1,14 @@
 import React, { useState } from "react";
-import { Wrapper, Input, Purchase, Title, BackIcon, Select, NoteTextArea } from "./styles";
+import {
+  Wrapper,
+  Input,
+  Purchase,
+  Title,
+  BackIcon,
+  Select,
+  NoteTextArea,
+  Error,
+} from "./styles";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import { clearCart } from "../../../../../redux/cart/cartActions";
@@ -22,7 +31,15 @@ export default function Order({ setblock, popupHandler, restaurant }) {
     fullName: "",
     phoneNumber: "",
     fullAddress: "",
+    note: "",
   });
+  const [errors, setErrors] = useState({
+    fullName: "",
+    phoneNumber: "",
+    fullAddress: "",
+    deliveryType: "",
+  });
+
   const [deliveryType, setDeliveryType] = useState("");
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -30,25 +47,43 @@ export default function Order({ setblock, popupHandler, restaurant }) {
       ...details,
       [name]: value,
     });
+    setErrors({
+      ...errors,
+      [name]: "",
+    });
   };
 
   const handlePurchase = () => {
-    console.log(cart);
+    const newErrors = {
+      fullName: !details.fullName ? "Full Name is required." : "",
+      phoneNumber: !details.phoneNumber ? "Phone Number is required." : "",
+      fullAddress:
+        deliveryType === "Delivery" && !details.fullAddress
+          ? "Full Address is required for delivery."
+          : "",
+      deliveryType: !deliveryType ? "Delivery Type is required." : "",
+    };
+
+    if (Object.values(newErrors).some((error) => error)) {
+      setErrors(newErrors);
+      return;
+    }
+
     setblock("order");
     let message = `Hello *${restaurantName}*\n`;
     message += `It's *${details.fullName}* and I want to purchase the following items:\n`;
 
+    let totalPrice = 0;
+
     cart.forEach((item) => {
       message += `• ${item.quantity} of *${item.en_name}* \n`;
 
-      // Extract and format the formData details dynamically
       if (item.formData) {
         Object.keys(item.formData).forEach((key) => {
           const value = item.formData[key];
           if (Array.isArray(value)) {
             message += `  - ${key}: ${value.join(", ")}\n`;
           } else if (typeof value === "object" && value !== null) {
-            // Handling objects like size
             message += `  - ${key}: ${value.label}\n`;
           } else {
             message += `  - ${key}: ${value}\n`;
@@ -57,16 +92,23 @@ export default function Order({ setblock, popupHandler, restaurant }) {
       }
 
       message += `  - Price: ${item.price * item.quantity}\n`;
+      totalPrice += item.price * item.quantity;
     });
 
-    message += `I live in: *${details.fullAddress}* \n`;
-    message += `You can contact me on this number: *${details.phoneNumber}* \n`;
-    message += "Thank you.";
+    message += `Total Price: ${totalPrice}\n\n`;
+    message += `Contact Info:\n`;
+    message += `- Name: ${details.fullName}\n`;
+    message += `- Phone Number: ${details.phoneNumber}\n`;
+    message += `- Order type: ${deliveryType}\n`;
+    if (deliveryType === "Delivery") {
+      message += `- Address: ${details.fullAddress}\n`;
+    }
+    message += `- Order notes: ${details.note || "None"}\n`;
 
     const encodedMessage = encodeURIComponent(message);
     const whatsappUrl = `https://wa.me/${restaurant.phone_number}?text=${encodedMessage}`;
 
-    window.open(whatsappUrl, "_blank"); // Open WhatsApp in a new tab/window
+    window.open(whatsappUrl, "_blank");
     dispatch(clearCart());
     popupHandler(null);
   };
@@ -89,7 +131,7 @@ export default function Order({ setblock, popupHandler, restaurant }) {
         <option value="Delivery">Delivery</option>
         <option value="TakeAway">TakeAway</option>
       </Select>
-
+      {errors.deliveryType && <Error>{errors.deliveryType}</Error>}
       <Input
         type="text"
         name="fullName"
@@ -97,7 +139,7 @@ export default function Order({ setblock, popupHandler, restaurant }) {
         onChange={handleChange}
         placeholder="Full Name"
       />
-
+      {errors.fullName && <Error>{errors.fullName}</Error>}
       <Input
         type="text"
         name="phoneNumber"
@@ -105,16 +147,25 @@ export default function Order({ setblock, popupHandler, restaurant }) {
         onChange={handleChange}
         placeholder="PhoneNumber"
       />
+      {errors.phoneNumber && <Error>{errors.phoneNumber}</Error>}
       {deliveryType == "Delivery" && (
-        <Input
-          type="text"
-          name="fullAddress"
-          value={details.fullAddress}
-          onChange={handleChange}
-          placeholder="Full Address"
-        />
+        <>
+          <Input
+            type="text"
+            name="fullAddress"
+            value={details.fullAddress}
+            onChange={handleChange}
+            placeholder="Full Address"
+          />
+          {errors.fullAddress && <Error>{errors.fullAddress}</Error>}
+        </>
       )}
-      <NoteTextArea placeholder="Note..."></NoteTextArea>
+      <NoteTextArea
+        name="note"
+        value={details.note}
+        onChange={handleChange}
+        placeholder="Note..."
+      ></NoteTextArea>
       <Purchase onClick={handlePurchase}>Purchase</Purchase>
     </Wrapper>
   );

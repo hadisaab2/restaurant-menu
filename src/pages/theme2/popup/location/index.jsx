@@ -22,6 +22,9 @@ import {
   FacebookContainer,
   FacebookLogo,
   MapLink,
+  PoweredBy,
+  Link,
+  CopyWrite,
 } from "./styles";
 
 export default function LocationPopup({
@@ -31,10 +34,10 @@ export default function LocationPopup({
 }) {
   const [activeBranch, setActiveBranch] = useState(restaurant?.branches[0]);
   function capitalizeWords(str) {
-    return str.replace(/\b\w/g, function(char) {
-        return char.toUpperCase();
+    return str.replace(/\b\w/g, function (char) {
+      return char.toUpperCase();
     });
-}
+  }
   return (
     <Container showPopup={showPopup}>
       <Close
@@ -58,46 +61,83 @@ export default function LocationPopup({
         })}
       </BranchesContainer>
       <BranchInfo>
-        {activeBranch?.location && 
-        <InfoContainer>
-          <LocationLogo />
-          <Info>{activeBranch?.location}</Info>
-        </InfoContainer>
-        }
+        {activeBranch?.location && (
+          <InfoContainer>
+            <LocationLogo />
+            <Info>{activeBranch?.location}</Info>
+          </InfoContainer>
+        )}
         <InfoContainer>
           <CallLogo />
           <Info>{activeBranch?.phone_number}</Info>
         </InfoContainer>
-
-        <InfoContainer>
-          <MapsLogo />
-          <MapLink href ={`https://${activeBranch?.mapLink}`}>{activeBranch?.mapLink}</MapLink>
-        </InfoContainer>
+        {activeBranch?.mapLink && (
+          <InfoContainer>
+            <MapsLogo />
+            <MapLink href={`https://${activeBranch?.mapLink}`}>
+              {activeBranch?.mapLink}
+            </MapLink>
+          </InfoContainer>
+        )}
       </BranchInfo>
 
       <SocialMediaContainer>
-        {restaurant.socialMedia.find((media) => media.platform == "Instagram") && (
-          <InstagramContainer href={`https://${restaurant.socialMedia.find((media) => media.platform == "Instagram").link}`}>
+        {restaurant.socialMedia.find(
+          (media) => media.platform == "Instagram"
+        ) && (
+          <InstagramContainer
+            href={`https://${
+              restaurant.socialMedia.find(
+                (media) => media.platform == "Instagram"
+              ).link
+            }`}
+          >
             <InstagramLogo />
           </InstagramContainer>
         )}
-        {restaurant.socialMedia.find((media) => media.platform == "Whatsapp") && (
-          <WhatsappContainer href={`https://${restaurant.socialMedia.find((media) => media.platform == "Whatsapp").link}`}>
-          <WhatsappLogo />
-        </WhatsappContainer>
+        {restaurant.socialMedia.find(
+          (media) => media.platform == "Whatsapp"
+        ) && (
+          <WhatsappContainer
+            href={`https://${
+              restaurant.socialMedia.find(
+                (media) => media.platform == "Whatsapp"
+              ).link
+            }`}
+          >
+            <WhatsappLogo />
+          </WhatsappContainer>
         )}
-      {restaurant.socialMedia.find((media) => media.platform == "Facebook") && (
-          <FacebookContainer href={`https://${restaurant.socialMedia.find((media) => media.platform == "Facebook").link}`}>
-          <FacebookLogo />
-        </FacebookContainer>
+        {restaurant.socialMedia.find(
+          (media) => media.platform == "Facebook"
+        ) && (
+          <FacebookContainer
+            href={`https://${
+              restaurant.socialMedia.find(
+                (media) => media.platform == "Facebook"
+              ).link
+            }`}
+          >
+            <FacebookLogo />
+          </FacebookContainer>
         )}
         {restaurant.socialMedia.find((media) => media.platform == "Tiktok") && (
-        <TiktokContainer href={`https://${restaurant.socialMedia.find((media) => media.platform == "Tiktok").link}`}>
-        <TiktokLogo />
-      </TiktokContainer>
+          <TiktokContainer
+            href={`https://${
+              restaurant.socialMedia.find((media) => media.platform == "Tiktok")
+                .link
+            }`}
+          >
+            <TiktokLogo />
+          </TiktokContainer>
         )}
-
       </SocialMediaContainer>
+
+      <PoweredBy>
+        Copyright
+        <CopyWrite />
+        2024 <Link href="https://www.menugic.com">menugic.com</Link>
+      </PoweredBy>
     </Container>
   );
 }

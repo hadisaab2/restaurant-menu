@@ -7,6 +7,7 @@ import { FaInstagram } from "react-icons/fa6";
 import { FaTiktok } from "react-icons/fa";
 import { FaLocationArrow } from "react-icons/fa6";
 import { FaFacebookF } from "react-icons/fa";
+import { MdCopyright } from "react-icons/md";
 
 export const Container = styled.div`
 position: fixed;
@@ -125,7 +126,7 @@ color:${props=>props.theme.popupTextColor}
 `;
 
 export const SocialMediaContainer = styled.div`
-margin-top: 80px;
+margin-top: 50px;
 display: flex;
 flex-direction: row;
 width: 100%;
@@ -201,5 +202,34 @@ color: white;
 export const TiktokLogo = styled(FaTiktok)`
 font-size: 24px;
 color: white;
+
+`;
+
+
+export const PoweredBy = styled.pre`
+  font-size: 15px;
+  text-align: center;
+  color: ${props=>props.theme.popupTextColor};
+  font-style: italic;
+  position: absolute;
+  bottom: 1px;
+  width: 100%;
+`;
+
+export const Link = styled.a`
+  color: ${props=>props.theme.popupTextColor};
+  text-decoration: none;
+  outline: none;
+  &:hover {
+    color: lightgray;
+  }
+`;
+
+
+export const CopyWrite = styled(MdCopyright)`
+color: ${props=>props.theme.popupTextColor};
+font-size: 15px;
+margin-left: 5px;
+margin-right: 5px;
 
 `;

@@ -41,16 +41,15 @@ background-color: ${props=>props.theme.mainColor};
 border-radius: 10px;
 padding-top: 10px;
 padding-bottom: 10px;
-
 `;
+
+
 export const Title = styled.span`
 font-size: 15px;
 font-weight:600;
 margin-top:30px;
 margin-bottom:10px;
-
 color: ${props=>props.theme.popupTextColor};
-
 `;
 
 
@@ -106,3 +105,9 @@ export const Select = styled.select`
 
 
 
+export const Error = styled.span`
+color:red;
+font-size: 13px;
+margin-top: 5px;
+
+`;

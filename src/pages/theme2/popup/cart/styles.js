@@ -154,6 +154,8 @@ font-size: 13px;
 
 
 `;
+
+
 export const TotalPrice = styled.span`
 color:${props=>props.theme.popupTextColor};
 font-size: 13px;
@@ -185,3 +187,4 @@ cursor: pointer;
 color:${props=>props.theme.popupTextColor}
 
 `;
+

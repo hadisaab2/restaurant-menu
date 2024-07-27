@@ -99,6 +99,7 @@ export default function Products({}) {
             </AddButton>
           </FormWrapper>
           <Wrapper>
+            {console.log(data)}
             {data?.pages?.flat().map((product) => {
               return (
                 <Product
