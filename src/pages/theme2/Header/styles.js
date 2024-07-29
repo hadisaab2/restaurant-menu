@@ -60,3 +60,19 @@ left: ${props=>props.activeLanguage=="en"?"10px":null};
 right: ${props=>props.activeLanguage=="en"?null:"10px"};
 
 `;
+
+export const SidebarAction = styled.div`
+width: 90%;
+display: flex;
+align-items: center;
+justify-content: flex-start;
+margin-top: 10px;
+margin-left: 10px;
+
+font-weight: 600;
+color:${props=>props.theme.searchTextColor};
+height: 40px;
+font-size: 13px;
+
+`;
+

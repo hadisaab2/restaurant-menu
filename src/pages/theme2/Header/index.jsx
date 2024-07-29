@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Container, Search, SearchContainer, SearchIcon, Text, TextContainer } from "./styles";
+import { Container, Search, SearchContainer, SearchIcon, SidebarAction, Text, TextContainer } from "./styles";
 import Categories from "./categories";
 import HeaderTop from "./headertop";
 import { useParams } from "react-router-dom";
@@ -10,7 +10,12 @@ export default function Header({
   setactiveCategory,
   categories,
   setSearchText,
-  searchText
+  searchText,
+  setshowSidebar,
+  showSidebar,
+  carouselPosition,
+  setcarouselPosition
+  
 }) {
   const { restaurantName: paramRestaurantName } = useParams();
   
@@ -31,13 +36,18 @@ export default function Header({
   }
   return (
     <Container>
-      <HeaderTop />
+      <HeaderTop setshowSidebar={setshowSidebar} showSidebar={showSidebar}/>
 
       <Categories
         categories={categories}
         activeCategory={activeCategory}
         setactiveCategory={setactiveCategory}
+        carouselPosition={carouselPosition}
+        setcarouselPosition={setcarouselPosition}
       />
+      {/* <SidebarAction>
+        Show All Categories
+      </SidebarAction> */}
       <SearchContainer>
         <SearchIcon  activeLanguage={activeLanguage}/>
         <Search type="text" activeLanguage={activeLanguage} dir={activeLanguage=="en"?"ltr":"rtl"} placeholder={activeLanguage=="en"?"Search Menu":"قائمة البحث"} onChange={handlesearch} value={searchText}/>

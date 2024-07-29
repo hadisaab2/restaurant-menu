@@ -22,8 +22,9 @@ export default function Categories({
   categories,
   activeCategory,
   setactiveCategory,
+  carouselPosition,
+  setcarouselPosition
 }) {
-  const [carouselPosition, setcarouselPosition] = useState(0);
   const [scrollInProgress, setScrollInProgress] = useState(false);
   const { restaurantName: paramRestaurantName } = useParams();
   

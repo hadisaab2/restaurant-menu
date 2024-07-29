@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import { RxHamburgerMenu } from "react-icons/rx";
 
 export const Container = styled.div`
 display: flex;
@@ -15,7 +16,14 @@ margin-left: 20px;
 
 `;
 
+export const ButtonsContainer=styled.div`
+display: flex;
+flex-direction: row;
+margin-right: 20px;
+align-items: center;
+justify-content: center;
 
+`;
 export const LanguageContainer = styled.div`
 display: flex;
 flex-direction: row;
@@ -66,4 +74,11 @@ font-size: 14px;
 
 /* opacity: ${props=>props.activeLanguage==props.language?`1`:"0.7"} ;
 /* transition:all ease-in-out 0.2s; */
+`;
+
+
+export const MenuIcon = styled(RxHamburgerMenu)`
+color: ${props=>props.theme.mainColor};
+font-size: 20px;
+
 `;
