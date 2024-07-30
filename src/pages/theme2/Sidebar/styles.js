@@ -33,6 +33,9 @@ border-bottom-right-radius: 50px;
 box-shadow: 10px 0 15px -5px rgba(0, 0, 0, 0.2);
   display: flex;
   flex-direction: column;
+  @media (min-width: 1024px) {
+        width: 25%;
+    }
 `;
 
 export const Top = styled.div`

@@ -50,6 +50,9 @@ export const Wrapper = styled.div`
   transition: all 0.8s;
   animation: ${({ x, y, width }) => slideAnimation(x, y, width)} 0.8s;
   z-index: 6;
+  ::-webkit-scrollbar {
+    display: none;
+  }
   background-color: ${(props) => props.theme.backgroundColor};
   @media (min-width: 1024px) {
     animation: ${({ x, y, width }) => slideAnimationScreen(x, y, width)} 0.8s;
@@ -58,6 +61,7 @@ export const Wrapper = styled.div`
 
 
     }
+
 `;
 
 
@@ -285,6 +289,7 @@ export const ItemInfoWrapper = styled.div`
   width: 100%;
   display: flex;
   justify-content: center;
+
 `;
 
 export const ItemInfo = styled.div`
@@ -295,6 +300,9 @@ export const ItemInfo = styled.div`
   margin-top: 20px;
   padding-bottom: 10vh;
   color: ${(props) => props.theme.textColor};
+  @media (min-width: 1024px) {
+        width: 50%;
+    }
 `;
 
 const NameAnimation = keyframes`
@@ -388,6 +396,9 @@ export const ButtonWrapper = styled.div`
   margin-top: 30px;
   /* height: 35px; */
   padding-bottom: 40px;
+  @media (min-width: 1024px) {
+        width: 50%;
+    }
 `;
 export const AddToCart = styled.button`
   flex: 1;

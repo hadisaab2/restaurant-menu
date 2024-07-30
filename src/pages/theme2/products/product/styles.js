@@ -7,7 +7,7 @@ export const Container = styled.div`
     justify-content: center;
     margin-top: 10px;
     @media (min-width: 1024px) {
-        width: 25%;
+        width: 20%;
     }
 `;
 export const Wrapper = styled.div`
@@ -72,7 +72,7 @@ display: -webkit-box;
   max-height: 3em; /* Adjust based on line-height */
   line-height: 1.5em; /* Adjust based on your font size and design */
 
-  
+
 
 `;
 export const PlatePrice = styled.span`

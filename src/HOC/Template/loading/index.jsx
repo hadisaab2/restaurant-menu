@@ -12,8 +12,8 @@ export default function Loading() {
       <div class="container">
         <div class="text-animation">
           <div class="text-wrapper">
-            <h2>LOADING</h2>
-            <h2>LOADING</h2>
+            <span>LOADING</span>
+            <span>LOADING</span>
           </div>
         </div>
       </div>

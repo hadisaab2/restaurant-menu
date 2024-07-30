@@ -112,11 +112,19 @@ export default function Restaurants() {
     template_id,
     theme: themeString,
     restaurant_id,
-    currency
+    currency,
+    font
   }) => {
-    console.log(currency)
+    console.log(currency);
     const theme = JSON.parse(themeString);
-    setSelectedProduct({ languages, template_id, theme, restaurant_id,currency });
+    setSelectedProduct({
+      languages,
+      template_id,
+      theme,
+      restaurant_id,
+      currency,
+      font
+    });
     setIsEditMode(true);
     setTemplate(template_id);
     setValue("username", username);
@@ -124,6 +132,8 @@ export default function Restaurants() {
     setValue("email", email);
     setValue("name", restaurantName);
     setValue("currency", currency);
+    setValue("font", font);
+
     setShowAddComponent(true);
   };
 
@@ -297,10 +307,29 @@ export default function Restaurants() {
                   <MenuItem value="lb">Lb</MenuItem>
                   <MenuItem value="gram">Gram</MenuItem>
                   <MenuItem value="killogram">KilloGram</MenuItem>
-
                 </Select>
               </FormControl>
             </Box>
+            <Box sx={{ minWidth: 120 }}>
+              <FormControl fullWidth>
+                <InputLabel>Font</InputLabel>
+                <Select
+                  label="Font"
+                  {...register("font", { required: "Required" })}
+                  error={!isEmpty(formState?.errors?.font)}
+                  defaultValue={selectedProduct?.font}
+                >
+                  <MenuItem value="Arial">Arial</MenuItem>
+                  <MenuItem value="Times New Roman">Times New Roman</MenuItem>
+                  <MenuItem value="Courier New">Courier New</MenuItem>
+                  <MenuItem value="Georgia">Georgia</MenuItem>
+                  <MenuItem value="Verdana">Verdana</MenuItem>
+                  <MenuItem value="Roboto Flex">Roboto Flex</MenuItem>
+                
+                </Select>
+              </FormControl>
+            </Box>
+
             <Box sx={{ minWidth: 120 }}>
               <FormControl fullWidth>
                 <InputLabel>Template</InputLabel>
