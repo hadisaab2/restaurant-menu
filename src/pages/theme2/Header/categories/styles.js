@@ -87,11 +87,7 @@ export const TextContainer = styled.div`
  display: flex;
 justify-content: center; 
 flex:0.8;
-<<<<<<< HEAD
-width: 95%;
-=======
 width: 100%;
->>>>>>> 9d9e172828a11d102f723d7bf03f5a89d5a93e80
 `;
 export const CategoryName = styled.span`
     width: 95%;
