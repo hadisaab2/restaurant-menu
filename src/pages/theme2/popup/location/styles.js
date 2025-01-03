@@ -12,10 +12,6 @@ import { MdCopyright } from "react-icons/md";
 export const Container = styled.div`
 position: fixed;
 bottom: ${props=>props.showPopup=="location"?"0%":"-100%"};
-<<<<<<< HEAD
-=======
-height: 80vh;
->>>>>>> 9d9e172828a11d102f723d7bf03f5a89d5a93e80
 background-color: ${props=>props.theme.popupbackgroundColor};
 width: 100%;
 transition: all 0.8s ease-in-out;
@@ -25,29 +21,18 @@ box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.2);
 display: flex;
 flex-direction: column;
 z-index: 5;
-<<<<<<< HEAD
 padding-bottom: 6vh;
-=======
->>>>>>> 9d9e172828a11d102f723d7bf03f5a89d5a93e80
 `;
 export const Title = styled.span`
 font-size: 30px;
 font-weight:bold;
-<<<<<<< HEAD
 text-align: left;
-=======
-margin-top:60px;
-text-align: left;
-width: 70%;
-margin-left: 20px;
->>>>>>> 9d9e172828a11d102f723d7bf03f5a89d5a93e80
 color:${props=>props.theme.mainColor}
 
 `;
 export const ResName = styled.span`
 font-size: 30px;
 font-weight:bold;
-<<<<<<< HEAD
 text-align: left;
 color:${props=>props.theme.mainColor}
 
@@ -63,15 +48,6 @@ padding-left: 20px;
 `;
 
 
-=======
-margin-top:6px;
-text-align: left;
-width: 70%;
-margin-left: 20px;
-color:${props=>props.theme.mainColor}
-
-`;
->>>>>>> 9d9e172828a11d102f723d7bf03f5a89d5a93e80
 export const BranchesContainer = styled.div`
   flex-wrap: wrap;
   display: flex;
@@ -80,10 +56,6 @@ export const BranchesContainer = styled.div`
   gap:20px;
   margin-left: 20px;
   margin-top: 40px;
-<<<<<<< HEAD
-=======
-  height: 40px;
->>>>>>> 9d9e172828a11d102f723d7bf03f5a89d5a93e80
 
 `;
 export const Branch = styled.span`
@@ -113,11 +85,7 @@ display: flex;
 
 `;
 
-<<<<<<< HEAD
 export const Info = styled.a`
-=======
-export const Info = styled.span`
->>>>>>> 9d9e172828a11d102f723d7bf03f5a89d5a93e80
 font-size:16px;
  font-weight: 620;
  color:${props=>props.theme.popupTextColor}

@@ -25,10 +25,7 @@ import {
   PoweredBy,
   Link,
   CopyWrite,
-<<<<<<< HEAD
   TitleContainer,
-=======
->>>>>>> 9d9e172828a11d102f723d7bf03f5a89d5a93e80
 } from "./styles";
 
 export default function LocationPopup({
@@ -49,7 +46,6 @@ export default function LocationPopup({
           popupHandler(null);
         }}
       />
-<<<<<<< HEAD
       <TitleContainer>
         <Title>Welcome To </Title>
         <ResName>{capitalizeWords(restaurant?.name)}</ResName>
@@ -59,13 +55,6 @@ export default function LocationPopup({
         {restaurant?.branches?.map((branch) => {
           return (
             branch.name && 
-=======
-      <Title>Welcome To </Title>
-      <ResName>{capitalizeWords(restaurant?.name)}</ResName>
-      <BranchesContainer>
-        {restaurant?.branches?.map((branch) => {
-          return (
->>>>>>> 9d9e172828a11d102f723d7bf03f5a89d5a93e80
             <Branch
               onClick={() => setActiveBranch(branch)}
               activeBranch={activeBranch.id}
@@ -73,10 +62,7 @@ export default function LocationPopup({
             >
               {branch.name}
             </Branch>
-<<<<<<< HEAD
             
-=======
->>>>>>> 9d9e172828a11d102f723d7bf03f5a89d5a93e80
           );
         })}
       </BranchesContainer>
@@ -89,11 +75,7 @@ export default function LocationPopup({
         )}
         <InfoContainer>
           <CallLogo />
-<<<<<<< HEAD
           <Info href={`tel:${activeBranch?.phone_number}`}>{activeBranch?.phone_number}</Info>
-=======
-          <Info>{activeBranch?.phone_number}</Info>
->>>>>>> 9d9e172828a11d102f723d7bf03f5a89d5a93e80
         </InfoContainer>
         {activeBranch?.mapLink && (
           <InfoContainer>
@@ -109,7 +91,6 @@ export default function LocationPopup({
         {restaurant.socialMedia.find(
           (media) => media.platform == "Instagram"
         ) && (
-<<<<<<< HEAD
             <InstagramContainer
               href={`https://${restaurant.socialMedia.find(
                 (media) => media.platform == "Instagram"
@@ -148,50 +129,6 @@ export default function LocationPopup({
             href={`https://${restaurant.socialMedia.find((media) => media.platform == "Tiktok")
               .link
               }`}
-=======
-          <InstagramContainer
-            href={`https://${
-              restaurant.socialMedia.find(
-                (media) => media.platform == "Instagram"
-              ).link
-            }`}
-          >
-            <InstagramLogo />
-          </InstagramContainer>
-        )}
-        {restaurant.socialMedia.find(
-          (media) => media.platform == "Whatsapp"
-        ) && (
-          <WhatsappContainer
-            href={`https://${
-              restaurant.socialMedia.find(
-                (media) => media.platform == "Whatsapp"
-              ).link
-            }`}
-          >
-            <WhatsappLogo />
-          </WhatsappContainer>
-        )}
-        {restaurant.socialMedia.find(
-          (media) => media.platform == "Facebook"
-        ) && (
-          <FacebookContainer
-            href={`https://${
-              restaurant.socialMedia.find(
-                (media) => media.platform == "Facebook"
-              ).link
-            }`}
-          >
-            <FacebookLogo />
-          </FacebookContainer>
-        )}
-        {restaurant.socialMedia.find((media) => media.platform == "Tiktok") && (
-          <TiktokContainer
-            href={`https://${
-              restaurant.socialMedia.find((media) => media.platform == "Tiktok")
-                .link
-            }`}
->>>>>>> 9d9e172828a11d102f723d7bf03f5a89d5a93e80
           >
             <TiktokLogo />
           </TiktokContainer>
