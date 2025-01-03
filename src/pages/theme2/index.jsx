@@ -71,13 +71,10 @@ export default function Theme2() {
           activeCategory={activeCategory}
           showPopup={showPopup}
           searchText={searchText}
-<<<<<<< HEAD
           setactiveCategory={setactiveCategory}
           setcarouselPosition={setcarouselPosition}
           carouselPosition={carouselPosition}
           categories={restaurant.categories}
-=======
->>>>>>> 9d9e172828a11d102f723d7bf03f5a89d5a93e80
         />
       </MenuWrapper>
       <DetailsBtn onClick={() => popupHandler("location")}>
