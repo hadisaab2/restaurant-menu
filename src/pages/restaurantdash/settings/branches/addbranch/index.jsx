@@ -73,7 +73,11 @@ export default function AddEditBranch({
           label="Name"
           name="name"
           variant="outlined"
+<<<<<<< HEAD
           {...register("name")}
+=======
+          {...register("name", { required: "Required" })}
+>>>>>>> 9d9e172828a11d102f723d7bf03f5a89d5a93e80
           error={!isEmpty(formState?.errors?.name)}
           helperText={
             !isEmpty(formState.errors.link) && formState?.errors?.name?.message
@@ -84,6 +88,10 @@ export default function AddEditBranch({
           name="phone_number"
           variant="outlined"
           {...register("phone_number", {
+<<<<<<< HEAD
+=======
+            required: "Required",
+>>>>>>> 9d9e172828a11d102f723d7bf03f5a89d5a93e80
             pattern: {
               value: /^(\d+\s)*\d+$/,
               message: "Invalid phone number format.",
@@ -99,7 +107,11 @@ export default function AddEditBranch({
           label="Location"
           variant="outlined"
           name="location"
+<<<<<<< HEAD
           {...register("location")}
+=======
+          {...register("location", { required: "Required" })}
+>>>>>>> 9d9e172828a11d102f723d7bf03f5a89d5a93e80
           error={!isEmpty(formState?.errors?.location)}
           helperText={
             !isEmpty(formState.errors.location) &&
@@ -110,7 +122,11 @@ export default function AddEditBranch({
           label="Maps"
           variant="outlined"
           name="mapLink"
+<<<<<<< HEAD
           {...register("mapLink")}
+=======
+          {...register("mapLink", { required: "Required" })}
+>>>>>>> 9d9e172828a11d102f723d7bf03f5a89d5a93e80
           error={!isEmpty(formState?.errors?.mapLink)}
           helperText={
             !isEmpty(formState.errors.mapLink) &&

@@ -11,14 +11,18 @@ export default function Products({
   activeCategory,
   showPopup,
   searchText,
+<<<<<<< HEAD
   carouselPosition,
   setcarouselPosition,
   setactiveCategory,
   categories
+=======
+>>>>>>> 9d9e172828a11d102f723d7bf03f5a89d5a93e80
 }) {
   const [activePlate, setactivePlate] = useState(null);
   const { restaurantName: paramRestaurantName } = useParams();
 
+<<<<<<< HEAD
   const [swipePosition, setswipePosition] = useState(carouselPosition);
   // console.log("carouselpostion" + carouselPosition)
   // console.log(categories.length-1)
@@ -75,6 +79,8 @@ export default function Products({
 
 
 
+=======
+>>>>>>> 9d9e172828a11d102f723d7bf03f5a89d5a93e80
   const hostname = window.location.hostname;
   const subdomain = hostname.split(".")[0];
 
@@ -163,12 +169,16 @@ export default function Products({
       ) || [];
 
   return (
+<<<<<<< HEAD
     <Container
       activeCategory={activeCategory}
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
     >
+=======
+    <Container activeCategory={activeCategory}>
+>>>>>>> 9d9e172828a11d102f723d7bf03f5a89d5a93e80
       <ProductWrapper activePlate={activePlate}>
         {menu?.map((singlemenu, index) => {
           if (activeCategory == singlemenu.id) {

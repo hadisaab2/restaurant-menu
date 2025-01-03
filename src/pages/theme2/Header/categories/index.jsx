@@ -46,7 +46,10 @@ export default function Categories({
       setcarouselPosition(carouselPosition + 1);
     }
   }
+<<<<<<< HEAD
 
+=======
+>>>>>>> 9d9e172828a11d102f723d7bf03f5a89d5a93e80
   const handleTouchStart = (e) => {
     touchStartX.current = e.touches[0].clientX;
   };
