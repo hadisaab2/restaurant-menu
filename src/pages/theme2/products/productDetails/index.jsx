@@ -55,8 +55,9 @@ export default function ProductDetails({
       : paramRestaurantName;
 
   const restaurant = useSelector((state) => state.restaurant?.[restaurantName]);
+  const formJson = plates[activePlate]?.form_json;
   const [formSchema, setFormSchema] = useState(
-    JSON.parse(plates[activePlate]?.form_json)
+    formJson ? JSON.parse(formJson) : {}
   );
   const [formData, setFormData] = useState({});
 
