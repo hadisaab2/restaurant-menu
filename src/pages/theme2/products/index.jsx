@@ -18,60 +18,58 @@ export default function Products({
 }) {
   const [activePlate, setactivePlate] = useState(null);
   const { restaurantName: paramRestaurantName } = useParams();
-
   const [swipePosition, setswipePosition] = useState(carouselPosition);
-  // console.log("carouselpostion" + carouselPosition)
-  // console.log(categories.length-1)
-  console.log("swipepostion" + swipePosition)
+ 
 
-  //handling page swipe to change category
-  // const [scrollInProgress, setScrollInProgress] = useState(false);
-  // const touchStartX = useRef(0);
-  // const handleTouchStart = (e) => {
-  //   touchStartX.current = e.touches[0].clientX;
-  // };
-  // const handleTouchMove = (e) => {
-  //   const currentX = e.touches[0].clientX;
-  //   const deltaX = currentX - touchStartX.current;
+  // handling page swipe to change category
+  const [scrollInProgress, setScrollInProgress] = useState(false);
+  const touchStartX = useRef(0);
+  const handleTouchStart = (e) => {
+    touchStartX.current = e.touches[0].clientX;
+  };
+  const handleTouchMove = (e) => {
+    const currentX = e.touches[0].clientX;
+    const deltaX = currentX - touchStartX.current;
 
-  //   // Add a flag to check if the scroll action is in progress
-  //   if (!scrollInProgress) {
-  //     setScrollInProgress(true);
-  //     if (deltaX > 0) {
-  //       if (carouselPosition > 0 && swipePosition > carouselPosition) {
-  //         setactiveCategory(categories[swipePosition - 1].id)
-  //         setswipePosition(swipePosition - 1)
-  //       } else {
-  //         setcarouselPosition(carouselPosition - 1);
-  //         setactiveCategory(categories[carouselPosition - 1].id)
-  //       }
-  //     } else {
-  //       if (carouselPosition < categories.length - 4 && swipePosition<categories.length-4) {
-  //         setcarouselPosition(carouselPosition + 1);
-  //         setactiveCategory(categories[carouselPosition + 1].id)
-  //       } else {
-  //         if( swipePosition < categories.length-1){
-  //         setcarouselPosition(categories.length - 4);
-  //         setactiveCategory(categories[swipePosition + 1].id)
-  //         setswipePosition(swipePosition + 1)
-  //         }
+    // Add a flag to check if the scroll action is in progress
+    if (!scrollInProgress && activePlate==null) {
+      setScrollInProgress(true);
+      //swipeposition is implemented for the problems in the last 4 categories where the carousel doesnt swipe
+      if (deltaX > 0) {
+        if (carouselPosition > 0 && swipePosition > carouselPosition) {
+          setactiveCategory(categories[swipePosition - 1].id)
+          setswipePosition(swipePosition - 1)
+        } else {
+          setcarouselPosition(carouselPosition - 1);
+          setactiveCategory(categories[carouselPosition - 1].id)
+        }
+      } else {
+        if (carouselPosition < categories.length - 4 && swipePosition<categories.length-4) {
+          setcarouselPosition(carouselPosition + 1);
+          setactiveCategory(categories[carouselPosition + 1].id)
+        } else {
+          if( swipePosition < categories.length-1){
+          setcarouselPosition(categories.length - 4);
+          setactiveCategory(categories[swipePosition + 1].id)
+          setswipePosition(swipePosition + 1)
+          }
 
-  //       }
-  //     }
-  //     touchStartX.current = currentX;
-  //   }
-  // };
-  // const handleTouchEnd = () => {
-  //   touchStartX.current = 0;
-  //   setScrollInProgress(false);
-  // };
+        }
+      }
+      touchStartX.current = currentX;
+    }
+  };
+  const handleTouchEnd = () => {
+    touchStartX.current = 0;
+    setScrollInProgress(false);
+  };
+  useEffect(() => {
+    setswipePosition(categories.findIndex(category=>category.id==activeCategory));
+  }, [activeCategory]);
 
 
-  // useEffect(() => {
-  //   console.log("the active cateogur now "+activeCategory +"   "+categories.findIndex(category=>category.id==activeCategory))
-  //   setswipePosition(categories.findIndex(category=>category.id==activeCategory));
-  // }, [activeCategory]);
 
+  
 
 
 
@@ -165,9 +163,9 @@ export default function Products({
   return (
     <Container
       activeCategory={activeCategory}
-      // onTouchStart={handleTouchStart}
-      // onTouchMove={handleTouchMove}
-      // onTouchEnd={handleTouchEnd}
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
     >
       <ProductWrapper activePlate={activePlate}>
         {menu?.map((singlemenu, index) => {
