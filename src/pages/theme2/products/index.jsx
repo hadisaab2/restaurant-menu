@@ -18,18 +18,31 @@ export default function Products({
 }) {
   const [activePlate, setactivePlate] = useState(null);
   const { restaurantName: paramRestaurantName } = useParams();
-  const [swipePosition, setswipePosition] = useState(carouselPosition);
  
 
   // handling page swipe to change category
+  const [swipePosition, setswipePosition] = useState(carouselPosition);
   const [scrollInProgress, setScrollInProgress] = useState(false);
   const touchStartX = useRef(0);
+  const touchStartY = useRef(0);
+  
   const handleTouchStart = (e) => {
     touchStartX.current = e.touches[0].clientX;
+    touchStartY.current = e.touches[0].clientY;
+  
   };
   const handleTouchMove = (e) => {
     const currentX = e.touches[0].clientX;
+    const currentY = e.touches[0].clientY;
+  
     const deltaX = currentX - touchStartX.current;
+    const deltaY = currentY - touchStartY.current;
+  
+    // Ignore vertical scroll
+    if (Math.abs(deltaY) > Math.abs(deltaX)) {
+      return; // Do nothing for vertical movements
+    }
+  
 
     // Add a flag to check if the scroll action is in progress
     if (!scrollInProgress && activePlate==null) {
@@ -40,8 +53,11 @@ export default function Products({
           setactiveCategory(categories[swipePosition - 1].id)
           setswipePosition(swipePosition - 1)
         } else {
+          if(carouselPosition!==0){
           setcarouselPosition(carouselPosition - 1);
           setactiveCategory(categories[carouselPosition - 1].id)
+          }
+          
         }
       } else {
         if (carouselPosition < categories.length - 4 && swipePosition<categories.length-4) {
