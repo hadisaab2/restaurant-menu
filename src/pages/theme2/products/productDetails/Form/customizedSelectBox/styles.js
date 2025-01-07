@@ -4,7 +4,7 @@ export const SelectBoxWrapper = styled.div`
   display: flex;
   flex-direction: column;
   gap: 16px;
-  margin-top: 40px;
+  margin-top: 30px;
   padding-top: 20px;
   border-top: 1px solid ${(props) => {
     const color = props.theme.mainColor; // Get the color
@@ -45,6 +45,7 @@ height: 20px;
 display: flex;
 align-items: center;
 justify-content: center;
+color :${(props) => props.theme.mainColor};
 border: 1px solid ${(props) => {
     const color = props.theme.mainColor; // Get the color
     const opacity = 0.3; // Desired opacity (e.g., 50%)

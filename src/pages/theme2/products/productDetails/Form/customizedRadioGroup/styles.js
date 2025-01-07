@@ -4,7 +4,7 @@ export const SelectBoxWrapper = styled.div`
   display: flex;
   flex-direction: column;
   gap: 16px;
-  margin-top: 40px;
+  margin-top: 30px;
   padding-top: 20px;
   font-family: Arial, sans-serif;
   border-top: 1px solid ${(props) => {
