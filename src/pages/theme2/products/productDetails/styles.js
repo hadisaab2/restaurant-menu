@@ -394,7 +394,7 @@ export const ButtonWrapper = styled.div`
   gap: 10px;
   animation: ${NameAnimation} 1.4s ease-in-out;
   margin-top: 30px;
-  /* height: 35px; */
+  height: 80px;
   padding-bottom: 40px;
   @media (min-width: 1024px) {
         width: 50%;
@@ -406,10 +406,11 @@ export const AddToCart = styled.button`
   border: 0;
   cursor: pointer;
   height: 100%;
+
   color: ${(props) => props.theme.backgroundColor};
   font-weight: 400;
   background-color: ${(props) => props.theme.mainColor};
-  border-radius: 10px;
+  border-radius: 5px;
 `;
 
 export const QuantityWrapper = styled.div`
@@ -419,7 +420,7 @@ export const QuantityWrapper = styled.div`
   height: 100%;
   background-color: ${(props) => props.theme.mainColor};
   color: ${(props) => props.theme.backgroundColor};
-  border-radius: 10px;
+  border-radius: 5px;
 `;
 
 export const Plus = styled.div`

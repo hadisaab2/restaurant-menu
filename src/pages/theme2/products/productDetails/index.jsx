@@ -287,8 +287,6 @@ export default function ProductDetails({
             <ItemDescription
               dangerouslySetInnerHTML={{ __html: description }}
             />
-            {/* <Form form={formSchema} onChange={handleFormChange} /> */}
-            {console.log(totalPrice)}
             {formSchema?.components && <ProductForm formSchema={formSchema} onPriceChange={handlePriceChange} formData={formData} setFormData={setFormData} basePrice={plates[activePlate]?.en_price}/>}
             {plates[activePlate]?.en_price !== "" && (
               <ItemPrice>
