@@ -8,12 +8,16 @@ import {
   RadioGroup,
   RadioLabel,
 } from "./styles";
+import CustomizedSelectBox from "./customizedSelectBox";
+import CustomSelect from "./customizedSelect";
+import CustomizedRadioGroup from "./customizedRadioGroup";
 
-export default function ProductForm({ formSchema, onPriceChange, basePrice,formData,setFormData }) {
+export default function ProductForm({ formSchema, onPriceChange, basePrice, formData, setFormData }) {
 
   useEffect(() => {
     calculateTotalPrice(formData);
   }, [formData]);
+
 
   const handleChange = (key, value) => {
     setFormData((prevData) => ({
@@ -30,7 +34,8 @@ export default function ProductForm({ formSchema, onPriceChange, basePrice,formD
         if (component.type === "selectboxes" && component.values) {
           data[component.key].forEach((label) => {
             const option = component.values.find((opt) => opt.label === label);
-            if (option && option.value) {
+            const isNumber = !isNaN(Number(option.value));
+            if (option && option.value && isNumber) {
               if (option.value.startsWith("+")) {
                 addOnsPrice += parseFloat(option.value.slice(1));
               } else if (option.value.startsWith("-")) {
@@ -46,7 +51,9 @@ export default function ProductForm({ formSchema, onPriceChange, basePrice,formD
           const option = component.data.values.find(
             (opt) => opt.value === data[component.key]?.value
           );
-          if (option) {
+          const isNumber = !isNaN(Number(option.value)); // Convert to number and check
+
+          if (option && isNumber) {
             if (option.value.startsWith("+")) {
               addOnsPrice += parseFloat(option.value.slice(1));
             } else if (option.value.startsWith("-")) {
@@ -54,12 +61,14 @@ export default function ProductForm({ formSchema, onPriceChange, basePrice,formD
             } else {
               newPrice = parseFloat(option.value);
             }
+
           }
         } else if (component.type === "radio" && component.values) {
           const option = component.values.find(
             (opt) => opt.value === data[component.key]?.value
           );
-          if (option) {
+          const isNumber = !isNaN(Number(option.value));
+          if (option && isNumber) {
             if (option.value.startsWith("+")) {
               addOnsPrice += parseFloat(option.value.slice(1));
             } else if (option.value.startsWith("-")) {
@@ -78,83 +87,28 @@ export default function ProductForm({ formSchema, onPriceChange, basePrice,formD
   const renderComponent = (component) => {
     switch (component.type) {
       case "selectboxes":
+        console.log(component.key)
         return (
-          <FormGroup key={component.key}>
-            <Label>{component.label}</Label>
-            {component.values.map((option) => (
-              <CheckboxLabel key={option.value}>
-                <input
-                  type="checkbox"
-                  checked={
-                    formData[component.key]?.includes(option.label) || false
-                  }
-                  onChange={(e) => {
-                    const selectedOptions = formData[component.key] || [];
-                    if (e.target.checked) {
-                      handleChange(component.key, [
-                        ...selectedOptions,
-                        option.label,
-                      ]);
-                    } else {
-                      handleChange(
-                        component.key,
-                        selectedOptions.filter((item) => item !== option.label)
-                      );
-                    }
-                  }}
-                />
-                {option.label}
-              </CheckboxLabel>
-            ))}
-          </FormGroup>
+          <CustomizedSelectBox
+            component={component}
+            formData={formData}
+            handleChange={handleChange} />
         );
-        case "select":
-          return (
-            <FormGroup key={component.key}>
-              <Label>{component.label}</Label>
-              <Select
-                value={formData[component.key]?.value || ""}
-                onChange={(e) => {
-                  const selectedOption = component.data.values.find(
-                    (option) => option.value === e.target.value
-                  );
-                  handleChange(component.key, selectedOption);
-                }}
-              >
-                <option value="">Select...</option>
-                {component.data.values.map((option) => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </Select>
-            </FormGroup>
-          );
-          case "radio":
-            return (
-              <FormGroup key={component.key}>
-                <Label>{component.label}</Label>
-                <RadioGroup>
-                  {component.values.map((option) => (
-                    <RadioLabel key={option.value}>
-                      <input
-                        type="radio"
-                        name={component.key}
-                        value={option.value}
-                        checked={formData[component.key]?.value === option.value}
-                        onChange={(e) => {
-                          const selectedOption = component.values.find(
-                            (opt) => opt.value === e.target.value
-                          );
-                          handleChange(component.key, selectedOption);
-                        }}
-                      />
-                      {option.label}
-                    </RadioLabel>
-                  ))}
-                </RadioGroup>
-              </FormGroup>
-            );
+      case "select":
+        return (
+          <CustomSelect
+            component={component}
+            formData={formData}
+            handleChange={handleChange} />
+        );
+      case "radio":
+        return (
+          <CustomizedRadioGroup
+            component={component}
+            formData={formData}
+            handleChange={handleChange} />
+        );
+
       default:
         return null;
     }
@@ -162,7 +116,6 @@ export default function ProductForm({ formSchema, onPriceChange, basePrice,formD
 
   return (
     <form>
-      {console.log(formData)}
       {formSchema?.components.map((component) => renderComponent(component))}
     </form>
   );

@@ -184,6 +184,8 @@ export default function Products({
       onTouchEnd={handleTouchEnd}
     >
       <ProductWrapper activePlate={activePlate}>
+
+        
         {menu?.map((singlemenu, index) => {
           if (activeCategory == singlemenu.id) {
             return (
