@@ -26,7 +26,27 @@ import {
   Link,
   CopyWrite,
   TitleContainer,
+  ButtonFilled,
+  ButtonBorder,
+  ButttonWrapper,
+  BranchSpan,
+  BranchWrapper,
+  BranchIconWrapper,
+  BranchIcon,
+  LineContainer,
+  Line,
+  Iconhole,
+  SocialMediaTitle,
+  SocialMediaTitleWrapper,
+  ShadeBox,
+  ChoosePlaceHolder,
+  ShadeBorder,
+  Arrow,
+  OptionsList,
+  Option
 } from "./styles";
+import { LuPhoneCall } from "react-icons/lu";
+import { TiMessage } from "react-icons/ti";
 
 export default function LocationPopup({
   restaurant,
@@ -34,6 +54,8 @@ export default function LocationPopup({
   popupHandler = { popupHandler },
 }) {
   const [activeBranch, setActiveBranch] = useState(restaurant?.branches[0]);
+  const [callOpened, setCallOpened] = useState(false);
+
   function capitalizeWords(str) {
     return str.replace(/\b\w/g, function (char) {
       return char.toUpperCase();
@@ -47,11 +69,46 @@ export default function LocationPopup({
         }}
       />
       <TitleContainer>
-        <Title>Welcome To </Title>
         <ResName>{capitalizeWords(restaurant?.name)}</ResName>
       </TitleContainer>
+      <ButttonWrapper>
+        <ButtonFilled callOpened={callOpened} onClick={() => { setCallOpened(!callOpened) }}>
+          {!callOpened ?
+            <>
+              <LuPhoneCall size={"25px"} />Call Now
+            </>
+            : <>
+              <OptionsList callOpened={callOpened}>
+                {restaurant?.branches?.flatMap(branch =>
+                  branch.phone_number.split(" ").map((phone, index) => (
+                    <Option>
+                      <a href={`tel:${phone}`} style={{ textDecoration: "none", color: "inherit" }}>
+                        {phone} ({branch.location})
+                      </a>
+                    </Option>
+                  ))
+                )}
+              </OptionsList>
+              <ShadeBox>
+                <ShadeBorder />
+              </ShadeBox>
+              <ChoosePlaceHolder>
+                Choose Number
+              </ChoosePlaceHolder>
+              <Arrow callOpened={callOpened} />
 
-      <BranchesContainer>
+
+            </>}
+
+        </ButtonFilled>
+        <ButtonBorder>
+          <TiMessage size={"30px"} />
+          Message
+        </ButtonBorder>
+
+      </ButttonWrapper>
+
+      {/* <BranchesContainer>
         {restaurant?.branches?.map((branch) => {
           return (
             branch.name && 
@@ -65,28 +122,39 @@ export default function LocationPopup({
             
           );
         })}
-      </BranchesContainer>
+      </BranchesContainer> */}
       <BranchInfo>
-        {activeBranch?.location && (
-          <InfoContainer>
-            <LocationLogo />
-            <Info>{activeBranch?.location}</Info>
-          </InfoContainer>
-        )}
-        <InfoContainer>
-          <CallLogo />
-          <Info href={`tel:${activeBranch?.phone_number}`}>{activeBranch?.phone_number}</Info>
-        </InfoContainer>
-        {activeBranch?.mapLink && (
-          <InfoContainer>
-            <MapsLogo />
-            <MapLink href={`https://${activeBranch?.mapLink}`}>
-              {activeBranch?.mapLink}
-            </MapLink>
-          </InfoContainer>
-        )}
-      </BranchInfo>
+        <BranchSpan>Branches</BranchSpan>
+        <BranchesContainer>
 
+          {restaurant?.branches?.map((branch, index) => {
+            return (
+              branch.name &&
+              <>
+                <BranchWrapper>
+                  {index !== restaurant?.branches?.length - 1 && <LineContainer index={index}>
+                    <Line />
+                  </LineContainer>}
+                  <BranchIconWrapper>
+                    <Iconhole />
+                    <BranchIcon />
+                  </BranchIconWrapper>
+                  <Branch
+                    href={`https://${branch?.mapLink}`}
+
+                  >
+                    {branch.location}
+                  </Branch>
+                </BranchWrapper>
+              </>
+            );
+          })}
+        </BranchesContainer>
+       
+      </BranchInfo>
+      <SocialMediaTitleWrapper>
+        <SocialMediaTitle>Follow Us</SocialMediaTitle>
+      </SocialMediaTitleWrapper>
       <SocialMediaContainer>
         {restaurant.socialMedia.find(
           (media) => media.platform == "Instagram"
