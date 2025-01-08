@@ -233,7 +233,7 @@ align-items: center;
 flex-direction: row;
 width: 90%;
 height: 50px;
-gap:30px;
+gap:25px;
 margin-top: 30px;
 `;
 
@@ -243,7 +243,7 @@ justify-content: center;
 flex-direction: row;
 align-items: center;
 background-color:${props=>props.theme.mainColor} ;
-width:${props=>props.callOpened?"80%":"50%"};
+width:${props=>props.activeButton=="Call"?"80%":"50%"};
 height: 100%;
 border:0;
 color: ${props=>props.theme.popupbackgroundColor};
@@ -274,7 +274,7 @@ export const ShadeBox = styled.div`
 position: absolute;
 width:10%;
 height: 50%;
-background-color:${props=>props.theme.mainColor} ;
+background-color:${props=>props.activeButton=="Call"?props.theme.mainColor:props.theme.popupbackgroundColor} ;
  left: 0;
  z-index: 5;
 
@@ -283,7 +283,7 @@ background-color:${props=>props.theme.mainColor} ;
 position: absolute;
 width:1px;
 height: 100%;
-background-color:${props=>props.theme.popupbackgroundColor};
+background-color:${props=>props.activeButton=="Call"?props.theme.popupbackgroundColor:props.theme.mainColor} ;
  right: 0;
  animation: ${borderanimation} 0.5s ease-in-out infinite; /* Infinite animation */
 
@@ -292,7 +292,7 @@ background-color:${props=>props.theme.popupbackgroundColor};
  const placeholderAnimation = keyframes`
   0% {
 opacity: 0;
-left: -20%;
+left: -10%;
   }
   100% {
 opacity: 1;
@@ -304,7 +304,7 @@ left: 16%;
  export const ChoosePlaceHolder = styled.span`
 position: absolute;
  left: 16%;
- color: ${props=>props.theme.popupbackgroundColor};
+ color:${props=>props.activeButton=="Call"?props.theme.popupbackgroundColor:props.theme.mainColor} ;
  animation: ${placeholderAnimation} 0.5s ease-in-out;
  z-index: 4;
 
@@ -325,7 +325,7 @@ position: absolute;
 
 
  export const Arrow = styled(IoIosArrowDown )`
-color: ${props=>props.theme.popupbackgroundColor};
+color:${props=>props.activeButton=="Call"?props.theme.popupbackgroundColor:props.theme.mainColor} ;
 font-size: 15px;
 position: absolute;
 right: 5%;
@@ -381,7 +381,7 @@ gap:15px;
 align-items: center;
 flex-direction: row;
 background-color:transparent ;
-width:50%;
+width:${props=>props.activeButton=="Message"?"80%":"50%"};
 height: 100%;
 border:1px solid ${props=>props.theme.mainColor} ;
 color: ${props=>props.theme.popupTextColor};
@@ -389,7 +389,8 @@ border-radius: 10px;
 font-size: 18px;
 &:focus{
   outline: none;
-}
+};
+position: relative;
 `;
   
 

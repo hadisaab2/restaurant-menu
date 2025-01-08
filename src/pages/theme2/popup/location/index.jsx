@@ -46,7 +46,7 @@ import {
   Option
 } from "./styles";
 import { LuPhoneCall } from "react-icons/lu";
-import { TiMessage } from "react-icons/ti";
+import { FaWhatsapp } from "react-icons/fa";
 
 export default function LocationPopup({
   restaurant,
@@ -54,12 +54,30 @@ export default function LocationPopup({
   popupHandler = { popupHandler },
 }) {
   const [activeBranch, setActiveBranch] = useState(restaurant?.branches[0]);
-  const [callOpened, setCallOpened] = useState(false);
+  const [activeButton, setActiveButton] = useState("");
 
   function capitalizeWords(str) {
     return str.replace(/\b\w/g, function (char) {
       return char.toUpperCase();
     });
+  }
+
+  const handleCallButton = () => {
+    if (activeButton == "Call") {
+      setActiveButton("")
+    } else {
+      setActiveButton("Call")
+
+    }
+  }
+
+  const handleMessageButton = () => {
+    if (activeButton == "Message") {
+      setActiveButton("")
+    } else {
+      setActiveButton("Message")
+
+    }
   }
   return (
     <Container showPopup={showPopup}>
@@ -72,38 +90,68 @@ export default function LocationPopup({
         <ResName>{capitalizeWords(restaurant?.name)}</ResName>
       </TitleContainer>
       <ButttonWrapper>
-        <ButtonFilled callOpened={callOpened} onClick={() => { setCallOpened(!callOpened) }}>
-          {!callOpened ?
+        <ButtonFilled activeButton={activeButton} onClick={handleCallButton}>
+          {activeButton !== "Call" ?
             <>
               <LuPhoneCall size={"25px"} />Call Now
             </>
             : <>
-              <OptionsList callOpened={callOpened}>
+              <OptionsList activeButton={activeButton}>
                 {restaurant?.branches?.flatMap(branch =>
                   branch.phone_number.split(" ").map((phone, index) => (
                     <Option>
                       <a href={`tel:${phone}`} style={{ textDecoration: "none", color: "inherit" }}>
-                        {phone} ({branch.location})
+                      {phone}  {branch.location && <span>- {branch.location} </span>}
                       </a>
                     </Option>
                   ))
                 )}
               </OptionsList>
-              <ShadeBox>
-                <ShadeBorder />
+              <ShadeBox activeButton={activeButton}>
+                <ShadeBorder activeButton={activeButton} />
               </ShadeBox>
-              <ChoosePlaceHolder>
+              <ChoosePlaceHolder activeButton={activeButton}>
                 Choose Number
               </ChoosePlaceHolder>
-              <Arrow callOpened={callOpened} />
+              <Arrow activeButton={activeButton} />
 
 
             </>}
 
         </ButtonFilled>
-        <ButtonBorder>
-          <TiMessage size={"30px"} />
-          Message
+        <ButtonBorder activeButton={activeButton} onClick={handleMessageButton}>
+
+
+
+          {activeButton !== "Message" ?
+            <>
+              <FaWhatsapp size={"25px"} />
+              Message            </>
+            : <>
+              <OptionsList activeButton={activeButton}>
+                {restaurant?.branches?.flatMap(branch =>
+                  branch.phone_number.split(" ").map((phone, index) => (
+                    <Option>
+                      <a href={`tel:${phone}`} style={{ textDecoration: "none", color: "inherit" }}>
+                      {phone}  {branch.location && <span>- {branch.location} </span>}
+                      </a>
+                    </Option>
+                  ))
+                )}
+               
+              </OptionsList>
+              <ShadeBox activeButton={activeButton}>
+                <ShadeBorder activeButton={activeButton} />
+              </ShadeBox>
+              <ChoosePlaceHolder activeButton={activeButton}>
+                Choose Number
+              </ChoosePlaceHolder>
+              <Arrow activeButton={activeButton} />
+
+
+            </>}
+
+
         </ButtonBorder>
 
       </ButttonWrapper>
@@ -124,7 +172,8 @@ export default function LocationPopup({
         })}
       </BranchesContainer> */}
       <BranchInfo>
-        <BranchSpan>Branches</BranchSpan>
+      {restaurant?.branches?.name && <BranchSpan>Branches</BranchSpan>}
+      
         <BranchesContainer>
 
           {restaurant?.branches?.map((branch, index) => {
@@ -150,7 +199,7 @@ export default function LocationPopup({
             );
           })}
         </BranchesContainer>
-       
+
       </BranchInfo>
       <SocialMediaTitleWrapper>
         <SocialMediaTitle>Follow Us</SocialMediaTitle>
@@ -168,7 +217,7 @@ export default function LocationPopup({
               <InstagramLogo />
             </InstagramContainer>
           )}
-        {restaurant.socialMedia.find(
+        {/* {restaurant.socialMedia.find(
           (media) => media.platform == "Whatsapp"
         ) && (
             <WhatsappContainer
@@ -179,7 +228,7 @@ export default function LocationPopup({
             >
               <WhatsappLogo />
             </WhatsappContainer>
-          )}
+          )} */}
         {restaurant.socialMedia.find(
           (media) => media.platform == "Facebook"
         ) && (
