@@ -55,6 +55,7 @@ export default function LocationPopup({
 }) {
   const [activeBranch, setActiveBranch] = useState(restaurant?.branches[0]);
   const [activeButton, setActiveButton] = useState("");
+  const regex = /(?:wa\.me\/|phone=)(\d+)/;
 
   function capitalizeWords(str) {
     return str.replace(/\b\w/g, function (char) {
@@ -101,7 +102,7 @@ export default function LocationPopup({
                   branch.phone_number.split(" ").map((phone, index) => (
                     <Option>
                       <a href={`tel:${phone}`} style={{ textDecoration: "none", color: "inherit" }}>
-                      {phone}  {branch.location && <span>- {branch.location} </span>}
+                        {phone}  {branch.location && <span>- {branch.location} </span>}
                       </a>
                     </Option>
                   ))
@@ -129,16 +130,27 @@ export default function LocationPopup({
               Message            </>
             : <>
               <OptionsList activeButton={activeButton}>
-                {restaurant?.branches?.flatMap(branch =>
+                {restaurant?.socialMedia?.filter(media => media.platform === "Whatsapp").map((number) => {
+                  return (
+                    <Option>
+                      <a href={`https://${number.link}`} style={{ textDecoration: "none", color: "inherit" }}>
+                        {number.link.match(regex)?.[1]}
+                      </a>
+                    </Option>
+                  )
+                })
+
+                }
+                {/* {restaurant?.branches?.flatMap(branch =>
                   branch.phone_number.split(" ").map((phone, index) => (
                     <Option>
                       <a href={`tel:${phone}`} style={{ textDecoration: "none", color: "inherit" }}>
-                      {phone}  {branch.location && <span>- {branch.location} </span>}
+                        {phone}  {branch.location && <span>- {branch.location} </span>}
                       </a>
                     </Option>
                   ))
-                )}
-               
+                )} */}
+
               </OptionsList>
               <ShadeBox activeButton={activeButton}>
                 <ShadeBorder activeButton={activeButton} />
@@ -172,8 +184,8 @@ export default function LocationPopup({
         })}
       </BranchesContainer> */}
       <BranchInfo>
-      {restaurant?.branches?.name && <BranchSpan>Branches</BranchSpan>}
-      
+        {restaurant?.branches?.name && <BranchSpan>Branches</BranchSpan>}
+
         <BranchesContainer>
 
           {restaurant?.branches?.map((branch, index) => {

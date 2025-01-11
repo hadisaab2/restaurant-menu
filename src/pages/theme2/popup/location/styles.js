@@ -23,7 +23,7 @@ display: flex;
 flex-direction: column;
 align-items: center;
 z-index: 5;
-padding-bottom: 6vh;
+padding-bottom: 10vh;
 `;
 export const Title = styled.span`
 font-size: 30px;
@@ -199,7 +199,7 @@ color: white;
 
 
 export const PoweredBy = styled.pre`
-  font-size: 15px;
+  font-size: 14px;
   text-align: center;
   color: ${props=>props.theme.popupTextColor};
   font-style: italic;

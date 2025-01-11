@@ -17,6 +17,7 @@ import DeleteProductPopup from "./product/deleteProductPopup";
 import { Box, FormControl, InputLabel, MenuItem, Select } from "@mui/material";
 import { useGetCategories } from "../../../apis/categories/getCategories";
 import { useGetProducts } from "../../../apis/products/getProductsByCategory";
+import { LANGUAGES } from "../../../global";
 
 export default function Products({}) {
   const [selectedProduct, setSelectedProduct] = useState(null);
@@ -86,7 +87,7 @@ export default function Products({}) {
                   {categories.map((category) => {
                     return (
                       <MenuItem value={category.id}>
-                        {category.en_category}
+                  { userInformation.Lang === LANGUAGES.AR ?category.ar_category:category.en_category }
                       </MenuItem>
                     );
                   })}

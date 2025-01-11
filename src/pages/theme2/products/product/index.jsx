@@ -13,6 +13,7 @@ import {
 import { useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { useEffect } from "react";
+const _ = require('lodash');
 
 const Product = React.forwardRef(
   ({ plate, setactivePlate, activePlate, index, showPopup }, ref) => {
@@ -101,7 +102,7 @@ const Product = React.forwardRef(
                 : truncateText(plate.ar_name, 30)} */}
                     {restaurant?.activeLanguage === 'en' ? plate.en_name : plate.ar_name}
             </PlateName>
-            {plate.en_price !== "" && (
+            {!_.isEmpty(plate.en_price) && (
               <PlatePrice>
                 {plate.en_price} {currencySymbol}
               </PlatePrice>

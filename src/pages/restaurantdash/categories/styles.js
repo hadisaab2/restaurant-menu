@@ -14,6 +14,22 @@ export const Container = styled.div`
   min-height: 100vh;
 `;
 
+export const Tabs = styled.div`
+  display: flex;
+  flex-direction: row;
+  gap:10px;
+  justify-content: center;
+  align-items: center;
+`;
+ 
+
+export const Tab = styled.div`
+padding: 10px;
+border-radius: 5px;
+background-color:${props=>props.activeTab==props.tab?"turquoise":"null"};
+color:${props=>props.activeTab==props.tab?"white":"black"};
+
+`;
 export const CategoriesContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -84,11 +100,13 @@ export const Actions = styled.div`
 export const AddCategoryForm = styled.div`
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
   gap: 20px;
   margin-top: 30px;
   margin-left: 20px;
   position: relative;
   padding-top: 40px;
+  width:${props=>props.activeTab=="formbuilder"?"100%":"60%"};
+
 `;

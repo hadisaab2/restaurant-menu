@@ -9,6 +9,8 @@ import {
   Actions,
   BackIcon,
   AddCategoryForm,
+  Tabs,
+  Tab,
 } from "./styles";
 import { TextField, Button } from "@mui/material";
 import { getCookie } from "../../../utilities/manageCookies";
@@ -34,6 +36,7 @@ import {
   UploadedImage,
 } from "../products/addproduct/styles";
 import { toast } from "react-toastify";
+import FormBuilder from "./formbuilder";
 
 export default function Categories({ setProducts }) {
   const [showAddComponent, setShowAddComponent] = useState(false);
@@ -45,11 +48,12 @@ export default function Categories({ setProducts }) {
   const [selectedIdForAction, setSelectedIdForAction] = useState(null);
   const [file, setFile] = useState(null);
   const [fileErrMsg, setFileErrMsg] = useState("Please upload image");
-
+  const [activeTab, setActiveTab] = useState("categoryinfo")
+  const [jsonString, setJsonString] = useState("{}");
   const [imageUrl, setImageUrl] = useState(null);
   const fileInputRef = useRef(null);
   const { refetch: refetchProducts } = useGetProducts({
-    onSuccess: () => {},
+    onSuccess: () => { },
     restaurantId: userInformation.restaurant_id,
   });
 
@@ -57,8 +61,8 @@ export default function Categories({ setProducts }) {
     userInformation.Lang === AR
       ? arCategorySchema
       : userInformation.Lang === EN
-      ? enCategorySchema
-      : EnArCategorySchema;
+        ? enCategorySchema
+        : EnArCategorySchema;
 
   const displayEnglish =
     userInformation.Lang === EN || userInformation.Lang === ENAR;
@@ -100,7 +104,7 @@ export default function Categories({ setProducts }) {
     });
 
   const { isLoading, response, refetch } = useGetCategories({
-    onSuccess: () => {},
+    onSuccess: () => { },
     restaurantId: userInformation.restaurant_id,
   });
 
@@ -110,6 +114,7 @@ export default function Categories({ setProducts }) {
         ...data,
         restaurant_id: userInformation.restaurant_id,
         image: file,
+        form_json:jsonString
       };
 
       !selectedIdForAction
@@ -136,6 +141,8 @@ export default function Categories({ setProducts }) {
       default:
         break;
     }
+    category?.form_json && setValue("form_json", category?.form_json);
+    category?.form_json && setJsonString(category?.form_json)
 
     setSelectedIdForAction(category.id);
     setShowAddComponent(true);
@@ -210,7 +217,7 @@ export default function Categories({ setProducts }) {
         refetchProductsHandler={refetchProductsHandler}
       />
       {showAddComponent ? (
-        <AddCategoryForm>
+        <AddCategoryForm activeTab={activeTab} >
           <BackIcon
             onClick={() => {
               reset();
@@ -220,7 +227,12 @@ export default function Categories({ setProducts }) {
               setSelectedIdForAction(null);
             }}
           />
-
+          <Tabs>
+            <Tab activeTab={activeTab} tab={"categoryinfo"} onClick={() => { setActiveTab("categoryinfo") }}>Category Details</Tab>
+            <Tab activeTab={activeTab} tab={"formbuilder"} onClick={() => { setActiveTab("formbuilder") }}>Form Builder</Tab>
+          </Tabs>
+          {activeTab=="categoryinfo" ?
+        <>
           {displayEnglish && (
             <TextField
               label="English category"
@@ -289,6 +301,7 @@ export default function Categories({ setProducts }) {
           >
             {!isNull(selectedIdForAction) ? "Edit Category" : "Add Category"}
           </LoadingButton>
+          </>:<FormBuilder jsonString={jsonString} setJsonString={setJsonString}/>}
         </AddCategoryForm>
       ) : (
         <>

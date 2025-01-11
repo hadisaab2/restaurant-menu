@@ -30,7 +30,9 @@ export const templates = [
       "searchTextColor",
       "popupTextColor",
       "popupbackgroundColor",
-      "branchUnActive"
+      "branchUnActive",
+      // "sidebarbackgroundColor",
+      // "sidebartextColor"
     ],
   },
   {

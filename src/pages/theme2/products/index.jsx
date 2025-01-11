@@ -216,6 +216,8 @@ export default function Products({
           setactivePlate={setactivePlate}
           plates={filteredProducts}
           productPositions={productPositions}
+          activeCategoryId={activeCategory}
+          categories={categories}
         />
       )}
     </Container>

@@ -4,7 +4,7 @@ export const SelectContainer = styled.div`
   position: relative;
   width: 100%;
   padding-top: 20px;
-  margin-top: 40px;
+  margin-top: 30px;
 
   font-family: Arial, sans-serif;
   border-top: 1px solid ${(props) => {

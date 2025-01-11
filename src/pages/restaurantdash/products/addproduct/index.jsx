@@ -221,6 +221,7 @@ export default function AddProduct({
     }
   }, []);
 
+
   const handleButtonClick = () => {
     fileInputRef.current.click();
   };
@@ -333,8 +334,8 @@ export default function AddProduct({
     },
     {
       name: "en_price",
-      label: "English price",
-      display: displayEnglish,
+      label: "Price",
+      display: displayEnglish||displayArabic,
       type: "number",
       mui_type: "textfield",
     },
@@ -482,7 +483,7 @@ export default function AddProduct({
               <MenuItem value={0}>Offer</MenuItem>
               {categories.map(({ id, en_category, ar_category }) => (
                 <MenuItem value={id} key={id}>
-                  {en_category || ar_category}
+                  { userInformation.Lang === LANGUAGES.AR ?ar_category:en_category }
                 </MenuItem>
               ))}
             </Select>

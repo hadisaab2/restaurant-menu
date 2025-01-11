@@ -31,10 +31,9 @@ import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { addToCart } from "../../../../redux/cart/cartActions";
 import CarouselLoader from "./carouselLoader";
-import { Form } from "react-formio";
-
 import "formiojs/dist/formio.full.css";
 import ProductForm from "./Form";
+const _ = require('lodash');
 
 export default function ProductDetails({
   activePlate,
@@ -42,6 +41,8 @@ export default function ProductDetails({
   menu,
   plates,
   productPositions,
+  categories,
+  activeCategoryId
 }) {
   const { restaurantName: paramRestaurantName } = useParams();
 
@@ -55,10 +56,19 @@ export default function ProductDetails({
       : paramRestaurantName;
 
   const restaurant = useSelector((state) => state.restaurant?.[restaurantName]);
-  const formJson = plates[activePlate]?.form_json;
+  const activeCategory = categories.find((category) => category.id == activeCategoryId)
+
+
+  //if product have a form than we'll take the form of it else we take form of category
+  const formJson = !_.isEmpty(JSON.parse(plates[activePlate]?.form_json)) ? plates[activePlate]?.form_json : activeCategory.form_json;
+
+
+
+
   const [formSchema, setFormSchema] = useState(
     formJson ? JSON.parse(formJson) : {}
   );
+  // console.log(formSchema)
   const [formData, setFormData] = useState({});
 
   const dispatch = useDispatch();
@@ -71,7 +81,7 @@ export default function ProductDetails({
   const handlePriceChange = (newPrice) => {
     setTotalPrice(newPrice);
   };
-
+  console.log()
 
   const [CloseAnimation, setCloseAnimation] = useState(true);
   const [carouselIndex, setcarouselIndex] = useState(0);
@@ -134,7 +144,7 @@ export default function ProductDetails({
       document.body.style.overflow = "auto";
     }, 800);
     dispatch(
-      addToCart(restaurantName, plates[activePlate], quantity, formData,totalPrice)
+      addToCart(restaurantName, plates[activePlate], quantity, formData, totalPrice)
     );
     setCloseAnimation(false);
     setQuantity(1);
@@ -287,8 +297,8 @@ export default function ProductDetails({
             <ItemDescription
               dangerouslySetInnerHTML={{ __html: description }}
             />
-            {formSchema?.components && <ProductForm formSchema={formSchema} onPriceChange={handlePriceChange} formData={formData} setFormData={setFormData} basePrice={plates[activePlate]?.en_price}/>}
-            {plates[activePlate]?.en_price !== "" && (
+            {formSchema?.components && <ProductForm formSchema={formSchema} onPriceChange={handlePriceChange} formData={formData} setFormData={setFormData} basePrice={plates[activePlate]?.en_price} />}
+            {!_.isEmpty(plates[activePlate]?.en_price) && (
               <ItemPrice>
                 {totalPrice} {currencySymbol}
               </ItemPrice>
