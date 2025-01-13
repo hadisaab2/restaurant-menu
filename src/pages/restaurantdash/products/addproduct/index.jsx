@@ -188,8 +188,8 @@ export default function AddProduct({
         setValue("en_description", en_description);
         setValue("en_price", en_price);
       } else if (userInformation.Lang === AR) {
-        const { ar_name, ar_description } = selectedProduct;
-
+        const { ar_name, ar_description,en_price } = selectedProduct;
+        setValue("en_price", en_price);
         setValue("ar_name", ar_name);
         setValue("ar_description", ar_description);
       } else {
