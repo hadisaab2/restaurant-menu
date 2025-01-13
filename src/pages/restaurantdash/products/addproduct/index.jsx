@@ -334,7 +334,7 @@ export default function AddProduct({
     },
     {
       name: "en_price",
-      label: "Price",
+      label: "en_price",
       display: displayEnglish||displayArabic,
       type: "number",
       mui_type: "textfield",

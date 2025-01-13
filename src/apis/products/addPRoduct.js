@@ -11,7 +11,7 @@ const addProduct = async (payload) => {
     const formData = new FormData();
     const { EN, ENAR, AR } = LANGUAGES;
     const { Lang } = JSON.parse(getCookie("userInfo"));
-
+    console.log(payload.en_price)
     switch (Lang) {
       case EN:
         formData.append("en_name", payload.en_name);
@@ -21,6 +21,7 @@ const addProduct = async (payload) => {
       case AR:
         formData.append("ar_name", payload.ar_name);
         formData.append("ar_description", payload.ar_description);
+        formData.append("en_price", payload.en_price);
         break;
       case ENAR:
         formData.append("en_name", payload.en_name);
