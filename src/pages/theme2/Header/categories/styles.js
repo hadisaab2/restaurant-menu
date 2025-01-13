@@ -90,7 +90,7 @@ flex:0.8;
 width: 100%;
 `;
 export const CategoryName = styled.span`
-    width: 95%;
+    width: 92%;
     /* overflow: hidden;
     text-overflow: ellipsis; */
     text-align: center;

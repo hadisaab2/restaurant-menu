@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Container,
   Close,
@@ -12,6 +12,20 @@ export default function CartPopup({
 }) {
   
   const[block,setblock]=useState("cart")
+
+    useEffect(() => {
+      const handlePopState = () => {
+        // Revert to the normal view when back is pressed
+        popupHandler(null);
+      };
+  
+      // Add event listener for popstate
+      window.addEventListener("popstate", handlePopState);
+  
+      // Cleanup event listener
+      return () => window.removeEventListener("popstate", handlePopState);
+    }, []);
+  
   return (
     <Container showPopup={showPopup}>
       <Close

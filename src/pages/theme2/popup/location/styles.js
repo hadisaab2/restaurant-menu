@@ -4,7 +4,7 @@ import { IoIosCall } from "react-icons/io";
 import { IoMdClose } from "react-icons/io";
 import { IoLogoWhatsapp } from "react-icons/io";
 import { FaInstagram } from "react-icons/fa";
-import { FaTiktok } from "react-icons/fa";
+import { BsTiktok } from "react-icons/bs";
 import { FaLocationArrow } from "react-icons/fa6";
 import { FaFacebookF } from "react-icons/fa";
 import { MdCopyright } from "react-icons/md";
@@ -191,9 +191,9 @@ font-size: 18px;
 color: ${props=>props.theme.popupTextColor};;
 
 `;
-export const TiktokLogo = styled(FaTiktok)`
-font-size: 24px;
-color: white;
+export const TiktokLogo = styled(BsTiktok)`
+font-size: 18px;
+color: ${props=>props.theme.popupTextColor};;
 
 `;
 
@@ -424,6 +424,7 @@ export const BranchIconWrapper = styled.div`
   align-items: center;
   justify-content: center;
   position: relative;
+  color: ${props=>props.theme.mainColor};
 `;
 
 export const BranchIcon = styled.div`
@@ -456,7 +457,7 @@ export const Branch = styled.a`
 
  export const LineContainer = styled.div`
  width: 15px;
- height: 50px;
+ height: 45px;
  top: 25px;
  position: absolute;
  left: 0;

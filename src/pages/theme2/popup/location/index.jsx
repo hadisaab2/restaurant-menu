@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Container,
   Title,
@@ -47,6 +47,7 @@ import {
 } from "./styles";
 import { LuPhoneCall } from "react-icons/lu";
 import { FaWhatsapp } from "react-icons/fa";
+import { FaLocationDot } from "react-icons/fa6";
 
 export default function LocationPopup({
   restaurant,
@@ -80,6 +81,20 @@ export default function LocationPopup({
 
     }
   }
+
+  useEffect(() => {
+    const handlePopState = () => {
+      // Revert to the normal view when back is pressed
+      popupHandler(null);
+    };
+
+    // Add event listener for popstate
+    window.addEventListener("popstate", handlePopState);
+
+    // Cleanup event listener
+    return () => window.removeEventListener("popstate", handlePopState);
+  }, []);
+
   return (
     <Container showPopup={showPopup}>
       <Close
@@ -197,8 +212,9 @@ export default function LocationPopup({
                     <Line />
                   </LineContainer>}
                   <BranchIconWrapper>
-                    <Iconhole />
-                    <BranchIcon />
+                  <FaLocationDot/>
+                    {/* <Iconhole />
+                    <BranchIcon /> */}
                   </BranchIconWrapper>
                   <Branch
                     href={`https://${branch?.mapLink}`}

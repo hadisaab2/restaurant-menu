@@ -46,7 +46,7 @@ export const ItemsContainer = styled.div`
 width: 100%;
 display: flex;
 flex-direction: row;
-height: 11vh;
+min-height: 11vh;
 margin-top: 1vh;
 position: relative;
 
@@ -55,6 +55,7 @@ export const ImageContainer = styled.div`
 flex: 1;
 display: flex;
 justify-content: center;
+max-height:11vh;
 `;
 export const Image = styled.img`
 width: 70%;

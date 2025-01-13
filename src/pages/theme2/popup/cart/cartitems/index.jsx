@@ -63,6 +63,26 @@ export default function CartItems({setblock}) {
       dispatch(adjustQuantity(restaurantName,uniqueId, quantity - 1));
     }
   };
+  
+
+  const generateitemdata = (item) => {
+    let message = '';
+    if (item.formData) {
+      Object.keys(item.formData).forEach((key) => {
+        const value = item.formData[key];
+        if (Array.isArray(value)) {
+          message += `  - ${key}: ${value.join(", ")}\n`;
+        } else if (typeof value === "object" && value !== null) {
+          message += `  - ${key}: ${value.label}\n`;
+        } else {
+          message += `  - ${key}: ${value}\n`;
+        }
+      });
+    }
+    // Replace newline characters with <br /> tags
+    return message.split("\n").map((line, index) => <Price key={index}>{line}<br /></Price>);
+  };
+
   return (
     <Wrapper>
         <Title>My Cart</Title>
@@ -91,6 +111,8 @@ export default function CartItems({setblock}) {
                             : item.ar_name}
                         </Name>
                         <Price>{item.price * item.quantity} $</Price>
+                        {generateitemdata(item)}
+                        {/* <Price>{generateitemdata(item)}</Price> */}
                       </PriceContainer>
                       <QuantityContainer>
                         <QuantityWrapper>

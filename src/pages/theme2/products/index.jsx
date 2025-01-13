@@ -31,6 +31,11 @@ export default function Products({
     touchStartY.current = e.touches[0].clientY;
   
   };
+  console.log("carouselPosition.."+carouselPosition)
+  console.log("swipePosition.."+swipePosition)
+  console.log("activeCategory.."+categories.findIndex(category=>category.id==activeCategory))
+
+
   const handleTouchMove = (e) => {
     const currentX = e.touches[0].clientX;
     const currentY = e.touches[0].clientY;
@@ -49,7 +54,7 @@ export default function Products({
       setScrollInProgress(true);
       //swipeposition is implemented for the problems in the last 4 categories where the carousel doesnt swipe
       if (deltaX > 0) {
-        if (carouselPosition > 0 && swipePosition > carouselPosition) {
+        if (carouselPosition >= 0 && swipePosition > carouselPosition) {
           setactiveCategory(categories[swipePosition - 1].id)
           setswipePosition(swipePosition - 1)
         } else {
@@ -62,7 +67,7 @@ export default function Products({
       } else {
         if (carouselPosition < categories.length - 4 && swipePosition<categories.length-4) {
           setcarouselPosition(carouselPosition + 1);
-          setactiveCategory(categories[carouselPosition + 1].id)
+          setactiveCategory(categories[swipePosition + 1].id)
         } else {
           if( swipePosition < categories.length-1){
           setcarouselPosition(categories.length - 4);
