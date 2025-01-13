@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Container,
   Wrapper,
@@ -11,6 +11,8 @@ import {
   Delete,
 } from "./styles";
 import { useDeleteProductQuery } from "../../../../apis/products/deleteProduct";
+import { LANGUAGES } from "../../../../global";
+import { getCookie } from "../../../../utilities/manageCookies";
 
 export default function Product({
   product,
@@ -20,7 +22,10 @@ export default function Product({
   setIsDeletePopUpOpen,
 }) {
   const { category, images,cover_id } = product;
-
+  const storedUserInfo = getCookie("userInfo") || "{}";
+  const [userInformation, setUserInformation] = useState(
+    JSON.parse(storedUserInfo)
+  );
   return (
     <Container>
       <Wrapper>
@@ -37,7 +42,7 @@ export default function Product({
         <InfoContainer>
           <Title>{product?.en_name || product?.ar_name}</Title>
           <Category>
-            {category?.en_category || category?.ar_category || "Offer"}
+            { userInformation.Lang === LANGUAGES.AR ?category.ar_category:category.en_category }
           </Category>
           <DeleteButton
             onClick={() => {
