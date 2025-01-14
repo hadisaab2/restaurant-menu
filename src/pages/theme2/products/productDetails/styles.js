@@ -295,6 +295,7 @@ export const ItemInfoWrapper = styled.div`
 export const ItemInfo = styled.div`
   width: 90%;
   display: ${(props) => (props.CloseAnimation ? "flex" : "none")};
+  align-items: ${props=>props.activeLanguage=="en"?"flex-start":"flex-end"};;
   flex-direction: column;
   position: relative;
   margin-top: 20px;
@@ -303,9 +304,10 @@ export const ItemInfo = styled.div`
   @media (min-width: 1024px) {
         width: 50%;
     }
+    /* background-color: red; */
 `;
 
-const NameAnimation = keyframes`
+const NameAnimationLeft = keyframes`
  0% { 
     margin-left: -50px;
     opacity: 0;
@@ -320,15 +322,30 @@ const NameAnimation = keyframes`
 
 }
 `;
+const NameAnimationRight = keyframes`
+ 0% { 
+    margin-right: -50px;
+    opacity: 0;
+}
+50%{
+  margin-right: -50px;
+    opacity: 0;
+}
+ 100% { 
+    margin-right: 0px;
+    opacity: 1;
 
+}
+`;
 export const ItemName = styled.span`
   font-size: 23px;
   font-weight: bold;
-  width: 60%;
-  margin-left: 0px;
+  /* width: 60%; */
+  margin-left:${props=>props.activeLanguage=="en"?"0px":null} ;
+  margin-right:${props=>props.activeLanguage=="en"?null:"0px"} ;
   opacity: 1;
   margin-top: 10px;
-  animation: ${NameAnimation} 1.4s ease-in-out;
+  animation: ${props=>props.activeLanguage=="en"?NameAnimationLeft:NameAnimationRight} 1.4s ease-in-out;
 `;
 
 const DescriptionAnimation = keyframes`
@@ -354,6 +371,8 @@ export const ItemDescription = styled.span`
   word-spacing: 1px;
   white-space: pre-line;
   animation: ${DescriptionAnimation} 1.6s ease-in-out;
+  text-align: ${props=>props.activeLanguage=="en"?"left":"right"} ;
+  direction: ${props=>props.activeLanguage=="en"?"ltr":"rtl"} ;;
 `;
 const PriceAnimation = keyframes`
  0% { 
@@ -375,7 +394,9 @@ export const ItemPrice = styled.span`
   font-weight: 500;
   word-spacing: 3px;
   position: absolute;
-  right: 0px;
+  right: ${props=>props.activeLanguage=="en"?"0px":null};
+  left: ${props=>props.activeLanguage=="en"?null:"0px"};
+
   transform: scale(1);
   top: 5px;
   color: white;
@@ -392,7 +413,7 @@ export const ButtonWrapper = styled.div`
   flex-direction: row;
   align-items: center;
   gap: 10px;
-  animation: ${NameAnimation} 1.4s ease-in-out;
+  animation: ${NameAnimationLeft} 1.4s ease-in-out;
   margin-top: 30px;
   height: 80px;
   padding-bottom: 40px;

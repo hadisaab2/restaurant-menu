@@ -115,7 +115,7 @@ export default function ProductForm({ formSchema, onPriceChange, basePrice, form
   };
 
   return (
-    <form>
+    <form style={{width:"100%"}}>
       {formSchema?.components.map((component) => renderComponent(component))}
     </form>
   );

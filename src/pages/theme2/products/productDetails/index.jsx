@@ -288,18 +288,18 @@ export default function ProductDetails({
           />
         )}
         <ItemInfoWrapper>
-          <ItemInfo CloseAnimation={CloseAnimation}>
-            <ItemName>
+          <ItemInfo CloseAnimation={CloseAnimation} activeLanguage={restaurant.activeLanguage}>
+            <ItemName  activeLanguage={restaurant.activeLanguage} >
               {restaurant.activeLanguage == "en"
                 ? plates[activePlate]?.en_name
                 : plates[activePlate]?.ar_name}
             </ItemName>
-            <ItemDescription
+            <ItemDescription activeLanguage={restaurant.activeLanguage} 
               dangerouslySetInnerHTML={{ __html: description }}
             />
             {formSchema?.components && <ProductForm formSchema={formSchema} onPriceChange={handlePriceChange} formData={formData} setFormData={setFormData} basePrice={plates[activePlate]?.en_price} />}
             {!_.isEmpty(plates[activePlate]?.en_price) && (
-              <ItemPrice>
+              <ItemPrice activeLanguage={restaurant.activeLanguage}>
                 {totalPrice} {currencySymbol}
               </ItemPrice>
             )}
@@ -310,7 +310,9 @@ export default function ProductDetails({
                 <Quantity>{quantity}</Quantity>
                 <Minus onClick={handleDecrement}>-</Minus>
               </QuantityWrapper>
-              <AddToCart onClick={handleAddToCart}>Add To Cart</AddToCart>
+              <AddToCart onClick={handleAddToCart}>{restaurant.activeLanguage == "en"
+                ? "Add To Cart"
+                : "أضف إلى السلة"}</AddToCart>
             </ButtonWrapper>
           </ItemInfo>
         </ItemInfoWrapper>
