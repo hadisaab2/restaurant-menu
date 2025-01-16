@@ -49,6 +49,7 @@ import { FaPlus } from "react-icons/fa6";
 import imageCompression from "browser-image-compression";
 
 import FormBuilder from "./formbuilder";
+import { dashboardColors } from "../../../../styles/theme";
 
 export default function AddProduct({
   setIsFormOpen,
@@ -499,7 +500,7 @@ export default function AddProduct({
           <LoadingButton
             loading={isPending || isEditing}
             variant="contained"
-            style={{ backgroundColor: "turquoise" }}
+            style={{ backgroundColor: dashboardColors.mainColor }}
             onClick={handleAddProduct}
           >
             {selectedProduct ? "Edit Product" : "Add Product"}

@@ -340,9 +340,10 @@ const NameAnimationRight = keyframes`
 export const ItemName = styled.span`
   font-size: 23px;
   font-weight: bold;
-  /* width: 60%; */
+  width: 70%;
   margin-left:${props=>props.activeLanguage=="en"?"0px":null} ;
   margin-right:${props=>props.activeLanguage=="en"?null:"0px"} ;
+  text-align:${props=>props.activeLanguage=="en"?"left":"right"} ;
   opacity: 1;
   margin-top: 10px;
   animation: ${props=>props.activeLanguage=="en"?NameAnimationLeft:NameAnimationRight} 1.4s ease-in-out;

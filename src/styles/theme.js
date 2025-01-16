@@ -12,6 +12,10 @@ export const breakingPoints = {
   lg: 992,
 };
 
+export const dashboardColors = {
+  mainColor: "#5eabb1"
+};
+
 // import axios from 'axios';
 
 // // Function that fetches theme data and returns a promise

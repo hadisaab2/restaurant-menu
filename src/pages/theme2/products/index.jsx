@@ -1,4 +1,4 @@
-import React, { createRef, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Container, ProductWrapper } from "./styles";
 import Product from "./product";
 import ProductDetails from "./productDetails";
@@ -18,100 +18,24 @@ export default function Products({
 }) {
   const [activePlate, setactivePlate] = useState(null);
   const { restaurantName: paramRestaurantName } = useParams();
- 
-
-  // handling page swipe to change category
-  const [swipePosition, setswipePosition] = useState(carouselPosition);
-  const [scrollInProgress, setScrollInProgress] = useState(false);
-  const touchStartX = useRef(0);
-  const touchStartY = useRef(0);
-  
-  const handleTouchStart = (e) => {
-    touchStartX.current = e.touches[0].clientX;
-    touchStartY.current = e.touches[0].clientY;
-  
-  };
-  console.log("carouselPosition.."+carouselPosition)
-  console.log("swipePosition.."+swipePosition)
-  console.log("activeCategory.."+categories.findIndex(category=>category.id==activeCategory))
-
-
-  const handleTouchMove = (e) => {
-    const currentX = e.touches[0].clientX;
-    const currentY = e.touches[0].clientY;
-  
-    const deltaX = currentX - touchStartX.current;
-    const deltaY = currentY - touchStartY.current;
-  
-    // Ignore vertical scroll
-    if (Math.abs(deltaY) > Math.abs(deltaX)) {
-      return; // Do nothing for vertical movements
-    }
-  
-
-    // Add a flag to check if the scroll action is in progress
-    if (!scrollInProgress && activePlate==null) {
-      setScrollInProgress(true);
-      //swipeposition is implemented for the problems in the last 4 categories where the carousel doesnt swipe
-      if (deltaX > 0) {
-        if (carouselPosition >= 0 && swipePosition > carouselPosition) {
-          setactiveCategory(categories[swipePosition - 1].id)
-          setswipePosition(swipePosition - 1)
-        } else {
-          if(carouselPosition!==0){
-          setcarouselPosition(carouselPosition - 1);
-          setactiveCategory(categories[carouselPosition - 1].id)
-          }
-          
-        }
-      } else {
-        if (carouselPosition < categories.length - 4 && swipePosition<categories.length-4) {
-          setcarouselPosition(carouselPosition + 1);
-          setactiveCategory(categories[swipePosition + 1].id)
-        } else {
-          if( swipePosition < categories.length-1){
-          setcarouselPosition(categories.length - 4);
-          setactiveCategory(categories[swipePosition + 1].id)
-          setswipePosition(swipePosition + 1)
-          }
-
-        }
-      }
-      touchStartX.current = currentX;
-    }
-  };
-  const handleTouchEnd = () => {
-    touchStartX.current = 0;
-    setScrollInProgress(false);
-  };
-  useEffect(() => {
-    setswipePosition(categories.findIndex(category=>category.id==activeCategory));
-  }, [activeCategory]);
-
-
-
-  
-
-
-
-  const hostname = window.location.hostname;
-  const subdomain = hostname.split(".")[0];
-
-  // Determine the restaurant name to use
-  const restaurantName =
+  const subdomain = window.location.hostname.split(".")[0];
+    // Determine the restaurant name to use
+    const restaurantName =
     subdomain !== "menugic" && subdomain !== "localhost" && subdomain !== "www"
       ? subdomain
       : paramRestaurantName;
 
-  const [productPositions, setProductPositions] = useState([]); // x y and width of product
-  const [productRefs, setProductRefs] = useState([]);
-  const loadMoreRef = useRef();
-  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, status } =
-    useGetProducts(activeCategory);
-
   const activeLanguage = useSelector(
     (state) => state.restaurant?.[restaurantName].activeLanguage
   );
+
+  const [productPositions, setProductPositions] = useState([]); // x y and width of product
+  const [productRefs, setProductRefs] = useState([]);
+  const loadMoreRef = useRef();
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage } =
+    useGetProducts(activeCategory);
+
+
 
   //function to find or change the x and y of the products images
   const changepositions = () => {
@@ -127,7 +51,6 @@ export default function Products({
   };
 
   useEffect(() => {
-    // window.scrollTo(0, 0);
     changepositions();
   }, [productRefs]);
 
@@ -181,6 +104,82 @@ export default function Products({
           .includes(searchText.toLowerCase())
       ) || [];
 
+
+
+
+
+
+
+  // handling page swipe to change category
+  const [swipePosition, setswipePosition] = useState(carouselPosition);
+  const [scrollInProgress, setScrollInProgress] = useState(false);
+  const touchStartX = useRef(0);
+  const touchStartY = useRef(0);
+
+  const handleTouchStart = (e) => {
+    touchStartX.current = e.touches[0].clientX;
+    touchStartY.current = e.touches[0].clientY;
+
+  };
+
+  const handleTouchMove = (e) => {
+    const currentX = e.touches[0].clientX;
+    const currentY = e.touches[0].clientY;
+
+    const deltaX = currentX - touchStartX.current;
+    const deltaY = currentY - touchStartY.current;
+
+    // Ignore vertical scroll
+    if (Math.abs(deltaY) > Math.abs(deltaX)) {
+      return; // Do nothing for vertical movements
+    }
+    // Add a flag to check if the scroll action is in progress
+    if (!scrollInProgress && activePlate == null) {
+      setScrollInProgress(true);
+      //swipeposition is implemented for the problems in the last 4 categories where the carousel doesnt swipe
+      if (deltaX > 0) {
+        if (carouselPosition >= 0 && swipePosition > carouselPosition) {
+          setactiveCategory(categories[swipePosition - 1].id)
+          setswipePosition(swipePosition - 1)
+        } else {
+          if (carouselPosition !== 0) {
+            setcarouselPosition(carouselPosition - 1);
+            setactiveCategory(categories[carouselPosition - 1].id)
+          }
+
+        }
+      } else {
+        if (carouselPosition < categories.length - 4 && swipePosition < categories.length - 4) {
+          setcarouselPosition(carouselPosition + 1);
+          setactiveCategory(categories[swipePosition + 1].id)
+        } else {
+          if (swipePosition < categories.length - 1) {
+            setcarouselPosition(categories.length - 4);
+            setactiveCategory(categories[swipePosition + 1].id)
+            setswipePosition(swipePosition + 1)
+          }
+
+        }
+      }
+      touchStartX.current = currentX;
+    }
+  };
+
+  const handleTouchEnd = () => {
+    touchStartX.current = 0;
+    setScrollInProgress(false);
+  };
+  useEffect(() => {
+    setswipePosition(categories.findIndex(category => category.id == activeCategory));
+  }, [activeCategory]);
+
+
+
+
+
+
+
+
   return (
     <Container
       activeCategory={activeCategory}
@@ -189,8 +188,6 @@ export default function Products({
       onTouchEnd={handleTouchEnd}
     >
       <ProductWrapper activePlate={activePlate}>
-
-        
         {menu?.map((singlemenu, index) => {
           if (activeCategory == singlemenu.id) {
             return (

@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import { MdOutlineKeyboardBackspace } from "react-icons/md";
-import { breakingPoints } from "../../../../styles/theme";
+import { breakingPoints, dashboardColors } from "../../../../styles/theme";
 import { MdDelete } from "react-icons/md";
 
 export const ProductInfo = styled.div`
@@ -39,7 +39,7 @@ export const CoverImage = styled.button`
   color: white;
   cursor: pointer;
   border-radius: 5px;
-  background-color: turquoise;
+  background-color: ${dashboardColors.mainColor};
   font-weight: 500;
   font-size: 10px;
 
@@ -128,7 +128,7 @@ export const Tabs = styled.div`
 export const Tab = styled.div`
 padding: 10px;
 border-radius: 5px;
-background-color:${props=>props.activeTab==props.tab?"turquoise":"null"};
+background-color:${props=>props.activeTab==props.tab?dashboardColors.mainColor:"null"};
 color:${props=>props.activeTab==props.tab?"white":"black"};
 
 `;

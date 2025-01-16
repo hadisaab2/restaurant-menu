@@ -1,6 +1,7 @@
 import styled from "styled-components";
 import { breakingPoints } from "../../../styles/theme";
-
+import { dashboardColors } from "../../../styles/theme";
+import { InputLabel, Select } from "@mui/material";
 export const Container = styled.div`
   display: flex;
   align-items: flex-start;
@@ -34,15 +35,40 @@ align-items: center;
   }
 `;
 
+// Styled Select Component
+export const StyledSelect = styled(Select)`
+  .MuiOutlinedInput-notchedOutline {
+    border-color: ${dashboardColors.mainColor} !important; /* Base outline color */
+  }
+
+  &:hover .MuiOutlinedInput-notchedOutline {
+    border-color: ${dashboardColors.mainColor} !important; /* Outline color on hover */
+  }
+
+  &.Mui-focused .MuiOutlinedInput-notchedOutline {
+    border-color: ${dashboardColors.mainColor} !important; /* Outline color when focused */
+  }
+`;
+export const StyledInputLabel = styled(InputLabel)`
+  &.MuiInputLabel-outlined {
+    color: ${dashboardColors.mainColor} !important; /* Change label color */
+  }
+
+  &.Mui-focused {
+    color: ${dashboardColors.mainColor} !important; /* Label color when focused */
+  }
+`;
+
+
 
 export const AddButton = styled.button`
   width: 150px;
   outline: none;
   border: 0;
-  color: black;
+  color: white;
   cursor: pointer;
   border-radius: 10px;
-  background-color: white;
+  background-color: ${dashboardColors.mainColor};
   display: flex;
   flex-direction: row;
   gap: 10px;
@@ -61,6 +87,9 @@ export const LoadWrapper = styled.div`
   align-items: center;
   justify-content: flex-start;
   cursor: pointer;
+  @media (max-width: ${breakingPoints.sm}px) {
+    width: 40%;
+  }
 `;
 
 export const LoadBtnWrapper = styled.div`
@@ -74,10 +103,10 @@ export const LoadMore = styled.button`
   width: 80%;
   outline: none;
   border: 0;
-  color: black;
+  color: white;
   cursor: pointer;
   border-radius: 10px;
-  background-color: white;
+  background-color: ${dashboardColors.mainColor};
   display: flex;
   gap: 10px;
   font-weight: 500;

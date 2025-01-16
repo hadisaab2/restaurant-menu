@@ -7,8 +7,9 @@ import {
   LoadWrapper,
   LoadMore,
   LoadBtnWrapper,
+  StyledSelect,
+  StyledInputLabel,
 } from "./styles";
-
 import Product from "./product";
 import { IoMdAdd } from "react-icons/io";
 import AddProduct from "./addproduct";
@@ -73,8 +74,8 @@ export default function Products({}) {
           <FormWrapper>
             <Box sx={{ minWidth: 120,height: '50%' }}>
               <FormControl fullWidth size="small">
-                <InputLabel id="demo-simple-select-label">Category</InputLabel>
-                <Select
+                <StyledInputLabel id="demo-simple-select-label">Category</StyledInputLabel>
+                <StyledSelect
                   labelId="demo-simple-select-label"
                   id="demo-simple-select"
                   value={selectedCategory}
@@ -91,7 +92,7 @@ export default function Products({}) {
                       </MenuItem>
                     );
                   })}
-                </Select>
+                </StyledSelect>
               </FormControl>
             </Box>
             <AddButton onClick={() => setIsFormOpen(true)}>

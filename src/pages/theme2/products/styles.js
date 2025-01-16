@@ -13,7 +13,7 @@ export const ProductWrapper = styled.div`
   display: flex;
   align-content: flex-start;
   width: 95%;
-  /* opacity:${props=>props.activePlate!==null?"0":"1"}; */
+  min-height: 70vh;
   opacity: 1;
   transition:all 0.7s ease-in-out;
 `;
