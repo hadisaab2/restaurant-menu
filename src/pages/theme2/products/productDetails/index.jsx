@@ -59,16 +59,21 @@ export default function ProductDetails({
   const activeCategory = categories.find((category) => category.id == activeCategoryId)
 
 
-  //if product have a form than we'll take the form of it else we take form of category
-  const formJson = !_.isEmpty(JSON.parse(plates[activePlate]?.form_json)) ? plates[activePlate]?.form_json : activeCategory.form_json;
-
-
+let formJson=null;
+//if product have a form than we'll take the form of it else we take form of category
+  if(!_.isEmpty(plates[activePlate]?.form_json)){//la etjanab json.parse la undefined
+    if(!_.isEmpty(JSON.parse(plates[activePlate]?.form_json))){
+      formJson=plates[activePlate]?.form_json
+    }else{
+      formJson=activeCategory?.form_json
+    }
+  }
 
 
   const [formSchema, setFormSchema] = useState(
-    formJson ? JSON.parse(formJson) : {}
+    !_.isEmpty(formJson) ? JSON.parse(formJson) : {}
   );
-  // console.log(formSchema)
+
   const [formData, setFormData] = useState({});
 
   const dispatch = useDispatch();
