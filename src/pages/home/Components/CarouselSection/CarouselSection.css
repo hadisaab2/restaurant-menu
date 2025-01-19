@@ -1,0 +1,12 @@
+.upperSection{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding-top: 130px;
+    gap:5px;
+    margin-bottom: 60px;
+    
+}
+

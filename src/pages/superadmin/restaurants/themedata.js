@@ -33,6 +33,8 @@ export const templates = [
       "branchUnActive",
       // "sidebarbackgroundColor",
       // "sidebartextColor"
+      "searchbackgroundColor",
+
     ],
   },
   {

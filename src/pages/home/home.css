@@ -1,0 +1,43 @@
+.Wrapper{
+    background-color: #4abdb7;
+    min-height: 100vh;
+  }
+
+  .close{
+    position: absolute;
+    right: 8%;
+    top:4%;
+  }
+.tabs{
+    margin-top: 20%;
+}
+  .tab{
+    font-size: 25px;
+    padding: 20px;
+    font-weight: 500;
+  }
+
+  .sidbar-logo{
+    max-width: 250px;
+    max-height:250px ;
+    margin-top: 20px;
+    margin-left: 10px;
+  }
+
+  .wp-iconwrapper{
+    width: 70px;
+    height: 70px;
+    position: fixed;
+    bottom: 20px;
+    left: 30px;
+    border-radius: 50%;
+    align-items: center;
+    justify-content:center;
+    display: flex;
+    background-color: rgb(234, 234, 234);
+  }
+
+  .wp-logoimage{
+    width: 30px;
+    height: 30px;
+  }
