@@ -400,7 +400,7 @@ export const ItemPrice = styled.span`
 
   transform: scale(1);
   top: 5px;
-  color: white;
+  color: ${(props) => props.theme.popupbuttonText};;
   padding: 10px;
   border-radius: 10px;
   background-color: ${(props) => props.theme.mainColor};
@@ -429,7 +429,7 @@ export const AddToCart = styled.button`
   cursor: pointer;
   height: 100%;
 
-  color: ${(props) => props.theme.backgroundColor};
+  color: ${(props) => props.theme.popupbuttonText};
   font-weight: 400;
   background-color: ${(props) => props.theme.mainColor};
   border-radius: 5px;
@@ -441,7 +441,7 @@ export const QuantityWrapper = styled.div`
   flex-direction: row;
   height: 100%;
   background-color: ${(props) => props.theme.mainColor};
-  color: ${(props) => props.theme.backgroundColor};
+  color: ${(props) => props.theme.popupbuttonText};
   border-radius: 5px;
 `;
 

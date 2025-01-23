@@ -5,6 +5,8 @@ import {
     Arrow,
     OptionsList,
     Option,
+    CircularOption,
+    OptionsWrapper,
 } from "./styles";
 import { Label } from "../styles";
 
@@ -41,22 +43,40 @@ export default function CustomizedSelect({ component, formData, handleChange, pl
     return (
         <SelectContainer ref={dropdownRef}>
             <Label>{component.label}</Label>
-            <SelectHeader onClick={toggleDropdown}>
-                {selectedOption ? selectedOption : placeholder}
-                <Arrow className={isOpen ? "up" : ""}>&#9660;</Arrow>
-            </SelectHeader>
+            {component.data.values > 4 ?
+                <>
+                    <SelectHeader onClick={toggleDropdown}>
+                        {selectedOption ? selectedOption : placeholder}
+                        <Arrow className={isOpen ? "up" : ""}>&#9660;</Arrow>
+                    </SelectHeader>
 
-            <OptionsList isOpen={isOpen}>
-                {component.data.values.map((option, index) => (
-                    <Option
-                        key={index}
-                        className={selectedOption === option.label ? "selected" : ""}
-                        onClick={() => handleOptionClick(option)}
-                    >
-                        {option.label}
-                    </Option>
-                ))}
-            </OptionsList>
+
+                    <OptionsList isOpen={isOpen}>
+                        {component.data.values.map((option, index) => (
+                            <Option
+                                key={index}
+                                className={selectedOption === option.label ? "selected" : ""}
+                                onClick={() => handleOptionClick(option)}
+                            >
+                                {option.label}
+                            </Option>
+                        ))}
+                    </OptionsList>
+                </> : <>
+                    <OptionsWrapper>
+                        {component.data.values.map((option, index) => (
+
+                            <CircularOption
+                                selected={selectedOption === option.label}
+                                onClick={() => handleOptionClick(option)}>
+                                {option.label}
+
+                            </CircularOption>
+                        ))}
+
+                    </OptionsWrapper>
+                </>}
+
         </SelectContainer>
     );
 };

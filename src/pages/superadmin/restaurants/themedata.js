@@ -27,14 +27,18 @@ export const templates = [
       "BoxTextColor",
       "BoxPriceColor",
       "languageTextColor",
-      "searchTextColor",
       "popupTextColor",
       "popupbackgroundColor",
-      "branchUnActive",
-      // "sidebarbackgroundColor",
-      // "sidebartextColor"
-      "searchbackgroundColor",
 
+      "searchbackground",
+      "searchTextColor",
+      "languagebackground",
+      "formColor",
+      "sidebartext",
+      "sidebarbackground",
+      "sidebarsearch",
+      "sidebarsearchText",
+      "popupbuttonText"
     ],
   },
   {

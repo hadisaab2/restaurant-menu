@@ -1,3 +1,4 @@
+import _ from "lodash";
 import styled from "styled-components";
 
 export const SelectContainer = styled.div`
@@ -8,8 +9,9 @@ export const SelectContainer = styled.div`
 
   font-family: Arial, sans-serif;
   border-top: 1px solid ${(props) => {
-    const color = props.theme.mainColor; // Get the color
+    let color = props?.theme?.formColor; // Get the color
     const opacity = 0.2; // Desired opacity (e.g., 50%)
+    if(_.isEmpty(color)){color="rgb(0,0,0)"};
 
     if (color.startsWith("#")) {
       // HEX to RGBA conversion
@@ -29,7 +31,7 @@ export const SelectContainer = styled.div`
 `;
 
 export const SelectHeader = styled.div`
-  padding: 10px;
+  padding: 5px;
   background: #f0f0f0;
   border: 1px solid #ccc;
   cursor: pointer;
@@ -38,14 +40,15 @@ export const SelectHeader = styled.div`
   align-items: center;
   border-radius: 4px;
   background-color:transparent;
-  color:${(props) => props.theme.mainColor};
+  color:${(props) => props.theme.formColor};
   width: 70%;
-  border: 1px solid ${(props) => props.theme.mainColor};
+  border: 1px solid ${(props) => props.theme.formColor};
 
+font-size: 13px;
 `;
 
 export const Arrow = styled.span`
-  font-size: 12px;
+  font-size: 10px;
   transition: transform 0.2s;
 
   &.up {
@@ -82,14 +85,32 @@ export const Option = styled.li`
   }
 
   &.selected {
-    background: ${(props) => props.theme.backgroundColor};
-    color: ${(props) => props.theme.mainColor};;
+    background: rgb(0,0,0);
   }
 `;
 
+export const OptionsWrapper = styled.div`
+  display: flex;
+  flex-direction: row;
+  gap:10px;
+`;
+
+export const CircularOption = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius:30px;
+  border: 1px solid ${(props) => props.theme.mainColor};
+  background-color: ${props=>props.selected?props.theme.mainColor:"transparent"};
+  padding: 10px;
+  font-size: 12px;
+  color: ${props=>props.selected?props.theme.popupbackgroundColor:props.theme.formColor};
+`;
 export const Label = styled.label`
   font-weight: bold;
   margin-bottom: 8px;
-  color:${(props) => props.theme.mainColor};
+  color:${(props) => props.theme.formColor};
   margin-top: 20px;
+  font-size: 14px;
+
 `;

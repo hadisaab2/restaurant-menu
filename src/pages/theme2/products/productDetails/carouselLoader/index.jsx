@@ -2,13 +2,16 @@ import React from "react";
 import {
   ActiveCircle,
   ActiveCircleWrapper,
+  ArrowRight,
   Circle,
   CircleWrapper,
   Container,
+  SwipeAnimation,
+  SwipeText,
   Wrapper,
 } from "./styles";
 
-export default function CarouselLoader({ carouselIndex, images,CloseAnimation }) {
+export default function CarouselLoader({ carouselIndex, images, CloseAnimation, carouselSwiped }) {
   return (
     <Container CloseAnimation={CloseAnimation}>
       <Wrapper>
@@ -23,6 +26,11 @@ export default function CarouselLoader({ carouselIndex, images,CloseAnimation })
           );
         })}
       </Wrapper>
+      {!carouselSwiped && <SwipeAnimation>
+        <SwipeText>Swipe</SwipeText>
+        <ArrowRight />
+      </SwipeAnimation>}
+
     </Container>
   );
 }

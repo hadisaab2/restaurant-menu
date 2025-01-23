@@ -66,7 +66,7 @@ const items = [
   },
   {
     name: "bodyboost",
-    logo: "https://storage.googleapis.com/ecommerce-bucket-testing/1723463602155-BodyBoosstLogoInverted.svg",
+    logo: "https://storage.googleapis.com/ecommerce-bucket-testing/1737311485437-textwithflaskBodyBoost (1).png",
   },
 ];
 

@@ -109,7 +109,7 @@ export default function Order({ setblock, popupHandler, restaurant }) {
     const whatsappUrl = `https://wa.me/${restaurant.phone_number}?text=${encodedMessage}`;
 
     window.open(whatsappUrl, "_blank");
-    dispatch(clearCart());
+    dispatch(clearCart(restaurantName));
     popupHandler(null);
   };
 

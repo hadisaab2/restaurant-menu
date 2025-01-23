@@ -45,20 +45,20 @@ const items = [
     logo: "https://storage.googleapis.com/ecommerce-bucket-testing/1736080387300-ce22b88d-701a-43a5-b40d-3e409a5f2780_1-removebg-preview (1).svg",
   },
   {
-    name: "magnifico",
-    logo: "https://storage.googleapis.com/ecommerce-bucket-testing/1736967893061-410590808_776386197848578_970705798533961791_n-removebg-preview.svg",
+    name: "walidFlower",
+    logo: "https://storage.googleapis.com/ecommerce-bucket-testing/1714720286931-fe43c3dc-2f2c-4111-a0d7-e00b628bad59-removebg-preview.svg",
   },
   {
-    name: "balloweenevent",
-    logo: "https://storage.googleapis.com/ecommerce-bucket-testing/1713873140213-balloween-event-logo-removebg-preview-2.svg",
+    name: "bacherlights",
+    logo: "https://storage.googleapis.com/ecommerce-bucket-testing/1714216387965-IMG-20240427-WA0065-removebg-preview.svg",
   },
   {
     name: "theflowershop",
     logo: "https://storage.googleapis.com/ecommerce-bucket-testing/1713692650687-10560986_301435386703720_1643784321_a-removebg-preview.svg",
   },
   {
-    name: "andysrolls",
-    logo: "https://storage.googleapis.com/ecommerce-bucket-testing/1736077791504-312993080_6321930744490328_111076251399715480_n-removebg-preview (2).svg",
+    name: "glowvana",
+    logo: "https://storage.googleapis.com/ecommerce-bucket-testing/1714810892590-be10d0ab-fcac-422d-97c1-5c53b9df2eda-removebg-preview.svg",
   },
   {
     name: "aldoauksweets",
@@ -66,7 +66,7 @@ const items = [
   },
   {
     name: "bodyboost",
-    logo: "https://storage.googleapis.com/ecommerce-bucket-testing/1723463602155-BodyBoosstLogoInverted.svg",
+    logo: "https://storage.googleapis.com/ecommerce-bucket-testing/1737311485437-textwithflaskBodyBoost (1).png",
   },
 ];
 

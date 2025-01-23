@@ -79,6 +79,7 @@ let formJson=null;
   const dispatch = useDispatch();
 
   const [quantity, setQuantity] = useState(1);
+  const [carouselSwiped, setCarouselSwiped] = useState(false);
 
   const basePrice = parseFloat(plates[activePlate]?.en_price || 0);
   const [totalPrice, setTotalPrice] = useState(basePrice); // Example base price
@@ -100,9 +101,11 @@ let formJson=null;
   };
 
   const handleright = () => {
+    setCarouselSwiped(true);
     setcarouselIndex(carouselIndex + 1);
   };
   const handleleft = () => {
+    setCarouselSwiped(true);
     setcarouselIndex(carouselIndex - 1);
   };
 
@@ -119,7 +122,7 @@ let formJson=null;
       const deltaX = currentX - startX;
 
       if (deltaX > 5) {
-        if (carouselIndex !== 0) handleleft();
+        if (carouselIndex !== 0) handleleft() ;
       } else if (deltaX < -5) {
         if (plates[activePlate].images.length > carouselIndex + 1)
           handleright();
@@ -290,6 +293,7 @@ let formJson=null;
             images={images}
             carouselIndex={carouselIndex}
             CloseAnimation={CloseAnimation}
+            carouselSwiped={carouselSwiped}
           />
         )}
         <ItemInfoWrapper>

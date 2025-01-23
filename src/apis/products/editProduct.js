@@ -14,21 +14,22 @@ const editProduct = async (id, payload) => {
     switch (Lang) {
       case EN:
         formData.append("en_name", payload.en_name);
-        formData.append("en_description", payload.en_description);
+        payload.en_description && formData.append("en_description", payload.en_description);
         formData.append("en_price", payload.en_price);
         break;
       case AR:
         formData.append("ar_name", payload.ar_name);
-        formData.append("ar_description", payload.ar_description);
+        payload.ar_description && formData.append("ar_description", payload.ar_description);
+
         formData.append("en_price", payload.en_price);
 
         break;
       case ENAR:
         formData.append("en_name", payload.en_name);
-        formData.append("en_description", payload.en_description);
+        payload.en_description && formData.append("en_description", payload.en_description);
         formData.append("en_price", payload.en_price);
         formData.append("ar_name", payload.ar_name);
-        formData.append("ar_description", payload.ar_description);
+        payload.ar_description && formData.append("ar_description", payload.ar_description);
         break;
       default:
         break;

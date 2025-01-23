@@ -41,7 +41,7 @@ position: relative;
 export const Search = styled.input`
 width: 100%;
 height:100%;
-background-color: ${props=>props.theme.BoxColor};
+background-color: ${props=>props.theme.searchbackground};
 border: 0;
 outline: none;
 padding-left: ${props=>props.activeLanguage=="en"?"30px":"0px"};

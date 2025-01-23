@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import styled from 'styled-components';
 
 export const SelectBoxWrapper = styled.div`
@@ -7,9 +8,9 @@ export const SelectBoxWrapper = styled.div`
   margin-top: 30px;
   padding-top: 20px;
   border-top: 1px solid ${(props) => {
-    const color = props.theme.mainColor; // Get the color
+    let color = props?.theme?.formColor; // Get the color
     const opacity = 0.2; // Desired opacity (e.g., 50%)
-
+    if(_.isEmpty(color)){color="rgb(0,0,0)"};
     if (color.startsWith("#")) {
       // HEX to RGBA conversion
       const r = parseInt(color.slice(1, 3), 16);
@@ -29,8 +30,9 @@ export const SelectBoxWrapper = styled.div`
 
 export const Option = styled.span`
  /* opacity: 0.8; */
- color: ${(props) => props.theme.mainColor};
- font-weight: 200;
+ color: ${(props) => props.theme.formColor};
+ font-size: 13px;
+ /* font-weight: 200; */
 
 `;
 export const OptionWrapper = styled.div`
@@ -40,16 +42,16 @@ export const OptionWrapper = styled.div`
 `;
 
 export const AddBox = styled.div`
-width: 20px;
-height: 20px;
+width: 17px;
+height: 17px;
 display: flex;
 align-items: center;
 justify-content: center;
-color :${(props) => props.theme.mainColor};
+color :${(props) => props.theme.formColor};
 border: 1px solid ${(props) => {
-    const color = props.theme.mainColor; // Get the color
+    let color = props.theme.formColor; // Get the color
     const opacity = 0.3; // Desired opacity (e.g., 50%)
-
+    if(_.isEmpty(color)){color="rgb(0,0,0)"};
     if (color.startsWith("#")) {
       // HEX to RGBA conversion
       const r = parseInt(color.slice(1, 3), 16);
@@ -64,17 +66,18 @@ border: 1px solid ${(props) => {
       });
     }
     return color; // Fallback if format is unsupported
-  }};font-size:12px;
+  }};
+  font-size:10px;
 
 `;
 
 export const RemoveBox = styled.div`
-width: 20px;
-height: 20px;
+width: 17px;
+height: 17px;
 display: flex;
 align-items: center;
 justify-content: center;
-font-size:12px;
+font-size:10px;
 color: ${(props) => props.theme.backgroundColor};
 background-color: ${(props) => props.theme.mainColor};
 `;
@@ -83,6 +86,6 @@ background-color: ${(props) => props.theme.mainColor};
 export const Label = styled.label`
   font-weight: bold;
   margin-bottom: 8px;
-  color:${(props) => props.theme.mainColor};
+  color:${(props) => props.theme.formColor};
 
 `;

@@ -75,65 +75,65 @@ export default function AddEditMedia({
 
   return (
     <>
-    <AddMediaForm>
-      <BackIcon onClick={() => handleBack()} />
-      <Box sx={{ minWidth: 120 }}>
-        <FormControl fullWidth>
-          <InputLabel>Media</InputLabel>
-          <Select
-            readOnly={selectedMedia}
-            {...register("platform", { required: "Required" })}
-            label="platform"
-            defaultValue={selectedMedia?.platform}
-            error={!isEmpty(formState?.errors?.platform)}
-          >
-            {!platformAlreadyAdded("Instagram") && (
-              <MenuItem value={"Instagram"}>Instagram</MenuItem>
-            )}
-            {!platformAlreadyAdded("Facebook") && (
-              <MenuItem value={"Facebook"}>Facebook</MenuItem>
-            )}
-            {!platformAlreadyAdded("Tiktok") && (
-              <MenuItem value={"Tiktok"}>Tiktok</MenuItem>
-            )}
-            {!platformAlreadyAdded("Whatsapp") && (
-              <MenuItem value={"Whatsapp"}>Whatsapp</MenuItem>
-            )}
-          </Select>
-          {!isEmpty(formState?.errors?.platform) && (
-            <FormHelperText style={{ color: "#d64241" }}>
-              Required field
-            </FormHelperText>
-          )}
-        </FormControl>
-      </Box>
-      <TextField
-        label="Link"
-        name="link"
-        variant="outlined"
-        {...register("link", { required: "Required" })}
-        error={!isEmpty(formState?.errors?.link)}
-        helperText={
-          !isEmpty(formState.errors.link) && formState?.errors?.link?.message
-        }
-      />
+      <AddMediaForm>
+        <BackIcon onClick={() => handleBack()} />
+        <Box sx={{ minWidth: 120 }}>
+          <FormControl fullWidth>
+            <InputLabel>Media</InputLabel>
+            <Select
+              readOnly={selectedMedia}
+              {...register("platform", { required: "Required" })}
+              label="platform"
+              defaultValue={selectedMedia?.platform}
+              error={!isEmpty(formState?.errors?.platform)}
+            >
+              {!platformAlreadyAdded("Instagram") && (
+                <MenuItem value={"Instagram"}>Instagram</MenuItem>
+              )}
+              {!platformAlreadyAdded("Facebook") && (
+                <MenuItem value={"Facebook"}>Facebook</MenuItem>
+              )}
+              {!platformAlreadyAdded("Tiktok") && (
+                <MenuItem value={"Tiktok"}>Tiktok</MenuItem>
+              )}
 
-      <LoadingButton
-        onClick={handleAddMedia}
-        loading={isPending}
-        style={{
-          backgroundColor: "turquoise",
-          color: "white",
-          width: "150px",
-          height: "40px",
-        }}
-      >
-        {selectedMedia ? "Edit Media" : "Add Media"}
-      </LoadingButton>
-    </AddMediaForm>
-          <Note>
-          Note: Media links should follow the format: www.instagram.com/...
-        </Note>
-      </>
+              <MenuItem value={"Whatsapp"}>Whatsapp</MenuItem>
+
+            </Select>
+            {!isEmpty(formState?.errors?.platform) && (
+              <FormHelperText style={{ color: "#d64241" }}>
+                Required field
+              </FormHelperText>
+            )}
+          </FormControl>
+        </Box>
+        <TextField
+          label="Link"
+          name="link"
+          variant="outlined"
+          {...register("link", { required: "Required" })}
+          error={!isEmpty(formState?.errors?.link)}
+          helperText={
+            !isEmpty(formState.errors.link) && formState?.errors?.link?.message
+          }
+        />
+
+        <LoadingButton
+          onClick={handleAddMedia}
+          loading={isPending}
+          style={{
+            backgroundColor: "turquoise",
+            color: "white",
+            width: "150px",
+            height: "40px",
+          }}
+        >
+          {selectedMedia ? "Edit Media" : "Add Media"}
+        </LoadingButton>
+      </AddMediaForm>
+      <Note>
+        Note: Media links should follow the format: www.instagram.com/...
+      </Note>
+    </>
   );
 }

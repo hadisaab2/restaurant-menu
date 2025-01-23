@@ -4,7 +4,7 @@ import "./ImageSection.css"
 export default function ImageSection() {
      
   return (
-    <div>
+    <div className='imgheader-wrapper'>
           <img src={Headerimg} alt="ubgugbugb" className='imgheader' />
     
     </div>
