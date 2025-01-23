@@ -90,25 +90,36 @@ export const Option = styled.li`
 `;
 
 export const OptionsWrapper = styled.div`
-  display: flex;
-  flex-direction: row;
-  gap:10px;
+  display: flex; /* Add display flex */
+  flex-wrap: wrap;
 `;
+export const CircularOptionWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  width: 25%;
+  align-items: center;
+  border-radius:30px;
+  background-color: transparent;
 
+`;
 export const CircularOption = styled.div`
   display: flex;
   justify-content: center;
+  width: 90%;
   align-items: center;
   border-radius:30px;
   border: 1px solid ${(props) => props.theme.mainColor};
   background-color: ${props=>props.selected?props.theme.mainColor:"transparent"};
-  padding: 10px;
   font-size: 12px;
   color: ${props=>props.selected?props.theme.popupbackgroundColor:props.theme.formColor};
+  height: 40px;
+  text-align: center;
+  padding: 3px;
+  margin-top: 10px;
 `;
 export const Label = styled.label`
   font-weight: bold;
-  margin-bottom: 8px;
+  margin-bottom: 10px;
   color:${(props) => props.theme.formColor};
   margin-top: 20px;
   font-size: 14px;

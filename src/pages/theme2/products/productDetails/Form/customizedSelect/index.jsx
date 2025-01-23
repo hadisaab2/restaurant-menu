@@ -7,6 +7,7 @@ import {
     Option,
     CircularOption,
     OptionsWrapper,
+    CircularOptionWrapper,
 } from "./styles";
 import { Label } from "../styles";
 
@@ -65,13 +66,14 @@ export default function CustomizedSelect({ component, formData, handleChange, pl
                 </> : <>
                     <OptionsWrapper>
                         {component.data.values.map((option, index) => (
-
+                            <CircularOptionWrapper>
                             <CircularOption
                                 selected={selectedOption === option.label}
                                 onClick={() => handleOptionClick(option)}>
                                 {option.label}
 
                             </CircularOption>
+                            </CircularOptionWrapper>
                         ))}
 
                     </OptionsWrapper>

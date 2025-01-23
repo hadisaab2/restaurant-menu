@@ -309,7 +309,7 @@ let formJson=null;
             {formSchema?.components && <ProductForm formSchema={formSchema} onPriceChange={handlePriceChange} formData={formData} setFormData={setFormData} basePrice={plates[activePlate]?.en_price} />}
             {!_.isEmpty(plates[activePlate]?.en_price) && (
               <ItemPrice activeLanguage={restaurant.activeLanguage}>
-                {totalPrice} {currencySymbol}
+                {totalPrice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") } {currencySymbol}
               </ItemPrice>
             )}
 

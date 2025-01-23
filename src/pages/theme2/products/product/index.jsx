@@ -104,7 +104,7 @@ const Product = React.forwardRef(
             </PlateName>
             {!_.isEmpty(plate.en_price) && (
               <PlatePrice>
-                {plate.en_price} {currencySymbol}
+                { plate.en_price.replace(/\B(?=(\d{3})+(?!\d))/g, ",")} {currencySymbol}
               </PlatePrice>
             )}
           </TextContainer>

@@ -37,7 +37,9 @@ export default function CartItems({setblock}) {
       : paramRestaurantName;
       
   const cart = useSelector((state) => state.cart[restaurantName] || []); // Fetch the cart for the specific restaurant
-
+  const restaurant = useSelector(
+      (state) => state.restaurant?.[restaurantName]
+    );
   // Calculate total price for the specific restaurant's cart
   const totalPrice = cart.reduce((total, item) => {
     return total + item.price * item.quantity;
@@ -83,6 +85,23 @@ export default function CartItems({setblock}) {
     return message.split("\n").map((line, index) => <Price key={index}>{line}<br /></Price>);
   };
 
+  let currencySymbol;
+  switch (restaurant?.currency) {
+    case "dollar":
+      currencySymbol = "$";
+      break;
+    case "lb":
+      currencySymbol = "L.L.";
+      break;
+    case "gram":
+      currencySymbol = "g";
+      break;
+    case "kilogram":
+      currencySymbol = "kg";
+      break;
+    default:
+      currencySymbol = ""; // No currency or unsupported currency
+  }
   return (
     <Wrapper>
         <Title>My Cart</Title>
@@ -110,7 +129,7 @@ export default function CartItems({setblock}) {
                             ? item.en_name
                             : item.ar_name}
                         </Name>
-                        <Price>{item.price * item.quantity} $</Price>
+                        <Price>{(item.price * item.quantity).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} {currencySymbol}</Price>
                         {generateitemdata(item)}
                         {/* <Price>{generateitemdata(item)}</Price> */}
                       </PriceContainer>
@@ -139,7 +158,10 @@ export default function CartItems({setblock}) {
                 );
               })}
             </ItemsWrap>
-            <TotalPrice>Total Price : {totalPrice.toFixed(2)} $</TotalPrice>
+            <TotalPrice>Total Price : {currencySymbol === "$" 
+  ? totalPrice.toFixed(2).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") 
+  : totalPrice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+} {currencySymbol}</TotalPrice>
 
             <Purchase onClick={handlePurchase}>Continue</Purchase>
           </>
