@@ -55,7 +55,7 @@ export const CategoryWrapper = styled.div`
   background-color:${props=>props.categoryId==props.activeCategory?props.theme.categoryActive:props.theme.categoryUnActive};
   box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.1);
   transition: 0.2s all ease-in-out;
-  color:${props=>props.categoryId==props.activeCategory?"white":"black"};
+  color:${props=>props.categoryId==props.activeCategory?"white":"black"};//edit thiss
 `;
 
 

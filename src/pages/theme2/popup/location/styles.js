@@ -356,7 +356,7 @@ export const OptionsList = styled.ul`
   list-style: none;
   max-height: 300px;
   background-color:${props=>props.theme.mainColor} ;
-  color:${(props) => props.theme.backgroundColor};
+  color:${(props) => props.theme.popupbackgroundColor};
   width: 100%;
   animation: ${OptionsListAnimation} 1s ease-in-out;
   overflow: hidden;

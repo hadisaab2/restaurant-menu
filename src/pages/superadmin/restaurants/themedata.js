@@ -29,7 +29,6 @@ export const templates = [
       "languageTextColor",
       "popupTextColor",
       "popupbackgroundColor",
-
       "searchbackground",
       "searchTextColor",
       "languagebackground",

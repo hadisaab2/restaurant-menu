@@ -10,22 +10,22 @@ export default function CartPopup({
   showPopup,
   popupHandler = { popupHandler },
 }) {
-  
-  const[block,setblock]=useState("cart")
 
-    useEffect(() => {
-      const handlePopState = () => {
-        // Revert to the normal view when back is pressed
-        popupHandler(null);
-      };
-  
-      // Add event listener for popstate
-      window.addEventListener("popstate", handlePopState);
-  
-      // Cleanup event listener
-      return () => window.removeEventListener("popstate", handlePopState);
-    }, []);
-  
+  const [block, setblock] = useState("cart")
+
+  useEffect(() => {
+    const handlePopState = () => {
+      // Revert to the normal view when back is pressed
+      popupHandler(null);
+    };
+
+    // Add event listener for popstate
+    window.addEventListener("popstate", handlePopState);
+
+    // Cleanup event listener
+    return () => window.removeEventListener("popstate", handlePopState);
+  }, []);
+
   return (
     <Container showPopup={showPopup}>
       <Close
@@ -33,8 +33,8 @@ export default function CartPopup({
           popupHandler(null);
         }}
       />
-      {block=="cart" && <CartItems setblock={setblock} />}
-      {block=="order" && <Order setblock={setblock} popupHandler={popupHandler} restaurant={restaurant}/>}
+      {block == "cart" && <CartItems setblock={setblock} />}
+      {block == "order" && <Order setblock={setblock} popupHandler={popupHandler} restaurant={restaurant} />}
     </Container>
   );
 }
