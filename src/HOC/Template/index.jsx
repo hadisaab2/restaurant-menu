@@ -48,8 +48,14 @@ const updateFavicon = (url) => {
     if (!isLoading && response?.data) {
       dispatch(addmenu(response?.data));
       document.title = response.data.name;
-      updateFavicon(`https://storage.googleapis.com/ecommerce-bucket-testing/${response.data.logoURL}`);
 
+      let link = document.querySelector("link[rel~='icon']");
+    if (!link) {
+      link = document.createElement('link');
+      link.rel = 'icon';
+      document.getElementsByTagName('head')[0].appendChild(link);
+    }
+    link.href = `https://storage.googleapis.com/ecommerce-bucket-testing/${response.data.logoURL}`;
       dispatch(
         changelanuage({
           name: restaurantName,
