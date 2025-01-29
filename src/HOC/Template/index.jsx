@@ -29,13 +29,27 @@ export default function Template() {
 
   const restaurant = useSelector((state) => state.restaurant?.[restaurantName]);
   const [isTrue, setIsTrue] = useState(true);
+// ✅ Update favicon dynamically
+const updateFavicon = (url) => {
+  let existingFavicon = document.querySelector("link[rel='icon']");
+  
+  if (existingFavicon) {
+      // ✅ Remove the existing favicon to force a fresh load
+      existingFavicon.remove();
+  }
 
+  // ✅ Create a new favicon tag
+  const newFavicon = document.createElement("link");
+  newFavicon.rel = "icon";
+  newFavicon.href = url + `?v=${new Date().getTime()}`; // Append timestamp to prevent caching
+  document.head.appendChild(newFavicon);
+};
   useEffect(() => {
     if (!isLoading && response?.data) {
       dispatch(addmenu(response?.data));
       document.title = response.data.name;
-      let favicon = document.querySelector("link[rel='icon']");
-      favicon.href = `https://storage.googleapis.com/ecommerce-bucket-testing/${response.data.logoURL}`;
+      updateFavicon(`https://storage.googleapis.com/ecommerce-bucket-testing/${response.data.logoURL}`);
+
       dispatch(
         changelanuage({
           name: restaurantName,
@@ -53,7 +67,6 @@ export default function Template() {
     return () => clearTimeout(timer);
   }, []);
   if (restaurant?.categories && !isLoading && !isTrue) {
-    console.log(response.data.font);
     return (<>
       <Helmet>
       <title>{response.data.name}</title>
