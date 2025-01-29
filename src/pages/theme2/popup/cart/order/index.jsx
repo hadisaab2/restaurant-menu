@@ -12,6 +12,8 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import { clearCart } from "../../../../../redux/cart/cartActions";
+import BranchSelect from "./branchSelect";
+import RegionSelect from "./regionSelect";
 
 export default function Order({ setblock, popupHandler, restaurant }) {
   const { restaurantName: paramRestaurantName } = useParams();
@@ -33,6 +35,9 @@ export default function Order({ setblock, popupHandler, restaurant }) {
     fullAddress: "",
     note: "",
   });
+  const [selectedBranch, setSelectedBranch] = useState(restaurant?.branches.length>1?"": restaurant?.branches[0]);
+  const [selectedRegion, setSelectedRegion] = useState("");
+
   const [errors, setErrors] = useState({
     fullName: "",
     phoneNumber: "",
@@ -132,6 +137,8 @@ export default function Order({ setblock, popupHandler, restaurant }) {
         <option value="TakeAway">TakeAway</option>
       </Select>
       {errors.deliveryType && <Error>{errors.deliveryType}</Error>}
+      {restaurant?.branches.length>1 && <BranchSelect branches={restaurant?.branches} selectedBranch={selectedBranch} setSelectedBranch={setSelectedBranch}/>}
+      {(selectedBranch && restaurant?.branches.length!=0)&& <RegionSelect  selectedRegion={selectedRegion} setSelectedRegion={setSelectedRegion} selectedBranch={restaurant?.branches.length==1?restaurant?.branches[0]:selectedBranch} /> } 
       <Input
         type="text"
         name="fullName"
@@ -160,6 +167,7 @@ export default function Order({ setblock, popupHandler, restaurant }) {
           {errors.fullAddress && <Error>{errors.fullAddress}</Error>}
         </>
       )}
+     
       <NoteTextArea
         name="note"
         value={details.note}

@@ -16,7 +16,7 @@ export const Input = styled.input`
   height: 40px;
   margin-top: 20px;
   background-color: transparent;
-  border: 1px solid ${props=>props.theme.popupTextColor};
+  border: 1px solid ${props=>props.theme.mainColor};
   border-radius:5px;
   padding-left: 10px;
   outline: none;
@@ -70,8 +70,9 @@ export const Select = styled.select`
   background-color: ${(props) => props.theme.mainColor};
   width: 90%;
   margin-top: 20px;
+  border: 0px;
 
-  &:active{
+  &:focus{
     outline: none;
     border: 0px;
 

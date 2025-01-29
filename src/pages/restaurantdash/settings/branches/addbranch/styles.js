@@ -5,7 +5,7 @@ import { MdOutlineKeyboardBackspace } from "react-icons/md";
 export const BackIcon = styled(MdOutlineKeyboardBackspace)`
   position: absolute;
   left: 0;
-  top: 0;
+  top: 20px;
   font-size: 20px;
 `;
 
@@ -26,14 +26,13 @@ width: 150px;
 
 export const AddBranchForm = styled.div`
   display: flex;
-  flex-direction: row;
+  flex-wrap: wrap;
   align-items:center;
-  justify-content: center;
   gap:20px;
-  margin-top:30px;
   margin-left: 20px;
   position: relative;
-  padding-top: 40px;
+  padding-top: 60px;
+  width: 100%;
 `;
 
 export const Note = styled.span`

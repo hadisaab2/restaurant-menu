@@ -12,11 +12,12 @@ import AddEditBranch from "./addbranch";
 import { useGetBranches } from "../../../../apis/branches/getBranches";
 import { getCookie } from "../../../../utilities/manageCookies";
 import DeleteBranchPopup from "./deleteBranchPopup";
+import { useGetBranch } from "../../../../apis/branches/getBranch";
 
 export default function Branches() {
   const [showAddComponent, setShowAddComponent] = useState(false);
   const [isPopupOpen, setIsPopUpOpen] = useState(false);
-  const [selectedBranch, setSelectedBranch] = useState(null);
+  // const [selectedBranch, setSelectedBranch] = useState(null);
   const [selectedIdForAction, setSelectedIdForAction] = useState(null);
   const [branches, setBranches] = useState([]);
   const storedUserInfo = getCookie("userInfo") || "{}";
@@ -27,13 +28,16 @@ export default function Branches() {
     restaurant_id: userInformation.restaurant_id,
   });
 
+
+
+
+
   const refetchBranches = () => {
     refetch().then(({ data: { data } }) => setBranches(data));
   };
 
-  const handleEdit = (branch) => {
+  const handleEdit = async (branch) => {
     setSelectedIdForAction(branch.id);
-    setSelectedBranch(branch);
     setShowAddComponent(true);
   };
 
@@ -43,12 +47,13 @@ export default function Branches() {
     }
   }, [isLoading]);
 
+
   return (
     <>
       {showAddComponent ? (
         <AddEditBranch
-          selectedBranch={selectedBranch}
-          setSelectedBranch={setSelectedBranch}
+          // selectedBranch={selectedBranch}
+          // setSelectedBranch={setSelectedBranch}
           setShowAddComponent={setShowAddComponent}
           refetchBranches={refetchBranches}
           userInformation={userInformation}

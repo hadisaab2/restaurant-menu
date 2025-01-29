@@ -51,9 +51,15 @@ export default function Theme2() {
     }
     setshowPopup(type);
   };
+
+  const handleClickOutside=()=>{
+    if(showPopup!=null){
+      setshowPopup(null)
+    }
+  }
   return (
     <Container id="wrapper">
-      <MenuWrapper>
+      <MenuWrapper onClick={handleClickOutside} >
         <BlurOverlay showPopup={showPopup} />
         <Header
           categories={restaurant.categories}
@@ -77,10 +83,16 @@ export default function Theme2() {
           categories={restaurant.categories}
         />
       </MenuWrapper>
-      <DetailsBtn onClick={() => popupHandler("location")}>
+      <DetailsBtn onClick={() => {
+        window.history.pushState({}, ""); // Add a history entry
+        popupHandler("location")
+      }}>
         <Location />
       </DetailsBtn>
-      <CartBtn onClick={() => popupHandler("cart")}>
+      <CartBtn onClick={() => {
+        window.history.pushState({}, ""); // Add a history entry
+        popupHandler("cart")
+      }}>
         <Number>{itemCount}</Number>
         <Cart />
       </CartBtn>
@@ -101,7 +113,7 @@ export default function Theme2() {
         setshowSidebar={setshowSidebar}
         showSidebar={showSidebar}
         setcarouselPosition={setcarouselPosition}
-        
+
       />
     </Container>
   );

@@ -10,6 +10,8 @@ import {
 import { ThemeProvider } from "styled-components";
 import Loading from "./loading";
 import Theme2 from "../../pages/theme2";
+import { Helmet } from "react-helmet";
+
 
 export default function Template() {
   const dispatch = useDispatch();
@@ -31,6 +33,9 @@ export default function Template() {
   useEffect(() => {
     if (!isLoading && response?.data) {
       dispatch(addmenu(response?.data));
+      document.title = response.data.name;
+      let favicon = document.querySelector("link[rel='icon']");
+      favicon.href = `https://storage.googleapis.com/ecommerce-bucket-testing/${response.data.logoURL}`;
       dispatch(
         changelanuage({
           name: restaurantName,
@@ -49,7 +54,23 @@ export default function Template() {
   }, []);
   if (restaurant?.categories && !isLoading && !isTrue) {
     console.log(response.data.font);
-    return (
+    return (<>
+      <Helmet>
+      <title>{response.data.name}</title>
+
+      {/* ✅ Open Graph Tags (WhatsApp, Facebook, Twitter) */}
+      <meta property="og:title" content={response.data.name} />
+      <meta property="og:description" content={`Check out ${response.data.name}'s menu!`} />
+      <meta property="og:image" content={`https://storage.googleapis.com/ecommerce-bucket-testing/${response.data.logoURL}`} />
+      <meta property="og:url" content={window.location.href} />
+      <meta property="og:type" content="website" />
+
+      {/* ✅ Twitter Meta Tags */}
+      <meta name="twitter:card" content="summary_large_image" />
+      <meta name="twitter:title" content={response.data.name} />
+      <meta name="twitter:description" content={`Explore the best dishes at ${response.data.name}!`} />
+      <meta name="twitter:image" content={`https://storage.googleapis.com/ecommerce-bucket-testing/${response.data.logoURL}`} />
+    </Helmet>
       <ThemeProvider
         theme={{
           ...JSON.parse(response.data.theme),
@@ -59,6 +80,8 @@ export default function Template() {
         {restaurant?.template_id == 1 && <Theme1 />}
         {restaurant?.template_id == 2 && <Theme2 />}
       </ThemeProvider>
+      </>
+
     );
   } else {
     return <Loading />;

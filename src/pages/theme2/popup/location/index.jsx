@@ -52,7 +52,7 @@ import { FaLocationDot } from "react-icons/fa6";
 export default function LocationPopup({
   restaurant,
   showPopup,
-  popupHandler = { popupHandler },
+  popupHandler
 }) {
   const [activeBranch, setActiveBranch] = useState(restaurant?.branches[0]);
   const [activeButton, setActiveButton] = useState("");
@@ -95,6 +95,8 @@ export default function LocationPopup({
     return () => window.removeEventListener("popstate", handlePopState);
   }, []);
 
+
+  
   return (
     <Container showPopup={showPopup}>
       <Close
