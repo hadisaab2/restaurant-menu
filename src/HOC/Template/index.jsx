@@ -11,6 +11,7 @@ import { ThemeProvider } from "styled-components";
 import Loading from "./loading";
 import Theme2 from "../../pages/theme2";
 import { Helmet } from "react-helmet";
+import Favicon from "react-favicon";
 
 
 export default function Template() {
@@ -44,18 +45,42 @@ const updateFavicon = (url) => {
   newFavicon.href = url + `?v=${new Date().getTime()}`; // Append timestamp to prevent caching
   document.head.appendChild(newFavicon);
 };
+
+
+const updateMetaTags = (faviconUrl, title) => {
+  const metaTags = [
+      { property: "og:image", content: faviconUrl },
+      { property: "og:image:type", content: "image/png" },
+      { property: "og:image:width", content: "512" },
+      { property: "og:image:height", content: "512" },
+      { property: "og:title", content: title }  // Updating title dynamically
+  ];
+
+  metaTags.forEach(({ property, content }) => {
+      let metaTag = document.querySelector(`meta[property='${property}']`);
+      if (!metaTag) {
+          metaTag = document.createElement("meta");
+          metaTag.setAttribute("property", property);
+          document.head.appendChild(metaTag);
+      }
+      metaTag.setAttribute("content", content);
+  });
+};
+
+
   useEffect(() => {
     if (!isLoading && response?.data) {
       dispatch(addmenu(response?.data));
       document.title = response.data.name;
 
-      let link = document.querySelector("link[rel~='icon']");
-    if (!link) {
-      link = document.createElement('link');
-      link.rel = 'icon';
-      document.getElementsByTagName('head')[0].appendChild(link);
-    }
-    link.href = `https://storage.googleapis.com/ecommerce-bucket-testing/${response.data.logoURL}`;
+    //   let link = document.querySelector("link[rel~='icon']");
+    // if (!link) {
+    //   link = document.createElement('link');
+    //   link.rel = 'icon';
+    //   document.getElementsByTagName('head')[0].appendChild(link);
+    // }
+    // link.href = `https://storage.googleapis.com/ecommerce-bucket-testing/${response.data.logoURL}`;
+    updateMetaTags(`https://storage.googleapis.com/ecommerce-bucket-testing/${response.data.logoURL}`,response?.data?.name)
       dispatch(
         changelanuage({
           name: restaurantName,
@@ -90,6 +115,8 @@ const updateFavicon = (url) => {
       <meta name="twitter:description" content={`Explore the best dishes at ${response.data.name}!`} />
       <meta name="twitter:image" content={`https://storage.googleapis.com/ecommerce-bucket-testing/${response.data.logoURL}`} />
     </Helmet>
+    <Favicon url={`https://storage.googleapis.com/ecommerce-bucket-testing/${response.data.logoURL}`} />
+
       <ThemeProvider
         theme={{
           ...JSON.parse(response.data.theme),
