@@ -43,7 +43,7 @@ width: 100%;
 position:relative;
 display: flex;
 flex-direction: column;
-gap:20px
+gap:20px;
 `;
 
 export const Tabs = styled.div`
@@ -87,7 +87,7 @@ width:20px;
 height:20px;
 `;
 export const Brand = styled.img`
-max-width: 250px;
+max-width: 200px;
 max-height: 120px;
 margin-top: 10px;
 `;

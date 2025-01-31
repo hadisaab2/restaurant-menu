@@ -1,9 +1,9 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Caret, Loader, LoaderWrapper, OptionItem, OptionsList, OptionText, Search, SearchIcon, SearchWrapper, SelectedValue, SelectWrapper } from './styles';
 import { useGetBranch } from '../../../../../../apis/branches/getBranch';
 import { SearchContainer } from './styles';
 
-export default function RegionSelect({ selectedBranch, selectedRegion, setSelectedRegion }) {
+export default function RegionSelect({ selectedBranch, selectedRegion, setSelectedRegion,setErrors,errors }) {
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -13,6 +13,9 @@ export default function RegionSelect({ selectedBranch, selectedRegion, setSelect
     }
   });
 
+  useEffect(()=>{
+    setSelectedRegion("")
+  },[selectedBranch])
 
   const handleToggle = () => {
     setIsOpen((prev) => !prev);
@@ -21,6 +24,11 @@ export default function RegionSelect({ selectedBranch, selectedRegion, setSelect
   const handleOptionClick = (option) => {
     setSelectedRegion(option);
     setIsOpen(false);
+    setSearchTerm("");
+    setErrors({
+      ...errors,
+      region: "",
+    });
   };
 
   const handleSearchChange = (event) => {
@@ -31,6 +39,7 @@ export default function RegionSelect({ selectedBranch, selectedRegion, setSelect
   );
 
   return (
+    
     <SelectWrapper>
       <SelectedValue onClick={handleToggle}>
         {selectedRegion || "Select Region"}

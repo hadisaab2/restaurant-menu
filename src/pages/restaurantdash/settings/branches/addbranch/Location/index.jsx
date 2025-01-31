@@ -3,7 +3,7 @@ import { Checkbox, FormControl, InputLabel, ListItemText, MenuItem, Select } fro
 import { lebanonData } from "./lebanondata";
 import { AddRate, CityDeliveryRate, DeliveryRate, DeliveryWrapper } from './styles';
 
-export default function Location({ location, setLocation, register }) {
+export default function Location({ location, setLocation,register}) {
     const [cityPage, setCityPage] = useState(1); // Tracks the current page for cities
     const CITIES_PER_PAGE = 10; // Number of cities per page
     const [deliveryRates, setDeliveryRates] = useState({}); // New state for delivery rates
@@ -49,8 +49,8 @@ export default function Location({ location, setLocation, register }) {
     };
 
     const handleCityChange = (event) => {
-
         const selectedCities = event.target.value;
+        console.log("Selected Cities",selectedCities)
         const hasUndefined = selectedCities.some((value) => value === undefined); // check if last menuitem handlechange triggered
         if (!hasUndefined) {
             setLocation((prev) => ({
@@ -63,7 +63,6 @@ export default function Location({ location, setLocation, register }) {
     const handleLoadMore = () => {
         setCityPage((prevPage) => prevPage + 1); // Increment the page
     };
-
 
 
     const handleDeliveryInputChange = (district, rate) => {
@@ -97,7 +96,7 @@ export default function Location({ location, setLocation, register }) {
         
 
     };
-    { console.log(location.cities) }
+    {console.log(location)}
     return (
         <>
             <FormControl style={{ width: "40%" }}>
@@ -163,6 +162,7 @@ export default function Location({ location, setLocation, register }) {
                     value={location.cities}
                     onChange={handleCityChange}
                     renderValue={(selected) => selected.map((city) => city?.region_name).join(", ")}
+                    {...register("regions")}
                 >
                     {lebanonData
                         .flatMap((governorate) =>
@@ -171,7 +171,7 @@ export default function Location({ location, setLocation, register }) {
                         .flatMap((district) => district.Cities).slice(0, cityPage * CITIES_PER_PAGE).map((city) => (
                             <MenuItem key={city.id} value={city}>
                                 <Checkbox
-                                    checked={location.cities.find((c) => c.id == city.id)}
+                                    checked={location.cities.find((c) => c.id === city.id)}
                                 />
                                 <ListItemText primary={city.region_name.trim()} />
                                 <DeliveryWrapper onClick={

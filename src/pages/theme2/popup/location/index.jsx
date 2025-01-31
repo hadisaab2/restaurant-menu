@@ -119,7 +119,7 @@ export default function LocationPopup({
                   branch.phone_number.split(" ").map((phone, index) => (
                     <Option>
                       <a href={`tel:${phone}`} style={{ textDecoration: "none", color: "inherit" }}>
-                        {phone}  {branch.location && <span>- {branch.location} </span>}
+                        {phone}  {branch.location && <span>- {branch.name} </span>}
                       </a>
                     </Option>
                   ))

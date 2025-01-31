@@ -66,6 +66,7 @@ export default function CartItems({setblock}) {
     }
   };
   
+ 
 
   const generateitemdata = (item) => {
     let message = '';

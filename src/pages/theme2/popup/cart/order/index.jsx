@@ -35,19 +35,20 @@ export default function Order({ setblock, popupHandler, restaurant }) {
     fullAddress: "",
     note: "",
   });
-  const [selectedBranch, setSelectedBranch] = useState(restaurant?.branches.length>1?"": restaurant?.branches[0]);
+  const hasOnlineBranch= ()=>{
+    return restaurant?.branches.some(branch => branch.is_online);
+
+  }
+
+  const [selectedBranch, setSelectedBranch] = useState(!hasOnlineBranch?"":restaurant?.branches[0]);
   const [selectedRegion, setSelectedRegion] = useState("");
-
-  const [errors, setErrors] = useState({
-    fullName: "",
-    phoneNumber: "",
-    fullAddress: "",
-    deliveryType: "",
-  });
-
+  const [errors, setErrors] = useState({});
   const [deliveryType, setDeliveryType] = useState("");
+
+  
   const handleChange = (e) => {
     const { name, value } = e.target;
+
     setDetails({
       ...details,
       [name]: value,
@@ -58,16 +59,29 @@ export default function Order({ setblock, popupHandler, restaurant }) {
     });
   };
 
+
+
   const handlePurchase = () => {
-    const newErrors = {
-      fullName: !details.fullName ? "Full Name is required." : "",
-      phoneNumber: !details.phoneNumber ? "Phone Number is required." : "",
-      fullAddress:
-        deliveryType === "Delivery" && !details.fullAddress
-          ? "Full Address is required for delivery."
-          : "",
-      deliveryType: !deliveryType ? "Delivery Type is required." : "",
-    };
+    let newErrors;
+    if(deliveryType=="Delivery"){
+       newErrors = {
+        fullName: !details.fullName ? "Full Name is required." : "",
+        phoneNumber: !details.phoneNumber ? "Phone Number is required." : "",
+        fullAddress: !details.fullAddress? "Full Address is required for delivery.": "",
+        deliveryType: !deliveryType ? "Delivery Type is required." : "",
+        branch: !selectedBranch ? "Branch is required" : "",
+        region: (!selectedRegion && selectedBranch) ? "Region is required" : "",
+  
+      };
+    }else{
+      newErrors = {
+        fullName: !details.fullName ? "Full Name is required." : "",
+        phoneNumber: !details.phoneNumber ? "Phone Number is required." : "",
+        deliveryType: !deliveryType ? "Delivery Type is required." : "",
+        branch: !selectedBranch ? "Branch is required" : "",
+      };
+    }
+   
 
     if (Object.values(newErrors).some((error) => error)) {
       setErrors(newErrors);
@@ -118,6 +132,7 @@ export default function Order({ setblock, popupHandler, restaurant }) {
     popupHandler(null);
   };
 
+
   return (
     <Wrapper>
       <BackIcon
@@ -130,15 +145,23 @@ export default function Order({ setblock, popupHandler, restaurant }) {
         value={deliveryType}
         onChange={(e) => {
           setDeliveryType(e.target.value);
+          setErrors({})
         }}
       >
         <option value="">Select Order Type</option>
         <option value="Delivery">Delivery</option>
         <option value="TakeAway">TakeAway</option>
+        <option value="DineIn">DineIn</option>
+
       </Select>
       {errors.deliveryType && <Error>{errors.deliveryType}</Error>}
-      {restaurant?.branches.length>1 && <BranchSelect branches={restaurant?.branches} selectedBranch={selectedBranch} setSelectedBranch={setSelectedBranch}/>}
-      {(selectedBranch && restaurant?.branches.length!=0)&& <RegionSelect  selectedRegion={selectedRegion} setSelectedRegion={setSelectedRegion} selectedBranch={restaurant?.branches.length==1?restaurant?.branches[0]:selectedBranch} /> } 
+        {(restaurant?.branches.length!=0 && !hasOnlineBranch()) && <BranchSelect branches={restaurant?.branches} selectedBranch={selectedBranch} setSelectedBranch={setSelectedBranch} setErrors={setErrors} errors={errors}/>}
+        {errors.branch && <Error>{errors.branch}</Error>}
+
+        {(selectedBranch && deliveryType === "Delivery") && <RegionSelect selectedRegion={selectedRegion} setSelectedRegion={setSelectedRegion} selectedBranch={restaurant?.branches.length == 1 ? restaurant?.branches[0] : selectedBranch} setErrors={setErrors} errors={errors} />}
+        {errors.region && <Error>{errors.region}</Error>}
+
+
       <Input
         type="text"
         name="fullName"
@@ -167,7 +190,7 @@ export default function Order({ setblock, popupHandler, restaurant }) {
           {errors.fullAddress && <Error>{errors.fullAddress}</Error>}
         </>
       )}
-     
+
       <NoteTextArea
         name="note"
         value={details.note}

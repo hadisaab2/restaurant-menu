@@ -30,6 +30,10 @@ export const useGetBranch = ({ onSuccess, branch_id }) => {
             queryKey: [`branch-${branch_id}`],
             onSuccess,
             retry: false, // Disable retries
+            cacheTime: 0, // Do not cache results
+            staleTime: 0, // Always refetch the data
+            refetchOnMount: true, // Fetch again when component remounts
+            refetchOnWindowFocus: true, // Fetch again when the window is focused
 
         });
 

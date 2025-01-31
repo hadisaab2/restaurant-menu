@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { AddBranchForm, BackIcon, Note } from "./styles";
-import { TextField } from "@mui/material";
+import { Checkbox, FormControl, FormControlLabel, FormLabel, Radio, RadioGroup, TextField } from "@mui/material";
 import { useForm } from "react-hook-form";
 import { useAddBranchQuery } from "../../../../../apis/branches/addBranch";
 import { useEditBranchQuery } from "../../../../../apis/branches/editBranch";
@@ -17,6 +17,7 @@ export default function AddEditBranch({
   setSelectedIdForAction,
 }) {
   const [location, setLocation] = useState({ governorates: [], districts: [], cities: [] });
+  const [isOnline, setIsOnline] = useState(false); // Default false
   const { register, handleSubmit, setValue, formState, reset } = useForm();
   const { response: fetchedBranch, isLoading: branchLoading, refetch: refetchBranchDetails } = useGetBranch({
     branch_id: selectedIdForAction, // Trigger fetch based on branch_id,
@@ -34,7 +35,7 @@ export default function AddEditBranch({
             const district = lebanonData
               .flatMap((governorate) => governorate.Districts)
               .find((d) => d.id === region.district_id);
-  
+
             return district ? district.DistrictDescription : null;
           })
           .filter(Boolean) // Remove null values
@@ -57,24 +58,27 @@ export default function AddEditBranch({
   };
 
   useEffect(() => {
-    if (!branchLoading && selectedIdForAction ) {
-      const { name, location, mapLink, phone_number,regions } = fetchedBranch?.data;
+    if (!branchLoading && selectedIdForAction) {
+      const { name, location, mapLink, phone_number, regions,is_online } = fetchedBranch?.data;
+      console.log(is_online)
       setValue("name", name);
       setValue("location", location);
       setValue("mapLink", mapLink);
       setValue("phone_number", phone_number);
-      const filtereddistricts=getDistrictNamesFromId( regions)
-      const filteredgovernorate=getGovernoratesFromDistricts(filtereddistricts);
-      setValue("regions", regions); 
+      const filtereddistricts = getDistrictNamesFromId(regions)
+      const filteredgovernorate = getGovernoratesFromDistricts(filtereddistricts);
+      setValue("regions", regions);
+      setValue("is_online", is_online);
+      setIsOnline(is_online)
       setLocation({
         governorates: filteredgovernorate,
         districts: filtereddistricts,
-        cities: regions, // Assuming `regions` is the desired value for cities
+        cities: regions.map(({ district_id, ...rest }) => rest), // Assuming `regions` is the desired value for cities
       });
 
 
     }
-  }, [branchLoading])
+  }, [branchLoading,fetchedBranch?.data])
 
 
   const { handleApiCall, isPending } = useAddBranchQuery({
@@ -112,7 +116,8 @@ export default function AddEditBranch({
       const payload = {
         ...data,
         restaurant_id: userInformation.restaurant_id,
-        regions: location.cities.map(city => city.id)
+        regions: location.cities.map(city => city.id),
+        is_online:isOnline
       };
       if (selectedIdForAction) {
         handleEditApi(selectedIdForAction, payload);
@@ -122,9 +127,6 @@ export default function AddEditBranch({
     })();
   };
 
-  useEffect(() => {
-
-  }, []);
 
   const handleBack = () => {
     reset({
@@ -137,7 +139,9 @@ export default function AddEditBranch({
     setSelectedIdForAction(null)
     setShowAddComponent(false);
   };
-
+  const handleisOnline = (event) => {
+    setIsOnline(!isOnline); // Toggle between true/false
+  };
 
 
   return (
@@ -195,7 +199,15 @@ export default function AddEditBranch({
                 formState?.errors?.mapLink?.message
               }
             />
-            <Location location={location} setLocation={setLocation} register={register} />
+            {!branchLoading && <Location location={location} setLocation={setLocation} register={register} />}
+            <FormControl component="fieldset">
+              <FormLabel component="legend">Shop Type</FormLabel>
+              <FormControlLabel
+                control={<Checkbox checked={isOnline} onChange={handleisOnline} />}
+                label="Online Shop"
+              />
+            </FormControl>
+
             <LoadingButton
               loading={isPending || isEditing}
               onClick={() => handleAddBranch()}
