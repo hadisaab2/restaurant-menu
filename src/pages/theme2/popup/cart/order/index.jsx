@@ -40,12 +40,12 @@ export default function Order({ setblock, popupHandler, restaurant }) {
 
   }
 
-  const [selectedBranch, setSelectedBranch] = useState(!hasOnlineBranch?"":restaurant?.branches[0]);
+  const [selectedBranch, setSelectedBranch] = useState(!hasOnlineBranch()?"":restaurant?.branches[0]);
   const [selectedRegion, setSelectedRegion] = useState("");
   const [errors, setErrors] = useState({});
   const [deliveryType, setDeliveryType] = useState("");
 
-  
+
   const handleChange = (e) => {
     const { name, value } = e.target;
 
