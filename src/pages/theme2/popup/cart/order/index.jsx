@@ -125,7 +125,12 @@ export default function Order({ setblock, popupHandler, restaurant }) {
     message += `- Order notes: ${details.note || "None"}\n`;
 
     const encodedMessage = encodeURIComponent(message);
-    const whatsappUrl = `https://wa.me/${restaurant.phone_number}?text=${encodedMessage}`;
+
+    let newWhatsappNumber = selectedBranch.whatsapp_number.startsWith("961") 
+    ? selectedBranch.whatsapp_number 
+    : "961" + selectedBranch.whatsapp_number;
+
+    const whatsappUrl = `https://wa.me/${newWhatsappNumber}?text=${encodedMessage}`;
 
     window.open(whatsappUrl, "_blank");
     dispatch(clearCart(restaurantName));

@@ -96,7 +96,7 @@ export default function LocationPopup({
   }, []);
 
 
-  
+
   return (
     <Container showPopup={showPopup}>
       <Close
@@ -147,18 +147,20 @@ export default function LocationPopup({
               Message            </>
             : <>
               <OptionsList activeButton={activeButton}>
-                {restaurant?.socialMedia?.filter(media => media.platform === "Whatsapp").map((number) => {
+                {restaurant?.branches?.map((branch) => {
                   return (
                     <Option>
-                      <a href={`https://${number.link}`} style={{ textDecoration: "none", color: "inherit" }}>
-                        {number.link.match(regex)?.[1]}
-                      </a>
+                      <a href={`https://wa.me/${branch?.whatsapp_number?.startsWith("961")
+                        ? branch?.whatsapp_number
+                        : "961" + branch?.whatsapp_number}`} style={{ textDecoration: "none", color: "inherit" }}>
+                      {branch?.whatsapp_number}-{branch?.name}
+                    </a>
                     </Option>
-                  )
+              )
                 })
 
                 }
-                {/* {restaurant?.branches?.flatMap(branch =>
+              {/* {restaurant?.branches?.flatMap(branch =>
                   branch.phone_number.split(" ").map((phone, index) => (
                     <Option>
                       <a href={`tel:${phone}`} style={{ textDecoration: "none", color: "inherit" }}>
@@ -168,22 +170,22 @@ export default function LocationPopup({
                   ))
                 )} */}
 
-              </OptionsList>
-              <ShadeBox activeButton={activeButton}>
-                <ShadeBorder activeButton={activeButton} />
-              </ShadeBox>
-              <ChoosePlaceHolder activeButton={activeButton}>
-                Choose Number
-              </ChoosePlaceHolder>
-              <Arrow activeButton={activeButton} />
+            </OptionsList>
+          <ShadeBox activeButton={activeButton}>
+            <ShadeBorder activeButton={activeButton} />
+          </ShadeBox>
+          <ChoosePlaceHolder activeButton={activeButton}>
+            Choose Number
+          </ChoosePlaceHolder>
+          <Arrow activeButton={activeButton} />
 
 
-            </>}
+        </>}
 
 
-        </ButtonBorder>
+      </ButtonBorder>
 
-      </ButttonWrapper>
+    </ButttonWrapper>
 
       {/* <BranchesContainer>
         {restaurant?.branches?.map((branch) => {
@@ -287,6 +289,6 @@ export default function LocationPopup({
         <CopyWrite />
         2024 <Link href="https://www.menugic.com">menugic.com</Link>
       </PoweredBy>
-    </Container>
+    </Container >
   );
 }
