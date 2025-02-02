@@ -44,7 +44,7 @@ export default function CustomizedSelect({ component, formData, handleChange, pl
     return (
         <SelectContainer ref={dropdownRef}>
             <Label>{component.label}</Label>
-            {component.data.values > 4 ?
+            {component.data.values.length > 8 ?
                 <>
                     <SelectHeader onClick={toggleDropdown}>
                         {selectedOption ? selectedOption : placeholder}

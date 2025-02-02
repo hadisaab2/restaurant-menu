@@ -59,12 +59,13 @@ export default function AddEditBranch({
 
   useEffect(() => {
     if (!branchLoading && selectedIdForAction) {
-      const { name, location, mapLink, phone_number, regions,is_online } = fetchedBranch?.data;
+      const { name, location, mapLink, phone_number, regions,is_online,whatsapp_number } = fetchedBranch?.data;
       console.log(is_online)
       setValue("name", name);
       setValue("location", location);
       setValue("mapLink", mapLink);
       setValue("phone_number", phone_number);
+      setValue("whatsapp_number", whatsapp_number);
       const filtereddistricts = getDistrictNamesFromId(regions)
       const filteredgovernorate = getGovernoratesFromDistricts(filtereddistricts);
       setValue("regions", regions);
@@ -87,7 +88,8 @@ export default function AddEditBranch({
         name: null,
         location: null,
         mapLink: null,
-        phone_number: null
+        phone_number: null,
+        whatsapp_number:null
         // Add all field names you want to reset
       });
       refetchBranches();
@@ -103,7 +105,8 @@ export default function AddEditBranch({
           name: null,
           location: null,
           mapLink: null,
-          phone_number: null
+          phone_number: null,
+          whatsapp_number:null
           // Add all field names you want to reset
         });
         refetchBranches();
@@ -175,6 +178,22 @@ export default function AddEditBranch({
               helperText={
                 !isEmpty(formState.errors.phone_number) &&
                 formState?.errors?.phone_number?.message
+              }
+            />
+               <TextField
+              label="WhatsappNumber"
+              name="whatsapp_number"
+              variant="outlined"
+              {...register("whatsapp_number", {
+                pattern: {
+                  value: /^(\d+\s)*\d+$/,
+                  message: "Invalid phone number format.",
+                },
+              })}
+              error={!isEmpty(formState?.errors?.whatsapp_number)}
+              helperText={
+                !isEmpty(formState.errors.whatsapp_number) &&
+                formState?.errors?.whatsapp_number?.message
               }
             />
             <TextField
