@@ -35,12 +35,12 @@ export default function Order({ setblock, popupHandler, restaurant }) {
     fullAddress: "",
     note: "",
   });
-  const hasOnlineBranch= ()=>{
+  const hasOnlineBranch = () => {
     return restaurant?.branches.some(branch => branch.is_online);
 
   }
 
-  const [selectedBranch, setSelectedBranch] = useState(!hasOnlineBranch()?"":restaurant?.branches[0]);
+  const [selectedBranch, setSelectedBranch] = useState(!hasOnlineBranch() ? "" : restaurant?.branches[0]);
   const [selectedRegion, setSelectedRegion] = useState("");
   const [errors, setErrors] = useState({});
   const [deliveryType, setDeliveryType] = useState("");
@@ -63,17 +63,17 @@ export default function Order({ setblock, popupHandler, restaurant }) {
 
   const handlePurchase = () => {
     let newErrors;
-    if(deliveryType=="Delivery"){
-       newErrors = {
+    if (deliveryType == "Delivery") {
+      newErrors = {
         fullName: !details.fullName ? "Full Name is required." : "",
         phoneNumber: !details.phoneNumber ? "Phone Number is required." : "",
-        fullAddress: !details.fullAddress? "Full Address is required for delivery.": "",
+        fullAddress: !details.fullAddress ? "Full Address is required for delivery." : "",
         deliveryType: !deliveryType ? "Delivery Type is required." : "",
         branch: !selectedBranch ? "Branch is required" : "",
         region: (!selectedRegion && selectedBranch) ? "Region is required" : "",
-  
+
       };
-    }else{
+    } else {
       newErrors = {
         fullName: !details.fullName ? "Full Name is required." : "",
         phoneNumber: !details.phoneNumber ? "Phone Number is required." : "",
@@ -81,7 +81,7 @@ export default function Order({ setblock, popupHandler, restaurant }) {
         branch: !selectedBranch ? "Branch is required" : "",
       };
     }
-   
+
 
     if (Object.values(newErrors).some((error) => error)) {
       setErrors(newErrors);
@@ -125,12 +125,21 @@ export default function Order({ setblock, popupHandler, restaurant }) {
     message += `- Order notes: ${details.note || "None"}\n`;
 
     const encodedMessage = encodeURIComponent(message);
+    let whatsappUrl = "",newWhatsappNumber="";
+    if(!selectedBranch.whatsapp_number){
+      whatsappUrl = `https://wa.me/${restaurant.phone_number}?text=${encodedMessage}`;
 
-    let newWhatsappNumber = selectedBranch.whatsapp_number.startsWith("961") 
-    ? selectedBranch.whatsapp_number 
-    : "961" + selectedBranch.whatsapp_number;
 
-    const whatsappUrl = `https://wa.me/${newWhatsappNumber}?text=${encodedMessage}`;
+    }else{
+       newWhatsappNumber = selectedBranch?.whatsapp_number?.startsWith("961")
+      ? selectedBranch?.whatsapp_number
+      : "961" + selectedBranch?.whatsapp_number;
+      whatsappUrl = `https://wa.me/${newWhatsappNumber}?text=${encodedMessage}`;
+
+    }
+    
+    console.log(whatsappUrl)
+
 
     window.open(whatsappUrl, "_blank");
     dispatch(clearCart(restaurantName));
@@ -160,11 +169,11 @@ export default function Order({ setblock, popupHandler, restaurant }) {
 
       </Select>
       {errors.deliveryType && <Error>{errors.deliveryType}</Error>}
-        {(restaurant?.branches.length!=0 && !hasOnlineBranch()) && <BranchSelect branches={restaurant?.branches} selectedBranch={selectedBranch} setSelectedBranch={setSelectedBranch} setErrors={setErrors} errors={errors}/>}
-        {errors.branch && <Error>{errors.branch}</Error>}
+      {(restaurant?.branches.length != 0 && !hasOnlineBranch()) && <BranchSelect branches={restaurant?.branches} selectedBranch={selectedBranch} setSelectedBranch={setSelectedBranch} setErrors={setErrors} errors={errors} />}
+      {errors.branch && <Error>{errors.branch}</Error>}
 
-        {(selectedBranch && deliveryType === "Delivery") && <RegionSelect selectedRegion={selectedRegion} setSelectedRegion={setSelectedRegion} selectedBranch={restaurant?.branches.length == 1 ? restaurant?.branches[0] : selectedBranch} setErrors={setErrors} errors={errors} />}
-        {errors.region && <Error>{errors.region}</Error>}
+      {(selectedBranch && deliveryType === "Delivery") && <RegionSelect selectedRegion={selectedRegion} setSelectedRegion={setSelectedRegion} selectedBranch={restaurant?.branches.length == 1 ? restaurant?.branches[0] : selectedBranch} setErrors={setErrors} errors={errors} />}
+      {errors.region && <Error>{errors.region}</Error>}
 
 
       <Input
