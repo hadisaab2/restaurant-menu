@@ -70,7 +70,7 @@ export default function Order({ setblock, popupHandler, restaurant }) {
         fullAddress: !details.fullAddress ? "Full Address is required for delivery." : "",
         deliveryType: !deliveryType ? "Delivery Type is required." : "",
         branch: !selectedBranch ? "Branch is required" : "",
-        region: (!selectedRegion && selectedBranch) ? "Region is required" : "",
+        region: (!selectedRegion && selectedBranch && selectedBranch?.regions?.length>0) ? "Region is required" : "",
 
       };
     } else {
@@ -125,19 +125,17 @@ export default function Order({ setblock, popupHandler, restaurant }) {
     message += `- Order notes: ${details.note || "None"}\n`;
 
     const encodedMessage = encodeURIComponent(message);
-    let whatsappUrl = "",newWhatsappNumber="";
-    if(!selectedBranch.whatsapp_number){
+    let whatsappUrl = "", newWhatsappNumber = "";
+    if (!selectedBranch.whatsapp_number) {
       whatsappUrl = `https://wa.me/${restaurant.phone_number}?text=${encodedMessage}`;
-
-
-    }else{
-       newWhatsappNumber = selectedBranch?.whatsapp_number?.startsWith("961")
-      ? selectedBranch?.whatsapp_number
-      : "961" + selectedBranch?.whatsapp_number;
+    } else {
+      newWhatsappNumber = selectedBranch?.whatsapp_number?.startsWith("961")
+        ? selectedBranch?.whatsapp_number
+        : "961" + selectedBranch?.whatsapp_number;
       whatsappUrl = `https://wa.me/${newWhatsappNumber}?text=${encodedMessage}`;
 
     }
-    
+
     console.log(whatsappUrl)
 
 
@@ -172,7 +170,7 @@ export default function Order({ setblock, popupHandler, restaurant }) {
       {(restaurant?.branches.length != 0 && !hasOnlineBranch()) && <BranchSelect branches={restaurant?.branches} selectedBranch={selectedBranch} setSelectedBranch={setSelectedBranch} setErrors={setErrors} errors={errors} />}
       {errors.branch && <Error>{errors.branch}</Error>}
 
-      {(selectedBranch && deliveryType === "Delivery") && <RegionSelect selectedRegion={selectedRegion} setSelectedRegion={setSelectedRegion} selectedBranch={restaurant?.branches.length == 1 ? restaurant?.branches[0] : selectedBranch} setErrors={setErrors} errors={errors} />}
+      {(selectedBranch && deliveryType === "Delivery" && selectedBranch?.regions?.length>0) && <RegionSelect selectedRegion={selectedRegion} setSelectedRegion={setSelectedRegion} selectedBranch={restaurant?.branches.length == 1 ? restaurant?.branches[0] : selectedBranch} setErrors={setErrors} errors={errors} />}
       {errors.region && <Error>{errors.region}</Error>}
 
 
