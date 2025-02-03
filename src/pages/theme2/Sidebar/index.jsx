@@ -74,7 +74,7 @@ export default function SideBar({
             type="text"
             activeLanguage={restaurant?.activeLanguage}
             dir={restaurant?.activeLanguage == "en" ? "ltr" : "rtl"}
-            placeholder={restaurant?.activeLanguage == "en" ? "Search Menu" : "قائمة البحث"}
+            placeholder={restaurant?.activeLanguage == "en" ? "Search Categories" : "قائمة البحث"}
             onChange={handlesearch}
             value={searchText}
           />

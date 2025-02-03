@@ -140,7 +140,7 @@ export const Purchase = styled.button`
 outline: none;
 border: 0;
 cursor: pointer;
-color: ${props=>props.theme.backgroundColor};
+color: ${props=>props.theme.popupbuttonText};
 width: 100%;
 margin-top: 10px;
 background-color: ${props=>props.theme.mainColor};

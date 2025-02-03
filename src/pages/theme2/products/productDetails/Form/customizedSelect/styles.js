@@ -31,7 +31,7 @@ export const SelectContainer = styled.div`
 `;
 
 export const SelectHeader = styled.div`
-  padding: 5px;
+  padding: 7px;
   background: #f0f0f0;
   border: 1px solid #ccc;
   cursor: pointer;
@@ -70,7 +70,7 @@ export const OptionsList = styled.ul`
   max-height: ${props=>props.isOpen?"200px":"0px"};
   transition: 0.2s all ease-in-out;
   background-color:${(props) => props.theme.mainColor};
-  color:${(props) => props.theme.backgroundColor};
+  color:${(props) => props.theme.popupbuttonText};
   width: 70%;
 
 `;
@@ -80,12 +80,10 @@ export const Option = styled.li`
   cursor: pointer;
   transition: background 0.2s;
 
-  &:hover {
-    background: #e9e9e9;
-  }
 
   &.selected {
-    background: rgb(0,0,0);
+    background: ${(props) => props.theme.backgroundColor};
+    color:${(props) => props.theme.mainColor};
   }
 `;
 
