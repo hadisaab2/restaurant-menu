@@ -3,7 +3,7 @@ import { Caret, Loader, LoaderWrapper, OptionItem, OptionsList, OptionText, Sear
 import { useGetBranch } from '../../../../../../apis/branches/getBranch';
 import { SearchContainer } from './styles';
 
-export default function RegionSelect({ selectedBranch, selectedRegion, setSelectedRegion,setErrors,errors }) {
+export default function RegionSelect({ selectedBranch, selectedRegion, setSelectedRegion,setErrors,errors,setRegions}) {
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -12,6 +12,14 @@ export default function RegionSelect({ selectedBranch, selectedRegion, setSelect
     onSuccess: () => {
     }
   });
+
+
+  useEffect(()=>{
+
+    if(!branchLoading){
+      setRegions(fetchedBranch?.data.regions)
+    }
+  },[branchLoading])
 
   useEffect(()=>{
     setSelectedRegion("")
@@ -39,7 +47,7 @@ export default function RegionSelect({ selectedBranch, selectedRegion, setSelect
   );
 
   return (
-    
+    !branchLoading &&<>
     <SelectWrapper>
       <SelectedValue onClick={handleToggle}>
         {selectedRegion || "Select Region"}
@@ -73,5 +81,6 @@ export default function RegionSelect({ selectedBranch, selectedRegion, setSelect
       </OptionsList>
 
     </SelectWrapper>
+    </>
   )
 }

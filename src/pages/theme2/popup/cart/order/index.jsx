@@ -42,6 +42,8 @@ export default function Order({ setblock, popupHandler, restaurant }) {
 
   const [selectedBranch, setSelectedBranch] = useState(!hasOnlineBranch() ? "" : restaurant?.branches[0]);
   const [selectedRegion, setSelectedRegion] = useState("");
+  const [regions, setRegions] = useState([""]);
+
   const [errors, setErrors] = useState({});
   const [deliveryType, setDeliveryType] = useState("");
 
@@ -70,7 +72,7 @@ export default function Order({ setblock, popupHandler, restaurant }) {
         fullAddress: !details.fullAddress ? "Full Address is required for delivery." : "",
         deliveryType: !deliveryType ? "Delivery Type is required." : "",
         branch: !selectedBranch ? "Branch is required" : "",
-        region: (!selectedRegion && selectedBranch && selectedBranch?.regions?.length>0) ? "Region is required" : "",
+        region: (!selectedRegion && selectedBranch && regions.length>0) ? "Region is required" : "",
 
       };
     } else {
@@ -170,7 +172,7 @@ export default function Order({ setblock, popupHandler, restaurant }) {
       {(restaurant?.branches.length != 0 && !hasOnlineBranch()) && <BranchSelect branches={restaurant?.branches} selectedBranch={selectedBranch} setSelectedBranch={setSelectedBranch} setErrors={setErrors} errors={errors} />}
       {errors.branch && <Error>{errors.branch}</Error>}
 
-      {(selectedBranch && deliveryType === "Delivery" && selectedBranch?.regions?.length>0) && <RegionSelect selectedRegion={selectedRegion} setSelectedRegion={setSelectedRegion} selectedBranch={restaurant?.branches.length == 1 ? restaurant?.branches[0] : selectedBranch} setErrors={setErrors} errors={errors} />}
+      {(selectedBranch && deliveryType === "Delivery" && regions.length>0) && <RegionSelect selectedRegion={selectedRegion} setSelectedRegion={setSelectedRegion} selectedBranch={restaurant?.branches.length == 1 ? restaurant?.branches[0] : selectedBranch} setErrors={setErrors} errors={errors} setRegions={setRegions} />}
       {errors.region && <Error>{errors.region}</Error>}
 
 
