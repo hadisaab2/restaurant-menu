@@ -113,6 +113,7 @@ export default function Products({
   // handling page swipe to change category
   const [swipePosition, setswipePosition] = useState(carouselPosition);
   const [scrollInProgress, setScrollInProgress] = useState(false);
+  const [uiCategorynb, setUiCategorynb] = useState(categories.length<4?3:4);
   const touchStartX = useRef(0);
   const touchStartY = useRef(0);
 
@@ -121,6 +122,8 @@ export default function Products({
     touchStartY.current = e.touches[0].clientY;
 
   };
+
+  
 
   const handleTouchMove = (e) => {
     const currentX = e.touches[0].clientX;
@@ -149,12 +152,12 @@ export default function Products({
 
         }
       } else {
-        if (carouselPosition < categories.length - 4 && swipePosition < categories.length - 4) {
+        if (carouselPosition < categories.length - uiCategorynb && swipePosition < categories.length - uiCategorynb) {
           setcarouselPosition(carouselPosition + 1);
           setactiveCategory(categories[swipePosition + 1].id)
         } else {
           if (swipePosition < categories.length - 1) {
-            setcarouselPosition(categories.length - 4);
+            setcarouselPosition(categories.length - uiCategorynb);
             setactiveCategory(categories[swipePosition + 1].id)
             setswipePosition(swipePosition + 1)
           }
