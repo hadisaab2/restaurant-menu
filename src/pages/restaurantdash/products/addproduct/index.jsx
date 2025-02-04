@@ -75,6 +75,7 @@ export default function AddProduct({
       ? enProductSchema
       : EnArProductSchema;
 
+      console.log(schema)
   const { register, handleSubmit, formState, setValue, getValues } = useForm({
     resolver: yupResolver(schema),
   });
@@ -186,23 +187,23 @@ export default function AddProduct({
         const { en_name, en_description, en_price } = selectedProduct;
 
         setValue("en_name", en_name);
-        setValue("en_description", en_description);
+        en_description&&setValue("en_description", en_description);
         setValue("en_price", en_price);
       } else if (userInformation.Lang === AR) {
         const { ar_name, ar_description,en_price } = selectedProduct;
         setValue("en_price", en_price);
         setValue("ar_name", ar_name);
-        setValue("ar_description", ar_description);
+        ar_description && setValue("ar_description", ar_description);
       } else {
         const { en_name, en_description, en_price, ar_name, ar_description } =
           selectedProduct;
 
         setValue("en_name", en_name);
-        setValue("en_description", en_description);
+        en_description&&setValue("en_description", en_description);
         setValue("en_price", en_price);
 
         setValue("ar_name", ar_name);
-        setValue("ar_description", ar_description);
+        ar_description && setValue("ar_description", ar_description);
       }
 
       const formattedImages = selectedProduct.images.map((image) => ({
