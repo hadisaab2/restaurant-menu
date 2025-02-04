@@ -3,11 +3,7 @@
   <head>
     
     <meta charset="utf-8" />
-    <link id="favicon" rel="icon" href="%PUBLIC_URL%/menugicLogo.png" />
-
-    
-
-
+    <link rel="icon" href="%PUBLIC_URL%/menugicLogo.png" />
     <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#000000" />
@@ -44,24 +40,6 @@
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
-    <script>
-      // Wait for the entire page to load (including images, styles, etc.)
-      window.onload = function() {
-          // Get the current page URL
-          const url = window.location.href;
-
-          // Extract the restaurant name from the URL (assuming it's the last part)
-          const restaurantName = url.split('/').pop();
-
-          // Find the link tag by id and update the href with template literal
-          const faviconLink = document.getElementById('favicon');
-          
-          // Check if the link tag exists
-          if (faviconLink) {
-              faviconLink.href = `https://storage.googleapis.com/ecommerce-bucket-testing/${restaurantName}`;
-          }
-      };
-  </script>
     <div id="root"></div>
     <!--
       This HTML file is a template.
