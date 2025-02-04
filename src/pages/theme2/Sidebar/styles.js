@@ -87,8 +87,8 @@ width:20px;
 height:20px;
 `;
 export const Brand = styled.img`
-max-width: 200px;
-max-height: 120px;
+max-width: 150px;
+max-height: 150px;
 margin-top: 10px;
 `;
 

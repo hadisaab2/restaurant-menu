@@ -90,7 +90,6 @@ export default function Order({ setblock, popupHandler, restaurant }) {
       return;
     }
 
-    setblock("order");
     let message = `Hello *${restaurantName}*\n`;
     message += `It's *${details.fullName}* and I want to purchase the following items:\n`;
 
@@ -138,11 +137,9 @@ export default function Order({ setblock, popupHandler, restaurant }) {
 
     }
 
-    console.log(whatsappUrl)
-
-
     window.open(whatsappUrl, "_blank");
     dispatch(clearCart(restaurantName));
+    setblock("cart");
     popupHandler(null);
   };
 
