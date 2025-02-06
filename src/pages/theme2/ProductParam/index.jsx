@@ -31,13 +31,13 @@ export default function ProductParam({ productId, setSearchParams, searchParams 
         }
     });
 
-    // useEffect(() => {
-    //     if (fetchedProduct?.en_price && !productLoading) {
-    //         setBasePrice(parseFloat(fetchedProduct.en_price));
-    //         // setTotalPrice(parseFloat(fetchedProduct?.en_price))
+    useEffect(() => {
+        if (fetchedProduct?.en_price && !productLoading) {
+            setBasePrice(parseFloat(fetchedProduct.en_price));
+            setTotalPrice(parseFloat(fetchedProduct?.en_price))
 
-    //     }
-    // }, [productLoading]);
+        }
+    }, [productLoading]);
 
     
 
