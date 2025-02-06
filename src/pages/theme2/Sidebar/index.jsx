@@ -14,7 +14,7 @@ import {
   Top,
   Wrapper,
 } from "./styles";
-import { useParams } from "react-router-dom";
+import { useParams, useSearchParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 
 export default function SideBar({
@@ -26,6 +26,7 @@ export default function SideBar({
   setcarouselPosition
 }) {
   const { restaurantName: paramRestaurantName } = useParams();
+  const [searchParams, setSearchParams] = useSearchParams();
 
   const hostname = window.location.hostname;
   const subdomain = hostname.split(".")[0];
@@ -52,6 +53,10 @@ export default function SideBar({
 
   const itemClick = (id,index) => {
     setactiveCategory(id);
+    const newParams = new URLSearchParams(searchParams);
+    newParams.set("categoryId", id); // Update categoryId
+    setSearchParams(newParams); // Update URL without reloading
+
     setcarouselPosition(index)
     setshowSidebar(false)
   };

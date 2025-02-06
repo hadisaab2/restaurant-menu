@@ -46,8 +46,8 @@ right: ${props=>props.CloseAnimation?0:"-100%"};
 color:${props => props.theme.textColor};
 background-color:${props => props.theme.backgroundColor};
   overflow: scroll;
-  transition: all 0.8s;
-  animation: ${slideAnimation} 0.8s;
+  transition: all 1s;
+  animation: ${slideAnimation} 1.1s;
   z-index: 6;
   ::-webkit-scrollbar {
     display: none;

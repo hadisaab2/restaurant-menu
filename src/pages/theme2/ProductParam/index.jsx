@@ -31,6 +31,16 @@ export default function ProductParam({ productId, setSearchParams, searchParams 
         }
     });
 
+    // useEffect(() => {
+    //     if (fetchedProduct?.en_price && !productLoading) {
+    //         setBasePrice(parseFloat(fetchedProduct.en_price));
+    //         // setTotalPrice(parseFloat(fetchedProduct?.en_price))
+
+    //     }
+    // }, [productLoading]);
+
+    
+
     if (!_.isEmpty(fetchedProduct?.form_json)) {//la etjanab json.parse la undefined
         if (!_.isEmpty(JSON.parse(fetchedProduct?.form_json))) {
             formJson = fetchedProduct?.form_json
@@ -50,8 +60,9 @@ export default function ProductParam({ productId, setSearchParams, searchParams 
     const dispatch = useDispatch();
     const [quantity, setQuantity] = useState(1);
     const [carouselSwiped, setCarouselSwiped] = useState(false);
-    const basePrice = parseFloat(fetchedProduct?.en_price || 0);
-    const [totalPrice, setTotalPrice] = useState(basePrice); // Example base price
+    // const basePrice = parseFloat(fetchedProduct?.en_price || 0);
+    const [basePrice, setBasePrice] = useState(parseFloat(fetchedProduct?.en_price)); // Example base price
+    const [totalPrice, setTotalPrice] = useState(parseFloat(fetchedProduct?.en_price)); // Example base price
 
     const handlePriceChange = (newPrice) => {
         setTotalPrice(newPrice);
