@@ -8,39 +8,46 @@ import {
   Location,
   MenuWrapper,
   Number,
+  ParamProductContainer,
 } from "./styles";
 import Header from "./Header";
-import { useParams } from "react-router-dom";
+import { useParams, useSearchParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import Products from "./products";
 import LocationPopup from "./popup/location";
 import CartPopup from "./popup/cart";
 import SideBar from "./Sidebar";
+import ProductParam from "./ProductParam";
 
 export default function Theme2() {
-  const [showPopup, setshowPopup] = useState(null);
-  const [searchText, setSearchText] = useState("");
-  const [showSidebar, setshowSidebar] = useState(null);
-  const [carouselPosition, setcarouselPosition] = useState(0);
-
+  const [searchParams, setSearchParams] = useSearchParams();
+  const productId = searchParams.get("productId"); // Get productId from URL
+  const categoryId = searchParams.get("categoryId"); // Get productId from URL
   const { restaurantName: paramRestaurantName } = useParams();
-
   const hostname = window.location.hostname;
   const subdomain = hostname.split(".")[0];
-
   // Determine the restaurant name to use
   const restaurantName =
     subdomain !== "menugic" && subdomain !== "localhost" && subdomain !== "www"
       ? subdomain
       : paramRestaurantName;
 
+  const restaurant = useSelector((state) => state.restaurant?.[restaurantName]);
+
+  const [showPopup, setshowPopup] = useState(null);
+  const [searchText, setSearchText] = useState("");
+  const [showSidebar, setshowSidebar] = useState(null);
+  console.log(restaurant.categories)
+  const [carouselPosition, setcarouselPosition] = useState(!categoryId?0:restaurant.categories.findIndex(category => category.id == categoryId));
+  console.log(carouselPosition)
+ 
+
   const itemCount = useSelector((state) => {
     const items = state.cart[restaurantName] || []; // Access cart by restaurant name, default to empty array if not found
     return items.reduce((total, item) => total + item.quantity, 0); // Sum up all quantities in the restaurant's cart
   });
-  const restaurant = useSelector((state) => state.restaurant?.[restaurantName]);
   const [activeCategory, setactiveCategory] = useState(
-    restaurant?.categories?.[0]?.id
+    categoryId?categoryId:restaurant?.categories?.[0]?.id
   );
 
   const popupHandler = (type) => {
@@ -52,8 +59,8 @@ export default function Theme2() {
     setshowPopup(type);
   };
 
-  const handleClickOutside=()=>{
-    if(showPopup!=null){
+  const handleClickOutside = () => {
+    if (showPopup != null) {
       setshowPopup(null)
     }
   }
@@ -115,6 +122,8 @@ export default function Theme2() {
         setcarouselPosition={setcarouselPosition}
 
       />
+      {productId &&<ProductParam productId={productId} searchParams={searchParams} setSearchParams={setSearchParams} />}
+        
     </Container>
   );
 }

@@ -13,7 +13,7 @@ import {
   ArrowIcon,
 } from "./styles";
 import { useSelector } from "react-redux";
-import { useParams } from "react-router-dom";
+import { useParams, useSearchParams } from "react-router-dom";
 import categoryicon from "./categoryicon.png";
 import categoryicon2 from "./categoryicon2.png";
 import perfume from "./perfume.png";
@@ -30,6 +30,7 @@ export default function Categories({
   
   const hostname = window.location.hostname;
   const subdomain = hostname.split('.')[0];
+  const [searchParams, setSearchParams] = useSearchParams();
 
   // Determine the restaurant name to use
   const restaurantName = (subdomain !== "menugic" && subdomain !== "localhost" && subdomain !== "www") 
@@ -78,6 +79,9 @@ export default function Categories({
 
   const itemClick = (id) => {
     setactiveCategory(id);
+    const newParams = new URLSearchParams(searchParams);
+    newParams.set("categoryId", id); // Update categoryId
+    setSearchParams(newParams); // Update URL without reloading
   };
   return (
     <Container>

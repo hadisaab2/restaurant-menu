@@ -26,6 +26,7 @@ import {
   CarouselForward,
   LoaderWrapper,
   Loader,
+  CopyButton,
 } from "./styles";
 import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -33,6 +34,9 @@ import { addToCart } from "../../../../redux/cart/cartActions";
 import CarouselLoader from "./carouselLoader";
 import "formiojs/dist/formio.full.css";
 import ProductForm from "./Form";
+import { FaRegCopy } from "react-icons/fa";
+import { TiTick } from "react-icons/ti";
+
 const _ = require('lodash');
 
 export default function ProductDetails({
@@ -42,7 +46,9 @@ export default function ProductDetails({
   plates,
   productPositions,
   categories,
-  activeCategoryId
+  activeCategoryId,
+  setSearchParams,
+  searchParams
 }) {
   const { restaurantName: paramRestaurantName } = useParams();
 
@@ -87,7 +93,6 @@ let formJson=null;
   const handlePriceChange = (newPrice) => {
     setTotalPrice(newPrice);
   };
-  console.log()
 
   const [CloseAnimation, setCloseAnimation] = useState(true);
   const [carouselIndex, setcarouselIndex] = useState(0);
@@ -95,11 +100,24 @@ let formJson=null;
     setTimeout(() => {
       setactivePlate(null);
       document.body.style.overflow = "auto";
+   
     }, 800);
     setCloseAnimation(false);
     setcarouselIndex(0);
+    searchParams.delete("productId"); // Remove the parameter
+    setSearchParams(searchParams); 
   };
+  const [copied, setCopied] = useState(false);
 
+  const handleCopy = ()=>{
+    const fullUrl = window.location.href; // Copies full URL including pathname and search params
+    navigator.clipboard.writeText(fullUrl)
+    setCopied(true)
+    setTimeout(() => {
+      setCopied(false)
+    }, 4000);
+
+  }
   const handleright = () => {
     setCarouselSwiped(true);
     setcarouselIndex(carouselIndex + 1);
@@ -330,6 +348,9 @@ let formJson=null;
       <BackBtn onClick={handleBack} CloseAnimation={CloseAnimation}>
         <BackIcon />
       </BackBtn>
+      <CopyButton onClick={handleCopy} CloseAnimation={CloseAnimation}>
+        {!copied?<FaRegCopy/>:<TiTick/>}
+      </CopyButton>
     </>
   );
 }

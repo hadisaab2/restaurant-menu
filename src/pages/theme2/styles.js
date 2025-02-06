@@ -90,3 +90,18 @@ export const Cart = styled(IoBag)`
 width: 20px;
 height: 20px;
 `;
+
+
+
+export const ParamProductContainer = styled.div`
+position: fixed;
+height: 100vh;
+width: 100%;
+display: flex;
+align-items: center;
+justify-content: center;
+color:${props=>props.theme.textColor};
+background-color:${props=>props.theme.backgroundColor};
+`;
+
+

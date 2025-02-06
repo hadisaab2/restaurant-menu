@@ -61,6 +61,23 @@ export default function Order({ setblock, popupHandler, restaurant }) {
     });
   };
 
+  let currencySymbol;
+  switch (restaurant?.currency) {
+    case "dollar":
+      currencySymbol = "$";
+      break;
+    case "lb":
+      currencySymbol = "L.L.";
+      break;
+    case "gram":
+      currencySymbol = "g";
+      break;
+    case "kilogram":
+      currencySymbol = "kg";
+      break;
+    default:
+      currencySymbol = ""; // No currency or unsupported currency
+  }
 
 
   const handlePurchase = () => {
@@ -111,13 +128,16 @@ export default function Order({ setblock, popupHandler, restaurant }) {
         });
       }
 
-      message += `  - Price: ${item.price * item.quantity}\n`;
+      message += `  - Price: ${item.price * item.quantity} ${currencySymbol}\n`;
       totalPrice += item.price * item.quantity;
     });
 
-    message += `Total Price: ${totalPrice}\n\n`;
+    message += `Total Price: ${totalPrice} ${currencySymbol}\n\n`;
     message += `Contact Info:\n`;
     message += `- Name: ${details.fullName}\n`;
+    if (selectedRegion) {
+      message += `- Region: ${selectedRegion}\n`;
+    }
     message += `- Phone Number: ${details.phoneNumber}\n`;
     message += `- Order type: ${deliveryType}\n`;
     if (deliveryType === "Delivery") {

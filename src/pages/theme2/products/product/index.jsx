@@ -10,13 +10,13 @@ import {
   TextContainer,
   Wrapper,
 } from "./styles";
-import { useParams } from "react-router-dom";
+import { useParams, useSearchParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { useEffect } from "react";
 const _ = require('lodash');
 
 const Product = React.forwardRef(
-  ({ plate, setactivePlate, activePlate, index, showPopup }, ref) => {
+  ({ plate, setactivePlate, activePlate, index, showPopup,setSearchParams,searchParams }, ref) => {
     const { restaurantName: paramRestaurantName } = useParams();
 
     const hostname = window.location.hostname;
@@ -43,7 +43,12 @@ const Product = React.forwardRef(
     const plateHandle = () => {
       if (activePlate == null && imageLoaded && !showPopup) {
         setactivePlate(index);
-        window.history.pushState({ isZoomed: true }, "");
+        // window.history.pushState({ isZoomed: true }, "");
+        const newParams = new URLSearchParams(searchParams);
+        newParams.set("productId", plate?.id);
+        // Push updated URL without reloading or navigating
+        window.history.pushState({}, "", `?${newParams.toString()}`);
+        
         document.body.style.overflow = "hidden";
       }
     };

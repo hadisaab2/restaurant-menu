@@ -1,22 +1,17 @@
 import styled from "styled-components";
 import { keyframes } from "styled-components";
-import { IoIosArrowBack,IoIosArrowForward  } from "react-icons/io";
+import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
+
+
+
 
 const slideAnimation = (x, y, width) => keyframes`
  0% { 
-    left: ${x}px;
-    top:${y}px;
-    width:${width}px;
-    height:20vh;
-    border-radius: 10px;
+    right: -100%;
     
 }
  100% { 
-    left: 0;
-    top:0;
-    width:100%;
-    height: 100vh;
-    border-radius: 0px;
+    right: 0;
 
 }
 `;
@@ -39,26 +34,27 @@ const slideAnimationScreen = (x, y, width) => keyframes`
 
 }
 `;
-export const Wrapper = styled.div`
-  position: fixed;
-  width: ${(props) => (props.CloseAnimation ? "100%" : `${props.width}px`)};
-  top: ${(props) => (props.CloseAnimation ? "0" : `${props.y}px`)};
-  left: ${(props) => (props.CloseAnimation ? "0" : `${props.x}px`)};
-  height: ${(props) => (props.CloseAnimation ? "100vh" : `20vh`)};
-  border-radius: ${(props) => (props.CloseAnimation ? "0px" : `10px`)};
+export const SearchProductContainer = styled.div`
+
+position: fixed;
+height: 100vh;
+width: 100%;
+align-items: center;
+justify-content: center;
+top:0;
+right: ${props=>props.CloseAnimation?0:"-100%"};
+color:${props => props.theme.textColor};
+background-color:${props => props.theme.backgroundColor};
   overflow: scroll;
   transition: all 0.8s;
-  animation: ${({ x, y, width }) => slideAnimation(x, y, width)} 0.8s;
+  animation: ${slideAnimation} 0.8s;
   z-index: 6;
   ::-webkit-scrollbar {
     display: none;
   }
-  background-color: ${(props) => props.theme.backgroundColor};
   @media (min-width: 1024px) {
-    animation: ${({ x, y, width }) => slideAnimationScreen(x, y, width)} 0.8s;
-    height: ${(props) => (props.CloseAnimation ? "100vh" : `30vh`)};
-
-
+    /* animation: ${({ x, y, width }) => slideAnimationScreen(x, y, width)} 0.8s;
+    height: ${(props) => (props.CloseAnimation ? "100vh" : `30vh`)}; */
 
     }
 
@@ -93,18 +89,16 @@ const ImageAnimationScreen = keyframes`
 
 export const ImagesContainer = styled.div`
   width: 100%;
-  height: ${(props) => (props.CloseAnimation ? "55vh" : "20vh")};
+  height: 55vh;
   position: absolute;
-  top: ${(props) => (props.CloseAnimation ? "80px" : "0px")};
-  
+  top:80px;
   transition: all 0.8s;
-  animation: ${ImageAnimation} 0.8s;
   display: flex;
   justify-content: center;
   overflow: hidden;
   @media (min-width: 1024px) {
-    height: ${(props) => (props.CloseAnimation ? "70vh" : "30vh")};
-    animation: ${ImageAnimationScreen} 0.8s;
+    /* height: ${(props) => (props.CloseAnimation ? "70vh" : "30vh")};
+    animation: ${ImageAnimationScreen} 0.8s; */
 
     }
 `;
@@ -166,12 +160,10 @@ export const Image = styled.img`
   object-fit: cover;
   border-radius: ${(props) => (props.CloseAnimation ? "40px" : "10px")};
   width: ${(props) => (props.CloseAnimation ? "90%" : "100%")};
-  display:${props=>props.Loaded ? 'block':'none'};
+  display:${props => props.Loaded ? 'block' : 'none'};
   transition: all 0.8s;
     @media (min-width: 1024px) {
       width: ${(props) => (props.CloseAnimation ? "50%" : "100%")};
-
-
     }
 `;
 const BackIconAnimation = keyframes`
@@ -271,11 +263,10 @@ export const Category = styled.span`
 `;
 
 export const FakeContainer = styled.div`
-  width: ${(props) => (props.CloseAnimation ? "90%" : "100%")};
-  height: ${(props) => (props.CloseAnimation ? "55vh" : "25vh")};
-  border-radius: ${(props) => (props.CloseAnimation ? "40px" : "10px")};
-  margin-top: ${(props) => (props.CloseAnimation ? "80px" : "0px")};
-  display: ${(props) => (props.CloseAnimation ? "flex" : "none")};
+  width:90%;
+  height: 55vh;
+  margin-top: 80px;
+  display: flex;
   overflow: hidden;
   transition: all 1s;
   animation: ${ImageAnimation} 0.8s;
@@ -295,7 +286,7 @@ export const ItemInfoWrapper = styled.div`
 export const ItemInfo = styled.div`
   width: 90%;
   display: ${(props) => (props.CloseAnimation ? "flex" : "none")};
-  align-items: ${props=>props.activeLanguage=="en"?"flex-start":"flex-end"};;
+  align-items: ${props => props.activeLanguage == "en" ? "flex-start" : "flex-end"};;
   flex-direction: column;
   position: relative;
   margin-top: 20px;
@@ -341,12 +332,12 @@ export const ItemName = styled.span`
   font-size: 23px;
   font-weight: bold;
   width: 70%;
-  margin-left:${props=>props.activeLanguage=="en"?"0px":null} ;
-  margin-right:${props=>props.activeLanguage=="en"?null:"0px"} ;
-  text-align:${props=>props.activeLanguage=="en"?"left":"right"} ;
+  margin-left:${props => props.activeLanguage == "en" ? "0px" : null} ;
+  margin-right:${props => props.activeLanguage == "en" ? null : "0px"} ;
+  text-align:${props => props.activeLanguage == "en" ? "left" : "right"} ;
   opacity: 1;
   margin-top: 10px;
-  animation: ${props=>props.activeLanguage=="en"?NameAnimationLeft:NameAnimationRight} 1.4s ease-in-out;
+  animation: ${props => props.activeLanguage == "en" ? NameAnimationLeft : NameAnimationRight} 1.4s ease-in-out;
 `;
 
 const DescriptionAnimation = keyframes`
@@ -372,8 +363,8 @@ export const ItemDescription = styled.span`
   word-spacing: 1px;
   white-space: pre-line;
   animation: ${DescriptionAnimation} 1.6s ease-in-out;
-  text-align: ${props=>props.activeLanguage=="en"?"left":"right"} ;
-  direction: ${props=>props.activeLanguage=="en"?"ltr":"rtl"} ;;
+  text-align: ${props => props.activeLanguage == "en" ? "left" : "right"} ;
+  direction: ${props => props.activeLanguage == "en" ? "ltr" : "rtl"} ;;
 `;
 const PriceAnimation = keyframes`
  0% { 
@@ -395,8 +386,8 @@ export const ItemPrice = styled.span`
   font-weight: 500;
   word-spacing: 3px;
   position: absolute;
-  right: ${props=>props.activeLanguage=="en"?"0px":null};
-  left: ${props=>props.activeLanguage=="en"?null:"0px"};
+  right: ${props => props.activeLanguage == "en" ? "0px" : null};
+  left: ${props => props.activeLanguage == "en" ? null : "0px"};
 
   transform: scale(1);
   top: 5px;

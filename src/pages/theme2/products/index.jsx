@@ -3,7 +3,7 @@ import { Container, ProductWrapper } from "./styles";
 import Product from "./product";
 import ProductDetails from "./productDetails";
 import { useSelector } from "react-redux";
-import { useParams } from "react-router-dom";
+import { useParams, useSearchParams } from "react-router-dom";
 import { useGetProducts } from "../../../apis/products/getProductsByCategory";
 
 export default function Products({
@@ -17,6 +17,8 @@ export default function Products({
   categories
 }) {
   const [activePlate, setactivePlate] = useState(null);
+  const [searchParams, setSearchParams] = useSearchParams();
+
   const { restaurantName: paramRestaurantName } = useParams();
   const subdomain = window.location.hostname.split(".")[0];
     // Determine the restaurant name to use
@@ -204,6 +206,8 @@ export default function Products({
                       setactivePlate={setactivePlate}
                       ref={productRefs[index]}
                       showPopup={showPopup}
+                      setSearchParams={setSearchParams}
+                      searchParams={searchParams}
                     />
                   );
                 })}
@@ -223,6 +227,8 @@ export default function Products({
           productPositions={productPositions}
           activeCategoryId={activeCategory}
           categories={categories}
+          setSearchParams={setSearchParams}
+          searchParams={searchParams}
         />
       )}
     </Container>
