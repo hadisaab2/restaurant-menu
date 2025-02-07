@@ -29,42 +29,8 @@ export default function Template() {
 
   const restaurant = useSelector((state) => state.restaurant?.[restaurantName]);
   const [isTrue, setIsTrue] = useState(true);
-  // ✅ Update favicon dynamically
-  const updateFavicon = (url) => {
-    let existingFavicon = document.querySelector("link[rel='icon']");
-
-    if (existingFavicon) {
-      // ✅ Remove the existing favicon to force a fresh load
-      existingFavicon.remove();
-    }
-
-    // ✅ Create a new favicon tag
-    const newFavicon = document.createElement("link");
-    newFavicon.rel = "icon";
-    newFavicon.href = url + `?v=${new Date().getTime()}`; // Append timestamp to prevent caching
-    document.head.appendChild(newFavicon);
-  };
 
 
-  const updateMetaTags = (faviconUrl, title) => {
-    const metaTags = [
-      { property: "og:image", content: faviconUrl },
-      { property: "og:image:type", content: "image/png" },
-      { property: "og:image:width", content: "512" },
-      { property: "og:image:height", content: "512" },
-      { property: "og:title", content: title }  // Updating title dynamically
-    ];
-
-    metaTags.forEach(({ property, content }) => {
-      let metaTag = document.querySelector(`meta[property='${property}']`);
-      if (!metaTag) {
-        metaTag = document.createElement("meta");
-        metaTag.setAttribute("property", property);
-        document.head.appendChild(metaTag);
-      }
-      metaTag.setAttribute("content", content);
-    });
-  };
 
 
   useEffect(() => {
@@ -72,14 +38,14 @@ export default function Template() {
       dispatch(addmenu(response?.data));
       document.title = response.data.name;
 
-      //   let link = document.querySelector("link[rel~='icon']");
-      // if (!link) {
-      //   link = document.createElement('link');
-      //   link.rel = 'icon';
-      //   document.getElementsByTagName('head')[0].appendChild(link);
-      // }
-      // link.href = `https://storage.googleapis.com/ecommerce-bucket-testing/${response.data.logoURL}`;
-      updateMetaTags(`https://storage.googleapis.com/ecommerce-bucket-testing/${response.data.logoURL}`, response?.data?.name)
+        let link = document.querySelector("link[rel~='icon']");
+      if (!link) {
+        link = document.createElement('link');
+        link.rel = 'icon';
+        document.getElementsByTagName('head')[0].appendChild(link);
+      }
+      link.href = `https://storage.googleapis.com/ecommerce-bucket-testing/${response.data.logoURL}`;
+      
       dispatch(
         changelanuage({
           name: restaurantName,

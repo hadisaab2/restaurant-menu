@@ -5,6 +5,7 @@ import { PersistGate } from "redux-persist/integration/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import HelmetFn from "./helmet";
 
 
 function App() {
@@ -16,6 +17,7 @@ function App() {
         <QueryClientProvider client={queryClient}>
           <ApplicationRoutes />
           <ToastContainer />
+          <HelmetFn/>
         </QueryClientProvider>
       </PersistGate>
     </Provider>
