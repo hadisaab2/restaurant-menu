@@ -17,7 +17,7 @@ function App() {
         <QueryClientProvider client={queryClient}>
           <ApplicationRoutes />
           <ToastContainer />
-            <HelmetFn />
+            {/* <HelmetFn /> */}
         </QueryClientProvider>
       </PersistGate>
     </Provider>
