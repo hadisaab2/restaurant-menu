@@ -6,7 +6,6 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import HelmetFn from "./helmet";
-import { HelmetProvider } from "react-helmet-async";
 
 
 function App() {
@@ -18,9 +17,7 @@ function App() {
         <QueryClientProvider client={queryClient}>
           <ApplicationRoutes />
           <ToastContainer />
-          <HelmetProvider>
-          <HelmetFn/>
-          </HelmetProvider>
+            <HelmetFn />
         </QueryClientProvider>
       </PersistGate>
     </Provider>
