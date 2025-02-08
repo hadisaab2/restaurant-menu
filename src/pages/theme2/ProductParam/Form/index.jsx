@@ -80,7 +80,7 @@ export default function ProductForm({ formSchema, onPriceChange, basePrice, form
       }
     });
 
-    onPriceChange(newPrice + addOnsPrice);
+    onPriceChange((newPrice + addOnsPrice).toFixed(2)); // Rounds to 2 decimal places
   };
 
   const renderComponent = (component) => {

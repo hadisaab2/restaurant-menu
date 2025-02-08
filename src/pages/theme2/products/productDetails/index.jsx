@@ -91,7 +91,7 @@ let formJson=null;
   const [totalPrice, setTotalPrice] = useState(basePrice); // Example base price
 
   const handlePriceChange = (newPrice) => {
-    setTotalPrice(newPrice);
+    setTotalPrice(parseFloat(newPrice));
   };
 
   const [CloseAnimation, setCloseAnimation] = useState(true);

@@ -48,13 +48,30 @@ import {
 import { LuPhoneCall } from "react-icons/lu";
 import { FaWhatsapp } from "react-icons/fa";
 import { FaLocationDot } from "react-icons/fa6";
+import { useParams } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 export default function LocationPopup({
   restaurant,
   showPopup,
   popupHandler
 }) {
-  const [activeBranch, setActiveBranch] = useState(restaurant?.branches[0]);
+  const { restaurantName: paramRestaurantName } = useParams();
+
+  const hostname = window.location.hostname;
+  const subdomain = hostname.split(".")[0];
+
+  // Determine the restaurant name to use
+  const restaurantName =
+    subdomain !== "menugic" &&
+      subdomain !== "localhost" &&
+      subdomain !== "www"
+      ? subdomain
+      : paramRestaurantName;
+
+  const activeLanguage = useSelector(
+    (state) => state.restaurant?.[restaurantName].activeLanguage
+  );
   const [activeButton, setActiveButton] = useState("");
   const regex = /(?:wa\.me\/|phone=)(\d+)/;
 
@@ -111,7 +128,7 @@ export default function LocationPopup({
         <ButtonFilled activeButton={activeButton} onClick={handleCallButton}>
           {activeButton !== "Call" ?
             <>
-              <LuPhoneCall size={"25px"} />Call Now
+              <LuPhoneCall size={"25px"} />{activeLanguage=="en"?"Call Now":"اتصل الان"}
             </>
             : <>
               <OptionsList activeButton={activeButton}>
@@ -129,7 +146,7 @@ export default function LocationPopup({
                 <ShadeBorder activeButton={activeButton} />
               </ShadeBox>
               <ChoosePlaceHolder activeButton={activeButton}>
-                Choose Number
+              {activeLanguage=="en"?"Choose Number":"اختر رقم"}
               </ChoosePlaceHolder>
               <Arrow activeButton={activeButton} />
 
@@ -144,7 +161,7 @@ export default function LocationPopup({
           {activeButton !== "Message" ?
             <>
               <FaWhatsapp size={"25px"} />
-              Message            </>
+              {activeLanguage=="en"? "Message":"رسالة"}            </>
             : <>
               <OptionsList activeButton={activeButton}>
                 {restaurant?.branches?.map((branch) => {
@@ -153,14 +170,14 @@ export default function LocationPopup({
                       <a href={`https://wa.me/${branch?.whatsapp_number?.startsWith("961")
                         ? branch?.whatsapp_number
                         : "961" + branch?.whatsapp_number}`} style={{ textDecoration: "none", color: "inherit" }}>
-                      {branch?.whatsapp_number}-{branch?.name}
-                    </a>
+                        {branch?.whatsapp_number}-{branch?.name}
+                      </a>
                     </Option>
-              )
+                  )
                 })
 
                 }
-              {/* {restaurant?.branches?.flatMap(branch =>
+                {/* {restaurant?.branches?.flatMap(branch =>
                   branch.phone_number.split(" ").map((phone, index) => (
                     <Option>
                       <a href={`tel:${phone}`} style={{ textDecoration: "none", color: "inherit" }}>
@@ -170,22 +187,22 @@ export default function LocationPopup({
                   ))
                 )} */}
 
-            </OptionsList>
-          <ShadeBox activeButton={activeButton}>
-            <ShadeBorder activeButton={activeButton} />
-          </ShadeBox>
-          <ChoosePlaceHolder activeButton={activeButton}>
-            Choose Number
-          </ChoosePlaceHolder>
-          <Arrow activeButton={activeButton} />
+              </OptionsList>
+              <ShadeBox activeButton={activeButton}>
+                <ShadeBorder activeButton={activeButton} />
+              </ShadeBox>
+              <ChoosePlaceHolder activeButton={activeButton}>
+              {activeLanguage=="en"?"Choose Number":"اختر رقم"}
+              </ChoosePlaceHolder>
+              <Arrow activeButton={activeButton} />
 
 
-        </>}
+            </>}
 
 
-      </ButtonBorder>
+        </ButtonBorder>
 
-    </ButttonWrapper>
+      </ButttonWrapper>
 
       {/* <BranchesContainer>
         {restaurant?.branches?.map((branch) => {
@@ -216,7 +233,7 @@ export default function LocationPopup({
                     <Line />
                   </LineContainer>}
                   <BranchIconWrapper>
-                  <FaLocationDot/>
+                    <FaLocationDot />
                     {/* <Iconhole />
                     <BranchIcon /> */}
                   </BranchIconWrapper>
@@ -234,7 +251,7 @@ export default function LocationPopup({
 
       </BranchInfo>
       <SocialMediaTitleWrapper>
-        <SocialMediaTitle>Follow Us</SocialMediaTitle>
+        <SocialMediaTitle>{activeLanguage=="en"?"Follow Us":"تابعنا"}</SocialMediaTitle>
       </SocialMediaTitleWrapper>
       <SocialMediaContainer>
         {restaurant.socialMedia.find(
