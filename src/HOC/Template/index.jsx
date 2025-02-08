@@ -37,7 +37,7 @@ export default function Template() {
     if (!isLoading && response?.data) {
       dispatch(addmenu(response?.data));
       document.title = response.data.name;
-
+      // document.body.style.fontFamily = `"${response.data.font}", "Noto Kufi Arabic"`;
         let link = document.querySelector("link[rel~='icon']");
       if (!link) {
         link = document.createElement('link');
@@ -45,7 +45,7 @@ export default function Template() {
         document.getElementsByTagName('head')[0].appendChild(link);
       }
       link.href = `https://storage.googleapis.com/ecommerce-bucket-testing/${response.data.logoURL}`;
-      
+
       dispatch(
         changelanuage({
           name: restaurantName,

@@ -55,7 +55,6 @@ export const Title = styled.p`
 `;
 export const SubTitle = styled.p`
   font-size: 15px;
-  font-family: Arial, Helvetica, sans-serif;
   color: gray;
   margin-bottom: 0;
   margin-top: 10px;

@@ -325,6 +325,9 @@ export default function Restaurants() {
                   <MenuItem value="Georgia">Georgia</MenuItem>
                   <MenuItem value="Verdana">Verdana</MenuItem>
                   <MenuItem value="Roboto Flex">Roboto Flex</MenuItem>
+                  <MenuItem value="Teko">Teko</MenuItem>
+
+                  
                 
                 </Select>
               </FormControl>

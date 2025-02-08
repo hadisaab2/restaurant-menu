@@ -31,6 +31,7 @@ export default function SubDomainTemplate({ restaurantName }) {
     if (!isLoading && response?.data) {
       dispatch(addmenu(response?.data));
       document.title = response.data.name;
+      // document.body.style.fontFamily = `"${response.data.font}", "Noto Kufi Arabic"`;
 
       let link = document.querySelector("link[rel~='icon']");
     if (!link) {
@@ -40,7 +41,7 @@ export default function SubDomainTemplate({ restaurantName }) {
     }
     link.href = `https://storage.googleapis.com/ecommerce-bucket-testing/${response.data.logoURL}`;
     
-    
+
       dispatch(
         changelanuage({
           name: restaurantName,
