@@ -6,7 +6,7 @@ export const Container = styled.div`
 min-height: 100vh;
 position: relative;
 background-color: ${props=>props.theme.backgroundColor};
-font-family:${props=>props.theme.font};
+font-family: ${(props) => `${props.theme.font}, "Noto Kufi Arabic" !important`};
 
 `;
 export const MenuWrapper = styled.div`

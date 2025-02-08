@@ -85,7 +85,6 @@ export const Select = styled.select`
   padding: 10px;
   border: 1px solid ${(props) => props.theme.mainColor};
   border-radius: 4px;
-  font-family: 'Oswald', sans-serif;
   font-size: 16px;
   margin-top: 20px;
 

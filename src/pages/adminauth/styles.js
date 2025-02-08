@@ -46,7 +46,6 @@ export const HeaderContainer = styled.div`
 export const Title = styled.p`
   font-size: 24px;
   font-weight: bold;
-  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   margin-bottom: 0;
   margin-top: 30px;
   @media (max-width: ${breakingPoints.sm}px) {
