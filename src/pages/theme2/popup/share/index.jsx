@@ -104,7 +104,7 @@ export default function Share({
         }}
       />
       <ShareWrapper>
-        <Title>Share</Title>
+        <Title>Share Category</Title>
         <SocialMediaContainer>
           <Media>
             <WhatsappLogoContainer onClick={() => handleShareOnWhatsApp(activeCategory)}>

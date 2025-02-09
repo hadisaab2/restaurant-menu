@@ -55,8 +55,10 @@ export default function Header({
           <Search type="text" activeLanguage={activeLanguage} dir={activeLanguage == "en" ? "ltr" : "rtl"} placeholder={activeLanguage == "en" ? "Search Category" : "قائمة البحث"} onChange={handlesearch} value={searchText} />
         </SearchContainer>
         <ShareIcon onClick={() => popupHandler("share")}>
-          <ShareIconLogo />
-          Share
+          {activeLanguage == "en" && <ShareIconLogo />}
+          {activeLanguage == "en" ? "Share" : "نشر"}
+          {activeLanguage !== "en" && <ShareIconLogo />}
+
         </ShareIcon>
       </SearchWapper>
     </Container>

@@ -106,6 +106,7 @@ display: flex;
 align-items:center;
 justify-content: center;
 background-color:${props=>props.theme.searchbackground};
+color:${props=>props.theme.searchTextColor};
 `
 export const ShareIconLogo = styled(IoShareSocialSharp)`
 color:${props=>props.theme.searchTextColor};
