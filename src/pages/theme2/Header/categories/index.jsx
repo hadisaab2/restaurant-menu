@@ -101,6 +101,10 @@ export default function Categories({
     }
   };
 
+  const handleImageContextMenu = (e) => {
+    e.preventDefault(); // Prevent the context menu from opening
+  };
+
 
   return (
     <Container>
@@ -124,7 +128,7 @@ export default function Categories({
                 <CategoryWrapper activeCategory={activeCategory} categoryId={category.id}>
                   <IconContainer >
                     <IconWrapper activeCategory={activeCategory} categoryId={category.id} >
-                      <Icon src={`https://storage.googleapis.com/ecommerce-bucket-testing/${category.image_url}`} />
+                      <Icon src={`https://storage.googleapis.com/ecommerce-bucket-testing/${category.image_url}`}  onContextMenu={handleImageContextMenu} />
                       {/* <Icon src={perfume} /> */}
 
                     </IconWrapper>

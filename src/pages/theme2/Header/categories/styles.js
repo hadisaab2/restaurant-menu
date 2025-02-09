@@ -97,6 +97,7 @@ export const CategoryName = styled.span`
     white-space: normal;
     word-wrap: break-word;
     font-size: 12px;
+    user-select: none;
 `;
 
 
