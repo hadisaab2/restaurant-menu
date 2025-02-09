@@ -18,6 +18,7 @@ import LocationPopup from "./popup/location";
 import CartPopup from "./popup/cart";
 import SideBar from "./Sidebar";
 import ProductParam from "./ProductParam";
+import Share from "./popup/share";
 
 export default function Theme2() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -78,6 +79,7 @@ export default function Theme2() {
           showSidebar={showSidebar}
           carouselPosition={carouselPosition}
           setcarouselPosition={setcarouselPosition}
+          popupHandler={popupHandler}
         />
         <Products
           menu={restaurant.categories}
@@ -112,6 +114,11 @@ export default function Theme2() {
         restaurant={restaurant}
         showPopup={showPopup}
         popupHandler={popupHandler}
+      />
+        <Share
+        showPopup={showPopup}
+        popupHandler={popupHandler}
+        activeCategory={activeCategory}
       />
       <SideBar
         categories={restaurant.categories}

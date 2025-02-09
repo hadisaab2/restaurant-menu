@@ -1,5 +1,7 @@
 import styled from "styled-components";
 import { CiSearch } from "react-icons/ci";
+import { IoMdShare } from "react-icons/io";
+import { IoShareSocialSharp } from "react-icons/io5";
 
 export const Container = styled.div`
 width: 100%;
@@ -24,12 +26,24 @@ font-size: 27px;
 
 `;
 
-export const SearchContainer = styled.div`
+export const SearchWapper = styled.div`
 width: 90%;
 display: flex;
 align-items: center;
 margin-top: 30px;
-font-weight: 600;
+color:${props=>props.theme.searchTextColor};
+height: 40px;
+border-radius: 10px;
+overflow: hidden;
+position: relative;
+flex-direction: row;
+gap:5px
+
+`;
+export const SearchContainer = styled.div`
+width: 90%;
+display: flex;
+align-items: center;
 color:${props=>props.theme.searchTextColor};
 height: 40px;
 border-radius: 10px;
@@ -76,3 +90,26 @@ font-size: 13px;
 
 `;
 
+
+
+
+export const ShareIcon = styled.div`
+height: 100%;
+font-size: 14px;
+padding-left: 10px;
+padding-right: 10px;
+border-radius: 10px;
+font-weight: 300;
+gap:5px;
+flex-direction: row;
+display: flex;
+align-items:center;
+justify-content: center;
+background-color:${props=>props.theme.searchbackground};
+`
+export const ShareIconLogo = styled(IoShareSocialSharp)`
+color:${props=>props.theme.searchTextColor};
+font-size: 14px;
+
+
+`;

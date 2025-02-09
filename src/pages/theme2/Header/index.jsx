@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Container, Search, SearchContainer, SearchIcon, SidebarAction, Text, TextContainer } from "./styles";
+import { Container, FilterContainer, Search, SearchContainer, SearchIcon, SearchWapper, ShareIcon, ShareIconLogo, SidebarAction, Text, TextContainer } from "./styles";
 import Categories from "./categories";
 import HeaderTop from "./headertop";
 import { useParams } from "react-router-dom";
@@ -14,29 +14,30 @@ export default function Header({
   setshowSidebar,
   showSidebar,
   carouselPosition,
-  setcarouselPosition
-  
+  setcarouselPosition,
+  popupHandler
+
 }) {
   const { restaurantName: paramRestaurantName } = useParams();
-  
+
   const hostname = window.location.hostname;
   const subdomain = hostname.split('.')[0];
 
   // Determine the restaurant name to use
-  const restaurantName = (subdomain !== "menugic" && subdomain !== "localhost" && subdomain !== "www") 
-    ? subdomain 
+  const restaurantName = (subdomain !== "menugic" && subdomain !== "localhost" && subdomain !== "www")
+    ? subdomain
     : paramRestaurantName;
-    
+
   const activeLanguage = useSelector(
     (state) => state.restaurant?.[restaurantName].activeLanguage
   );
-  const handlesearch=(e)=>{
+  const handlesearch = (e) => {
     setSearchText(e.target.value)
 
   }
   return (
     <Container>
-      <HeaderTop setshowSidebar={setshowSidebar} showSidebar={showSidebar}/>
+      <HeaderTop setshowSidebar={setshowSidebar} showSidebar={showSidebar} />
 
       <Categories
         categories={categories}
@@ -48,10 +49,16 @@ export default function Header({
       {/* <SidebarAction>
         Show All Categories
       </SidebarAction> */}
-      <SearchContainer>
-        <SearchIcon  activeLanguage={activeLanguage}/>
-        <Search type="text" activeLanguage={activeLanguage} dir={activeLanguage=="en"?"ltr":"rtl"} placeholder={activeLanguage=="en"?"Search Menu":"قائمة البحث"} onChange={handlesearch} value={searchText}/>
-      </SearchContainer>
+      <SearchWapper>
+        <SearchContainer>
+          <SearchIcon activeLanguage={activeLanguage} />
+          <Search type="text" activeLanguage={activeLanguage} dir={activeLanguage == "en" ? "ltr" : "rtl"} placeholder={activeLanguage == "en" ? "Search Category" : "قائمة البحث"} onChange={handlesearch} value={searchText} />
+        </SearchContainer>
+        <ShareIcon onClick={() => popupHandler("share")}>
+          <ShareIconLogo />
+          Share
+        </ShareIcon>
+      </SearchWapper>
     </Container>
   );
 }

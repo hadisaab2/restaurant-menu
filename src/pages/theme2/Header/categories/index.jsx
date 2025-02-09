@@ -82,24 +82,7 @@ export default function Categories({
 
   };
 
-  const touchStartTime = useRef(0); // Store the time when the press starts
 
-  const TouchStart = (e) => {
-    touchStartX.current = e.touches[0].clientX;
-    touchStartTime.current = Date.now(); // Record the time the press starts
-  };
-
-  const TouchEnd = (id) => {
-    const touchDuration = Date.now() - touchStartTime.current; // Calculate how long the press was
-
-    // If the press was held long enough (e.g., 1000ms), it's considered a long press
-    if (touchDuration >= 600) {
-
-      const baseUrl = window.location.origin + window.location.pathname; // Get the main host + pathname
-      navigator.clipboard.writeText(baseUrl + "?categoryId=" + id)
-
-    }
-  };
 
   const handleImageContextMenu = (e) => {
     e.preventDefault(); // Prevent the context menu from opening
@@ -108,6 +91,11 @@ export default function Categories({
 const handleImageTouchStart = (e) => {
   e.preventDefault(); // Prevent default touch behavior (text selection or image save menu)
 };
+
+// const handleDoubleClick=(id)=>{
+//   const baseUrl = window.location.origin + window.location.pathname; // Get the main host + pathname
+//   navigator.clipboard.writeText(baseUrl + "?categoryId=" + id)
+// }
   return (
     <Container>
       <CarouselContainer
@@ -123,10 +111,8 @@ const handleImageTouchStart = (e) => {
                 activeCategory={activeCategory}
                 categoryId={category.id}
                 onClick={() => itemClick(category.id)}
-                onTouchStart={TouchStart} // Start the touch event for long press
-                onTouchEnd={() => TouchEnd(category.id)} // Handle end of touch for long press
-                ref={touchStartTime}
-              >
+                // onDoubleClick={() => handleDoubleClick(category.id)} // Attach double-click handler
+                >
                 <CategoryWrapper activeCategory={activeCategory} categoryId={category.id}>
                   <IconContainer >
                     <IconWrapper activeCategory={activeCategory} categoryId={category.id} >
