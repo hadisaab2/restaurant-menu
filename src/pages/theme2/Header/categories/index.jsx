@@ -94,8 +94,9 @@ export default function Categories({
 
     // If the press was held long enough (e.g., 1000ms), it's considered a long press
     if (touchDuration >= 600) {
-      const fullUrl = window.location.href; // Copies full URL including pathname and search params
-      navigator.clipboard.writeText(fullUrl + "?categoryId=" + id)
+   
+      const baseUrl = window.location.origin + window.location.pathname; // Get the main host + pathname
+      navigator.clipboard.writeText(baseUrl+"?categoryId="+id)
 
     }
   };
