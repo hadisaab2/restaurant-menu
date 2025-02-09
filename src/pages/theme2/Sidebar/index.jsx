@@ -53,10 +53,6 @@ export default function SideBar({
 
   const itemClick = (id,index) => {
     setactiveCategory(id);
-    const newParams = new URLSearchParams(searchParams);
-    newParams.set("categoryId", id); // Update categoryId
-    setSearchParams(newParams); // Update URL without reloading
-
     setcarouselPosition(index)
     setshowSidebar(false)
   };

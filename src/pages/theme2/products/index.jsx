@@ -124,11 +124,7 @@ export default function Products({
     touchStartY.current = e.touches[0].clientY;
 
   };
-  const pushparam = (id)=>{
-    const newParams = new URLSearchParams(searchParams);
-    newParams.set("categoryId", id); // Update categoryId
-    setSearchParams(newParams); // Update URL without reloading
-  }
+
 
 
   const handleTouchMove = (e) => {
@@ -149,13 +145,11 @@ export default function Products({
       if (deltaX > 0) {
         if (carouselPosition >= 0 && swipePosition > carouselPosition) {
           setactiveCategory(categories[swipePosition - 1].id)
-          pushparam(categories[swipePosition - 1].id)
           setswipePosition(swipePosition - 1)
         } else {
           if (carouselPosition !== 0) {
             setcarouselPosition(carouselPosition - 1);
             setactiveCategory(categories[carouselPosition - 1].id)
-            pushparam(categories[carouselPosition - 1].id)
 
           }
 
@@ -164,14 +158,12 @@ export default function Products({
         if (carouselPosition < categories.length - uiCategorynb && swipePosition < categories.length - uiCategorynb) {
           setcarouselPosition(carouselPosition + 1);
           setactiveCategory(categories[swipePosition + 1].id)
-          pushparam(categories[swipePosition + 1].id)
 
         } else {
           if (swipePosition < categories.length - 1) {
             setcarouselPosition(categories.length - uiCategorynb);
             setactiveCategory(categories[swipePosition + 1].id)
             setswipePosition(swipePosition + 1)
-            pushparam(categories[swipePosition + 1].id)
 
           }
 

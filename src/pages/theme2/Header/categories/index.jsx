@@ -27,22 +27,22 @@ export default function Categories({
 }) {
   const [scrollInProgress, setScrollInProgress] = useState(false);
   const { restaurantName: paramRestaurantName } = useParams();
-  
+
   const hostname = window.location.hostname;
   const subdomain = hostname.split('.')[0];
   const [searchParams, setSearchParams] = useSearchParams();
 
   // Determine the restaurant name to use
-  const restaurantName = (subdomain !== "menugic" && subdomain !== "localhost" && subdomain !== "www") 
-    ? subdomain 
+  const restaurantName = (subdomain !== "menugic" && subdomain !== "localhost" && subdomain !== "www")
+    ? subdomain
     : paramRestaurantName;
-    
-    const activeLanuguage = useSelector(
+
+  const activeLanuguage = useSelector(
     (state) => state.restaurant?.[restaurantName].activeLanguage
   );
 
   const touchStartX = useRef(0);
-  const handleArrow = ()=>{
+  const handleArrow = () => {
     if (carouselPosition < categories.length - 4) {
       setcarouselPosition(carouselPosition + 1);
     }
@@ -79,10 +79,28 @@ export default function Categories({
 
   const itemClick = (id) => {
     setactiveCategory(id);
-    const newParams = new URLSearchParams(searchParams);
-    newParams.set("categoryId", id); // Update categoryId
-    setSearchParams(newParams); // Update URL without reloading
+
   };
+
+  const touchStartTime = useRef(0); // Store the time when the press starts
+
+  const TouchStart = (e) => {
+    touchStartX.current = e.touches[0].clientX;
+    touchStartTime.current = Date.now(); // Record the time the press starts
+  };
+
+  const TouchEnd = (id) => {
+    const touchDuration = Date.now() - touchStartTime.current; // Calculate how long the press was
+
+    // If the press was held long enough (e.g., 1000ms), it's considered a long press
+    if (touchDuration >= 600) {
+      const fullUrl = window.location.href; // Copies full URL including pathname and search params
+      navigator.clipboard.writeText(fullUrl + "?categoryId=" + id)
+
+    }
+  };
+
+
   return (
     <Container>
       <CarouselContainer
@@ -98,6 +116,9 @@ export default function Categories({
                 activeCategory={activeCategory}
                 categoryId={category.id}
                 onClick={() => itemClick(category.id)}
+                onTouchStart={TouchStart} // Start the touch event for long press
+                onTouchEnd={() => TouchEnd(category.id)} // Handle end of touch for long press
+                ref={touchStartTime}
               >
                 <CategoryWrapper activeCategory={activeCategory} categoryId={category.id}>
                   <IconContainer >
@@ -120,7 +141,7 @@ export default function Categories({
           })}
         </Carousel>
       </CarouselContainer>
-      {categories?.length>4 && <ArrowIcon onClick={handleArrow}/>}
+      {categories?.length > 4 && <ArrowIcon onClick={handleArrow} />}
     </Container>
   );
 }
