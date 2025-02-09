@@ -15,12 +15,33 @@ export const PhoneWrapper = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
+  height: 60vh;
+  position: relative;
+
+`;
+export const TitleContainer = styled.div`
+  position: absolute;
+  bottom: 0;
+  /* z-index: 10; */
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  height: 20%;
+
+`;
+
+export const Title = styled.span`
+position: absolute;
+bottom:${props=>props.index==props.currentIndex?"-30px":"150px"} ;
+  font-size: 32px;
+  font-weight: bold;
+  color:white;
+  transition: all 0.7s ease-in-out;
 `;
 
 export const PhoneImage = styled.img`
   width: 500px;
   z-index: 10;
-
 `;
 
 export const CarouselWrapper = styled.div`
@@ -30,15 +51,6 @@ export const CarouselWrapper = styled.div`
   transition: transform 0.7s ease-in-out;
   transform: translateX(${props => -props.currentIndex * 100}%);
   z-index: 11;
-
-`;
-export const TitleContainer = styled.div`
-  height: 70vh;
-  position: absolute;
-  /* z-index: 10; */
-  width: 100%;
-  display: flex;
-  justify-content: center;
 
 `;
 
@@ -61,14 +73,7 @@ export const Image = styled.img`
 
 `;
 
-export const Title = styled.span`
-position: absolute;
-bottom:${props=>props.index==props.currentIndex?0:"150px"} ;
-  font-size: 32px;
-  font-weight: bold;
-  color:white;
-  transition: all 0.7s ease-in-out;
-`;
+
 
 export const LogoMenugic = styled.img`
 position: absolute;

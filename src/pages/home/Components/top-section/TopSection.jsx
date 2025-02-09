@@ -68,14 +68,15 @@ export default function TopSection() {
             <LogoMenugic src={Logo}/>
             <PhoneWrapper>
                 <PhoneImage src={phone} />
-            </PhoneWrapper>
-            <TitleContainer>
+                <TitleContainer>
             {carouselItems.map((item, index) => (
 
                 <Title index={index} currentIndex={currentIndex}>{item.title}</Title>
 
             ))}
             </TitleContainer>
+            </PhoneWrapper>
+         
             <CarouselWrapper currentIndex={currentIndex}>
                 {carouselItems.map((item, index) => (
                     <>
