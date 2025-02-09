@@ -18,7 +18,7 @@ export const PhoneWrapper = styled.div`
 `;
 
 export const PhoneImage = styled.img`
-  width: 600px;
+  width: 500px;
   z-index: 10;
 
 `;
@@ -33,7 +33,7 @@ export const CarouselWrapper = styled.div`
 
 `;
 export const TitleContainer = styled.div`
-  height: 80vh;
+  height: 70vh;
   position: absolute;
   /* z-index: 10; */
   width: 100%;
@@ -54,8 +54,8 @@ export const ImageWrapper = styled.div`
 `;
 
 export const Image = styled.img`
-  width: 360px;
-  height: 360px;
+  width: 300px;
+  height: 300px;
   rotate:${props=>props.index==props.currentIndex?"0deg":"150deg"} ;
   transition: all 0.7s ease-in-out;
 
@@ -64,7 +64,7 @@ export const Image = styled.img`
 export const Title = styled.span`
 position: absolute;
 bottom:${props=>props.index==props.currentIndex?0:"150px"} ;
-  font-size: 40px;
+  font-size: 32px;
   font-weight: bold;
   color:white;
   transition: all 0.7s ease-in-out;
