@@ -26,7 +26,9 @@ export default function Order({ setblock, popupHandler, restaurant }) {
     subdomain !== "menugic" && subdomain !== "localhost" && subdomain !== "www"
       ? subdomain
       : paramRestaurantName;
+
   const cart = useSelector((state) => state.cart[restaurantName] || []); // Fetch the cart for the specific restaurant
+
   const dispatch = useDispatch();
 
   const [details, setDetails] = useState({
@@ -89,7 +91,7 @@ export default function Order({ setblock, popupHandler, restaurant }) {
         fullAddress: !details.fullAddress ? "Full Address is required for delivery." : "",
         deliveryType: !deliveryType ? "Delivery Type is required." : "",
         branch: !selectedBranch ? "Branch is required" : "",
-        region: (!selectedRegion && selectedBranch && regions.length>0) ? "Region is required" : "",
+        region: (!selectedRegion && selectedBranch && regions.length > 0) ? "Region is required" : "",
 
       };
     } else {
@@ -113,7 +115,7 @@ export default function Order({ setblock, popupHandler, restaurant }) {
     let totalPrice = 0;
 
     cart.forEach((item) => {
-      message += `• ${item.quantity} of *${item.en_name}* \n`;
+      message += `• ${item.quantity} of *${restaurant.languages == "ar" ? item.ar_name : item.en_name}* \n`;
 
       if (item.formData) {
         Object.keys(item.formData).forEach((key) => {
@@ -189,7 +191,7 @@ export default function Order({ setblock, popupHandler, restaurant }) {
       {(restaurant?.branches.length != 0 && !hasOnlineBranch()) && <BranchSelect branches={restaurant?.branches} selectedBranch={selectedBranch} setSelectedBranch={setSelectedBranch} setErrors={setErrors} errors={errors} />}
       {errors.branch && <Error>{errors.branch}</Error>}
 
-      {(selectedBranch && deliveryType === "Delivery" && regions.length>0) && <RegionSelect selectedRegion={selectedRegion} setSelectedRegion={setSelectedRegion} selectedBranch={restaurant?.branches.length == 1 ? restaurant?.branches[0] : selectedBranch} setErrors={setErrors} errors={errors} setRegions={setRegions} />}
+      {(selectedBranch && deliveryType === "Delivery" && regions.length > 0) && <RegionSelect selectedRegion={selectedRegion} setSelectedRegion={setSelectedRegion} selectedBranch={restaurant?.branches.length == 1 ? restaurant?.branches[0] : selectedBranch} setErrors={setErrors} errors={errors} setRegions={setRegions} />}
       {errors.region && <Error>{errors.region}</Error>}
 
 
@@ -211,13 +213,15 @@ export default function Order({ setblock, popupHandler, restaurant }) {
       {errors.phoneNumber && <Error>{errors.phoneNumber}</Error>}
       {deliveryType == "Delivery" && (
         <>
-          <Input
-            type="text"
+
+          <NoteTextArea
             name="fullAddress"
             value={details.fullAddress}
             onChange={handleChange}
             placeholder="Full Address"
-          />
+          ></NoteTextArea>
+
+
           {errors.fullAddress && <Error>{errors.fullAddress}</Error>}
         </>
       )}

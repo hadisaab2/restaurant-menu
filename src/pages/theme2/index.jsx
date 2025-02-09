@@ -62,7 +62,7 @@ export default function Theme2() {
 
   const handleClickOutside = () => {
     if (showPopup != null) {
-      setshowPopup(null)
+      popupHandler(null)
     }
   }
   return (
