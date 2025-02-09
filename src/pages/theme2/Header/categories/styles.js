@@ -81,10 +81,7 @@ transition: 0.2s all ease-in-out;
 export const Icon = styled.img`
 width:20px;
 height:20px;
-user-select: none !important;
-  -webkit-user-select: none !important;  /* For Safari (iOS) */
-  -moz-user-select: none !important;     /* For Firefox */
-  -ms-user-select: none !important;   
+
 `;
 
 export const TextContainer = styled.div`

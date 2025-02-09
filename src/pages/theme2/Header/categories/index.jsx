@@ -94,9 +94,9 @@ export default function Categories({
 
     // If the press was held long enough (e.g., 1000ms), it's considered a long press
     if (touchDuration >= 600) {
-   
+
       const baseUrl = window.location.origin + window.location.pathname; // Get the main host + pathname
-      navigator.clipboard.writeText(baseUrl+"?categoryId="+id)
+      navigator.clipboard.writeText(baseUrl + "?categoryId=" + id)
 
     }
   };
@@ -105,7 +105,9 @@ export default function Categories({
     e.preventDefault(); // Prevent the context menu from opening
   };
 
-
+const handleImageTouchStart = (e) => {
+  e.preventDefault(); // Prevent default touch behavior (text selection or image save menu)
+};
   return (
     <Container>
       <CarouselContainer
@@ -128,7 +130,10 @@ export default function Categories({
                 <CategoryWrapper activeCategory={activeCategory} categoryId={category.id}>
                   <IconContainer >
                     <IconWrapper activeCategory={activeCategory} categoryId={category.id} >
-                      <Icon src={`https://storage.googleapis.com/ecommerce-bucket-testing/${category.image_url}`}  onContextMenu={handleImageContextMenu} />
+                      <Icon src={`https://storage.googleapis.com/ecommerce-bucket-testing/${category.image_url}`} 
+                       onContextMenu={handleImageContextMenu}
+                       onTouchStart={handleImageTouchStart}
+                      />
                       {/* <Icon src={perfume} /> */}
 
                     </IconWrapper>
