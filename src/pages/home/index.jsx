@@ -46,7 +46,7 @@ export default function Home() {
 
   return (
     <div id='home'>
-      {!isVisible &&
+      {/* {!isVisible &&
         <>
           <RxHamburgerMenu onClick={() => { setviewSidebar(!viewSidebar) }} className='burger' />
           <div className='sidebar' style={{ left: viewSidebar ? "0%" : "-100%" }}>
@@ -67,7 +67,7 @@ export default function Home() {
           </div>
 
         </>
-      }
+      } */}
       <div className='Wrapper'>
         <div className='right-part'>
           <TopSection />
