@@ -28,7 +28,7 @@ export const Carousel = styled.div`
   transition: transform 0.3s ease-in-out;
   width: 100%;
   transform: ${(props) =>
-    `translateX(-${(props.carouselPosition) * 100/4}%)`};
+    `translateX(-${(props.carouselPosition) * 100 / 4}%)`};
 `;
 
 export const CarouselItem = styled.div`
@@ -39,8 +39,8 @@ export const CarouselItem = styled.div`
   justify-content: center;
   font-weight: 500;
   transition:all 0.2s ease-in-out;
-  color:${props=>props.categoryId==props.activeCategory?props.theme.categoryactive:props.theme.categoryunactive};
-  line-height: ${props=>props.activeLanuguage=="ar"?"1.5":"null"};
+  color:${props => props.categoryId == props.activeCategory ? props.theme.categoryactive : props.theme.categoryunactive};
+  line-height: ${props => props.activeLanuguage == "ar" ? "1.5" : "null"};
   font-size: 14px;
 `;
 
@@ -52,10 +52,10 @@ export const CategoryWrapper = styled.div`
   align-items: center;
   justify-content: center;
   flex-direction: column;
-  background-color:${props=>props.categoryId==props.activeCategory?props.theme.categoryActive:props.theme.categoryUnActive};
+  background-color:${props => props.categoryId == props.activeCategory ? props.theme.categoryActive : props.theme.categoryUnActive};
   box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.1);
   transition: 0.2s all ease-in-out;
-  color:${props=>props.categoryId==props.activeCategory?"white":"black"};//edit thiss
+  color:${props => props.categoryId == props.activeCategory ? "white" : "black"};//edit thiss
 `;
 
 
@@ -74,7 +74,7 @@ background-color: black;
 display: flex;
 align-items: center;
 justify-content: center;
-background-color:${props=>props.categoryId==props.activeCategory?props.theme.categoryActiveIcon:props.theme.categoryUnactiveIcon};
+background-color:${props => props.categoryId == props.activeCategory ? props.theme.categoryActiveIcon : props.theme.categoryUnactiveIcon};
 transition: 0.2s all ease-in-out;
 
 `;
@@ -97,7 +97,10 @@ export const CategoryName = styled.span`
     white-space: normal;
     word-wrap: break-word;
     font-size: 12px;
-    user-select: none;
+  user-select: none !important;
+  -webkit-user-select: none !important;  /* For Safari (iOS) */
+  -moz-user-select: none !important;     /* For Firefox */
+  -ms-user-select: none !important;      /* For Internet Explorer */
 `;
 
 
@@ -105,5 +108,5 @@ export const ArrowIcon = styled(MdOutlineChevronRight)`
 position: absolute;
 font-size: 22px;
 right: 0px;
-color:${props=>props.theme.textColor};
+color:${props => props.theme.textColor};
 `;
