@@ -52,7 +52,7 @@ display: flex;
 justify-content: center;
 flex-direction: column;
 text-align: ${props=>props.activeLanuguage=="en"?"left":"right"};
-
+position: relative;
 align-items: ${props=>props.activeLanuguage=="en"?"flex-start":"flex-end"};
 gap:5px;
 height: 10vh;
@@ -111,5 +111,19 @@ overflow: hidden;
 top: 10px;
   z-index: 3;
   background-color: ${props=>props.theme.categoryUnactive};
+
+`;
+
+export const NEW = styled.div`
+position: absolute;
+right: 5px;
+bottom: 15px;
+font-size: 13px;
+padding-left: 5px;
+padding-right: 5px;
+
+ background-color:${props=>props.theme.mainColor};
+ color:${props=>props.theme.popupbuttonText};
+ border-radius: 4px;
 
 `;

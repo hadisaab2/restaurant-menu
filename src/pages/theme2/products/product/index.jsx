@@ -5,6 +5,7 @@ import {
   ImageContainer,
   Loader,
   LoaderWrapper,
+  NEW,
   PlateName,
   PlatePrice,
   TextContainer,
@@ -101,6 +102,7 @@ const Product = React.forwardRef(
             />
           </ImageContainer>
           <TextContainer activeLanuguage={restaurant?.activeLanguage}>
+            {plate.new && <NEW>NEW !</NEW>}
             <PlateName>
               {/* {restaurant?.activeLanguage === "en"
                 ? truncateText(plate.en_name, 30)

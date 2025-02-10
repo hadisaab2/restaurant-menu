@@ -25,6 +25,9 @@ import {
   FormControl,
   Select,
   FormHelperText,
+  FormControlLabel,
+  Checkbox,
+  FormLabel,
 } from "@mui/material";
 import { useForm } from "react-hook-form";
 import { LANGUAGES } from "../../../../global/index";
@@ -62,6 +65,7 @@ export default function AddProduct({
   const [images, setImages] = useState([]);
   const [fileErrMsg, setFileErrMsg] = useState("");
   const [coverId, setCoverId] = useState(null);
+  const [isNew, setIsNew] = useState(false); // Default false
   const [jsonString, setJsonString] = useState("{}");
   const [activeTab,setActiveTab]=useState("productinfo")
   const [categories, setCategories] = useState([]);
@@ -220,6 +224,8 @@ export default function AddProduct({
       selectedProduct.form_json && setValue("form_json", selectedProduct.form_json);
       setCoverId(selectedProduct.cover_id);
       selectedProduct.form_json && setJsonString(selectedProduct.form_json)
+      setValue("new", selectedProduct.new);
+      setIsNew(selectedProduct.new)
     }
   }, []);
 
@@ -240,8 +246,8 @@ export default function AddProduct({
           images,
           restaurant_id: userInformation.restaurant_id,
           cover_id: coverId,
-          form_json:jsonString
-
+          form_json:jsonString,
+          new:isNew
         });
       } else {
         handleApiCall({
@@ -249,7 +255,8 @@ export default function AddProduct({
           images,
           restaurant_id: userInformation.restaurant_id,
           cover_id: coverId,
-          form_json:jsonString
+          form_json:jsonString,
+          new:isNew
         });
       }
     })();
@@ -282,6 +289,10 @@ export default function AddProduct({
     //set images and form
     setImages(updatedimages);
     setValue("images", updatedimages);
+  };
+
+  const handleisNew = (event) => {
+    setIsNew(!isNew); // Toggle between true/false
   };
 
   const handleCover = (url) => {
@@ -495,8 +506,15 @@ export default function AddProduct({
               </FormHelperText>
             )}
           </FormControl>
+        
         </Box>
-
+        <FormControl component="fieldset">
+              <FormLabel component="legend">New Item</FormLabel>
+              <FormControlLabel
+                control={<Checkbox checked={isNew} onChange={handleisNew} />}
+                label="New Item"
+              />
+          </FormControl>
         <Row>
           <LoadingButton
             loading={isPending || isEditing}
