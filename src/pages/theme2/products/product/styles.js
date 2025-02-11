@@ -116,12 +116,12 @@ top: 10px;
 
 export const NEW = styled.div`
 position: absolute;
-right: 5px;
+right: ${props=>props.activeLanuguage=="en"?"5px":null};
+left: ${props=>props.activeLanuguage=="en"?null:"5px"};
 bottom: 15px;
 font-size: 13px;
 padding-left: 5px;
 padding-right: 5px;
-
  background-color:${props=>props.theme.mainColor};
  color:${props=>props.theme.popupbuttonText};
  border-radius: 4px;
