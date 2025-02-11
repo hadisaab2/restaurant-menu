@@ -90,6 +90,7 @@ export const Brand = styled.img`
 max-width: 150px;
 max-height: 150px;
 margin-top: 10px;
+margin-left: 30px;
 `;
 
 export const SearchContainer = styled.div`
