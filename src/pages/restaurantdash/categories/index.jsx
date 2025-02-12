@@ -91,17 +91,19 @@ export default function Categories({ setProducts }) {
   const { isPending: isEditing, handleApiCall: handleEditApi } =
     useEditCategoryQuery({
       onSuccess: () => {
+        setShowAddComponent(false);
         refetchCategories();
         refetchProductsHandler();
         reset();
-        setShowAddComponent(false);
         setFile(null);
         setImageUrl(null);
+        setSelectedIdForAction(null)
       },
       onError: () => {
         toast.error("Failed to add product !!");
       },
     });
+
 
   const { isLoading, response, refetch } = useGetCategories({
     onSuccess: () => { },
