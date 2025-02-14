@@ -53,6 +53,7 @@ export default function SideBar({
 
   const itemClick = (id,index) => {
     setactiveCategory(id);
+
     setcarouselPosition(index)
     setshowSidebar(false)
   };

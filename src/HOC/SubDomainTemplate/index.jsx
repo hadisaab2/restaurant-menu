@@ -71,6 +71,6 @@ export default function SubDomainTemplate({ restaurantName }) {
       </ThemeProvider>
     );
   } else {
-    return <Loading />;
+    return <Loading restaurantName={restaurantName} />;
   }
 }

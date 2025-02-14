@@ -77,6 +77,6 @@ export default function Template() {
 
     );
   } else {
-    return <Loading />;
+    return <Loading restaurantName={restaurantName} />;
   }
 }

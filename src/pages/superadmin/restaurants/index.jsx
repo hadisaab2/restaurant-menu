@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import {
   AddRestaurant,
   AddRestaurantForm,
@@ -10,6 +10,10 @@ import {
   Table,
   Td,
   Th,
+  UploadBtn,
+  UploadedImage,
+  UploadImageText,
+  UploadPhoto,
 } from "./styles";
 import { useForm } from "react-hook-form";
 import { useState } from "react";
@@ -33,6 +37,8 @@ import DeleteRestaurantPopup from "./deleteRestauarantPopup";
 import { deleteCookie } from "../../../utilities/manageCookies";
 import { useNavigate } from "react-router-dom";
 import { ADMINSIGNIN } from "../../../routes/URLs";
+import { useAddRestaurantCoverQuery } from "../../../apis/restaurants/addCoverLogo";
+import { useEditRestaurantCoverQuery } from "../../../apis/restaurants/editCoverLogo";
 
 export default function Restaurants() {
   const [isEditMode, setIsEditMode] = useState(false);
@@ -54,7 +60,7 @@ export default function Restaurants() {
   } = useForm();
 
   const { response, isLoading, refetch } = useGetRestaurants({
-    onSuccess: () => {},
+    onSuccess: () => { },
   });
 
   const refetchRestaurants = () => {
@@ -63,9 +69,22 @@ export default function Restaurants() {
       .catch((err) => console.log(err));
   };
 
+  const { handleApiCall: editRestaurantCover, isPending: isEdditingCover } = useEditRestaurantCoverQuery({
+    onSuccess: () => {
+    },
+  });
+
+
   const { handleApiCall: handleEditApi, isPending: isEditing } =
     useEditRestaurantQuery({
-      onSuccess: () => {
+      onSuccess: (response) => {
+        const restaurantId = response?.data?.id;
+        if(restaurantId && file){
+          editRestaurantCover({
+            id: restaurantId,
+            cover_url: file, // Assume you have the cover image file in this variable
+          });
+        }
         reset();
         setSelectedIdForAction(null);
         setSelectedProduct(null);
@@ -74,11 +93,26 @@ export default function Restaurants() {
       },
     });
 
-  const { handleApiCall, isPending } = useAddRestaurantQuery({
+  const { handleApiCall: addRestaurantCover, isPending: isAddingCover } = useAddRestaurantCoverQuery({
     onSuccess: () => {
+    },
+  });
+
+
+  const { handleApiCall, isPending } = useAddRestaurantQuery({
+    onSuccess: (response) => {
+      const restaurantId = response?.data?.id;
+      if(restaurantId && file){
+        addRestaurantCover({
+          id: restaurantId,
+          cover_url: file, // Assume you have the cover image file in this variable
+        });
+      }
       rest();
       refetchRestaurants();
       setShowAddComponent(false);
+
+
     },
   });
 
@@ -113,9 +147,9 @@ export default function Restaurants() {
     theme: themeString,
     restaurant_id,
     currency,
-    font
+    font,
+    cover_url
   }) => {
-    console.log(currency);
     const theme = JSON.parse(themeString);
     setSelectedProduct({
       languages,
@@ -123,7 +157,8 @@ export default function Restaurants() {
       theme,
       restaurant_id,
       currency,
-      font
+      font,
+      cover_url
     });
     setIsEditMode(true);
     setTemplate(template_id);
@@ -133,7 +168,11 @@ export default function Restaurants() {
     setValue("name", restaurantName);
     setValue("currency", currency);
     setValue("font", font);
-
+    if(cover_url){
+    setImageUrl(
+      `https://storage.googleapis.com/ecommerce-bucket-testing/${cover_url}`
+    );
+  }
     setShowAddComponent(true);
   };
 
@@ -145,6 +184,38 @@ export default function Restaurants() {
         handleApiCall(data);
       }
     })();
+  };
+
+  const [file, setFile] = useState(null);
+  const [imageUrl, setImageUrl] = useState(null);
+  const [fileErrMsg, setFileErrMsg] = useState("Please upload image");
+  const fileInputRef = useRef(null);
+
+  const handleFileChange = ({ target }) => {
+    if (target.files[0]) {
+      const uploadedFile = target.files[0];
+      const fileSizeInMB = uploadedFile.size / (1024 * 1024);
+      if (fileSizeInMB > 4) {
+        setFileErrMsg("Image is greater than 4MB");
+        return;
+      } else {
+        setFileErrMsg("Please upload image");
+      }
+      setFile(target.files[0]);
+      const url = URL.createObjectURL(target.files[0]);
+      setImageUrl(url);
+    }
+    target.value = null;
+  };
+
+  const handleOnDeleteImage = () => {
+    setImageUrl(null);
+    setFile(null);
+    setValue("cover_url", null);
+  };
+
+  const handleButtonClick = () => {
+    fileInputRef.current.click();
   };
 
   return (
@@ -327,11 +398,34 @@ export default function Restaurants() {
                   <MenuItem value="Roboto Flex">Roboto Flex</MenuItem>
                   <MenuItem value="Teko">Teko</MenuItem>
 
-                  
-                
+
+
                 </Select>
               </FormControl>
             </Box>
+            <UploadPhoto
+              type="file"
+              ref={fileInputRef}
+              onChange={handleFileChange}
+            />
+            {imageUrl ? (
+              <Button
+                variant="contained"
+                color="error"
+                style={{ width: "150px", height: "40px" }}
+                onClick={() => handleOnDeleteImage()}
+              >
+                Delete
+              </Button>
+            ) : (
+              <UploadBtn onClick={handleButtonClick}>Upload Image</UploadBtn>
+            )}
+            {!imageUrl && !getValues().image && (
+              <UploadImageText>{fileErrMsg}</UploadImageText>
+            )}
+            {imageUrl && <UploadedImage src={imageUrl} alt="Uploaded" />}
+
+
 
             <Box sx={{ minWidth: 120 }}>
               <FormControl fullWidth>

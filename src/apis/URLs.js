@@ -25,6 +25,10 @@ export const DELETE_CATEGORY_URL = (id) =>
   `${REACT_APP_BASE_URL}/categories/${id}`;
 
 export const ADD_RESTAURANT_URL = `${REACT_APP_BASE_URL}/restaurants`;
+export const ADD_RESTAURANT_COVER_URL = `${REACT_APP_BASE_URL}/restaurants/addcover`;
+export const EDIT_RESTAURANT_COVER_URL = `${REACT_APP_BASE_URL}/restaurants/editcover`;
+
+
 export const GET_RESTAURANTS_URL = `${REACT_APP_BASE_URL}/restaurants`;
 export const GET_RESTAURANT_URL = (restaurantname) =>
   `${REACT_APP_BASE_URL}/restaurants/${restaurantname}`;

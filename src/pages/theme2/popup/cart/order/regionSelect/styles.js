@@ -6,7 +6,6 @@ import { CiSearch } from "react-icons/ci";
 // Styled components
 export const SelectWrapper = styled.div`
   position: relative;
-  font-family: Arial, sans-serif;
   width: 90%;
   height: 40px;
   margin-top: 20px;

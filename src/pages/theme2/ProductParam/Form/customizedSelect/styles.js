@@ -7,7 +7,6 @@ export const SelectContainer = styled.div`
   padding-top: 20px;
   margin-top: 30px;
 
-  font-family: Arial, sans-serif;
   border-top: 1px solid ${(props) => {
     let color = props?.theme?.formColor; // Get the color
     const opacity = 0.2; // Desired opacity (e.g., 50%)

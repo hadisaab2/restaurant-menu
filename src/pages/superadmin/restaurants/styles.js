@@ -11,6 +11,36 @@ export const Container = styled.div`
   flex-direction: column;
 `;
 
+export const UploadPhoto = styled.input`
+  display: none;
+`;
+export const UploadBtn = styled.div`
+   width: 100%;
+  height: 150px;
+  background-color: transparent;
+  border:1px solid  #1976d2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap:10px;
+  border-radius: 5px;
+`;
+export const UploadedImage = styled.img`
+  width: 100%;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 5px;
+
+
+`;
+
+export const UploadImageText = styled.p`
+  /* align-self: flex-end; */
+  margin-left: 20px;
+  font-size: 13px;
+  color: red;
+`;
 export const AddRestaurantForm = styled.div`
   display: flex;
   flex-direction: column;
