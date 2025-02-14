@@ -6,7 +6,7 @@ import "./styles.css";
 export default function Loading({ restaurantName }) {
   return (
     <Container>
-      {restaurantName == "junkies" ?
+      {(restaurantName == "junkies"|| restaurantName == "restaurant") ?
         <LogoImage src={`https://storage.googleapis.com/ecommerce-bucket-testing/${restaurantName}`}/>
         :
         <div class="container">

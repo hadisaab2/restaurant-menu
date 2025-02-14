@@ -211,7 +211,6 @@ export default function Restaurants() {
   const handleOnDeleteImage = () => {
     setImageUrl(null);
     setFile(null);
-    setValue("cover_url", null);
   };
 
   const handleButtonClick = () => {
