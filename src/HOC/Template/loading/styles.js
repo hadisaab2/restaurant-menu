@@ -29,21 +29,21 @@ height: 80px;
 
 const LogoAnimation = keyframes`
   0% {
-    width: 0px;
-    height: 0px;
+    max-width: 0px;
+    max-height: 0px;
     opacity: 0;
   }
   100%{
-    width: 200px;
-    height: 200px;
+    max-width: 400px;
+    max-width: 400px;
     opacity: 1;
   }
 
 `;
 
 export const LogoImage = styled.img`
-width: 200px;
-height: 200px;
+max-width: 400px;
+max-width: 400px;
 animation: ${LogoAnimation} 0.8s ease-in-out;
 
 
