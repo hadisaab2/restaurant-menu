@@ -62,21 +62,20 @@ export default function Template() {
     }, 3000);
     return () => clearTimeout(timer);
   }, []);
-  if (restaurant?.categories && !isLoading && !isTrue) {
-    return (
-     
-      <ThemeProvider
-        theme={{
-          ...JSON.parse(response.data.theme),
-          font: response.data.font,
-        }}
-      >
-        {restaurant?.template_id == 1 && <Theme1 />}
-        {restaurant?.template_id == 2 && <Theme2 />}
-      </ThemeProvider>
-
-    );
-  } else {
-    return <Loading restaurantName={restaurantName} />;
-  }
+ return (
+     <>
+       {(restaurant?.categories && !isLoading && !isTrue) && <ThemeProvider
+         theme={{
+           ...JSON.parse(response.data.theme),
+           font: response.data.font,
+         }}
+       >
+         {restaurant?.template_id == 1 && <Theme1 />}
+         {restaurant?.template_id == 2 && <Theme2 />}
+       </ThemeProvider>
+       }
+       <Loading restaurantName={restaurantName} viewLoading={restaurant?.categories && !isLoading && !isTrue} />
+     </>
+   );
+   
 }

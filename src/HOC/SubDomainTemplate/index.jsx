@@ -34,13 +34,13 @@ export default function SubDomainTemplate({ restaurantName }) {
       // document.body.style.fontFamily = `"${response.data.font}", "Noto Kufi Arabic"`;
 
       let link = document.querySelector("link[rel~='icon']");
-    if (!link) {
-      link = document.createElement('link');
-      link.rel = 'icon';
-      document.getElementsByTagName('head')[0].appendChild(link);
-    }
-    link.href = `https://storage.googleapis.com/ecommerce-bucket-testing/${response.data.logoURL}`;
-    
+      if (!link) {
+        link = document.createElement('link');
+        link.rel = 'icon';
+        document.getElementsByTagName('head')[0].appendChild(link);
+      }
+      link.href = `https://storage.googleapis.com/ecommerce-bucket-testing/${response.data.logoURL}`;
+
 
       dispatch(
         changelanuage({
@@ -58,9 +58,9 @@ export default function SubDomainTemplate({ restaurantName }) {
     }, 3000);
     return () => clearTimeout(timer);
   }, []);
-  if (restaurant?.categories && !isLoading && !isTrue) {
-    return (
-      <ThemeProvider
+  return (
+    <>
+      {(restaurant?.categories && !isLoading && !isTrue) && <ThemeProvider
         theme={{
           ...JSON.parse(response.data.theme),
           font: response.data.font,
@@ -69,8 +69,9 @@ export default function SubDomainTemplate({ restaurantName }) {
         {restaurant?.template_id == 1 && <Theme1 />}
         {restaurant?.template_id == 2 && <Theme2 />}
       </ThemeProvider>
-    );
-  } else {
-    return <Loading restaurantName={restaurantName} />;
-  }
+      }
+      <Loading restaurantName={restaurantName} viewLoading={restaurant?.categories && !isLoading && !isTrue} />
+    </>
+  );
+
 }

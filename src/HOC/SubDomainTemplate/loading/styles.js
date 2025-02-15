@@ -2,14 +2,20 @@ import styled, { keyframes } from 'styled-components';
 
 export const Container = styled.div`
     height: 100vh;
+    width: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
     color:white;
     flex-direction: column;
+    position: fixed;
     /* background-color: black; */
     background: black;
     overflow: hidden;
+    transition: all 0.4s ease-in-out ;
+    z-index: 1000;
+top: 0;
+left:${props=>props.viewLoading?"-100%":"0"};
 
 `;
 
