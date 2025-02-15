@@ -90,6 +90,9 @@ export default function Restaurants() {
         setSelectedProduct(null);
         refetchRestaurants();
         setShowAddComponent(false);
+        handleOnDeleteImage();
+        setIsEditMode(false)
+
       },
     });
 
@@ -110,7 +113,12 @@ export default function Restaurants() {
       }
       rest();
       refetchRestaurants();
+      setSelectedIdForAction(null);
+      setSelectedProduct(null);
       setShowAddComponent(false);
+      handleOnDeleteImage();
+      setIsEditMode(false)
+
 
 
     },
@@ -291,6 +299,7 @@ export default function Restaurants() {
                 setSelectedIdForAction(null);
                 setSelectedProduct(null);
                 setShowAddComponent(false);
+                handleOnDeleteImage();
               }}
             />
 

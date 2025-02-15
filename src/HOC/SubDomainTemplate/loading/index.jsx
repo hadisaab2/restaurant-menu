@@ -9,7 +9,7 @@ export default function Loading({ restaurantName }) {
       {(restaurantName == "junkies" || restaurantName == "restaurant" || restaurantName == "hassaneen") ?
         <>
           <LogoImage src={`https://storage.googleapis.com/ecommerce-bucket-testing/${restaurantName}`} />
-           {restaurantName=="junkies" && <BouncingLoader /> }
+           {/* {restaurantName=="junkies" && <BouncingLoader /> } */}
         </>
 
         :
