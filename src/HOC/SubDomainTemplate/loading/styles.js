@@ -9,6 +9,7 @@ export const Container = styled.div`
     flex-direction: column;
     /* background-color: black; */
     background: black;
+    overflow: hidden;
 
 `;
 
@@ -29,13 +30,9 @@ height: 80px;
 
 const LogoAnimation = keyframes`
   0% {
-    max-width: 0px;
-    max-height: 0px;
     opacity: 0;
   }
   100%{
-    max-width: 400px;
-    max-width: 400px;
     opacity: 1;
   }
 

@@ -1,6 +1,5 @@
 import React from "react";
 import { Container, Logo, LogoImage, Text } from "./styles";
-import menugic from "./menugic.png";
 import { PulseLoader } from "react-spinners";
 import "./styles.css";
 export default function Loading({ restaurantName }) {
