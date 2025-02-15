@@ -55,7 +55,7 @@ export default function SubDomainTemplate({ restaurantName }) {
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsTrue(false);
-    }, 5000);
+    }, 3000);
     return () => clearTimeout(timer);
   }, []);
   if (restaurant?.categories && !isLoading && !isTrue) {
