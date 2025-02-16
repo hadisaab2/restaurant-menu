@@ -5,8 +5,8 @@ import "./styles.css";
 import BouncingLoader from "./bouncingLoader";
 export default function Loading({ restaurantName,viewLoading }) {
   return (
-    <Container viewLoading={viewLoading}>
-      {(restaurantName == "junkies" || restaurantName == "restaurant" || restaurantName == "hassaneen") ?
+    <Container viewLoading={viewLoading} restaurantName={restaurantName}>
+      {(restaurantName == "junkies" || restaurantName == "kacodoner" || restaurantName == "hassaneen") ?
         <>
           <LogoImage src={`https://storage.googleapis.com/ecommerce-bucket-testing/${restaurantName}`} />
            {/* {restaurantName=="junkies" && <BouncingLoader /> } */}

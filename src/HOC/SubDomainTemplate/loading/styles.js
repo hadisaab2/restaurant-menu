@@ -10,7 +10,7 @@ export const Container = styled.div`
     flex-direction: column;
     position: fixed;
     /* background-color: black; */
-    background: black;
+    background: ${props=>props.restaurantName=="kacodoner"?"rgb(255 233 226)":"black"};
     overflow: hidden;
     transition: all 0.4s ease-in-out ;
     z-index: 1000;
