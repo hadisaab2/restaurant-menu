@@ -2,11 +2,27 @@ import React from "react";
 import { Container, Logo, LogoImage, Text } from "./styles";
 import { PulseLoader } from "react-spinners";
 import "./styles.css";
-import BouncingLoader from "./bouncingLoader";
+const backgroundColors=[
+  {
+    name:"kacodoner",
+    color:"rgb(255 233 226)",
+  },
+  {
+    name:"aldaouksweets",
+    color:"#E1DBCA",
+  },
+  {
+    name:"junkies",
+    color:"black",
+  }
+]
 export default function Loading({ restaurantName,viewLoading }) {
+  const restaurant = backgroundColors.find(
+    (bg) => bg.name.toLowerCase() === restaurantName.toLowerCase()
+  );
   return (
-    <Container viewLoading={viewLoading} restaurantName={restaurantName}>
-      {(restaurantName == "junkies" || restaurantName == "kacodoner" || restaurantName == "hassaneen") ?
+    <Container viewLoading={viewLoading} bg={restaurant?restaurant.color:"black"}>
+      {(restaurantName == "junkies" || restaurantName == "kacodoner" || restaurantName == "aldaouksweets") ?
         <>
           <LogoImage src={`https://storage.googleapis.com/ecommerce-bucket-testing/${restaurantName}`} />
            {/* {restaurantName=="junkies" && <BouncingLoader /> } */}
