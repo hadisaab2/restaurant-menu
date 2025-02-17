@@ -22,6 +22,8 @@ const backgroundColors=[
 ]
 export default function Loading({ restaurantName,viewLoading }) {
   const [removeAnimation,setRemoveAnimation]=useState(false)
+  const [imagesrc,setImagesrc]=useState("emptysrc")
+
   const restaurant = backgroundColors.find(
     (bg) => bg.name.toLowerCase() === restaurantName.toLowerCase()
   );
@@ -33,13 +35,12 @@ export default function Loading({ restaurantName,viewLoading }) {
       }, 1000);
     }
   },[viewLoading])
-  if(!removeAnimation){
   return (
     
     <Container viewLoading={viewLoading} bg={restaurant?restaurant.color:"black"}>
       {(restaurantName == "junkies" || restaurantName == "kacodoner" || restaurantName == "aldaouksweets" || restaurantName=="cheeseboard") ?
         <>
-          <LogoImage src={`https://storage.googleapis.com/ecommerce-bucket-testing/${restaurantName}`} />
+          <LogoImage src={!removeAnimation?`https://storage.googleapis.com/ecommerce-bucket-testing/${restaurantName}`:""} />
            {/* {restaurantName=="junkies" && <BouncingLoader /> } */}
         </>
 
@@ -55,7 +56,4 @@ export default function Loading({ restaurantName,viewLoading }) {
       }
     </Container>
   );
-}else{
-  return null
-}
 }
