@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Container, Logo, LogoImage, Text } from "./styles";
 import { PulseLoader } from "react-spinners";
 import "./styles.css";
@@ -21,10 +21,21 @@ const backgroundColors=[
   }
 ]
 export default function Loading({ restaurantName,viewLoading }) {
+  const [removeAnimation,setRemoveAnimation]=useState(false)
   const restaurant = backgroundColors.find(
     (bg) => bg.name.toLowerCase() === restaurantName.toLowerCase()
   );
+
+  useEffect(()=>{
+    if(viewLoading){
+      const timer = setTimeout(() => {
+        setRemoveAnimation(true);
+      }, 1000);
+    }
+  },[viewLoading])
+  if(!removeAnimation){
   return (
+    
     <Container viewLoading={viewLoading} bg={restaurant?restaurant.color:"black"}>
       {(restaurantName == "junkies" || restaurantName == "kacodoner" || restaurantName == "aldaouksweets" || restaurantName=="cheeseboard") ?
         <>
@@ -44,4 +55,7 @@ export default function Loading({ restaurantName,viewLoading }) {
       }
     </Container>
   );
+}else{
+  return null
+}
 }
