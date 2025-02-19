@@ -43,30 +43,44 @@ const items = [
   {
     name: "yalunji",
     logo: "https://storage.googleapis.com/ecommerce-bucket-testing/1736080387300-ce22b88d-701a-43a5-b40d-3e409a5f2780_1-removebg-preview (1).svg",
+    link:"https://yalunji.menugic.com"
+
   },
   {
     name: "walidFlower",
     logo: "https://storage.googleapis.com/ecommerce-bucket-testing/1714720286931-fe43c3dc-2f2c-4111-a0d7-e00b628bad59-removebg-preview.svg",
+    link:"https://walidFlower.menugic.com"
+
   },
   {
     name: "bacherlights",
     logo: "https://storage.googleapis.com/ecommerce-bucket-testing/1714216387965-IMG-20240427-WA0065-removebg-preview.svg",
+    link:"https://bacherlights.menugic.com"
+
   },
   {
     name: "theflowershop",
     logo: "https://storage.googleapis.com/ecommerce-bucket-testing/1713692650687-10560986_301435386703720_1643784321_a-removebg-preview.svg",
+    link:"https://theflowershop.menugic.com"
+
   },
   {
     name: "glowvana",
     logo: "https://storage.googleapis.com/ecommerce-bucket-testing/1714810892590-be10d0ab-fcac-422d-97c1-5c53b9df2eda-removebg-preview.svg",
+    link:"https://glowvana.menugic.com"
+
   },
   {
     name: "aldoauksweets",
     logo: "https://storage.googleapis.com/ecommerce-bucket-testing/1735600724733-470897863_1250703089551104_8662433934202922003_n-removebg-preview.svg",
+    link:"https://aldoauksweets.menugic.com"
+
   },
   {
     name: "bodyboost",
     logo: "https://storage.googleapis.com/ecommerce-bucket-testing/1737311485437-textwithflaskBodyBoost (1).png",
+    link:"https://bodyboost.menugic.com"
+
   },
 ];
 
@@ -80,13 +94,13 @@ export default function CarouselInverted() {
       <Track trackWidth={trackWidth} duration={duration}>
         {/* Render carousel items */}
         {items.map((item, index) => (
-          <Item key={`original-${index}`}>
+          <Item key={`original-${index}`} onClick={() => window.location.href = item.link}>
             <Image src={item.logo} alt={item.name} />
           </Item>
         ))}
         {/* Duplicate items for seamless looping */}
         {items.map((item, index) => (
-          <Item key={`duplicate-${index}`}>
+          <Item key={`duplicate-${index}`} onClick={() => window.location.href = item.link}>
             <Image src={item.logo} alt={item.name} />
           </Item>
         ))}

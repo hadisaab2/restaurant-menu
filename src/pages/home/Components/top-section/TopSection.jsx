@@ -1,8 +1,8 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
     Container, Image, ImageWrapper,
     PhoneImage, PhoneWrapper, Title, CarouselWrapper,
-    TitleContainer,LogoMenugic
+    TitleContainer, LogoMenugic
 } from './styles';
 
 import phone from './phone.png';
@@ -12,43 +12,34 @@ import Flowers from './Flowers.png';
 import Cream from './Cream.png';
 import Logo from './Logo.png';
 
-
-
-// Carousel data with local images
 const carouselItems = [
     { image: Mashewi, title: "FOOD MENU" },
     { image: Coffee, title: "COFFEE SHOP" },
     { image: Flowers, title: "FLOWER SHOP" },
     { image: Cream, title: "COSMETICS" }
-
-    
 ];
 
 export default function TopSection() {
     const [currentIndex, setCurrentIndex] = useState(0);
     const touchStartX = useRef(0);
 
-    // Handle left/right scrolling (mouse wheel)
-    const handleScroll = (e) => {
-        if (e.deltaY > 0 || e.deltaX > 0) {
+    useEffect(() => {
+        const interval = setInterval(() => {
             nextSlide();
-        } else if (e.deltaY < 0 || e.deltaX < 0) {
-            prevSlide();
-        }
-    };
+        }, 2000);
+        return () => clearInterval(interval);
+    }, [currentIndex]);
 
-    // Handle touch start
     const handleTouchStart = (e) => {
         touchStartX.current = e.touches[0].clientX;
     };
 
-    // Handle touch end (detect swipe)
     const handleTouchEnd = (e) => {
         const deltaX = e.changedTouches[0].clientX - touchStartX.current;
         if (deltaX > 50) {
-            prevSlide(); // Swipe Right
+            prevSlide();
         } else if (deltaX < -50) {
-            nextSlide(); // Swipe Left
+            nextSlide();
         }
     };
 
@@ -61,31 +52,21 @@ export default function TopSection() {
     };
 
     return (
-        <Container
-            onTouchStart={handleTouchStart}
-            onTouchEnd={handleTouchEnd}
-        >
-            <LogoMenugic src={Logo}/>
+        <Container onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd}>
+            <LogoMenugic src={Logo} />
             <PhoneWrapper>
                 <PhoneImage src={phone} />
                 <TitleContainer>
-            {carouselItems.map((item, index) => (
-
-                <Title index={index} currentIndex={currentIndex}>{item.title}</Title>
-
-            ))}
-            </TitleContainer>
+                    {carouselItems.map((item, index) => (
+                        <Title key={index} index={index} currentIndex={currentIndex}>{item.title}</Title>
+                    ))}
+                </TitleContainer>
             </PhoneWrapper>
-         
             <CarouselWrapper currentIndex={currentIndex}>
                 {carouselItems.map((item, index) => (
-                    <>
-                        <ImageWrapper key={index}>
-                            <Image   index={index} currentIndex={currentIndex} src={item.image} alt={item.title} />
-
-                        </ImageWrapper>
-
-                    </>
+                    <ImageWrapper key={index}>
+                        <Image index={index} currentIndex={currentIndex} src={item.image} alt={item.title} />
+                    </ImageWrapper>
                 ))}
             </CarouselWrapper>
         </Container>

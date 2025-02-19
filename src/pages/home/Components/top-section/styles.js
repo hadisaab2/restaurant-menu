@@ -7,6 +7,7 @@ export const Container = styled.div`
   justify-content: center;
   overflow: hidden;
   position: relative;
+  flex-direction: column;
 `;
 
 export const PhoneWrapper = styled.div`
@@ -76,8 +77,10 @@ export const Image = styled.img`
 
 
 export const LogoMenugic = styled.img`
-position: absolute;
+/* position: absolute;
 right: 20px;
-top:20px;
-width: 150px;
+top:20px; */
+width: 200px;
+position: absolute;
+top:40px;
 `;

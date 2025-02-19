@@ -2,14 +2,11 @@ import React, { useRef } from "react";
 import {
   AddRestaurant,
   AddRestaurantForm,
+  Arrow,
   BackIcon,
+  ColorsBlock,
+  ColorSection,
   Container,
-  Delete,
-  Edit,
-  EditDeleteIcons,
-  Table,
-  Td,
-  Th,
   UploadBtn,
   UploadedImage,
   UploadImageText,
@@ -39,6 +36,7 @@ import { useNavigate } from "react-router-dom";
 import { ADMINSIGNIN } from "../../../routes/URLs";
 import { useAddRestaurantCoverQuery } from "../../../apis/restaurants/addCoverLogo";
 import { useEditRestaurantCoverQuery } from "../../../apis/restaurants/editCoverLogo";
+import TableRestaurants from "./tableRestaurants";
 
 export default function Restaurants() {
   const [isEditMode, setIsEditMode] = useState(false);
@@ -47,6 +45,13 @@ export default function Restaurants() {
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [selectedIdForAction, setSelectedIdForAction] = useState(null);
   const [restaurants, setRestaurants] = useState([]);
+  const [template, setTemplate] = useState();
+  const [file, setFile] = useState(null);
+  const [imageUrl, setImageUrl] = useState(null);
+  const [fileErrMsg, setFileErrMsg] = useState("Please upload image");
+  const fileInputRef = useRef(null);
+  const [viewColorSection, setViewColorSection] = useState(false);
+
   const navigate = useNavigate();
 
   const {
@@ -69,7 +74,7 @@ export default function Restaurants() {
       .catch((err) => console.log(err));
   };
 
-  const { handleApiCall: editRestaurantCover, isPending: isEdditingCover } = useEditRestaurantCoverQuery({
+  const { handleApiCall: editRestaurantCover } = useEditRestaurantCoverQuery({
     onSuccess: () => {
     },
   });
@@ -79,20 +84,13 @@ export default function Restaurants() {
     useEditRestaurantQuery({
       onSuccess: (response) => {
         const restaurantId = response?.data?.id;
-        if(restaurantId && file){
+        if (restaurantId && file) {
           editRestaurantCover({
             id: restaurantId,
             cover_url: file, // Assume you have the cover image file in this variable
           });
         }
-        reset();
-        setSelectedIdForAction(null);
-        setSelectedProduct(null);
-        refetchRestaurants();
-        setShowAddComponent(false);
-        handleOnDeleteImage();
-        setIsEditMode(false)
-
+        resetComponent()
       },
     });
 
@@ -105,28 +103,34 @@ export default function Restaurants() {
   const { handleApiCall, isPending } = useAddRestaurantQuery({
     onSuccess: (response) => {
       const restaurantId = response?.data?.id;
-      if(restaurantId && file){
+      if (restaurantId && file) {
         addRestaurantCover({
           id: restaurantId,
           cover_url: file, // Assume you have the cover image file in this variable
         });
       }
-      rest();
-      refetchRestaurants();
-      setSelectedIdForAction(null);
-      setSelectedProduct(null);
-      setShowAddComponent(false);
-      handleOnDeleteImage();
-      setIsEditMode(false)
-
+      resetComponent()
 
 
     },
   });
 
-  const [template, setTemplate] = useState();
+  const resetComponent = () => {
+    rest();
+    refetchRestaurants();
+    setSelectedIdForAction(null);
+    setSelectedProduct(null);
+    setShowAddComponent(false);
+    handleOnDeleteImage();
+    setIsEditMode(false)
+  }
+
+
+
+
 
   const handletemplate = (e) => {
+    //Should empty all fields except these fields
     Object.keys(getValues()).map((key) => {
       const shouldDeleteField = ["username", "password", "language"].every(
         (field) => field !== key
@@ -176,11 +180,11 @@ export default function Restaurants() {
     setValue("name", restaurantName);
     setValue("currency", currency);
     setValue("font", font);
-    if(cover_url){
-    setImageUrl(
-      `https://storage.googleapis.com/ecommerce-bucket-testing/${cover_url}`
-    );
-  }
+    if (cover_url) {
+      setImageUrl(
+        `https://storage.googleapis.com/ecommerce-bucket-testing/${cover_url}`
+      );
+    }
     setShowAddComponent(true);
   };
 
@@ -194,10 +198,7 @@ export default function Restaurants() {
     })();
   };
 
-  const [file, setFile] = useState(null);
-  const [imageUrl, setImageUrl] = useState(null);
-  const [fileErrMsg, setFileErrMsg] = useState("Please upload image");
-  const fileInputRef = useRef(null);
+
 
   const handleFileChange = ({ target }) => {
     if (target.files[0]) {
@@ -225,6 +226,15 @@ export default function Restaurants() {
     fileInputRef.current.click();
   };
 
+  const mainFields = [
+    { label: "UserName", name: "username", required: true },
+    { label: "Password", name: "password", required: !isEditMode },
+    { label: "Phone", name: "phone_number", required: true },
+    { label: "Email", name: "email", required: true },
+    { label: "Restaurant name", name: "name", required: true }
+  ];
+
+
   return (
     <Container>
       {!showAddComponent ? (
@@ -238,7 +248,7 @@ export default function Restaurants() {
           <AddRestaurant onClick={() => setShowAddComponent(true)}>
             Add Restaurant
           </AddRestaurant>
-          <Table>
+          {/* <Table>
             <thead>
               <tr>
                 <Th>User name</Th>
@@ -268,7 +278,8 @@ export default function Restaurants() {
                 );
               })}
             </tbody>
-          </Table>
+          </Table> */}
+          <TableRestaurants restaurants={restaurants} setSelectedIdForAction={setSelectedIdForAction} setIsPopupOpen={setIsPopupOpen} handleEdit={handleEdit} />
           <Button
             style={{
               alignSelf: "flex-start",
@@ -303,62 +314,22 @@ export default function Restaurants() {
               }}
             />
 
-            <TextField
-              label="UserName"
-              name="username"
-              variant="outlined"
-              {...register("username", { required: "Required" })}
-              error={!isEmpty(formState?.errors?.username)}
-              helperText={
-                !isEmpty(formState?.errors?.username) &&
-                formState.errors?.username.message
-              }
-            />
-            <TextField
-              label="Password"
-              variant="outlined"
-              name="password"
-              {...register("password", !isEditMode && { required: "Required" })}
-              error={!isEmpty(formState?.errors?.password)}
-              helperText={
-                !isEmpty(formState?.errors?.password) &&
-                formState.errors?.password.message
-              }
-            />
-            <TextField
-              label="Phone"
-              variant="outlined"
-              name="phone_number"
-              {...register("phone_number", { required: "Required" })}
-              error={!isEmpty(formState?.errors?.phone_number)}
-              helperText={
-                !isEmpty(formState?.errors?.phone_number) &&
-                formState.errors?.phone_number.message
-              }
-            />
-            <TextField
-              label="Email"
-              variant="outlined"
-              name="email"
-              {...register("email", { required: "Required" })}
-              error={!isEmpty(formState?.errors?.email)}
-              helperText={
-                !isEmpty(formState?.errors?.email) &&
-                formState.errors?.email.message
-              }
-            />
-            <TextField
-              label="Restaurant name"
-              variant="outlined"
-              name="name"
-              {...register("name", { required: "Required" })}
-              error={!isEmpty(formState?.errors?.name)}
-              helperText={
-                !isEmpty(formState?.errors?.name) &&
-                formState.errors?.name.message
-              }
-            />
-            <Box sx={{ minWidth: 120 }}>
+
+            {mainFields.map(({ label, name, required }) => (
+              <TextField
+                key={name}
+                label={label}
+                variant="outlined"
+                name={name}
+                {...register(name, required && { required: "Required" })}
+                error={!isEmpty(formState?.errors?.[name])}
+                helperText={
+                  !isEmpty(formState?.errors?.[name]) && formState.errors?.[name].message
+                }
+                style={{ width: "30%" }}
+              />
+            ))}
+            <Box sx={{ width: "30%" }}>
               <FormControl fullWidth>
                 <InputLabel>Language</InputLabel>
                 <Select
@@ -373,7 +344,7 @@ export default function Restaurants() {
                 </Select>
               </FormControl>
             </Box>
-            <Box sx={{ minWidth: 120 }}>
+            <Box sx={{ width: "30%" }}>
               <FormControl fullWidth>
                 <InputLabel>Currency</InputLabel>
                 <Select
@@ -389,7 +360,7 @@ export default function Restaurants() {
                 </Select>
               </FormControl>
             </Box>
-            <Box sx={{ minWidth: 120 }}>
+            <Box sx={{ width: "30%" }}>
               <FormControl fullWidth>
                 <InputLabel>Font</InputLabel>
                 <Select
@@ -405,9 +376,6 @@ export default function Restaurants() {
                   <MenuItem value="Verdana">Verdana</MenuItem>
                   <MenuItem value="Roboto Flex">Roboto Flex</MenuItem>
                   <MenuItem value="Teko">Teko</MenuItem>
-
-
-
                 </Select>
               </FormControl>
             </Box>
@@ -432,10 +400,13 @@ export default function Restaurants() {
               <UploadImageText>{fileErrMsg}</UploadImageText>
             )}
             {imageUrl && <UploadedImage src={imageUrl} alt="Uploaded" />}
-
-
-
-            <Box sx={{ minWidth: 120 }}>
+            <ColorSection onClick={()=>setViewColorSection(!viewColorSection)}>
+              Color Section
+              <Arrow/>
+            </ColorSection>
+            <ColorsBlock viewColorSection={viewColorSection}>
+            
+            <Box sx={{ width: "32%" ,marginTop:"5px"}}>
               <FormControl fullWidth>
                 <InputLabel>Template</InputLabel>
                 <Select
@@ -462,9 +433,12 @@ export default function Restaurants() {
                     variant="outlined"
                     {...register(`theme.[${color}]`, { required: "Required" })}
                     defaultValue={selectedProduct?.theme?.[color]}
+                    style={{ width: "32%",marginTop:"5px" }}
+
                   />
                 );
               })}
+              </ColorsBlock>
             <LoadingButton
               onClick={handleAddRestaurant}
               style={{ backgroundColor: "turquoise", color: "white" }}

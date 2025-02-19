@@ -43,30 +43,43 @@ const items = [
   {
     name: "yalunji",
     logo: "https://storage.googleapis.com/ecommerce-bucket-testing/1736080387300-ce22b88d-701a-43a5-b40d-3e409a5f2780_1-removebg-preview (1).svg",
+    link:"https://yalunji.menugic.com"
   },
   {
     name: "magnifico",
     logo: "https://storage.googleapis.com/ecommerce-bucket-testing/1736967893061-410590808_776386197848578_970705798533961791_n-removebg-preview.svg",
+    link:"https://magnifico.menugic.com"
+
   },
   {
     name: "balloweenevent",
     logo: "https://storage.googleapis.com/ecommerce-bucket-testing/1713873140213-balloween-event-logo-removebg-preview-2.svg",
+    link:"https://balloweenevent.menugic.com"
+
   },
   {
     name: "theflowershop",
     logo: "https://storage.googleapis.com/ecommerce-bucket-testing/1713692650687-10560986_301435386703720_1643784321_a-removebg-preview.svg",
+    link:"https://theflowershop.menugic.com"
+
   },
   {
     name: "andysrolls",
     logo: "https://storage.googleapis.com/ecommerce-bucket-testing/1736077791504-312993080_6321930744490328_111076251399715480_n-removebg-preview (2).svg",
+    link:"https://andysrolls.menugic.com"
+
   },
   {
     name: "aldoauksweets",
     logo: "https://storage.googleapis.com/ecommerce-bucket-testing/1735600724733-470897863_1250703089551104_8662433934202922003_n-removebg-preview.svg",
+    link:"https://aldoauksweets.menugic.com"
+
   },
   {
     name: "bodyboost",
     logo: "https://storage.googleapis.com/ecommerce-bucket-testing/1737311485437-textwithflaskBodyBoost (1).png",
+    link:"https://bodyboost.menugic.com"
+
   },
 ];
 
@@ -80,13 +93,13 @@ export default function Carousel() {
       <Track trackWidth={trackWidth} duration={duration}>
         {/* Render carousel items */}
         {items.map((item, index) => (
-          <Item key={`original-${index}`}>
+          <Item key={`original-${index}`} onClick={() => window.location.href = item.link}>
             <Image src={item.logo} alt={item.name} />
           </Item>
         ))}
         {/* Duplicate items for seamless looping */}
         {items.map((item, index) => (
-          <Item key={`duplicate-${index}`}>
+          <Item  key={`duplicate-${index}`} onClick={() => window.location.href = item.link}>
             <Image src={item.logo} alt={item.name} />
           </Item>
         ))}

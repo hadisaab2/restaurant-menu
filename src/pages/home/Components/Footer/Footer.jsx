@@ -98,11 +98,14 @@ const menuItems = [
 [
     {
         "Name":"Whatsapp",
-        "Icon":FaWhatsapp
+        "Icon":FaWhatsapp,
+        "link":"https://wa.me/96178911634"
     },
     {
         "Name":"Instagram",
-        "Icon":FaInstagram
+        "Icon":FaInstagram,
+        "link":"https://www.instagram.com/menugic/"
+
     },
     {
         "Name":"Email",
@@ -127,7 +130,7 @@ export default function Footer() {
             </Sections>
         <SocialMedia>
         {mediaItems.map((item, index) => (
-            <SectionsWrapper >
+            <SectionsWrapper  onClick={() => window.location.href = item.link}>
                 <MediaItem>
                     <item.Icon/>
                 </MediaItem>
