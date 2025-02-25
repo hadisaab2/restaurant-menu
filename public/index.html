@@ -11,6 +11,25 @@
       name="description"
       content=""
     />
+    <script>
+      (function() {
+          let restaurantName = "default";
+          const hostname = window.location.hostname;
+          const pathParts = window.location.pathname.split('/');
+
+          if (hostname.includes("menugic.com") && hostname !== "www.menugic.com") {
+              // Subdomain-based URL: restname.menugic.com
+              restaurantName = hostname.split('.')[0]; 
+          } else if (pathParts.length > 1 && pathParts[1]) {
+              // Path-based URL: www.menugic.com/restname
+              restaurantName = pathParts[1];
+          }
+
+          document.write(`<link rel="manifest" href="https://77.37.51.25/restaurants/manifest/${restaurantName}">`);
+      })();
+  </script>
+
+
     <link rel="apple-touch-icon" href="%PUBLIC_URL%/menugicLogo.png" />
     <!--
       manifest.json provides metadata used when your web app is installed on a
@@ -29,7 +48,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Verdana&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Teko:wght@300..700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Dangrek&display=swap" rel="stylesheet">
-    
+
     <meta name="robots" content="noimageindex, noarchive">
     <meta property="og:title" content="" />
 <meta property="og:description" content="" />
