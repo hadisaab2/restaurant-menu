@@ -26,7 +26,11 @@ export default function SubDomainTemplate({ restaurantName }) {
 
   const restaurant = useSelector((state) => state.restaurant?.[restaurantName]);
   const [isTrue, setIsTrue] = useState(true);
-  const [removeLoader, setRemoveloader] = useState(false);
+
+
+
+
+
 
   useEffect(() => {
     if (!isLoading && response?.data) {
@@ -59,14 +63,7 @@ export default function SubDomainTemplate({ restaurantName }) {
     }, 3000);
     return () => clearTimeout(timer);
   }, []);
-  // useEffect(() => {
-  //   if(restaurant?.categories && !isLoading && !isTrue){
-  //     const timer = setTimeout(() => {
-  //       setRemoveloader(true);
-  //     }, 1000);
-  //     return () => clearTimeout(timer);
-  //   }
-  // }, [isTrue,isLoading,restaurant]);
+
 
 
   return (
@@ -82,6 +79,7 @@ export default function SubDomainTemplate({ restaurantName }) {
       </ThemeProvider>
       }
       <Loading restaurantName={restaurantName} viewLoading={restaurant?.categories && !isLoading && !isTrue} />
+
     </>
   );
 

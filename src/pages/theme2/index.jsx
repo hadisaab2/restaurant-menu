@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   BlurOverlay,
   Cart,
@@ -19,6 +19,7 @@ import CartPopup from "./popup/cart";
 import SideBar from "./Sidebar";
 import ProductParam from "./ProductParam";
 import Share from "./popup/share";
+import { InstallPrompt } from "./installPrompt";
 
 export default function Theme2() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -38,6 +39,9 @@ export default function Theme2() {
   const [showPopup, setshowPopup] = useState(null);
   const [searchText, setSearchText] = useState("");
   const [showSidebar, setshowSidebar] = useState(null);
+  const [deferredPrompt, setDeferredPrompt] = useState(null);
+  const [showInstallPopup, setShowInstallPopup] = useState(true);
+
   console.log(restaurant.categories)
   const [carouselPosition, setcarouselPosition] = useState(!categoryId?0:restaurant.categories.findIndex(category => category.id == categoryId));
   console.log(carouselPosition)
@@ -65,6 +69,42 @@ export default function Theme2() {
       popupHandler(null)
     }
   }
+  
+  
+
+  
+    useEffect(() => {
+      const handleBeforeInstallPrompt = (event) => {
+        event.preventDefault();
+        setDeferredPrompt(event);
+        setShowInstallPopup(true);
+      };
+  
+      window.addEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
+  
+      return () => {
+        window.removeEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
+      };
+    }, []);
+  
+    const handleInstallClick = async () => {
+      if (!deferredPrompt) return;
+  
+      deferredPrompt.prompt();
+      const choiceResult = await deferredPrompt.userChoice;
+  
+      if (choiceResult.outcome === "accepted") {
+        console.log("User accepted the install");
+      } else {
+        console.log("User dismissed the install");
+      }
+  
+      setDeferredPrompt(null);
+      setShowInstallPopup(false);
+    };
+  
+
+
   return (
     <Container id="wrapper">
       <MenuWrapper onClick={handleClickOutside} >
@@ -130,7 +170,8 @@ export default function Theme2() {
 
       />
       {productId &&<ProductParam productId={productId} searchParams={searchParams} setSearchParams={setSearchParams} />}
-        
+      <InstallPrompt showInstallPopup={showInstallPopup} onInstall={handleInstallClick} restaurantName={restaurantName} onDismiss={() => setShowInstallPopup(false)} />
+
     </Container>
   );
 }
