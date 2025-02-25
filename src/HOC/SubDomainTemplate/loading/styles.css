@@ -17,6 +17,7 @@
   white-space: nowrap;
   position: absolute;
   transform: translate(-50%, -62%);
+  font-weight: 500;
 }
 
 .text-wrapper h2:nth-child(1) {
