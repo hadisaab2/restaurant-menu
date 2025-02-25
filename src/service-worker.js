@@ -1,3 +1,5 @@
+/* eslint-disable no-restricted-globals */
+
 const CACHE_NAME_PREFIX = "menugic-cache-"; // Prefix for restaurant-specific caches
 
 self.addEventListener("install", (event) => {
