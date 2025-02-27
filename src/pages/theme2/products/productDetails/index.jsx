@@ -87,9 +87,12 @@ let formJson=null;
   const [quantity, setQuantity] = useState(1);
   const [carouselSwiped, setCarouselSwiped] = useState(false);
 
-  const basePrice = parseFloat(plates[activePlate]?.en_price || 0);
-  const [totalPrice, setTotalPrice] = useState(basePrice); // Example base price
 
+  const enPrice = plates[activePlate]?.en_price || "0";
+  const basePrice = enPrice.includes(".") ? parseFloat(enPrice).toFixed(2) : parseFloat(enPrice).toFixed(0);
+  console.log(basePrice)
+  const [totalPrice, setTotalPrice] = useState(basePrice); // Example base price
+  console.log(totalPrice)
   const handlePriceChange = (newPrice) => {
     setTotalPrice(newPrice);
   };

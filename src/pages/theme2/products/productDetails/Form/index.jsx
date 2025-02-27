@@ -81,7 +81,10 @@ export default function ProductForm({ formSchema, onPriceChange, basePrice, form
       }
     });
 
-    onPriceChange((newPrice + addOnsPrice).toFixed(2)); // Rounds to 2 decimal places
+    const total = newPrice + addOnsPrice;
+    const formattedPrice = total % 1 !== 0 ? total.toFixed(2) : total.toFixed(0); //check if their is a decimal
+    onPriceChange(formattedPrice);
+  
   };
 
   const renderComponent = (component) => {
