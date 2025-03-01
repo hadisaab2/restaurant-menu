@@ -47,15 +47,21 @@ export const OptionItem = styled.li`
   height: 50px;
   cursor: pointer;
   padding-left: 7px;
+  padding-right: 7px;
   display: flex;
   align-items: center;
+  justify-content: space-between;
   transition: background-color 0.2s;
-  background-color: ${props=>props.branchName==props.selectedBranch?props.theme.popupbackgroundColor:"transparent"};
+  background-color: ${props=>props.branchName==props.selectedBranch?props.theme.popupbackgroundColor:!props.disable?"transparent":"gray"};
   color: ${props=>props.branchName==props.selectedBranch?props.theme.mainColor:props.theme.popupbackgroundColor};
-  &:hover {
-    background-color: ${(props) => props.theme.popupbackgroundColor};
-  }
+
 `;
+
+export const HasNoDelivery = styled.span`
+
+`;
+
+
 
 export const Caret = styled.span`
   border: solid ${(props) => props.theme.backgroundColor};

@@ -178,6 +178,7 @@ export default function Order({ setblock, popupHandler, restaurant }) {
         value={deliveryType}
         onChange={(e) => {
           setDeliveryType(e.target.value);
+          setSelectedBranch(!hasOnlineBranch() ? "" : restaurant?.branches[0])
           setErrors({})
         }}
       >
@@ -188,7 +189,7 @@ export default function Order({ setblock, popupHandler, restaurant }) {
 
       </Select>
       {errors.deliveryType && <Error>{errors.deliveryType}</Error>}
-      {(restaurant?.branches.length != 0 && !hasOnlineBranch()) && <BranchSelect branches={restaurant?.branches} selectedBranch={selectedBranch} setSelectedBranch={setSelectedBranch} setErrors={setErrors} errors={errors} />}
+      {(restaurant?.branches.length != 0 && !hasOnlineBranch()) && <BranchSelect deliveryType={deliveryType} branches={restaurant?.branches} selectedBranch={selectedBranch} setSelectedBranch={setSelectedBranch} setErrors={setErrors} errors={errors} />}
       {errors.branch && <Error>{errors.branch}</Error>}
 
       {(selectedBranch && deliveryType === "Delivery" && regions.length > 0) && <RegionSelect selectedRegion={selectedRegion} setSelectedRegion={setSelectedRegion} selectedBranch={restaurant?.branches.length == 1 ? restaurant?.branches[0] : selectedBranch} setErrors={setErrors} errors={errors} setRegions={setRegions} />}

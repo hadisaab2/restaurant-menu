@@ -18,6 +18,8 @@ export default function AddEditBranch({
 }) {
   const [location, setLocation] = useState({ governorates: [], districts: [], cities: [] });
   const [isOnline, setIsOnline] = useState(false); // Default false
+  const [hasDelivery, setHasDelivery] = useState(true); // Default false
+
   const { register, handleSubmit, setValue, formState, reset } = useForm();
   const { response: fetchedBranch, isLoading: branchLoading, refetch: refetchBranchDetails } = useGetBranch({
     branch_id: selectedIdForAction, // Trigger fetch based on branch_id,
@@ -59,7 +61,7 @@ export default function AddEditBranch({
 
   useEffect(() => {
     if (!branchLoading && selectedIdForAction) {
-      const { name, location, mapLink, phone_number, regions,is_online,whatsapp_number } = fetchedBranch?.data;
+      const { name, location, mapLink, phone_number, regions,is_online,whatsapp_number,has_delivery } = fetchedBranch?.data;
       console.log(is_online)
       setValue("name", name);
       setValue("location", location);
@@ -70,7 +72,10 @@ export default function AddEditBranch({
       const filteredgovernorate = getGovernoratesFromDistricts(filtereddistricts);
       setValue("regions", regions);
       setValue("is_online", is_online);
+      setValue("has_delivery", has_delivery);
       setIsOnline(is_online)
+      setHasDelivery(has_delivery)
+
       setLocation({
         governorates: filteredgovernorate,
         districts: filtereddistricts,
@@ -120,7 +125,8 @@ export default function AddEditBranch({
         ...data,
         restaurant_id: userInformation.restaurant_id,
         regions: location.cities.map(city => city.id),
-        is_online:isOnline
+        is_online:isOnline,
+        has_delivery:hasDelivery
       };
       if (selectedIdForAction) {
         handleEditApi(selectedIdForAction, payload);
@@ -145,7 +151,9 @@ export default function AddEditBranch({
   const handleisOnline = (event) => {
     setIsOnline(!isOnline); // Toggle between true/false
   };
-
+  const handlehasDelivery = (event) => {
+    setHasDelivery(!hasDelivery); // Toggle between true/false
+  };
 
   return (
     <>
@@ -226,6 +234,15 @@ export default function AddEditBranch({
                 label="Online Shop"
               />
             </FormControl>
+
+            <FormControl component="fieldset">
+              <FormLabel component="legend">Has Delivery</FormLabel>
+              <FormControlLabel
+                control={<Checkbox checked={hasDelivery} onChange={handlehasDelivery} />}
+                label="Has Delivery"
+              />
+            </FormControl>
+
 
             <LoadingButton
               loading={isPending || isEditing}
