@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   Route,
   BrowserRouter,
@@ -19,11 +19,12 @@ import SubDomainTemplate from "../HOC/SubDomainTemplate";
 
 export default function ApplicationRoutes() {
   const subdomain = window.location.hostname.split('.')[0];
+
   return (
     <BrowserRouter>
       <RoutesWrapper>
         {/* Handle subdomain routing */}
-        {subdomain !== "www" && subdomain !== "menugic" && subdomain!="localhost" ? (
+        {subdomain !== "www" && subdomain !== "menugic" && subdomain != "localhost" ? (
           <Route path="/" element={<SubDomainTemplate restaurantName={subdomain} />} />
         ) : (
           <>
