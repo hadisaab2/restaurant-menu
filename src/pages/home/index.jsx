@@ -11,11 +11,11 @@ import MenugicLogo from "./Components/header/Menugic-Logo.png"
 import Whatsapp from "./whatsapp.png"
 export default function Home() {
   const [viewSidebar, setviewSidebar] = useState(false)
-  useEffect(()=>{
-    const link = document.getElementById("favicon");
-    link.href = `menugicLogo.png`;
+  // useEffect(()=>{
+  //   const link = document.getElementById("favicon");
+  //   link.href = `menugicLogo.png`;
 
-  },[])
+  // },[])
   const menuItems = [
     { name: 'Home', sectionId: 'home' },
     { name: 'Clients', sectionId: 'clients' },
