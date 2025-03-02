@@ -39,6 +39,12 @@ export const templates = [
       "sidebarsearchText",
       "popupbuttonText"
     ],
+    features:[
+      {featureName:"cart",defaultValue:true},
+      {featureName:"delivery_order",defaultValue:true},
+      {featureName:"dinein_order",defaultValue:true},
+      {featureName:"takeaway_order",defaultValue:true},
+    ]
   },
   {
     id: 3,

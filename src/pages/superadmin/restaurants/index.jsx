@@ -7,6 +7,8 @@ import {
   ColorsBlock,
   ColorSection,
   Container,
+  FeaturesBlock,
+  FeaturesSection,
   UploadBtn,
   UploadedImage,
   UploadImageText,
@@ -17,7 +19,10 @@ import { useState } from "react";
 import {
   Box,
   Button,
+  Checkbox,
   FormControl,
+  FormControlLabel,
+  FormLabel,
   InputLabel,
   MenuItem,
   Select,
@@ -51,6 +56,9 @@ export default function Restaurants() {
   const [fileErrMsg, setFileErrMsg] = useState("Please upload image");
   const fileInputRef = useRef(null);
   const [viewColorSection, setViewColorSection] = useState(false);
+  const [viewFeaturesSection, setViewFeaturesSection] = useState(false);
+ 
+
 
   const navigate = useNavigate();
 
@@ -62,7 +70,9 @@ export default function Restaurants() {
     setValue,
     formState,
     reset,
+    watch
   } = useForm();
+  const watchedFeatures = watch("features", {});
 
   const { response, isLoading, refetch } = useGetRestaurants({
     onSuccess: () => { },
@@ -400,45 +410,67 @@ export default function Restaurants() {
               <UploadImageText>{fileErrMsg}</UploadImageText>
             )}
             {imageUrl && <UploadedImage src={imageUrl} alt="Uploaded" />}
-            <ColorSection onClick={()=>setViewColorSection(!viewColorSection)}>
+            <ColorSection onClick={() => setViewColorSection(!viewColorSection)}>
               Color Section
-              <Arrow/>
+              <Arrow />
             </ColorSection>
             <ColorsBlock viewColorSection={viewColorSection}>
-            
-            <Box sx={{ width: "32%" ,marginTop:"5px"}}>
-              <FormControl fullWidth>
-                <InputLabel>Template</InputLabel>
-                <Select
-                  label="mediaType"
-                  {...register("template_id", { required: "Required" })}
-                  error={!isEmpty(formState?.errors?.template_id)}
-                  onChange={handletemplate}
-                  defaultValue={selectedProduct?.template_id}
-                >
-                  {templates.map(({ name, id }) => (
-                    <MenuItem value={id}>{name}</MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            </Box>
 
-            {templates
-              .find((t) => t.id == template)
-              ?.colors.map((color) => {
-                return (
-                  <TextField
-                    label={color}
-                    name={color}
-                    variant="outlined"
-                    {...register(`theme.[${color}]`, { required: "Required" })}
-                    defaultValue={selectedProduct?.theme?.[color]}
-                    style={{ width: "32%",marginTop:"5px" }}
+              <Box sx={{ width: "32%", marginTop: "5px" }}>
+                <FormControl fullWidth>
+                  <InputLabel>Template</InputLabel>
+                  <Select
+                    label="mediaType"
+                    {...register("template_id", { required: "Required" })}
+                    error={!isEmpty(formState?.errors?.template_id)}
+                    onChange={handletemplate}
+                    defaultValue={selectedProduct?.template_id}
+                  >
+                    {templates.map(({ name, id }) => (
+                      <MenuItem value={id}>{name}</MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </Box>
 
-                  />
-                );
-              })}
-              </ColorsBlock>
+              {templates
+                .find((t) => t.id == template)
+                ?.colors.map((color) => {
+                  return (
+                    <TextField
+                      label={color}
+                      name={color}
+                      variant="outlined"
+                      {...register(`theme.[${color}]`, { required: "Required" })}
+                      defaultValue={selectedProduct?.theme?.[color]}
+                      style={{ width: "32%", marginTop: "5px" }}
+
+                    />
+                  );
+                })}
+            </ColorsBlock>
+            <FeaturesSection onClick={() => setViewFeaturesSection(!viewFeaturesSection)}>
+              Feature Section
+              <Arrow />
+            </FeaturesSection>
+            <FeaturesBlock viewFeaturesSection={viewFeaturesSection}>
+              {templates
+                .find((t) => t.id == template)
+                ?.features.map((feature) => {
+                  return (
+                    <FormControl component="fieldset" style={{display:"flex",flexDirection:"row"}}>
+                      <FormLabel component="legend">{feature.featureName}</FormLabel>
+                      <FormControlLabel
+                        control={<Checkbox {...register(`features.${feature.featureName}`)}
+                        checked={watchedFeatures[feature.featureName] ?? feature.defaultValue} // Ensure controlled behavior
+                        defaultValue={selectedProduct?selectedProduct.features?.[feature.featureName]:feature.defaultValue} 
+                        />}
+                        label={feature.featureName}
+                      />
+                    </FormControl>
+                  );
+                })}
+            </FeaturesBlock>
             <LoadingButton
               onClick={handleAddRestaurant}
               style={{ backgroundColor: "turquoise", color: "white" }}

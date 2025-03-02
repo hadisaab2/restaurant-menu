@@ -106,3 +106,28 @@ position: absolute;
 right: 5%;
 
 `;
+
+export const FeaturesSection = styled.div`
+  height: 50px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding-left: 10px;
+  cursor: pointer;
+`;
+
+export const FeaturesBlock = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  overflow: hidden;
+  height: ${props=>props.viewFeaturesSection?"50vh":"0px"};
+  position: relative;
+  transition: all 0.8s ease-in-out ;
+  gap:10px;
+`;
+
+
+
+
