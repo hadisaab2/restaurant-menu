@@ -103,8 +103,7 @@ export default function Theme2() {
       setShowInstallPopup(false);
     };
   
-
-
+  let features=JSON.parse(restaurant.features)
   return (
     <Container id="wrapper">
       <MenuWrapper onClick={handleClickOutside} >
@@ -138,24 +137,24 @@ export default function Theme2() {
       }}>
         <Location />
       </DetailsBtn>
-      <CartBtn onClick={() => {
+      {features?.cart &&<CartBtn onClick={() => {
         window.history.pushState({}, ""); // Add a history entry
         popupHandler("cart")
       }}>
         <Number>{itemCount}</Number>
         <Cart />
-      </CartBtn>
+      </CartBtn>}
       <LocationPopup
         restaurant={restaurant}
         showPopup={showPopup}
         popupHandler={popupHandler}
       />
-      <CartPopup
+      {features?.cart && <CartPopup
         restaurant={restaurant}
         showPopup={showPopup}
         popupHandler={popupHandler}
-      />
-        <Share
+      />}
+      <Share
         showPopup={showPopup}
         popupHandler={popupHandler}
         activeCategory={activeCategory}
@@ -170,7 +169,7 @@ export default function Theme2() {
 
       />
       {productId &&<ProductParam productId={productId} searchParams={searchParams} setSearchParams={setSearchParams} />}
-      {/* <InstallPrompt showInstallPopup={showInstallPopup} onInstall={handleInstallClick} restaurantName={restaurantName} onDismiss={() => setShowInstallPopup(false)} /> */}
+      {features?.install_app && <InstallPrompt showInstallPopup={showInstallPopup} onInstall={handleInstallClick} restaurantName={restaurantName} onDismiss={() => setShowInstallPopup(false)} />}
 
     </Container>
   );

@@ -39,7 +39,7 @@ export default function ProductParam({ productId, setSearchParams, searchParams 
         }
     }, [productLoading]);
 
-    
+
 
     if (!_.isEmpty(fetchedProduct?.form_json)) {//la etjanab json.parse la undefined
         if (!_.isEmpty(JSON.parse(fetchedProduct?.form_json))) {
@@ -201,6 +201,7 @@ export default function ProductParam({ productId, setSearchParams, searchParams 
         default:
             currencySymbol = ""; // No currency or unsupported currency
     }
+    let features = JSON.parse(restaurant.features)
 
     return (
         <>
@@ -298,17 +299,18 @@ export default function ProductParam({ productId, setSearchParams, searchParams 
                                 {totalPrice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} {currencySymbol}
                             </ItemPrice>
                         )}
-
-                        <ButtonWrapper>
-                            <QuantityWrapper>
-                                <Plus onClick={handleIncrement}>+</Plus>
-                                <Quantity>{quantity}</Quantity>
-                                <Minus onClick={handleDecrement}>-</Minus>
-                            </QuantityWrapper>
-                            <AddToCart onClick={handleAddToCart}>{restaurant.activeLanguage == "en"
-                                ? "Add To Cart"
-                                : "أضف إلى السلة"}</AddToCart>
-                        </ButtonWrapper>
+                        {features?.cart &&
+                            <ButtonWrapper>
+                                <QuantityWrapper>
+                                    <Plus onClick={handleIncrement}>+</Plus>
+                                    <Quantity>{quantity}</Quantity>
+                                    <Minus onClick={handleDecrement}>-</Minus>
+                                </QuantityWrapper>
+                                <AddToCart onClick={handleAddToCart}>{restaurant.activeLanguage == "en"
+                                    ? "Add To Cart"
+                                    : "أضف إلى السلة"}</AddToCart>
+                            </ButtonWrapper>
+                        }
                     </ItemInfo>
                 </ItemInfoWrapper>
             </SearchProductContainer>

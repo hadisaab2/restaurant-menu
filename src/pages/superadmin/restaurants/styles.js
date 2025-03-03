@@ -122,7 +122,7 @@ export const FeaturesBlock = styled.div`
   flex-direction: column;
   width: 100%;
   overflow: hidden;
-  height: ${props=>props.viewFeaturesSection?"50vh":"0px"};
+  height: ${props=>props.viewFeaturesSection?"60vh":"0px"};
   position: relative;
   transition: all 0.8s ease-in-out ;
   gap:10px;

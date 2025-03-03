@@ -65,13 +65,13 @@ export default function ProductDetails({
   const activeCategory = categories.find((category) => category.id == activeCategoryId)
 
 
-let formJson=null;
-//if product have a form than we'll take the form of it else we take form of category
-  if(!_.isEmpty(plates[activePlate]?.form_json)){//la etjanab json.parse la undefined
-    if(!_.isEmpty(JSON.parse(plates[activePlate]?.form_json))){
-      formJson=plates[activePlate]?.form_json
-    }else{
-      formJson=activeCategory?.form_json
+  let formJson = null;
+  //if product have a form than we'll take the form of it else we take form of category
+  if (!_.isEmpty(plates[activePlate]?.form_json)) {//la etjanab json.parse la undefined
+    if (!_.isEmpty(JSON.parse(plates[activePlate]?.form_json))) {
+      formJson = plates[activePlate]?.form_json
+    } else {
+      formJson = activeCategory?.form_json
     }
   }
 
@@ -90,9 +90,7 @@ let formJson=null;
 
   const enPrice = plates[activePlate]?.en_price || "0";
   const basePrice = enPrice.includes(".") ? parseFloat(enPrice).toFixed(2) : parseFloat(enPrice).toFixed(0);
-  console.log(basePrice)
   const [totalPrice, setTotalPrice] = useState(basePrice); // Example base price
-  console.log(totalPrice)
   const handlePriceChange = (newPrice) => {
     setTotalPrice(newPrice);
   };
@@ -103,16 +101,16 @@ let formJson=null;
     setTimeout(() => {
       setactivePlate(null);
       document.body.style.overflow = "auto";
-   
+
     }, 800);
     setCloseAnimation(false);
     setcarouselIndex(0);
     searchParams.delete("productId"); // Remove the parameter
-    setSearchParams(searchParams); 
+    setSearchParams(searchParams);
   };
   const [copied, setCopied] = useState(false);
 
-  const handleCopy = ()=>{
+  const handleCopy = () => {
     const fullUrl = window.location.href; // Copies full URL including pathname and search params
     navigator.clipboard.writeText(fullUrl)
     setCopied(true)
@@ -143,7 +141,7 @@ let formJson=null;
       const deltaX = currentX - startX;
 
       if (deltaX > 5) {
-        if (carouselIndex !== 0) handleleft() ;
+        if (carouselIndex !== 0) handleleft();
       } else if (deltaX < -5) {
         if (plates[activePlate].images.length > carouselIndex + 1)
           handleright();
@@ -238,6 +236,9 @@ let formJson=null;
     default:
       currencySymbol = ""; // No currency or unsupported currency
   }
+
+  let features = JSON.parse(restaurant.features)
+
   return (
     <>
 
@@ -319,31 +320,32 @@ let formJson=null;
         )}
         <ItemInfoWrapper>
           <ItemInfo CloseAnimation={CloseAnimation} activeLanguage={restaurant.activeLanguage}>
-            <ItemName  activeLanguage={restaurant.activeLanguage} >
+            <ItemName activeLanguage={restaurant.activeLanguage} >
               {restaurant.activeLanguage == "en"
                 ? plates[activePlate]?.en_name
                 : plates[activePlate]?.ar_name}
             </ItemName>
-            <ItemDescription activeLanguage={restaurant.activeLanguage} 
+            <ItemDescription activeLanguage={restaurant.activeLanguage}
               dangerouslySetInnerHTML={{ __html: description }}
             />
             {formSchema?.components && <ProductForm formSchema={formSchema} onPriceChange={handlePriceChange} formData={formData} setFormData={setFormData} basePrice={plates[activePlate]?.en_price} />}
             {!_.isEmpty(plates[activePlate]?.en_price) && (
               <ItemPrice activeLanguage={restaurant.activeLanguage}>
-                {totalPrice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") } {currencySymbol}
+                {totalPrice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} {currencySymbol}
               </ItemPrice>
             )}
-
-            <ButtonWrapper>
-              <QuantityWrapper>
-                <Plus onClick={handleIncrement}>+</Plus>
-                <Quantity>{quantity}</Quantity>
-                <Minus onClick={handleDecrement}>-</Minus>
-              </QuantityWrapper>
-              <AddToCart onClick={handleAddToCart}>{restaurant.activeLanguage == "en"
-                ? "Add To Cart"
-                : "أضف إلى السلة"}</AddToCart>
-            </ButtonWrapper>
+            {features?.cart &&
+              <ButtonWrapper>
+                <QuantityWrapper>
+                  <Plus onClick={handleIncrement}>+</Plus>
+                  <Quantity>{quantity}</Quantity>
+                  <Minus onClick={handleDecrement}>-</Minus>
+                </QuantityWrapper>
+                <AddToCart onClick={handleAddToCart}>{restaurant.activeLanguage == "en"
+                  ? "Add To Cart"
+                  : "أضف إلى السلة"}</AddToCart>
+              </ButtonWrapper>
+            }
           </ItemInfo>
         </ItemInfoWrapper>
       </Wrapper>
@@ -352,7 +354,7 @@ let formJson=null;
         <BackIcon />
       </BackBtn>
       <CopyButton onClick={handleCopy} CloseAnimation={CloseAnimation}>
-        {!copied?<FaRegCopy/>:<TiTick/>}
+        {!copied ? <FaRegCopy /> : <TiTick />}
       </CopyButton>
     </>
   );

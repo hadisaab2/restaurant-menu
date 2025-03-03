@@ -5,6 +5,7 @@ import { getCookie } from "../../utilities/manageCookies";
 
 const editRestaurant = async (id, payload) => {
   try {
+    console.log("payload",payload)
     const url = EDIT_RESTAURANT_URL(id);
     if (payload?.password === "") {
       delete payload?.password;

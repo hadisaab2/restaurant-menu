@@ -72,7 +72,7 @@ export default function Restaurants() {
     reset,
     watch
   } = useForm();
-  const watchedFeatures = watch("features", {});
+  // const watchedFeatures = watch("features", {});
 
   const { response, isLoading, refetch } = useGetRestaurants({
     onSuccess: () => { },
@@ -126,7 +126,7 @@ export default function Restaurants() {
   });
 
   const resetComponent = () => {
-    rest();
+    reset();
     refetchRestaurants();
     setSelectedIdForAction(null);
     setSelectedProduct(null);
@@ -167,16 +167,19 @@ export default function Restaurants() {
     languages,
     template_id,
     theme: themeString,
+    features: featureString,
     restaurant_id,
     currency,
     font,
     cover_url
   }) => {
     const theme = JSON.parse(themeString);
+    const features = JSON.parse(featureString);
     setSelectedProduct({
       languages,
       template_id,
       theme,
+      features,
       restaurant_id,
       currency,
       font,
@@ -185,6 +188,8 @@ export default function Restaurants() {
     setIsEditMode(true);
     setTemplate(template_id);
     setValue("username", username);
+    setValue("features", features);
+
     setValue("phone_number", phone_number);
     setValue("email", email);
     setValue("name", restaurantName);
@@ -200,6 +205,7 @@ export default function Restaurants() {
 
   const handleAddRestaurant = () => {
     handleSubmit((data) => {
+      console.log(data)
       if (selectedProduct) {
         handleEditApi(selectedProduct.restaurant_id, data);
       } else {
@@ -314,6 +320,7 @@ export default function Restaurants() {
       ) : (
         <>
           <AddRestaurantForm>
+            {console.log(selectedProduct?.features)}
             <BackIcon
               onClick={() => {
                 reset();
@@ -461,9 +468,14 @@ export default function Restaurants() {
                     <FormControl component="fieldset" style={{display:"flex",flexDirection:"row"}}>
                       <FormLabel component="legend">{feature.featureName}</FormLabel>
                       <FormControlLabel
-                        control={<Checkbox {...register(`features.${feature.featureName}`)}
-                        checked={watchedFeatures[feature.featureName] ?? feature.defaultValue} // Ensure controlled behavior
-                        defaultValue={selectedProduct?selectedProduct.features?.[feature.featureName]:feature.defaultValue} 
+                        control={   <Checkbox
+                          {...register(`features.${feature.featureName}`)}
+                          defaultChecked={getValues(`features.${feature.featureName}`) ?? false} // ✅ Use `defaultChecked`
+                          onChange={(e) => {
+                            setValue("features", {
+                              ...getValues("features"), // ✅ Preserve existing features
+                              [feature.featureName]: e.target.checked, // ✅ Update only the clicked checkbox
+                            });                          }}
                         />}
                         label={feature.featureName}
                       />
@@ -471,6 +483,7 @@ export default function Restaurants() {
                   );
                 })}
             </FeaturesBlock>
+            <button onClick={()=>console.log(getValues("features"))}>hadi</button>
             <LoadingButton
               onClick={handleAddRestaurant}
               style={{ backgroundColor: "turquoise", color: "white" }}

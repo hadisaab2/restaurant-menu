@@ -10,6 +10,13 @@ export const templates = [
       "categoryunactive",
       "scrollanimator",
     ],
+    features:[
+      {featureName:"cart",defaultValue:true},
+      {featureName:"install_app",defaultValue:true},
+      {featureName:"delivery_order",defaultValue:true},
+      {featureName:"dinein_order",defaultValue:true},
+      {featureName:"takeaway_order",defaultValue:true},
+    ]
   },
   {
     id: 2,
@@ -41,6 +48,7 @@ export const templates = [
     ],
     features:[
       {featureName:"cart",defaultValue:true},
+      {featureName:"install_app",defaultValue:true},
       {featureName:"delivery_order",defaultValue:true},
       {featureName:"dinein_order",defaultValue:true},
       {featureName:"takeaway_order",defaultValue:true},
@@ -50,6 +58,13 @@ export const templates = [
     id: 3,
     name: "template3",
     colors: ["maincolor", "backgroundcolor", "textcolor"],
+    features:[
+      {featureName:"cart",defaultValue:true},
+      {featureName:"install_app",defaultValue:true},
+      {featureName:"delivery_order",defaultValue:true},
+      {featureName:"dinein_order",defaultValue:true},
+      {featureName:"takeaway_order",defaultValue:true},
+    ]
   }
 
 
