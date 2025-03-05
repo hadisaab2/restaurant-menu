@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import {
   Container,
   CarouselContainer,
@@ -91,17 +91,28 @@ export default function Categories({
 const handleImageTouchStart = (e) => {
   e.preventDefault(); // Prevent default touch behavior (text selection or image save menu)
 };
+const carouselRef = useRef(null);
 
 // const handleDoubleClick=(id)=>{
 //   const baseUrl = window.location.origin + window.location.pathname; // Get the main host + pathname
 //   navigator.clipboard.writeText(baseUrl + "?categoryId=" + id)
 // }
+
+useEffect(() => {
+  if (carouselRef.current) {
+    const containerWidth = carouselRef.current.offsetWidth;
+    const scrollTo = (carouselPosition * containerWidth) / 4;
+    carouselRef.current.scrollTo({ left: scrollTo, behavior: "smooth" });
+  }
+}, [carouselPosition]);
+
   return (
     <Container>
       <CarouselContainer
-        onTouchStart={handleTouchStart}
-        onTouchMove={handleTouchMove}
-        onTouchEnd={handleTouchEnd}
+      ref={carouselRef}
+        // onTouchStart={handleTouchStart}
+        // onTouchMove={handleTouchMove}
+        // onTouchEnd={handleTouchEnd}
       >
         <Carousel carouselPosition={carouselPosition}>
           {categories?.sort((a, b) => b.priority - a.priority).map((category, index) => {

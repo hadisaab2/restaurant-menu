@@ -10,7 +10,7 @@ margin-top: 20px;
 position: relative;
 `;
 export const CarouselContainer = styled.div`
-  overflow: hidden;
+  overflow: scroll;
   width: 90%;
   display: flex;
   align-items: center;
@@ -19,6 +19,14 @@ export const CarouselContainer = styled.div`
   flex-direction: column;
   gap: 4px;
   height: 100px;
+  /* Hide scrollbar in WebKit browsers */
+  &::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Hide scrollbar in Firefox */
+  scrollbar-width: none;
+  -ms-overflow-style: none; /* Hide scrollbar in IE and Edge */
 `;
 export const Carousel = styled.div`
   flex: 1;
@@ -27,8 +35,8 @@ export const Carousel = styled.div`
   height: 100%;
   transition: transform 0.3s ease-in-out;
   width: 100%;
-  transform: ${(props) =>
-    `translateX(-${(props.carouselPosition) * 100 / 4}%)`};
+  /* transform: ${(props) =>
+    `translateX(-${(props.carouselPosition) * 100 / 4}%)`}; */
 `;
 
 export const CarouselItem = styled.div`

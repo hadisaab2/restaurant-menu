@@ -74,13 +74,25 @@ export default function Theme2() {
 
   
     useEffect(() => {
+      // Log PWA requirements
+      console.log('🔍 PWA Debug Info:');
+      console.log('- Protocol:', window.location.protocol);
+      console.log('- Host:', window.location.hostname);
+      console.log('- Navigator:', navigator.userAgent);
+
       const handleBeforeInstallPrompt = (event) => {
         event.preventDefault();
+        console.log('✅ Install prompt event captured!');
         setDeferredPrompt(event);
         setShowInstallPopup(true);
       };
   
       window.addEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
+  
+      // Check if app is already installed
+      window.addEventListener('appinstalled', (event) => {
+        console.log('🎉 Application installed successfully!');
+      });
   
       return () => {
         window.removeEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
