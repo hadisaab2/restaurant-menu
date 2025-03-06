@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { AddToCart, BackBtn, BackIcon, ButtonWrapper, Carousel, CarouselBack, CarouselForward, CarouselItem, Category, CopyButton, FakeContainer, Image, ImagesContainer, ImageWrapper, ItemCategory, ItemDescription, ItemInfo, ItemInfoWrapper, ItemName, ItemPrice, Loader, LoaderWrapper, Minus, Plus, Quantity, QuantityWrapper, SearchProductContainer } from './styles'
+import { AddToCart, BackBtn, BackIcon, ButtonWrapper, Carousel, CarouselBack, CarouselForward, CarouselItem, Category, CopyButton, FakeContainer, Image, ImagesContainer, ImageWrapper, InfoContainer, ItemCategory, ItemDescription, ItemInfo, ItemInfoWrapper, ItemName, ItemPrice, Loader, LoaderWrapper, Minus, Plus, Quantity, QuantityWrapper, SearchProductContainer } from './styles'
 import { useGetProduct } from '../../../apis/products/getProduct';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
@@ -201,7 +201,6 @@ export default function ProductParam({ productId, setSearchParams, searchParams 
         default:
             currencySymbol = ""; // No currency or unsupported currency
     }
-    let features = JSON.parse(restaurant.features)
 
     return (
         <>
@@ -283,36 +282,40 @@ export default function ProductParam({ productId, setSearchParams, searchParams 
                     />
                 )}
                 <ItemInfoWrapper>
-                    <ItemInfo CloseAnimation={CloseAnimation} activeLanguage={restaurant.activeLanguage}>
-                        <ItemName activeLanguage={restaurant.activeLanguage} >
-                            {restaurant.activeLanguage == "en"
-                                ? fetchedProduct?.en_name
-                                : fetchedProduct?.ar_name}
-                        </ItemName>
-                        <ItemDescription activeLanguage={restaurant.activeLanguage}
-                            dangerouslySetInnerHTML={{ __html: description }}
-                        />
-                        {console.log(formSchema.components)}
-                        {formSchema?.components && <ProductForm formSchema={formSchema} onPriceChange={handlePriceChange} formData={formData} setFormData={setFormData} basePrice={fetchedProduct?.en_price} />}
-                        {!_.isEmpty(fetchedProduct?.en_price) && (
-                            <ItemPrice activeLanguage={restaurant.activeLanguage}>
-                                {totalPrice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} {currencySymbol}
-                            </ItemPrice>
-                        )}
-                        {features?.cart &&
-                            <ButtonWrapper>
-                                <QuantityWrapper>
-                                    <Plus onClick={handleIncrement}>+</Plus>
-                                    <Quantity>{quantity}</Quantity>
-                                    <Minus onClick={handleDecrement}>-</Minus>
-                                </QuantityWrapper>
-                                <AddToCart onClick={handleAddToCart}>{restaurant.activeLanguage == "en"
-                                    ? "Add To Cart"
-                                    : "أضف إلى السلة"}</AddToCart>
-                            </ButtonWrapper>
-                        }
-                    </ItemInfo>
+                    <InfoContainer>
+                        <QuantityWrapper CloseAnimation={CloseAnimation}>
+                            <Plus onClick={handleIncrement}>+</Plus>
+                            <Quantity>{quantity}</Quantity>
+                            <Minus onClick={handleDecrement}>-</Minus>
+                        </QuantityWrapper>
+                        <ItemInfo CloseAnimation={CloseAnimation} activeLanguage={restaurant.activeLanguage}>
+                            <ItemName activeLanguage={restaurant.activeLanguage} >
+                                {restaurant.activeLanguage == "en"
+                                    ? fetchedProduct?.en_name
+                                    : fetchedProduct?.ar_name}
+                            </ItemName>
+
+                            {!_.isEmpty(fetchedProduct?.en_price) && (
+                                <ItemPrice activeLanguage={restaurant.activeLanguage}>
+                                    {totalPrice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} {currencySymbol}
+                                </ItemPrice>
+                            )}
+                            <ItemDescription activeLanguage={restaurant.activeLanguage}
+                                dangerouslySetInnerHTML={{ __html: description }}
+                            />
+                            {formSchema?.components && <ProductForm formSchema={formSchema} onPriceChange={handlePriceChange} formData={formData} setFormData={setFormData} basePrice={fetchedProduct?.en_price} />}
+
+
+
+                        </ItemInfo>
+                    </InfoContainer>
                 </ItemInfoWrapper>
+                <ButtonWrapper CloseAnimation={CloseAnimation}>
+
+                    <AddToCart onClick={handleAddToCart}>{restaurant.activeLanguage == "en"
+                        ? "Add To Cart"
+                        : "أضف إلى السلة"}</AddToCart>
+                </ButtonWrapper>
             </SearchProductContainer>
 
             <BackBtn onClick={handleBack} CloseAnimation={CloseAnimation}>

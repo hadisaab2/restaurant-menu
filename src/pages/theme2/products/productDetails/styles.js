@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import { keyframes } from "styled-components";
-import { IoIosArrowBack,IoIosArrowForward  } from "react-icons/io";
+import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 
 const slideAnimation = (x, y, width) => keyframes`
  0% { 
@@ -166,7 +166,7 @@ export const Image = styled.img`
   object-fit: cover;
   border-radius: ${(props) => (props.CloseAnimation ? "40px" : "10px")};
   width: ${(props) => (props.CloseAnimation ? "90%" : "100%")};
-  display:${props=>props.Loaded ? 'block':'none'};
+  display:${props => props.Loaded ? 'block' : 'none'};
   transition: all 0.8s;
     @media (min-width: 1024px) {
       width: ${(props) => (props.CloseAnimation ? "50%" : "100%")};
@@ -284,19 +284,39 @@ export const FakeContainer = styled.div`
     }
   /* background-color: red; */
 `;
-
+const QuantityAnimation = keyframes`
+ 0% { 
+  margin-top: 0px;
+  opacity: 0;
+}
+100% { 
+  margin-top: -20px;
+  opacity: 1;
+}
+`;
 export const ItemInfoWrapper = styled.div`
   width: 100%;
   display: flex;
   justify-content: center;
+  align-items: center;
+`;
+export const InfoContainer = styled.div`
+  width: 95%;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  margin-top: -20px;
+
+  animation: ${QuantityAnimation} 1.4s ease-in-out;
 
 `;
-
 export const ItemInfo = styled.div`
   width: 90%;
   display: ${(props) => (props.CloseAnimation ? "flex" : "none")};
-  align-items: ${props=>props.activeLanguage=="en"?"flex-start":"flex-end"};;
+  align-items: ${props => props.activeLanguage == "en" ? "flex-start" : "flex-end"};;
   flex-direction: column;
+  align-items: center;
   position: relative;
   margin-top: 20px;
   padding-bottom: 10vh;
@@ -340,84 +360,59 @@ const NameAnimationRight = keyframes`
 export const ItemName = styled.span`
   font-size: 23px;
   font-weight: bold;
-  width: 50%;
-  margin-left:${props=>props.activeLanguage=="en"?"0px":null} ;
-  margin-right:${props=>props.activeLanguage=="en"?null:"0px"} ;
-  text-align:${props=>props.activeLanguage=="en"?"left":"right"} ;
+  width: 100%;
+  margin-left:${props => props.activeLanguage == "en" ? "0px" : null} ;
+  margin-right:${props => props.activeLanguage == "en" ? null : "0px"} ;
+  text-align:center;
   opacity: 1;
   margin-top: 10px;
-  animation: ${props=>props.activeLanguage=="en"?NameAnimationLeft:NameAnimationRight} 1.4s ease-in-out;
+  /* animation: ${props => props.activeLanguage == "en" ? NameAnimationLeft : NameAnimationRight} 1.4s ease-in-out; */
 `;
 
-const DescriptionAnimation = keyframes`
- 0% { 
-    margin-top: -20px;
-    opacity: 0;
-}
-50%{
-  margin-top: -20px;
-    opacity: 0;
-}
- 100% { 
-    margin-top: 20px;
-    opacity: 1;
 
-}
-`;
 export const ItemDescription = styled.span`
   font-size: 16px;
   font-weight: 300;
-  width: 90%;
+  width: 100%;
   margin-top: 20px;
   word-spacing: 1px;
   white-space: pre-line;
-  animation: ${DescriptionAnimation} 1.6s ease-in-out;
-  text-align: ${props=>props.activeLanguage=="en"?"left":"right"} ;
-  direction: ${props=>props.activeLanguage=="en"?"ltr":"rtl"} ;;
+  text-align: center;
+  direction: ${props => props.activeLanguage == "en" ? "ltr" : "rtl"} ;;
 `;
-const PriceAnimation = keyframes`
- 0% { 
-    transform: scale(0);
-    opacity: 0;
-}
-50% { 
-    transform: scale(0);
-    opacity: 0;
-}
- 100% { 
-    transform: scale(1);
-    opacity: 1;
 
-}
-`;
 export const ItemPrice = styled.span`
   font-size: 20px;
-  font-weight: 500;
+  font-weight: 600;
   word-spacing: 3px;
-  position: absolute;
-  right: ${props=>props.activeLanguage=="en"?"0px":null};
-  left: ${props=>props.activeLanguage=="en"?null:"0px"};
-
   transform: scale(1);
-  top: 5px;
-  color: ${(props) => props.theme.popupbuttonText};;
+  color: ${(props) => props.theme.mainColor};;
   padding: 10px;
   border-radius: 10px;
-  background-color: ${(props) => props.theme.mainColor};
-  animation: ${PriceAnimation} 1.4s ease-in-out;
+`;
+
+const AddToCartAnimation = keyframes`
+ 0% { 
+   bottom: -100%;
+}
+100% { 
+  bottom: 0;
+}
 `;
 
 export const ButtonWrapper = styled.div`
   width: 100%;
-  display: flex;
+  position: fixed;
+  bottom: 0;
   justify-content: center;
   flex-direction: row;
   align-items: center;
   gap: 10px;
-  animation: ${NameAnimationLeft} 1.4s ease-in-out;
+  animation: ${AddToCartAnimation} 1.4s ease-in-out;
+  display: ${(props) => (props.CloseAnimation ? "flex" : "none")};
+
   margin-top: 30px;
-  height: 80px;
-  padding-bottom: 40px;
+  height: 50px;
   @media (min-width: 1024px) {
         width: 50%;
     }
@@ -432,17 +427,20 @@ export const AddToCart = styled.button`
   color: ${(props) => props.theme.popupbuttonText};
   font-weight: 400;
   background-color: ${(props) => props.theme.mainColor};
-  border-radius: 5px;
 `;
 
+
+
 export const QuantityWrapper = styled.div`
-  flex: 0.5;
-  display: flex;
+  display: ${(props) => (props.CloseAnimation ? "flex" : "none")};
   flex-direction: row;
-  height: 100%;
+  height: 50px;
   background-color: ${(props) => props.theme.mainColor};
   color: ${(props) => props.theme.popupbuttonText};
-  border-radius: 5px;
+  border-radius: 25px;
+  width: 150px;
+  z-index: 2000;
+
 `;
 
 export const Plus = styled.div`
@@ -450,14 +448,14 @@ export const Plus = styled.div`
   align-items: center;
   justify-content: center;
   flex: 1;
-  font-size: 18px;
+  font-size: 20px;
 `;
 export const Minus = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
   flex: 1;
-  font-size: 18px;
+  font-size: 20px;
 `;
 
 export const Quantity = styled.div`
@@ -465,7 +463,7 @@ export const Quantity = styled.div`
   align-items: center;
   justify-content: center;
   flex: 1;
-  font-size: 14px;
+  font-size: 17px;
 `;
 
 
@@ -491,8 +489,8 @@ export const CopyButton = styled.div`
  position: fixed;
   z-index: 8;
   top: 30px;
-  background-color: ${props=>props.theme.mainColor};
-  color: ${props=>props.theme.backgroundColor};
+  background-color: ${props => props.theme.mainColor};
+  color: ${props => props.theme.backgroundColor};
   right: 30px;
   display: ${(props) => (props.CloseAnimation ? "flex" : "none")};
   animation: ${CopyBtnAnimation} 0.8s ease-in-out;

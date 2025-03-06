@@ -27,6 +27,7 @@ import {
   LoaderWrapper,
   Loader,
   CopyButton,
+  InfoContainer,
 } from "./styles";
 import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -278,17 +279,11 @@ export default function ProductDetails({
                       </LoaderWrapper>
                     )}
                     <Image
-                      // src={`https://storage.googleapis.com/ecommerce-bucket-testing/${image.url}`}
                       src={
                         loadedIndices[index] || index === carouselIndex
                           ? `https://storage.googleapis.com/ecommerce-bucket-testing/${image.url}`
                           : ""
                       }
-                      // src={
-
-                      //      `https://storage.googleapis.com/ecommerce-bucket-testing/${image.url}`
-
-                      // }
                       onLoad={() => handleImageLoad(index)}
                       CloseAnimation={CloseAnimation}
                       Loaded={loadedIndices[index]}
@@ -318,36 +313,43 @@ export default function ProductDetails({
             carouselSwiped={carouselSwiped}
           />
         )}
+
         <ItemInfoWrapper>
-          <ItemInfo CloseAnimation={CloseAnimation} activeLanguage={restaurant.activeLanguage}>
-            <ItemName activeLanguage={restaurant.activeLanguage} >
-              {restaurant.activeLanguage == "en"
-                ? plates[activePlate]?.en_name
-                : plates[activePlate]?.ar_name}
-            </ItemName>
-            <ItemDescription activeLanguage={restaurant.activeLanguage}
-              dangerouslySetInnerHTML={{ __html: description }}
-            />
-            {formSchema?.components && <ProductForm formSchema={formSchema} onPriceChange={handlePriceChange} formData={formData} setFormData={setFormData} basePrice={plates[activePlate]?.en_price} />}
-            {!_.isEmpty(plates[activePlate]?.en_price) && (
-              <ItemPrice activeLanguage={restaurant.activeLanguage}>
-                {totalPrice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} {currencySymbol}
-              </ItemPrice>
-            )}
-            {features?.cart &&
-              <ButtonWrapper>
-                <QuantityWrapper>
-                  <Plus onClick={handleIncrement}>+</Plus>
-                  <Quantity>{quantity}</Quantity>
-                  <Minus onClick={handleDecrement}>-</Minus>
-                </QuantityWrapper>
-                <AddToCart onClick={handleAddToCart}>{restaurant.activeLanguage == "en"
-                  ? "Add To Cart"
-                  : "أضف إلى السلة"}</AddToCart>
-              </ButtonWrapper>
-            }
-          </ItemInfo>
+          <InfoContainer>
+            <QuantityWrapper CloseAnimation={CloseAnimation}>
+              <Plus onClick={handleIncrement}>+</Plus>
+              <Quantity>{quantity}</Quantity>
+              <Minus onClick={handleDecrement}>-</Minus>
+            </QuantityWrapper>
+            <ItemInfo CloseAnimation={CloseAnimation} activeLanguage={restaurant.activeLanguage}>
+              <ItemName activeLanguage={restaurant.activeLanguage} >
+                {restaurant.activeLanguage == "en"
+                  ? plates[activePlate]?.en_name
+                  : plates[activePlate]?.ar_name}
+              </ItemName>
+              {!_.isEmpty(plates[activePlate]?.en_price) && (
+                <ItemPrice activeLanguage={restaurant.activeLanguage}>
+                  {totalPrice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} {currencySymbol}
+                </ItemPrice>
+              )}
+              <ItemDescription activeLanguage={restaurant.activeLanguage}
+                dangerouslySetInnerHTML={{ __html: description }}
+              />
+
+              {formSchema?.components && <ProductForm formSchema={formSchema} onPriceChange={handlePriceChange} formData={formData} setFormData={setFormData} basePrice={plates[activePlate]?.en_price} />}
+
+
+            </ItemInfo>
+          </InfoContainer>
         </ItemInfoWrapper>
+        {features?.cart &&
+          <ButtonWrapper CloseAnimation={CloseAnimation}>
+
+            <AddToCart onClick={handleAddToCart}>{restaurant.activeLanguage == "en"
+              ? "Add To Cart"
+              : "أضف إلى السلة"}</AddToCart>
+          </ButtonWrapper>
+        }
       </Wrapper>
 
       <BackBtn onClick={handleBack} CloseAnimation={CloseAnimation}>
