@@ -191,9 +191,9 @@ export default function Products({
   return (
     <Container
       activeCategory={activeCategory}
-      onTouchStart={handleTouchStart}
-      onTouchMove={handleTouchMove}
-      onTouchEnd={handleTouchEnd}
+      // onTouchStart={handleTouchStart}
+      // onTouchMove={handleTouchMove}
+      // onTouchEnd={handleTouchEnd}
     >
       <ProductWrapper activePlate={activePlate}>
         {menu?.map((singlemenu, index) => {

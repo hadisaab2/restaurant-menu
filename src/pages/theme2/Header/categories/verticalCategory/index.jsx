@@ -42,26 +42,34 @@ export default function VerticalCategory({
     }
   }
 
-  const itemClick = (id) => {
+  const itemClick = (id,index) => {
     setactiveCategory(id);
+    setcarouselPosition(index)
 
   };
 
-const carouselRef = useRef(null);
+  const carouselRefs = useRef([]); // Array to hold refs for each carousel item
 
 
-useEffect(() => {
-  if (carouselRef.current) {
-    const containerWidth = carouselRef.current.offsetWidth;
-    const scrollTo = (carouselPosition * containerWidth) / 4;
-    carouselRef.current.scrollTo({ left: scrollTo, behavior: "smooth" });
-  }
-}, [carouselPosition]);
+  // Initialize refs for each carousel item when categories change
+  useEffect(() => {
+    carouselRefs.current = carouselRefs.current.slice(0, categories.length); // Ensure we have enough refs for each category
+  }, [categories.length]); // Update refs if categories change
 
+  // Scroll to the current item when the carouselPosition changes
+  useEffect(() => {
+
+    if (carouselRefs.current[carouselPosition]) {
+      carouselRefs.current[carouselPosition].scrollIntoView({
+        behavior: "smooth",
+        block: "nearest", // Align the item nearest to the viewport
+        inline: "start", // Center the item horizontally
+      });
+    }
+  }, [carouselPosition]); // Trigger scrolling when carouselPosition changes
   return (
     <Container>
       <CarouselContainer
-      ref={carouselRef}
      
       >
         <Carousel carouselPosition={carouselPosition}>
@@ -71,7 +79,9 @@ useEffect(() => {
                 activeLanuguage={activeLanuguage}
                 activeCategory={activeCategory}
                 categoryId={category.id}
-                onClick={() => itemClick(category.id)}
+                onClick={() => itemClick(category.id,index)}
+                ref={(el) => (carouselRefs.current[index] = el)} // Assign ref to each category item
+
                 // onDoubleClick={() => handleDoubleClick(category.id)} // Attach double-click handler
                 >
                 <CategoryWrapper activeCategory={activeCategory} categoryId={category.id}>
