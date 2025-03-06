@@ -52,7 +52,7 @@ export const CarouselItem = styled.div`
   white-space: nowrap; /* Prevent wrapping of text */
   flex-shrink: 0; /* Prevent shrinking of the item */
   height: 100%;
-  margin-left: ${props=>props.index!=0 && "5px"};
+  margin-left: ${props=>props.index!=0 && "8px"};
 
 `;
 
