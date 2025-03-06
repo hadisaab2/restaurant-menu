@@ -48,7 +48,7 @@ export const Wrapper = styled.div`
   border-radius: ${(props) => (props.CloseAnimation ? "0px" : `10px`)};
   overflow: scroll;
   transition: all 0.8s;
-  padding-bottom:100px;
+  padding-bottom:150px;
   animation: ${({ x, y, width }) => slideAnimation(x, y, width)} 0.8s;
   z-index: 6;
   ::-webkit-scrollbar {
@@ -388,7 +388,7 @@ export const ItemPrice = styled.span`
   word-spacing: 3px;
   transform: scale(1);
   color: ${(props) => props.theme.mainColor};;
-  padding: 10px;
+  padding: 5px;
   border-radius: 10px;
 `;
 

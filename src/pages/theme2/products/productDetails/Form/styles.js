@@ -14,7 +14,7 @@ export const FormGroup = styled.div`
 
 export const Label = styled.label`
   font-weight: bold;
-  margin-bottom: 10px;
+  margin-bottom: 5px;
   color:${(props) => props.theme.mainColor};
   font-size: 14px;
 `;

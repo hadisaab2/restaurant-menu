@@ -5,11 +5,11 @@ export const SelectContainer = styled.div`
   position: relative;
   width: 100%;
   padding-top: 20px;
-  margin-top: ${props=>props.index!=0 ? "30px":"10px"};
+  margin-top: ${props=>props.index!=0 ? "20px":"10px"};
 
   border-top: 1px solid ${(props) => {
     let color = props?.theme?.formColor; // Get the color
-    const opacity = 0.2; // Desired opacity (e.g., 50%)
+    const opacity = 0.1; // Desired opacity (e.g., 50%)
     if(_.isEmpty(color)){color="rgb(0,0,0)"};
 
     if (color.startsWith("#")) {
@@ -116,7 +116,7 @@ export const CircularOption = styled.div`
 `;
 export const Label = styled.label`
   font-weight: bold;
-  margin-bottom: 10px;
+  margin-bottom: 5px;
   color:${(props) => props.theme.formColor};
   margin-top: 20px;
   font-size: 14px;

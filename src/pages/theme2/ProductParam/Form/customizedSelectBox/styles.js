@@ -5,11 +5,11 @@ export const SelectBoxWrapper = styled.div`
   display: flex;
   flex-direction: column;
   gap: 16px;
-  margin-top: ${props=>props.index!=0 ? "30px":"10px"};
+  margin-top: ${props=>props.index!=0 ? "20px":"10px"};
   padding-top: 20px;
   border-top: 1px solid ${(props) => {
     let color = props?.theme?.formColor; // Get the color
-    const opacity = 0.2; // Desired opacity (e.g., 50%)
+    const opacity = 0.1; // Desired opacity (e.g., 50%)
     if(_.isEmpty(color)){color="rgb(0,0,0)"};
     if (color.startsWith("#")) {
       // HEX to RGBA conversion
@@ -85,7 +85,7 @@ background-color: ${(props) => props.theme.mainColor};
 
 export const Label = styled.label`
   font-weight: bold;
-  margin-bottom: 8px;
+  margin-bottom: 5px;
   color:${(props) => props.theme.formColor};
 
 `;
