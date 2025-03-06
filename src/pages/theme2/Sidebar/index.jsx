@@ -12,7 +12,8 @@ import {
   Tab,
   Tabs,
   Wrapper,
-  BrandContainer
+  BrandContainer,
+  MenuIcon
 } from "./styles";
 import { useParams, useSearchParams } from "react-router-dom";
 import { useSelector } from "react-redux";
@@ -62,15 +63,18 @@ export default function SideBar({
     <Wrapper showSidebar={showSidebar}>
         <BlurLayer onClick={()=>{setshowSidebar(false)}} showSidebar={showSidebar}/>
     <Container >
+      
+        <MenuIcon />
       <BrandContainer>
         <Brand
+        showSidebar={showSidebar}
           src={
             restaurant.logoURL &&
             `https://storage.googleapis.com/ecommerce-bucket-testing/${restaurant.logoURL}`
           }
         />
         </BrandContainer>
-        <SearchContainer>
+        <SearchContainer  showSidebar={showSidebar}>
           <SearchIcon activeLanguage={restaurant?.activeLanguage} />
           <Search
             type="text"
@@ -81,7 +85,7 @@ export default function SideBar({
             value={searchText}
           />
         </SearchContainer>
-      <Tabs>
+      <Tabs showSidebar={showSidebar}>
         {filteredCategories
           ?.sort((a, b) => b.priority - a.priority)
           .map((category, index) => {

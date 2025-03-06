@@ -1,5 +1,6 @@
 import { CiSearch } from "react-icons/ci";
-import styled from "styled-components";
+import { HiMenuAlt2 } from "react-icons/hi";
+import styled, { keyframes } from "styled-components";
 
 
 export const Wrapper = styled.div`
@@ -24,15 +25,14 @@ height: 100%;
 export const Container = styled.div`
 height: 100%;
 background-color: ${props=>props.theme.sidebarbackground};
-width: 70%;
+width: 80%;
 position: absolute;
 left: 0;
 top:0;
-border-top-right-radius: 50px;
-border-bottom-right-radius: 50px;
 box-shadow: 10px 0 15px -5px rgba(0, 0, 0, 0.2);
   display: flex;
   flex-direction: column;
+  align-items: center;
   @media (min-width: 1024px) {
         width: 25%;
     }
@@ -43,10 +43,14 @@ export const Tabs = styled.div`
 width: 100%;
   height: 60%; /* 60% of the sidebar height */
   overflow-y: auto;
+  margin-right: ${props=>!props.showSidebar?"150px":"0px"};
+transition: all 0.8s ease-in-out;
+opacity: ${props=>!props.showSidebar?"0":"1"};
+
 `;
 export const Tab = styled.div`
 width: 100%;
-height: 40px;
+height: 50px;
 display: flex;
 flex-direction: row;
 align-items: center;
@@ -59,7 +63,7 @@ export const CategoryName = styled.span`
     text-align: center;
     white-space: normal;
     word-wrap: break-word;
-    font-size: 12px;
+    font-size: 15px;
     color: ${props=>props.theme.sidebartext};
 
 `;
@@ -76,8 +80,8 @@ margin-left: 10%;
 
 `;
 export const Icon = styled.img`
-width:20px;
-height:20px;
+width:25px;
+height:25px;
 `;
 
 
@@ -86,25 +90,32 @@ height: 20vh;
 display: flex;
 align-items: center;
 justify-content: center;
+margin-top: 5vh;
 `;
 
 
 export const Brand = styled.img`
 max-width: 200px;
 max-height: 200px;
+margin-right: ${props=>!props.showSidebar?"150px":"0px"};
+transition: all 0.8s ease-in-out;
+opacity: ${props=>!props.showSidebar?"0":"1"};
+
 `;
 
 export const SearchContainer = styled.div`
 display: flex;
 align-items: center;
 font-weight: 600;
-height: 30px;
-border-radius: 10px;
+height: 40px;
 overflow: hidden;
 position: relative;
-margin-left: 10%;
-width: 70%;
+width: 80%;
 margin-bottom: 20px;
+margin-right: ${props=>!props.showSidebar?"150px":"0px"};
+transition: all 0.8s ease-in-out;
+opacity: ${props=>!props.showSidebar?"0":"1"};
+
 `;
 
 export const Search = styled.input`
@@ -129,5 +140,14 @@ position: absolute;
 left: ${props=>props.activeLanguage=="en"?"10px":null};
 right: ${props=>props.activeLanguage=="en"?null:"10px"};
 color:${props=>props.theme.sidebarsearchText};
+
+`;
+
+export const MenuIcon = styled(HiMenuAlt2)`
+position: absolute;
+left: 20px;
+top: 20px;
+color: ${props=>props.theme.sidebarsearch};
+font-size: 27px;
 
 `;
