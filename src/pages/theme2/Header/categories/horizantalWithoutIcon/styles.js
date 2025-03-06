@@ -18,7 +18,7 @@ export const CarouselContainer = styled.div`
   justify-content: center;
   flex-direction: column;
   gap: 4px;
-  height: 30px;
+  height: 40px;
   /* Hide scrollbar in WebKit browsers */
   &::-webkit-scrollbar {
     display: none;
@@ -52,7 +52,7 @@ export const CarouselItem = styled.div`
   white-space: nowrap; /* Prevent wrapping of text */
   flex-shrink: 0; /* Prevent shrinking of the item */
   height: 100%;
-  margin-left: ${props=>props.index!=0 && "10px"};
+  margin-left: ${props=>props.index!=0 && "5px"};
 
 `;
 
