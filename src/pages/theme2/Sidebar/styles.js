@@ -63,7 +63,7 @@ export const CategoryName = styled.span`
     text-align: center;
     white-space: normal;
     word-wrap: break-word;
-    font-size: 15px;
+    font-size: 13px;
     color: ${props=>props.theme.sidebartext};
 
 `;
@@ -80,8 +80,8 @@ margin-left: 10%;
 
 `;
 export const Icon = styled.img`
-width:25px;
-height:25px;
+width:20px;
+height:20px;
 `;
 
 
@@ -107,11 +107,12 @@ export const SearchContainer = styled.div`
 display: flex;
 align-items: center;
 font-weight: 600;
-height: 40px;
+height: 35px;
 overflow: hidden;
 position: relative;
 width: 80%;
 margin-bottom: 20px;
+margin-top: 10px;
 margin-right: ${props=>!props.showSidebar?"150px":"0px"};
 transition: all 0.8s ease-in-out;
 opacity: ${props=>!props.showSidebar?"0":"1"};
