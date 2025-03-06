@@ -5,7 +5,7 @@ export const SelectContainer = styled.div`
   position: relative;
   width: 100%;
   padding-top: 20px;
-  margin-top: 30px;
+  margin-top: ${props=>props.index!=0 ? "30px":"10px"};
   border-top: 1px solid ${(props) => {
     let color = props?.theme?.formColor; // Get the color
     const opacity = 0.2; // Desired opacity (e.g., 50%)

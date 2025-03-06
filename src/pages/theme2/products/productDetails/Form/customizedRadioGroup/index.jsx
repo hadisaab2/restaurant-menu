@@ -6,7 +6,7 @@ import { Label } from '../styles';
 import { DynamicCircle } from './styles';
 import { OptionCircle } from './styles';
 
-export default function CustomizedRadioGroup({component, formData,handleChange }) {
+export default function CustomizedRadioGroup({component, formData,handleChange,index }) {
   const [selectedOption, setSelectedOption] = useState(formData[component.key] || "")
 
 
@@ -16,7 +16,7 @@ export default function CustomizedRadioGroup({component, formData,handleChange }
   }
 
   return (
-    <SelectBoxWrapper>
+    <SelectBoxWrapper index={index}>
       <Label>{component.label}</Label>
 
       {component.values.map((option) => {

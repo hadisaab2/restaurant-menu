@@ -48,6 +48,7 @@ export const Wrapper = styled.div`
   border-radius: ${(props) => (props.CloseAnimation ? "0px" : `10px`)};
   overflow: scroll;
   transition: all 0.8s;
+  padding-bottom:100px;
   animation: ${({ x, y, width }) => slideAnimation(x, y, width)} 0.8s;
   z-index: 6;
   ::-webkit-scrollbar {
@@ -73,7 +74,7 @@ const ImageAnimation = keyframes`
 }
 
  100% { 
-    height:55vh;
+    height:45vh;
     top:80px;
 
     }
@@ -93,7 +94,7 @@ const ImageAnimationScreen = keyframes`
 
 export const ImagesContainer = styled.div`
   width: 100%;
-  height: ${(props) => (props.CloseAnimation ? "55vh" : "20vh")};
+  height: ${(props) => (props.CloseAnimation ? "45vh" : "20vh")};
   position: absolute;
   top: ${(props) => (props.CloseAnimation ? "80px" : "0px")};
   
@@ -272,7 +273,7 @@ export const Category = styled.span`
 
 export const FakeContainer = styled.div`
   width: ${(props) => (props.CloseAnimation ? "90%" : "100%")};
-  height: ${(props) => (props.CloseAnimation ? "55vh" : "25vh")};
+  height: ${(props) => (props.CloseAnimation ? "45vh" : "25vh")};
   border-radius: ${(props) => (props.CloseAnimation ? "40px" : "10px")};
   margin-top: ${(props) => (props.CloseAnimation ? "80px" : "0px")};
   display: ${(props) => (props.CloseAnimation ? "flex" : "none")};
@@ -286,11 +287,11 @@ export const FakeContainer = styled.div`
 `;
 const QuantityAnimation = keyframes`
  0% { 
-  margin-top: 0px;
+  margin-top: -20px;
   opacity: 0;
 }
 100% { 
-  margin-top: -20px;
+  margin-top: 10px;
   opacity: 1;
 }
 `;
@@ -306,7 +307,7 @@ export const InfoContainer = styled.div`
   justify-content: center;
   flex-direction: column;
   align-items: center;
-  margin-top: -20px;
+  margin-top: 10px;
 
   animation: ${QuantityAnimation} 1.4s ease-in-out;
 
@@ -358,31 +359,31 @@ const NameAnimationRight = keyframes`
 }
 `;
 export const ItemName = styled.span`
-  font-size: 23px;
+  font-size: 19px;
   font-weight: bold;
   width: 100%;
   margin-left:${props => props.activeLanguage == "en" ? "0px" : null} ;
   margin-right:${props => props.activeLanguage == "en" ? null : "0px"} ;
   text-align:center;
   opacity: 1;
-  margin-top: 10px;
+  margin-top: 5px;
   /* animation: ${props => props.activeLanguage == "en" ? NameAnimationLeft : NameAnimationRight} 1.4s ease-in-out; */
 `;
 
 
 export const ItemDescription = styled.span`
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 300;
   width: 100%;
-  margin-top: 20px;
+  margin-top: 5px;
   word-spacing: 1px;
-  white-space: pre-line;
+  /* white-space: pre-line; */
   text-align: center;
   direction: ${props => props.activeLanguage == "en" ? "ltr" : "rtl"} ;;
 `;
 
 export const ItemPrice = styled.span`
-  font-size: 20px;
+  font-size: 16px;
   font-weight: 600;
   word-spacing: 3px;
   transform: scale(1);
@@ -405,28 +406,30 @@ export const ButtonWrapper = styled.div`
   position: fixed;
   bottom: 0;
   justify-content: center;
-  flex-direction: row;
+  flex-direction: column;
   align-items: center;
-  gap: 10px;
   animation: ${AddToCartAnimation} 1.4s ease-in-out;
-  display: ${(props) => (props.CloseAnimation ? "flex" : "none")};
+  background-color: ${(props) => props.theme.backgroundColor};
 
+  display: ${(props) => (props.CloseAnimation ? "flex" : "none")};
+  box-shadow: 0px -3px 5px rgba(180, 180, 180, 0.1); /* Slight shadow on the top */
+  padding-bottom: 10px;
   margin-top: 30px;
-  height: 50px;
   @media (min-width: 1024px) {
         width: 50%;
     }
 `;
 export const AddToCart = styled.button`
-  flex: 1;
   outline: none;
   border: 0;
   cursor: pointer;
-  height: 100%;
-
+    width: 90%;
+    border-radius: 10px;
+    height: 40px;
   color: ${(props) => props.theme.popupbuttonText};
   font-weight: 400;
   background-color: ${(props) => props.theme.mainColor};
+  font-size: 12px;
 `;
 
 
@@ -434,11 +437,9 @@ export const AddToCart = styled.button`
 export const QuantityWrapper = styled.div`
   display: ${(props) => (props.CloseAnimation ? "flex" : "none")};
   flex-direction: row;
-  height: 50px;
-  background-color: ${(props) => props.theme.mainColor};
-  color: ${(props) => props.theme.popupbuttonText};
-  border-radius: 25px;
-  width: 150px;
+  height: 45px;
+  color: ${(props) => props.theme.mainColor};
+  width: 60%;
   z-index: 2000;
 
 `;
@@ -448,14 +449,14 @@ export const Plus = styled.div`
   align-items: center;
   justify-content: center;
   flex: 1;
-  font-size: 20px;
+  font-size: 18px;
 `;
 export const Minus = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
   flex: 1;
-  font-size: 20px;
+  font-size: 18px;
 `;
 
 export const Quantity = styled.div`
@@ -463,7 +464,7 @@ export const Quantity = styled.div`
   align-items: center;
   justify-content: center;
   flex: 1;
-  font-size: 17px;
+  font-size: 15px;
 `;
 
 

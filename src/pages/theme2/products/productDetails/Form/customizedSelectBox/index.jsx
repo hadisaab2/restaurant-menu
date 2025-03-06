@@ -4,7 +4,7 @@ import { FaPlus } from "react-icons/fa";
 import { TiTick } from "react-icons/ti";
 import { Label } from '../styles';
 
-export default function CustomizedSelectBox({component, formData,handleChange }) {
+export default function CustomizedSelectBox({component, formData,handleChange ,index}) {
   const [selectedOptions, setSelectedOptions] = useState(formData[component.key] || [])
 
 
@@ -19,7 +19,7 @@ export default function CustomizedSelectBox({component, formData,handleChange })
 
   }
   return (
-    <SelectBoxWrapper>
+    <SelectBoxWrapper index={index}>
       <Label>{component.label}</Label>
 
       {component.values.map((option) => {

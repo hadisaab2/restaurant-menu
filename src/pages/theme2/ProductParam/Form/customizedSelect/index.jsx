@@ -11,7 +11,7 @@ import {
 } from "./styles";
 import { Label } from "../styles";
 
-export default function CustomizedSelect({ component, formData, handleChange, placeholder = "Select an option" }) {
+export default function CustomizedSelect({ component, formData, handleChange, placeholder = "Select an option",index }) {
 
 
     const [isOpen, setIsOpen] = useState(false); // Tracks if the dropdown is open
@@ -42,7 +42,7 @@ export default function CustomizedSelect({ component, formData, handleChange, pl
     }, []);
 
     return (
-        <SelectContainer ref={dropdownRef}>
+        <SelectContainer ref={dropdownRef} index={index}>
             <Label>{component.label}</Label>
             {component.data.values.length > 8 ?
                 <>

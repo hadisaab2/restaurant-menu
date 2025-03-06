@@ -316,11 +316,7 @@ export default function ProductDetails({
 
         <ItemInfoWrapper>
           <InfoContainer>
-            <QuantityWrapper CloseAnimation={CloseAnimation}>
-              <Plus onClick={handleIncrement}>+</Plus>
-              <Quantity>{quantity}</Quantity>
-              <Minus onClick={handleDecrement}>-</Minus>
-            </QuantityWrapper>
+
             <ItemInfo CloseAnimation={CloseAnimation} activeLanguage={restaurant.activeLanguage}>
               <ItemName activeLanguage={restaurant.activeLanguage} >
                 {restaurant.activeLanguage == "en"
@@ -332,6 +328,7 @@ export default function ProductDetails({
                   {totalPrice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} {currencySymbol}
                 </ItemPrice>
               )}
+              
               <ItemDescription activeLanguage={restaurant.activeLanguage}
                 dangerouslySetInnerHTML={{ __html: description }}
               />
@@ -344,7 +341,11 @@ export default function ProductDetails({
         </ItemInfoWrapper>
         {features?.cart &&
           <ButtonWrapper CloseAnimation={CloseAnimation}>
-
+            <QuantityWrapper CloseAnimation={CloseAnimation}>
+              <Plus onClick={handleIncrement}>+</Plus>
+              <Quantity>{quantity}</Quantity>
+              <Minus onClick={handleDecrement}>-</Minus>
+            </QuantityWrapper>
             <AddToCart onClick={handleAddToCart}>{restaurant.activeLanguage == "en"
               ? "Add To Cart"
               : "أضف إلى السلة"}</AddToCart>

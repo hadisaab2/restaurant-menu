@@ -283,11 +283,7 @@ export default function ProductParam({ productId, setSearchParams, searchParams 
                 )}
                 <ItemInfoWrapper>
                     <InfoContainer>
-                        <QuantityWrapper CloseAnimation={CloseAnimation}>
-                            <Plus onClick={handleIncrement}>+</Plus>
-                            <Quantity>{quantity}</Quantity>
-                            <Minus onClick={handleDecrement}>-</Minus>
-                        </QuantityWrapper>
+
                         <ItemInfo CloseAnimation={CloseAnimation} activeLanguage={restaurant.activeLanguage}>
                             <ItemName activeLanguage={restaurant.activeLanguage} >
                                 {restaurant.activeLanguage == "en"
@@ -311,7 +307,11 @@ export default function ProductParam({ productId, setSearchParams, searchParams 
                     </InfoContainer>
                 </ItemInfoWrapper>
                 <ButtonWrapper CloseAnimation={CloseAnimation}>
-
+                    <QuantityWrapper CloseAnimation={CloseAnimation}>
+                        <Plus onClick={handleIncrement}>+</Plus>
+                        <Quantity>{quantity}</Quantity>
+                        <Minus onClick={handleDecrement}>-</Minus>
+                    </QuantityWrapper>
                     <AddToCart onClick={handleAddToCart}>{restaurant.activeLanguage == "en"
                         ? "Add To Cart"
                         : "أضف إلى السلة"}</AddToCart>

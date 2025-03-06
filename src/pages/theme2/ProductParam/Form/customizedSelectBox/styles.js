@@ -5,7 +5,7 @@ export const SelectBoxWrapper = styled.div`
   display: flex;
   flex-direction: column;
   gap: 16px;
-  margin-top: 30px;
+  margin-top: ${props=>props.index!=0 ? "30px":"10px"};
   padding-top: 20px;
   border-top: 1px solid ${(props) => {
     let color = props?.theme?.formColor; // Get the color

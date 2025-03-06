@@ -13,7 +13,6 @@ import CustomSelect from "./customizedSelect";
 import CustomizedRadioGroup from "./customizedRadioGroup";
 
 export default function ProductForm({ formSchema, onPriceChange, basePrice, formData, setFormData }) {
-
   useEffect(() => {
     calculateTotalPrice(formData);
   }, [formData]);
@@ -82,12 +81,11 @@ export default function ProductForm({ formSchema, onPriceChange, basePrice, form
     });
 
     const total = newPrice + addOnsPrice;
-    const formattedPrice = total % 1 !== 0 ? total.toFixed(2) : total.toFixed(0); //check if their is a decimal
+    const formattedPrice = total % 1 !== 0 ? total.toFixed(2) : total.toFixed(0);//check decimal if exist
     onPriceChange(formattedPrice);
-  
-  };
+    };
 
-  const renderComponent = (component) => {
+  const renderComponent = (component,index) => {
     switch (component.type) {
       case "selectboxes":
         console.log(component.key)
@@ -95,21 +93,29 @@ export default function ProductForm({ formSchema, onPriceChange, basePrice, form
           <CustomizedSelectBox
             component={component}
             formData={formData}
-            handleChange={handleChange} />
+            handleChange={handleChange} 
+            index={index}
+            />
         );
       case "select":
         return (
           <CustomSelect
             component={component}
             formData={formData}
-            handleChange={handleChange} />
+            handleChange={handleChange}
+            index={index}
+
+            />
         );
       case "radio":
         return (
           <CustomizedRadioGroup
             component={component}
             formData={formData}
-            handleChange={handleChange} />
+            handleChange={handleChange} 
+            index={index}
+
+            />
         );
 
       default:
@@ -119,7 +125,7 @@ export default function ProductForm({ formSchema, onPriceChange, basePrice, form
 
   return (
     <form style={{width:"100%"}}>
-      {formSchema?.components.map((component) => renderComponent(component))}
+      {formSchema?.components.map((component,index) => renderComponent(component,index))}
     </form>
   );
 }
