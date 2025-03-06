@@ -38,13 +38,6 @@ box-shadow: 10px 0 15px -5px rgba(0, 0, 0, 0.2);
     }
 `;
 
-export const Top = styled.div`
-width: 100%;
-position:relative;
-display: flex;
-flex-direction: column;
-gap:20px;
-`;
 
 export const Tabs = styled.div`
 width: 100%;
@@ -86,11 +79,19 @@ export const Icon = styled.img`
 width:20px;
 height:20px;
 `;
+
+
+export const BrandContainer = styled.div`
+height: 20vh;
+display: flex;
+align-items: center;
+justify-content: center;
+`;
+
+
 export const Brand = styled.img`
-max-width: 150px;
-max-height: 150px;
-margin-top: 10px;
-margin-left: 30px;
+max-width: 200px;
+max-height: 200px;
 `;
 
 export const SearchContainer = styled.div`

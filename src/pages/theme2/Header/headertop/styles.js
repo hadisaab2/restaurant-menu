@@ -1,25 +1,37 @@
 import styled from "styled-components";
-import { RxHamburgerMenu } from "react-icons/rx";
+import { HiMenuAlt2 } from "react-icons/hi";
 
 export const Container = styled.div`
+display: flex;
+align-items: center;
+justify-content: center;
+position: relative;
+height: 10vh;
+width: 100%;
+`;
+export const HeaderWrapper = styled.div`
 display: flex;
 align-items: center;
 position: relative;
 height: 10vh;
 justify-content: space-between;
-width: 100%;
+width: 90%;
+position: relative;
+
 `;
+
 export const Brand = styled.img`
 max-width: 250px;
 max-height: 120px;
-margin-left: 20px;
+position: absolute;
+margin-right: 7px;
+/* margin-left: 20px; */
 
 `;
 
 export const ButtonsContainer=styled.div`
 display: flex;
 flex-direction: row;
-margin-right: 20px;
 align-items: center;
 justify-content: center;
 
@@ -27,7 +39,6 @@ justify-content: center;
 export const LanguageContainer = styled.div`
 display: flex;
 flex-direction: row;
-margin-right: 20px;
 position: relative;
 border-radius: 10px;
 width:60px;
@@ -77,8 +88,8 @@ font-size: 14px;
 `;
 
 
-export const MenuIcon = styled(RxHamburgerMenu)`
+export const MenuIcon = styled(HiMenuAlt2)`
 color: ${props=>props.theme.mainColor};
-font-size: 20px;
+font-size: 27px;
 
 `;

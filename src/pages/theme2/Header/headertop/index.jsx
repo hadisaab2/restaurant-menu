@@ -8,6 +8,7 @@ import {
   Wrapper,
   ButtonsContainer,
   MenuIcon,
+  HeaderWrapper,
 } from "./styles";
 import { useDispatch, useSelector } from "react-redux";
 import { changelanuage } from "../../../../redux/restaurant/restaurantActions";
@@ -31,12 +32,17 @@ export default function HeaderTop({setshowSidebar,showSidebar}) {
   };
   return (
     <Container>
-      <Brand
+       <Brand
         src={
           restaurant.logoURL &&
           `https://storage.googleapis.com/ecommerce-bucket-testing/${restaurant.logoURL}`
         }
       />
+      <HeaderWrapper>
+       <ButtonsContainer >
+        <MenuIcon onClick={()=>{setshowSidebar(!showSidebar)}}/>
+      </ButtonsContainer>
+     
 
       <ButtonsContainer>
         {restaurant?.languages == "en&ar" && (
@@ -59,8 +65,9 @@ export default function HeaderTop({setshowSidebar,showSidebar}) {
             </Language>
           </LanguageContainer>
         )}
-        <MenuIcon onClick={()=>{setshowSidebar(!showSidebar)}}/>
+        {/* <MenuIcon onClick={()=>{setshowSidebar(!showSidebar)}}/> */}
       </ButtonsContainer>
+      </HeaderWrapper>
     </Container>
   );
 }
