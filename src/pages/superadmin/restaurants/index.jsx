@@ -57,7 +57,7 @@ export default function Restaurants() {
   const fileInputRef = useRef(null);
   const [viewColorSection, setViewColorSection] = useState(false);
   const [viewFeaturesSection, setViewFeaturesSection] = useState(false);
- 
+
 
 
   const navigate = useNavigate();
@@ -170,6 +170,7 @@ export default function Restaurants() {
     features: featureString,
     restaurant_id,
     currency,
+    category_type,
     font,
     cover_url
   }) => {
@@ -182,6 +183,7 @@ export default function Restaurants() {
       features,
       restaurant_id,
       currency,
+      category_type,
       font,
       cover_url
     });
@@ -194,6 +196,8 @@ export default function Restaurants() {
     setValue("email", email);
     setValue("name", restaurantName);
     setValue("currency", currency);
+    setValue("category_type", category_type);
+
     setValue("font", font);
     if (cover_url) {
       setImageUrl(
@@ -379,6 +383,21 @@ export default function Restaurants() {
             </Box>
             <Box sx={{ width: "30%" }}>
               <FormControl fullWidth>
+                <InputLabel>Category Type</InputLabel>
+                <Select
+                  label="Category Type"
+                  {...register("category_type", { required: "Required" })}
+                  error={!isEmpty(formState?.errors?.category_type)}
+                  defaultValue={selectedProduct?.category_type}
+                >
+                  <MenuItem value="vertical-category">vertical-category</MenuItem>
+                  <MenuItem value="horizantal-withoutIcon">horizantal-withoutIcon</MenuItem>
+
+                </Select>
+              </FormControl>
+            </Box>
+            <Box sx={{ width: "30%" }}>
+              <FormControl fullWidth>
                 <InputLabel>Font</InputLabel>
                 <Select
                   label="Font"
@@ -465,17 +484,18 @@ export default function Restaurants() {
                 .find((t) => t.id == template)
                 ?.features.map((feature) => {
                   return (
-                    <FormControl component="fieldset" style={{display:"flex",flexDirection:"row"}}>
+                    <FormControl component="fieldset" style={{ display: "flex", flexDirection: "row" }}>
                       <FormLabel component="legend">{feature.featureName}</FormLabel>
                       <FormControlLabel
-                        control={   <Checkbox
+                        control={<Checkbox
                           {...register(`features.${feature.featureName}`)}
                           defaultChecked={getValues(`features.${feature.featureName}`) ?? false} // ✅ Use `defaultChecked`
                           onChange={(e) => {
                             setValue("features", {
                               ...getValues("features"), // ✅ Preserve existing features
                               [feature.featureName]: e.target.checked, // ✅ Update only the clicked checkbox
-                            });                          }}
+                            });
+                          }}
                         />}
                         label={feature.featureName}
                       />
@@ -483,7 +503,7 @@ export default function Restaurants() {
                   );
                 })}
             </FeaturesBlock>
-            <button onClick={()=>console.log(getValues("features"))}>hadi</button>
+            <button onClick={() => console.log(getValues("features"))}>hadi</button>
             <LoadingButton
               onClick={handleAddRestaurant}
               style={{ backgroundColor: "turquoise", color: "white" }}

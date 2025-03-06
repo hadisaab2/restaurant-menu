@@ -26,12 +26,9 @@ export default function SubDomainTemplate({ restaurantName }) {
 
   const restaurant = useSelector((state) => state.restaurant?.[restaurantName]);
   const [isTrue, setIsTrue] = useState(true);
+  
 
-
-
-
-
-
+  
   useEffect(() => {
     if (!isLoading && response?.data) {
       dispatch(addmenu(response?.data));
@@ -79,7 +76,6 @@ export default function SubDomainTemplate({ restaurantName }) {
       </ThemeProvider>
       }
       <Loading restaurantName={restaurantName} viewLoading={restaurant?.categories && !isLoading && !isTrue} />
-
     </>
   );
 
