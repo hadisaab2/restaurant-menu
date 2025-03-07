@@ -1,6 +1,7 @@
 import styled from "styled-components";
 import { keyframes } from "styled-components";
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
+import _ from "lodash";
 
 const slideAnimation = (x, y, width) => keyframes`
  0% { 
@@ -287,11 +288,15 @@ export const FakeContainer = styled.div`
 `;
 const QuantityAnimation = keyframes`
  0% { 
-  margin-top: -20px;
+  margin-left: -70px;
+  opacity: 0;
+}
+50%{
+  margin-left: -70px;
   opacity: 0;
 }
 100% { 
-  margin-top: 10px;
+  margin-left: 0;
   opacity: 1;
 }
 `;
@@ -301,23 +306,25 @@ export const ItemInfoWrapper = styled.div`
   justify-content: center;
   align-items: center;
 `;
+
 export const InfoContainer = styled.div`
   width: 95%;
   display: flex;
   justify-content: center;
   flex-direction: column;
   align-items: center;
-  margin-top: 10px;
+  margin-left: 0;
 
-  animation: ${QuantityAnimation} 1.4s ease-in-out;
+  animation: ${QuantityAnimation} 1.8s ease-in-out;
 
 `;
+
 export const ItemInfo = styled.div`
   width: 90%;
   display: ${(props) => (props.CloseAnimation ? "flex" : "none")};
   align-items: ${props => props.activeLanguage == "en" ? "flex-start" : "flex-end"};;
   flex-direction: column;
-  align-items: center;
+  /* align-items: center; */
   position: relative;
   margin-top: 20px;
   padding-bottom: 10vh;
@@ -328,58 +335,26 @@ export const ItemInfo = styled.div`
     /* background-color: red; */
 `;
 
-const NameAnimationLeft = keyframes`
- 0% { 
-    margin-left: -50px;
-    opacity: 0;
-}
-50%{
-  margin-left: -50px;
-    opacity: 0;
-}
- 100% { 
-    margin-left: 0px;
-    opacity: 1;
-
-}
-`;
-const NameAnimationRight = keyframes`
- 0% { 
-    margin-right: -50px;
-    opacity: 0;
-}
-50%{
-  margin-right: -50px;
-    opacity: 0;
-}
- 100% { 
-    margin-right: 0px;
-    opacity: 1;
-
-}
-`;
 export const ItemName = styled.span`
-  font-size: 19px;
+  font-size: 21px;
   font-weight: bold;
-  width: 100%;
   margin-left:${props => props.activeLanguage == "en" ? "0px" : null} ;
   margin-right:${props => props.activeLanguage == "en" ? null : "0px"} ;
   text-align:center;
   opacity: 1;
   margin-top: 5px;
-  /* animation: ${props => props.activeLanguage == "en" ? NameAnimationLeft : NameAnimationRight} 1.4s ease-in-out; */
 `;
 
 
 export const ItemDescription = styled.span`
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 300;
   width: 100%;
   margin-top: 5px;
-  word-spacing: 1px;
   /* white-space: pre-line; */
-  text-align: center;
-  direction: ${props => props.activeLanguage == "en" ? "ltr" : "rtl"} ;;
+  text-align:${props => props.activeLanguage == "en" ? "left" : "right"};
+  direction: ${props => props.activeLanguage == "en" ? "ltr" : "rtl"} ;
+  opacity: 0.8;
 `;
 
 export const ItemPrice = styled.span`
@@ -388,7 +363,6 @@ export const ItemPrice = styled.span`
   word-spacing: 3px;
   transform: scale(1);
   color: ${(props) => props.theme.mainColor};;
-  padding: 5px;
   border-radius: 10px;
 `;
 
@@ -423,6 +397,7 @@ export const AddToCart = styled.button`
   outline: none;
   border: 0;
   cursor: pointer;
+  position: relative;
     width: 90%;
     border-radius: 10px;
     height: 40px;
@@ -431,7 +406,14 @@ export const AddToCart = styled.button`
   background-color: ${(props) => props.theme.mainColor};
   font-size: 12px;
 `;
+export const QuantityPrice = styled.span`
+position: absolute;
+right: 10%;
+  font-size: 12px;
+  color: ${(props) => props.theme.popupbuttonText};
+  word-spacing: 1px;
 
+`;
 
 
 export const QuantityWrapper = styled.div`
@@ -497,5 +479,63 @@ export const CopyButton = styled.div`
   animation: ${CopyBtnAnimation} 0.8s ease-in-out;
   font-size: 14px;
   cursor: pointer;
+`;
+
+export const InstructionContainer = styled.span`
+  width: 95%;
+  display: flex;
+  flex-direction: column;
+  gap:10px;
+  margin-top: 40px;
+  align-items: ${props => props.activeLanguage == "en" ? "flex-start" : "flex-end"};;
+
+`;
+
+
+export const InstructionLabel = styled.span`
+ 
+  font-size: 13px;
+  color:${(props) => props.theme.formColor};
+
+`;
+
+
+
+export const Instruction = styled.input`
+background-color: transparent;
+border: 1px solid ${(props) => {
+    let color = props?.theme?.formColor; // Get the color
+    const opacity = 0.8; // Desired opacity (e.g., 50%)
+
+    if (color.startsWith("#")) {
+      // HEX to RGBA conversion
+      const r = parseInt(color.slice(1, 3), 16);
+      const g = parseInt(color.slice(3, 5), 16);
+      const b = parseInt(color.slice(5, 7), 16);
+      return `rgba(${r}, ${g}, ${b}, ${opacity})`;
+    } else if (color.startsWith("rgb")) {
+      // Adjust existing RGB/RGBA
+      return color.replace(/rgba?\(([^)]+)\)/, (_, values) => {
+        const rgbValues = values.split(",").slice(0, 3).join(","); // Extract RGB values
+        return `rgba(${rgbValues}, ${opacity})`;
+      });
+    }
+    return color; // Fallback if format is unsupported
+  }};
+  text-align:${props => props.activeLanguage == "en" ? "left" : "right"};
+direction: ${props => props.activeLanguage == "en" ? "ltr" : "rtl"} ;
+&:focus{
+  outline: none;
+}
+&::placeholder{
+  color:${(props) => props.theme.formColor};
+  opacity: 0.5;
+}
+font-size: 13px;
+color:${(props) => props.theme.formColor};
+width: 100%;
+padding: 10px;
+border-radius: 10px;
+
 `;
 

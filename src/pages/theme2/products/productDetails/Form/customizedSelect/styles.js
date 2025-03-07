@@ -8,7 +8,7 @@ export const SelectContainer = styled.div`
   margin-top: ${props=>props.index!=0 ? "20px":"10px"};
   border-top: 1px solid ${(props) => {
     let color = props?.theme?.formColor; // Get the color
-    const opacity = 0.1; // Desired opacity (e.g., 50%)
+    const opacity = 0.08; // Desired opacity (e.g., 50%)
     if(_.isEmpty(color)){color="rgb(0,0,0)"};
 
     if (color.startsWith("#")) {
@@ -91,7 +91,7 @@ export const OptionsWrapper = styled.div`
 `;
 export const CircularOptionWrapper = styled.div`
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
   width: 25%;
   align-items: center;
   border-radius:30px;

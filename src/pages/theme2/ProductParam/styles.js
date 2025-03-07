@@ -42,9 +42,11 @@ width: 100%;
 align-items: center;
 justify-content: center;
 top:0;
-right: ${props=>props.CloseAnimation?0:"-100%"};
+right: ${props => props.CloseAnimation ? 0 : "-100%"};
 color:${props => props.theme.textColor};
 background-color:${props => props.theme.backgroundColor};
+padding-bottom:150px;
+
   overflow: scroll;
   transition: all 1s;
   animation: ${slideAnimation} 1.1s;
@@ -291,15 +293,16 @@ export const ItemInfoWrapper = styled.div`
   justify-content: center;
   align-items: center;
 `;
+
 export const InfoContainer = styled.div`
   width: 95%;
   display: flex;
   justify-content: center;
   flex-direction: column;
   align-items: center;
-  margin-top: 10px;
+  margin-left: 0;
 
-  animation: ${QuantityAnimation} 1.4s ease-in-out;
+  animation: ${QuantityAnimation} 1.8s ease-in-out;
 
 `;
 
@@ -308,7 +311,6 @@ export const ItemInfo = styled.div`
   display: ${(props) => (props.CloseAnimation ? "flex" : "none")};
   align-items: ${props => props.activeLanguage == "en" ? "flex-start" : "flex-end"};;
   flex-direction: column;
-  align-items: center;
   position: relative;
   margin-top: 20px;
   padding-bottom: 10vh;
@@ -316,15 +318,11 @@ export const ItemInfo = styled.div`
   @media (min-width: 1024px) {
         width: 50%;
     }
-    /* background-color: red; */
 `;
 
-
-
 export const ItemName = styled.span`
-  font-size: 19px;
+  font-size: 21px;
   font-weight: bold;
-  width: 100%;
   margin-left:${props => props.activeLanguage == "en" ? "0px" : null} ;
   margin-right:${props => props.activeLanguage == "en" ? null : "0px"} ;
   text-align:center;
@@ -334,23 +332,21 @@ export const ItemName = styled.span`
 
 
 export const ItemDescription = styled.span`
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 300;
   width: 100%;
   margin-top: 5px;
-  word-spacing: 1px;
   /* white-space: pre-line; */
-  text-align: center;
-  direction: ${props => props.activeLanguage == "en" ? "ltr" : "rtl"} ;;
+  text-align:${props => props.activeLanguage == "en" ? "left" : "right"};
+  direction: ${props => props.activeLanguage == "en" ? "ltr" : "rtl"} ;
+  opacity: 0.8;
 `;
 
 export const ItemPrice = styled.span`
   font-size: 16px;
   font-weight: 600;
   word-spacing: 3px;
-  transform: scale(1);
   color: ${(props) => props.theme.mainColor};;
-  padding: 10px;
   border-radius: 10px;
 `;
 
@@ -385,6 +381,7 @@ export const ButtonWrapper = styled.div`
 export const AddToCart = styled.button`
   outline: none;
   border: 0;
+  position: relative;
   cursor: pointer;
     width: 90%;
     border-radius: 10px;
@@ -395,6 +392,14 @@ export const AddToCart = styled.button`
   font-size: 12px;
 `;
 
+export const QuantityPrice = styled.span`
+position: absolute;
+right: 10%;
+  font-size: 12px;
+  color: ${(props) => props.theme.popupbuttonText};
+  word-spacing: 1px;
+
+`;
 
 
 export const QuantityWrapper = styled.div`
@@ -452,12 +457,72 @@ export const CopyButton = styled.div`
  position: fixed;
   z-index: 8;
   top: 30px;
-  background-color: ${props=>props.theme.mainColor};
-  color: ${props=>props.theme.backgroundColor};
+  background-color: ${props => props.theme.mainColor};
+  color: ${props => props.theme.backgroundColor};
   right: 30px;
   display: ${(props) => (props.CloseAnimation ? "flex" : "none")};
   animation: ${CopyBtnAnimation} 0.8s ease-in-out;
   font-size: 14px;
   cursor: pointer;
 `;
+
+
+export const InstructionContainer = styled.span`
+  width: 95%;
+  display: flex;
+  flex-direction: column;
+  gap:10px;
+  margin-top: 40px;
+  align-items: ${props => props.activeLanguage == "en" ? "flex-start" : "flex-end"};;
+
+`;
+
+
+export const InstructionLabel = styled.span`
+ 
+  font-size: 13px;
+  color:${(props) => props.theme.formColor};
+
+`;
+
+
+
+export const Instruction = styled.input`
+background-color: transparent;
+border: 1px solid ${(props) => {
+    let color = props?.theme?.formColor; // Get the color
+    const opacity = 0.8; // Desired opacity (e.g., 50%)
+
+    if (color.startsWith("#")) {
+      // HEX to RGBA conversion
+      const r = parseInt(color.slice(1, 3), 16);
+      const g = parseInt(color.slice(3, 5), 16);
+      const b = parseInt(color.slice(5, 7), 16);
+      return `rgba(${r}, ${g}, ${b}, ${opacity})`;
+    } else if (color.startsWith("rgb")) {
+      // Adjust existing RGB/RGBA
+      return color.replace(/rgba?\(([^)]+)\)/, (_, values) => {
+        const rgbValues = values.split(",").slice(0, 3).join(","); // Extract RGB values
+        return `rgba(${rgbValues}, ${opacity})`;
+      });
+    }
+    return color; // Fallback if format is unsupported
+  }};
+  text-align:${props => props.activeLanguage == "en" ? "left" : "right"};
+direction: ${props => props.activeLanguage == "en" ? "ltr" : "rtl"} ;
+&:focus{
+  outline: none;
+}
+&::placeholder{
+  color:${(props) => props.theme.formColor};
+  opacity: 0.5;
+}
+font-size: 13px;
+color:${(props) => props.theme.formColor};
+width: 100%;
+padding: 10px;
+border-radius: 10px;
+
+`;
+
 

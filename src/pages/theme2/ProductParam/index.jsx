@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { AddToCart, BackBtn, BackIcon, ButtonWrapper, Carousel, CarouselBack, CarouselForward, CarouselItem, Category, CopyButton, FakeContainer, Image, ImagesContainer, ImageWrapper, InfoContainer, ItemCategory, ItemDescription, ItemInfo, ItemInfoWrapper, ItemName, ItemPrice, Loader, LoaderWrapper, Minus, Plus, Quantity, QuantityWrapper, SearchProductContainer } from './styles'
+import { AddToCart, BackBtn, BackIcon, ButtonWrapper, Carousel, CarouselBack, CarouselForward, CarouselItem, Category, CopyButton, FakeContainer, Image, ImagesContainer, ImageWrapper, InfoContainer, Instruction, InstructionContainer, InstructionLabel, ItemCategory, ItemDescription, ItemInfo, ItemInfoWrapper, ItemName, ItemPrice, Loader, LoaderWrapper, Minus, Plus, Quantity, QuantityPrice, QuantityWrapper, SearchProductContainer } from './styles'
 import { useGetProduct } from '../../../apis/products/getProduct';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
@@ -63,6 +63,8 @@ export default function ProductParam({ productId, setSearchParams, searchParams 
     // const basePrice = parseFloat(fetchedProduct?.en_price || 0);
     const [basePrice, setBasePrice] = useState(parseFloat(fetchedProduct?.en_price)); // Example base price
     const [totalPrice, setTotalPrice] = useState(parseFloat(fetchedProduct?.en_price)); // Example base price
+    const [instruction, setInstruction] = useState(""); // Example base price
+
 
     const handlePriceChange = (newPrice) => {
         setTotalPrice(newPrice);
@@ -144,7 +146,7 @@ export default function ProductParam({ productId, setSearchParams, searchParams 
             document.body.style.overflow = "auto";
         }, 800);
         dispatch(
-            addToCart(restaurantName, fetchedProduct, quantity, formData, totalPrice)
+            addToCart(restaurantName, fetchedProduct, quantity, formData, totalPrice, instruction)
         );
         setCloseAnimation(false);
         setQuantity(1);
@@ -300,7 +302,14 @@ export default function ProductParam({ productId, setSearchParams, searchParams 
                                 dangerouslySetInnerHTML={{ __html: description }}
                             />
                             {formSchema?.components && <ProductForm formSchema={formSchema} onPriceChange={handlePriceChange} formData={formData} setFormData={setFormData} basePrice={fetchedProduct?.en_price} />}
-
+                            <InstructionContainer activeLanguage={restaurant.activeLanguage}>
+                                <InstructionLabel>{restaurant.activeLanguage == "en"
+                                    ? "Any Special Instuction ?"
+                                    : "أي تعليمات خاصة؟"}</InstructionLabel>
+                                <Instruction activeLanguage={restaurant.activeLanguage} onChange={(e) => setInstruction(e.target.value)} placeholder={restaurant.activeLanguage == "en"
+                                    ? "Special Instruction"
+                                    : "تعليمات خاصة"} />
+                            </InstructionContainer>
 
 
                         </ItemInfo>
@@ -314,7 +323,10 @@ export default function ProductParam({ productId, setSearchParams, searchParams 
                     </QuantityWrapper>
                     <AddToCart onClick={handleAddToCart}>{restaurant.activeLanguage == "en"
                         ? "Add To Cart"
-                        : "أضف إلى السلة"}</AddToCart>
+                        : "أضف إلى السلة"}
+                        <QuantityPrice>{quantity * totalPrice} {currencySymbol}</QuantityPrice>
+
+                    </AddToCart>
                 </ButtonWrapper>
             </SearchProductContainer>
 

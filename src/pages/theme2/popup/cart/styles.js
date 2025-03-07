@@ -7,7 +7,7 @@ import { MdOutlineDelete } from "react-icons/md";
 export const Container = styled.div`
 position: fixed;
 bottom: ${props=>props.showPopup=="cart"?"0%":"-100%"};
-min-height: 45vh;
+min-height: 70vh;
 background-color: ${props=>props.theme.popupbackgroundColor};
 width: 100%;
 transition: all 0.8s ease-in-out;

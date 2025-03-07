@@ -28,6 +28,10 @@ import {
   Loader,
   CopyButton,
   InfoContainer,
+  InstructionLabel,
+  Instruction,
+  InstructionContainer,
+  QuantityPrice,
 } from "./styles";
 import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -92,6 +96,8 @@ export default function ProductDetails({
   const enPrice = plates[activePlate]?.en_price || "0";
   const basePrice = enPrice.includes(".") ? parseFloat(enPrice).toFixed(2) : parseFloat(enPrice).toFixed(0);
   const [totalPrice, setTotalPrice] = useState(basePrice); // Example base price
+  const [instruction, setInstruction] = useState("");
+
   const handlePriceChange = (newPrice) => {
     setTotalPrice(newPrice);
   };
@@ -172,7 +178,8 @@ export default function ProductDetails({
       document.body.style.overflow = "auto";
     }, 800);
     dispatch(
-      addToCart(restaurantName, plates[activePlate], quantity, formData, totalPrice)
+      addToCart(restaurantName, plates[activePlate], quantity, formData, totalPrice, instruction)
+
     );
     setCloseAnimation(false);
     setQuantity(1);
@@ -328,13 +335,22 @@ export default function ProductDetails({
                   {totalPrice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} {currencySymbol}
                 </ItemPrice>
               )}
-              
-              <ItemDescription activeLanguage={restaurant.activeLanguage}
-                dangerouslySetInnerHTML={{ __html: description }}
-              />
+              {(!_.isEmpty(description)) && (
+
+                <ItemDescription activeLanguage={restaurant.activeLanguage}
+                  dangerouslySetInnerHTML={{ __html: description }}
+                />
+              )}
 
               {formSchema?.components && <ProductForm formSchema={formSchema} onPriceChange={handlePriceChange} formData={formData} setFormData={setFormData} basePrice={plates[activePlate]?.en_price} />}
-
+              <InstructionContainer activeLanguage={restaurant.activeLanguage}>
+                <InstructionLabel>{restaurant.activeLanguage == "en"
+                  ? "Any Special Instuction ?"
+                  : "أي تعليمات خاصة؟"}</InstructionLabel>
+                <Instruction activeLanguage={restaurant.activeLanguage} onChange={(e) => setInstruction(e.target.value)} placeholder={restaurant.activeLanguage == "en"
+                  ? "Special Instruction"
+                  : "تعليمات خاصة"} />
+              </InstructionContainer>
 
             </ItemInfo>
           </InfoContainer>
@@ -348,7 +364,9 @@ export default function ProductDetails({
             </QuantityWrapper>
             <AddToCart onClick={handleAddToCart}>{restaurant.activeLanguage == "en"
               ? "Add To Cart"
-              : "أضف إلى السلة"}</AddToCart>
+              : "أضف إلى السلة"}
+              <QuantityPrice>{quantity*totalPrice} {currencySymbol}</QuantityPrice>
+              </AddToCart>
           </ButtonWrapper>
         }
       </Wrapper>
