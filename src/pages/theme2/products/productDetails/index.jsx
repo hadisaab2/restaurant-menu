@@ -41,6 +41,7 @@ import "formiojs/dist/formio.full.css";
 import ProductForm from "./Form";
 import { FaRegCopy } from "react-icons/fa";
 import { TiTick } from "react-icons/ti";
+import { translateForm } from "../../../../utilities/translate";
 
 const _ = require('lodash');
 
@@ -70,20 +71,26 @@ export default function ProductDetails({
   const activeCategory = categories.find((category) => category.id == activeCategoryId)
 
 
-  let formJson = null;
-  //if product have a form than we'll take the form of it else we take form of category
-  if (!_.isEmpty(plates[activePlate]?.form_json)) {//la etjanab json.parse la undefined
-    if (!_.isEmpty(JSON.parse(plates[activePlate]?.form_json))) {
-      formJson = plates[activePlate]?.form_json
-    } else {
-      formJson = activeCategory?.form_json
+  useEffect(()=>{
+    let formJson = null;
+    //if product have a form than we'll take the form of it else we take form of category
+    if (!_.isEmpty(plates[activePlate]?.form_json)) {//la etjanab json.parse la undefined
+      if (!_.isEmpty(JSON.parse(plates[activePlate]?.form_json))) {
+        formJson = plates[activePlate]?.form_json
+      } else {
+        formJson = activeCategory?.form_json
+      }
     }
-  }
+    !_.isEmpty(formJson) ? setFormSchema(JSON.parse(formJson)) : setFormSchema({})
+
+  
+  
+  },[restaurant.activeLanguage])
 
 
-  const [formSchema, setFormSchema] = useState(
-    !_.isEmpty(formJson) ? JSON.parse(formJson) : {}
-  );
+
+
+  const [formSchema, setFormSchema] = useState({});
 
   const [formData, setFormData] = useState({});
 
@@ -222,6 +229,7 @@ export default function ProductDetails({
     }));
   };
 
+  
   const description =
     restaurant?.activeLanguage === "en"
       ? plates[activePlate]?.en_description

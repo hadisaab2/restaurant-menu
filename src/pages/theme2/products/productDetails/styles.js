@@ -340,7 +340,7 @@ export const ItemName = styled.span`
   font-weight: bold;
   margin-left:${props => props.activeLanguage == "en" ? "0px" : null} ;
   margin-right:${props => props.activeLanguage == "en" ? null : "0px"} ;
-  text-align:center;
+  text-align:${props => props.activeLanguage == "en" ? "left" : "right"} ;
   opacity: 1;
   margin-top: 5px;
 `;
