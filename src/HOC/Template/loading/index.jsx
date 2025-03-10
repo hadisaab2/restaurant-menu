@@ -32,8 +32,8 @@ const backgroundColors=[
     color:"white"
   },
   {
-    name:"bolandco",
-    color:"#BCC1AA"
+    name:"paradise",
+    color:"#F9E2F0"
   }
 ]
 export default function Loading({ restaurantName,viewLoading }) {
@@ -54,7 +54,7 @@ export default function Loading({ restaurantName,viewLoading }) {
   return (
     
     <Container viewLoading={viewLoading} bg={restaurant?restaurant.color:"black"}>
-      {(restaurantName == "junkies" || restaurantName == "kacodoner" || restaurantName == "aldaouksweets" || restaurantName=="cheeseboard"|| restaurantName=="balloweenevent" || restaurantName=="the1burger"||restaurantName=="alsharqsweets"||restaurantName=="bolandco") ?
+      {(restaurantName == "junkies" || restaurantName == "kacodoner" || restaurantName == "aldaouksweets" || restaurantName=="cheeseboard"|| restaurantName=="balloweenevent" || restaurantName=="the1burger"||restaurantName=="alsharqsweets"||restaurantName=="paradise") ?
         <>
           <LogoImage src={!removeAnimation?`https://storage.googleapis.com/ecommerce-bucket-testing/${restaurantName}`:""} />
            {/* {restaurantName=="junkies" && <BouncingLoader /> } */}
