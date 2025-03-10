@@ -412,6 +412,9 @@ export default function Restaurants() {
                   <MenuItem value="Verdana">Verdana</MenuItem>
                   <MenuItem value="Roboto Flex">Roboto Flex</MenuItem>
                   <MenuItem value="Teko">Teko</MenuItem>
+                  <MenuItem value="Gotu">Gotu</MenuItem>
+
+                  
                 </Select>
               </FormControl>
             </Box>
