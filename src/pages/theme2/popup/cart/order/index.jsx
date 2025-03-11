@@ -129,7 +129,9 @@ export default function Order({ setblock, popupHandler, restaurant }) {
           }
         });
       }
-      message += `  - Special Insruction: ${item.instruction }\n`;
+      if(item.instruction){
+        message += `  - Special Insruction: ${item.instruction }\n`;
+      }
 
       message += `  - Price: ${item.price * item.quantity} ${currencySymbol}\n`;
       totalPrice += item.price * item.quantity;
@@ -159,6 +161,8 @@ export default function Order({ setblock, popupHandler, restaurant }) {
       whatsappUrl = `https://wa.me/${newWhatsappNumber}?text=${encodedMessage}`;
 
     }
+
+    console.log(whatsappUrl)
 
     window.open(whatsappUrl, "_blank");
     dispatch(clearCart(restaurantName));
