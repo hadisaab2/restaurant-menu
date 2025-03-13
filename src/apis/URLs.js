@@ -8,6 +8,8 @@ export const GET_PRODUCT_URL = (id) =>
   `${REACT_APP_BASE_URL}/products?restaurantId=${id}`;
 export const GET_ONEPRODUCT_URL = (id) =>
   `${REACT_APP_BASE_URL}/products/${id}`;
+export const LOG_PRODUCT_URL = (id) =>
+  `${REACT_APP_BASE_URL}/products/logs/${id}`;
 export const EDIT_PRODUCT_URL = (id) => `${REACT_APP_BASE_URL}/products/${id}`;
 export const DELETE_PRODUCT_URL = (id) =>
   `${REACT_APP_BASE_URL}/products/${id}`;

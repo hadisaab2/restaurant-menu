@@ -10,6 +10,7 @@ import "formiojs/dist/formio.full.css";
 import ProductForm from "./Form";
 import { FaRegCopy } from 'react-icons/fa6';
 import { TiTick } from 'react-icons/ti';
+import { useLogProduct } from '../../../apis/products/logProduct';
 
 export default function ProductParam({ productId, setSearchParams, searchParams }) {
     const { restaurantName: paramRestaurantName } = useParams();
@@ -31,6 +32,11 @@ export default function ProductParam({ productId, setSearchParams, searchParams 
         }
     });
 
+      const {response } = useLogProduct({
+          productId: productId,
+        });
+    
+    
     useEffect(() => {
         if (fetchedProduct?.en_price && !productLoading) {
             setBasePrice(parseFloat(fetchedProduct.en_price));

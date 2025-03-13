@@ -42,6 +42,7 @@ import ProductForm from "./Form";
 import { FaRegCopy } from "react-icons/fa";
 import { TiTick } from "react-icons/ti";
 import { translateForm } from "../../../../utilities/translate";
+import { useLogProduct } from "../../../../apis/products/logProduct";
 
 const _ = require('lodash');
 
@@ -69,6 +70,11 @@ export default function ProductDetails({
 
   const restaurant = useSelector((state) => state.restaurant?.[restaurantName]);
   const activeCategory = categories.find((category) => category.id == activeCategoryId)
+
+
+    const {response } = useLogProduct({
+      productId: plates[activePlate]?.id,
+    });
 
 
   useEffect(()=>{
