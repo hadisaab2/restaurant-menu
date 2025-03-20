@@ -58,6 +58,10 @@ const backgroundColors=[
   {
     name:"abrands",
     color:"black"
+  },
+  {
+    name:"brewsociety",
+    color:"#ededed"
   }
 ]
 export default function Loading({ restaurantName,viewLoading }) {
