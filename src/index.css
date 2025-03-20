@@ -11,6 +11,11 @@ html,body{
   padding:0;
 
   }
+  #root{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+  }
 /* html, body {
   margin: 0;
   padding: 0;

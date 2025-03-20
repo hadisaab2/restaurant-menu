@@ -50,12 +50,22 @@ const backgroundColors=[
   {
     name:"jadeerorganics",
     color:"#bcc1aa"
+  },
+  {
+    name:"abrands",
+    color:"black"
+  },
+  {
+    name:"shamacosmetics",
+    color:"#FDE4FD"
   }
 ]
 export default function Loading({ restaurantName,viewLoading }) {
   const [removeAnimation,setRemoveAnimation]=useState(false)
   const [imagesrc,setImagesrc]=useState("emptysrc")
-
+  const checkRestaurantExists = (restaurantName) => {
+    return backgroundColors.some(item => item.name === restaurantName);
+  };
   const restaurant = backgroundColors.find(
     (bg) => bg.name.toLowerCase() === restaurantName.toLowerCase()
   );
@@ -70,7 +80,7 @@ export default function Loading({ restaurantName,viewLoading }) {
   return (
     
     <Container viewLoading={viewLoading} bg={restaurant?restaurant.color:"black"}>
-      {(restaurantName == "junkies" || restaurantName == "kacodoner" || restaurantName == "aldaouksweets" || restaurantName=="cheeseboard"|| restaurantName=="balloweenevent" || restaurantName=="the1burger"||restaurantName=="alsharqsweets"||restaurantName=="paradise"||restaurantName=="medilaser"||restaurantName=="pizzafactory"||restaurantName=="magnifico"||restaurantName=="jadeerorganics") ?
+      {checkRestaurantExists(restaurantName) ?
         <>
           <LogoImage src={!removeAnimation?`https://storage.googleapis.com/ecommerce-bucket-testing/${restaurantName}`:""} />
            {/* {restaurantName=="junkies" && <BouncingLoader /> } */}
