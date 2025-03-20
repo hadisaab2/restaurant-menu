@@ -54,6 +54,10 @@ const backgroundColors=[
   {
     name:"shamacosmetics",
     color:"#FDE4FD"
+  },
+  {
+    name:"abrands",
+    color:"black"
   }
 ]
 export default function Loading({ restaurantName,viewLoading }) {
