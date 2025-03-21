@@ -14,6 +14,7 @@ import { useParams } from "react-router-dom";
 import { clearCart } from "../../../../../redux/cart/cartActions";
 import BranchSelect from "./branchSelect";
 import RegionSelect from "./regionSelect";
+import { useAddOrderQuery } from "../../../../../apis/restaurants/addOrder";
 
 export default function Order({ setblock, popupHandler, restaurant }) {
   const { restaurantName: paramRestaurantName } = useParams();
@@ -30,6 +31,11 @@ export default function Order({ setblock, popupHandler, restaurant }) {
   const cart = useSelector((state) => state.cart[restaurantName] || []); // Fetch the cart for the specific restaurant
 
   const dispatch = useDispatch();
+  const { handleApiCall:handleAddOrder, isPending } = useAddOrderQuery({
+    onSuccess: () => {
+
+    }
+  });
 
   const [details, setDetails] = useState({
     fullName: "",
@@ -129,8 +135,8 @@ export default function Order({ setblock, popupHandler, restaurant }) {
           }
         });
       }
-      if(item.instruction){
-        message += `  - Special Insruction: ${item.instruction }\n`;
+      if (item.instruction) {
+        message += `  - Special Insruction: ${item.instruction}\n`;
       }
 
       message += `  - Price: ${item.price * item.quantity} ${currencySymbol}\n`;
@@ -161,9 +167,16 @@ export default function Order({ setblock, popupHandler, restaurant }) {
       whatsappUrl = `https://wa.me/${newWhatsappNumber}?text=${encodedMessage}`;
 
     }
+    //log order to database
+    const simplifiedCart = cart.map(item => ({
+      id: item.id,
+      quantity: item.quantity,
+      branch_id:selectedBranch?.id,
+      restaurant_id:restaurant.id
+    }));
 
-    console.log(whatsappUrl)
-
+    handleAddOrder({products:simplifiedCart})
+    
     window.open(whatsappUrl, "_blank");
     dispatch(clearCart(restaurantName));
     setblock("cart");
