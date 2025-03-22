@@ -62,6 +62,10 @@ const backgroundColors=[
   {
     name:"brewsociety",
     color:"#ededed"
+  },
+  {
+    name:"beit-wurud",
+    color:"#FEE6F3"
   }
 ]
 export default function Loading({ restaurantName,viewLoading }) {
