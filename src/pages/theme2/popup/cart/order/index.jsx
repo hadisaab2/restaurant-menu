@@ -31,7 +31,7 @@ export default function Order({ setblock, popupHandler, restaurant }) {
   const cart = useSelector((state) => state.cart[restaurantName] || []); // Fetch the cart for the specific restaurant
 
   const dispatch = useDispatch();
-  const { handleApiCall:handleAddOrder, isPending } = useAddOrderQuery({
+  const { handleApiCall: handleAddOrder, isPending } = useAddOrderQuery({
     onSuccess: () => {
 
     }
@@ -101,12 +101,23 @@ export default function Order({ setblock, popupHandler, restaurant }) {
 
       };
     } else {
-      newErrors = {
-        fullName: !details.fullName ? "Full Name is required." : "",
-        phoneNumber: !details.phoneNumber ? "Phone Number is required." : "",
-        deliveryType: !deliveryType ? "Delivery Type is required." : "",
-        branch: !selectedBranch ? "Branch is required" : "",
-      };
+      if (deliveryType == "DineIn") {
+        newErrors = {
+          fullName: !details.fullName ? "Full Name is required." : "",
+          phoneNumber: !details.phoneNumber ? "Phone Number is required." : "",
+          deliveryType: !deliveryType ? "Delivery Type is required." : "",
+          branch: !selectedBranch ? "Branch is required" : "",
+          tableNumber: !details.tableNumber ? "Table Number is required." : "",
+
+        };
+      } else {
+        newErrors = {
+          fullName: !details.fullName ? "Full Name is required." : "",
+          phoneNumber: !details.phoneNumber ? "Phone Number is required." : "",
+          deliveryType: !deliveryType ? "Delivery Type is required." : "",
+          branch: !selectedBranch ? "Branch is required" : "",
+        };
+      }
     }
 
 
@@ -117,6 +128,7 @@ export default function Order({ setblock, popupHandler, restaurant }) {
 
     let message = `Hello *${restaurantName}*\n`;
     message += `It's *${details.fullName}* and I want to purchase the following items:\n`;
+    message += `Order Type: ${deliveryType}\n`;
 
     let totalPrice = 0;
 
@@ -150,9 +162,11 @@ export default function Order({ setblock, popupHandler, restaurant }) {
       message += `- Region: ${selectedRegion}\n`;
     }
     message += `- Phone Number: ${details.phoneNumber}\n`;
-    message += `- Order type: ${deliveryType}\n`;
     if (deliveryType === "Delivery") {
       message += `- Address: ${details.fullAddress}\n`;
+    }
+    if (deliveryType === "DineIn") {
+      message += `- Table Number: ${details.tableNumber}\n`;
     }
     message += `- Order notes: ${details.note || "None"}\n`;
 
@@ -171,12 +185,12 @@ export default function Order({ setblock, popupHandler, restaurant }) {
     const simplifiedCart = cart.map(item => ({
       id: item.id,
       quantity: item.quantity,
-      branch_id:selectedBranch?.id,
-      restaurant_id:restaurant.id
+      branch_id: selectedBranch?.id,
+      restaurant_id: restaurant.id
     }));
 
-    handleAddOrder({products:simplifiedCart})
-    
+    handleAddOrder({ products: simplifiedCart })
+
     window.open(whatsappUrl, "_blank");
     dispatch(clearCart(restaurantName));
     setblock("cart");
@@ -244,7 +258,21 @@ export default function Order({ setblock, popupHandler, restaurant }) {
           {errors.fullAddress && <Error>{errors.fullAddress}</Error>}
         </>
       )}
+      {deliveryType == "DineIn" && (
+        <>
 
+          <Input
+            type="number"
+            name="tableNumber"
+            value={details.tableNumber}
+            onChange={handleChange}
+            placeholder="Table Number"
+          />
+
+
+          {errors.tableNumber && <Error>{errors.tableNumber}</Error>}
+        </>
+      )}
       <NoteTextArea
         name="note"
         value={details.note}
