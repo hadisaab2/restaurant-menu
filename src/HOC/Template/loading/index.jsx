@@ -70,6 +70,10 @@ const backgroundColors=[
   {
     name:"beitmariam",
     color:"#01ACB9"
+  },
+  {
+    name:"powermunch",
+    color:"#A9D05E"
   }
 ]
 export default function Loading({ restaurantName,viewLoading }) {
