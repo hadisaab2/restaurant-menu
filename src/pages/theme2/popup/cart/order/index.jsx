@@ -128,7 +128,7 @@ export default function Order({ setblock, popupHandler, restaurant }) {
 
     let message = `Hello *${restaurantName}*\n`;
     message += `It's *${details.fullName}* and I want to purchase the following items:\n`;
-    message += `Order Type: ${deliveryType}\n`;
+    message += `Order Type: *${deliveryType}*\n`;
 
     let totalPrice = 0;
 

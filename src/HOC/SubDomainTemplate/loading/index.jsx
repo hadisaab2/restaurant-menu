@@ -41,7 +41,7 @@ const backgroundColors=[
   },
   {
     name:"pizzafactory",
-    color:"white"
+    color:"#232323"
   },
   {
     name:"magnifico",
