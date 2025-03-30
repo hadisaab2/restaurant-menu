@@ -220,6 +220,8 @@ export default function AddProduct({
       setValue("category_id", selectedProduct.category_id);
       setValue("priority", selectedProduct.priority);
       setValue("product_code", selectedProduct.product_code);
+      setValue("discount", selectedProduct.discount);
+
       setValue("cover_id", selectedProduct.cover_id);
       selectedProduct.form_json && setValue("form_json", selectedProduct.form_json);
       setCoverId(selectedProduct.cover_id);
@@ -482,7 +484,17 @@ export default function AddProduct({
           variant="outlined"
           {...register("product_code")}
           style={fieldStyle}
-          type="text"
+          type="number"
+          defaultValue={0}
+
+        />
+        <TextField
+          label={"Discount"}
+          name={"discount"}
+          variant="outlined"
+          {...register("discount")}
+          style={fieldStyle}
+          type="number"
         />
         <Box style={fieldStyle}>
           <FormControl fullWidth>

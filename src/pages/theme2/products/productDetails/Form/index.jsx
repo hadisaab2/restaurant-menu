@@ -12,7 +12,7 @@ import CustomizedSelectBox from "./customizedSelectBox";
 import CustomSelect from "./customizedSelect";
 import CustomizedRadioGroup from "./customizedRadioGroup";
 
-export default function ProductForm({ formSchema, onPriceChange, basePrice, formData, setFormData }) {
+export default function ProductForm({ formSchema, onPriceChange, basePrice, formData, setFormData,finalDiscount }) {
   useEffect(() => {
     calculateTotalPrice(formData);
   }, [formData]);
@@ -58,7 +58,7 @@ export default function ProductForm({ formSchema, onPriceChange, basePrice, form
             } else if (option.value.startsWith("-")) {
               addOnsPrice -= parseFloat(option.value.slice(1));
             } else {
-              newPrice = parseFloat(option.value);
+              newPrice = parseFloat(option.value) ;
             }
 
           }

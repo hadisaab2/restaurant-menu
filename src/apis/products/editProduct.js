@@ -46,6 +46,7 @@ const editProduct = async (id, payload) => {
 
     formData.append(`priority`, payload.priority);
     formData.append(`product_code`, payload.product_code);
+    formData.append(`discount`, payload.discount);
     formData.append(`cover_id`, payload.cover_id);
     formData.append(`form_json`, payload.form_json);
     formData.append(`new`, payload.new);

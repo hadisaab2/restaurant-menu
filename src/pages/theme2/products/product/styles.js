@@ -75,12 +75,31 @@ display: -webkit-box;
 
 
 `;
+
+export const PriceContainer = styled.div`
+display: flex;
+flex-direction: row;
+gap:5px;
+`;
+
 export const PlatePrice = styled.span`
 color:${props=>props.theme.BoxPriceColor};
 font-size: 14px;
+word-spacing: 0px;
+text-decoration:${props=>props.discounted?"line-through":"none"};
 
 
 `;
+
+export const DiscountPrice = styled.span`
+color:${props=>props.theme.BoxPriceColor};
+font-size: 14px;
+word-spacing: 0px;
+
+`;
+
+
+
 const spin = keyframes`
   0% {
     transform: rotate(0deg);

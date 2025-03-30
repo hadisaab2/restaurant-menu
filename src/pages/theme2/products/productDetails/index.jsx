@@ -32,6 +32,8 @@ import {
   Instruction,
   InstructionContainer,
   QuantityPrice,
+  DiscountPrice,
+  PriceContainer,
 } from "./styles";
 import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -43,6 +45,7 @@ import { FaRegCopy } from "react-icons/fa";
 import { TiTick } from "react-icons/ti";
 import { translateForm } from "../../../../utilities/translate";
 import { useLogProduct } from "../../../../apis/products/logProduct";
+import { convertPrice } from "../../../../utilities/convertPrice";
 
 const _ = require('lodash');
 
@@ -72,12 +75,12 @@ export default function ProductDetails({
   const activeCategory = categories.find((category) => category.id == activeCategoryId)
 
 
-    const {response } = useLogProduct({
-      productId: plates[activePlate]?.id,
-    });
+  const { response } = useLogProduct({
+    productId: plates[activePlate]?.id,
+  });
 
 
-  useEffect(()=>{
+  useEffect(() => {
     let formJson = null;
     //if product have a form than we'll take the form of it else we take form of category
     if (!_.isEmpty(plates[activePlate]?.form_json)) {//la etjanab json.parse la undefined
@@ -89,9 +92,9 @@ export default function ProductDetails({
     }
     !_.isEmpty(formJson) ? setFormSchema(JSON.parse(formJson)) : setFormSchema({})
 
-  
-  
-  },[restaurant.activeLanguage])
+
+
+  }, [restaurant.activeLanguage])
 
 
 
@@ -105,6 +108,13 @@ export default function ProductDetails({
   const [quantity, setQuantity] = useState(1);
   const [carouselSwiped, setCarouselSwiped] = useState(false);
 
+  let finalDiscount;
+
+  if (parseFloat(activeCategory.discount) === 0.00) {
+    finalDiscount = parseFloat(plates[activePlate].discount);
+  } else {
+    finalDiscount = parseFloat(activeCategory.discount);
+  }
 
   const enPrice = plates[activePlate]?.en_price || "0";
   const basePrice = enPrice.includes(".") ? parseFloat(enPrice).toFixed(2) : parseFloat(enPrice).toFixed(0);
@@ -185,13 +195,13 @@ export default function ProductDetails({
   }, []);
 
   const handleAddToCart = () => {
-    console.log(formData);
+    let discountedPrice=(totalPrice * (1 - parseFloat(finalDiscount) / 100))
     setTimeout(() => {
       setactivePlate(null);
       document.body.style.overflow = "auto";
     }, 800);
     dispatch(
-      addToCart(restaurantName, plates[activePlate], quantity, formData, totalPrice, instruction)
+      addToCart(restaurantName, plates[activePlate], quantity, formData, discountedPrice, instruction)
 
     );
     setCloseAnimation(false);
@@ -235,7 +245,7 @@ export default function ProductDetails({
     }));
   };
 
-  
+
   const description =
     restaurant?.activeLanguage === "en"
       ? plates[activePlate]?.en_description
@@ -260,6 +270,10 @@ export default function ProductDetails({
   }
 
   let features = JSON.parse(restaurant.features)
+
+
+
+
 
   return (
     <>
@@ -345,9 +359,16 @@ export default function ProductDetails({
                   : plates[activePlate]?.ar_name}
               </ItemName>
               {!_.isEmpty(plates[activePlate]?.en_price) && (
-                <ItemPrice activeLanguage={restaurant.activeLanguage}>
-                  {totalPrice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} {currencySymbol}
-                </ItemPrice>
+                <PriceContainer>
+                  <ItemPrice activeLanguage={restaurant.activeLanguage} discounted={finalDiscount != 0.00}>
+                    {convertPrice(totalPrice,currencySymbol)}
+                  </ItemPrice>
+                  {finalDiscount != 0.00 &&
+                    <DiscountPrice activeLanguage={restaurant.activeLanguage}>
+                      {convertPrice(totalPrice * (1 - parseFloat(finalDiscount) / 100),currencySymbol)}
+                    </DiscountPrice>
+                  }
+                </PriceContainer>
               )}
               {(!_.isEmpty(description)) && (
 
@@ -356,7 +377,7 @@ export default function ProductDetails({
                 />
               )}
 
-              {formSchema?.components && <ProductForm formSchema={formSchema} onPriceChange={handlePriceChange} formData={formData} setFormData={setFormData} basePrice={plates[activePlate]?.en_price} />}
+              {formSchema?.components && <ProductForm formSchema={formSchema} onPriceChange={handlePriceChange} formData={formData} setFormData={setFormData} basePrice={basePrice} />}
               <InstructionContainer activeLanguage={restaurant.activeLanguage}>
                 <InstructionLabel>{restaurant.activeLanguage == "en"
                   ? "Any Special Instuction ?"
@@ -379,8 +400,10 @@ export default function ProductDetails({
             <AddToCart onClick={handleAddToCart}>{restaurant.activeLanguage == "en"
               ? "Add To Cart"
               : "أضف إلى السلة"}
-              <QuantityPrice>{quantity*totalPrice} {currencySymbol}</QuantityPrice>
-              </AddToCart>
+              <QuantityPrice>
+                {convertPrice(quantity * (totalPrice * (1 - parseFloat(finalDiscount) / 100)),currencySymbol)}
+              </QuantityPrice>
+            </AddToCart>
           </ButtonWrapper>
         }
       </Wrapper>

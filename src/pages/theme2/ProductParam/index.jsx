@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { AddToCart, BackBtn, BackIcon, ButtonWrapper, Carousel, CarouselBack, CarouselForward, CarouselItem, Category, CopyButton, FakeContainer, Image, ImagesContainer, ImageWrapper, InfoContainer, Instruction, InstructionContainer, InstructionLabel, ItemCategory, ItemDescription, ItemInfo, ItemInfoWrapper, ItemName, ItemPrice, Loader, LoaderWrapper, Minus, Plus, Quantity, QuantityPrice, QuantityWrapper, SearchProductContainer } from './styles'
+import { AddToCart, BackBtn, BackIcon, ButtonWrapper, Carousel, CarouselBack, CarouselForward, CarouselItem, Category, CopyButton, DiscountPrice, FakeContainer, Image, ImagesContainer, ImageWrapper, InfoContainer, Instruction, InstructionContainer, InstructionLabel, ItemCategory, ItemDescription, ItemInfo, ItemInfoWrapper, ItemName, ItemPrice, Loader, LoaderWrapper, Minus, Plus, PriceContainer, Quantity, QuantityPrice, QuantityWrapper, SearchProductContainer } from './styles'
 import { useGetProduct } from '../../../apis/products/getProduct';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
@@ -11,6 +11,7 @@ import ProductForm from "./Form";
 import { FaRegCopy } from 'react-icons/fa6';
 import { TiTick } from 'react-icons/ti';
 import { useLogProduct } from '../../../apis/products/logProduct';
+import { convertPrice } from '../../../utilities/convertPrice';
 
 export default function ProductParam({ productId, setSearchParams, searchParams }) {
     const { restaurantName: paramRestaurantName } = useParams();
@@ -32,15 +33,20 @@ export default function ProductParam({ productId, setSearchParams, searchParams 
         }
     });
 
-      const {response } = useLogProduct({
-          productId: productId,
-        });
-    
-    
+    const { response } = useLogProduct({
+        productId: productId,
+    });
+
+
     useEffect(() => {
         if (fetchedProduct?.en_price && !productLoading) {
             setBasePrice(parseFloat(fetchedProduct.en_price));
             setTotalPrice(parseFloat(fetchedProduct?.en_price))
+            if (parseFloat(fetchedProduct?.category?.discount) === 0.00) {
+                setfinalDiscount(parseFloat(fetchedProduct?.discount))
+            } else {
+                setfinalDiscount(parseFloat(fetchedProduct.category.discount))
+            }
 
         }
     }, [productLoading]);
@@ -70,6 +76,7 @@ export default function ProductParam({ productId, setSearchParams, searchParams 
     const [basePrice, setBasePrice] = useState(parseFloat(fetchedProduct?.en_price)); // Example base price
     const [totalPrice, setTotalPrice] = useState(parseFloat(fetchedProduct?.en_price)); // Example base price
     const [instruction, setInstruction] = useState(""); // Example base price
+    const [finalDiscount, setfinalDiscount] = useState(0); // Example base price
 
 
     const handlePriceChange = (newPrice) => {
@@ -146,13 +153,14 @@ export default function ProductParam({ productId, setSearchParams, searchParams 
 
 
     const handleAddToCart = () => {
+        let discountedPrice = (totalPrice * (1 - parseFloat(finalDiscount) / 100))
         setTimeout(() => {
             searchParams.delete("productId"); // Remove the parameter
             setSearchParams(searchParams);
             document.body.style.overflow = "auto";
         }, 800);
         dispatch(
-            addToCart(restaurantName, fetchedProduct, quantity, formData, totalPrice, instruction)
+            addToCart(restaurantName, fetchedProduct, quantity, formData, discountedPrice, instruction)
         );
         setCloseAnimation(false);
         setQuantity(1);
@@ -209,6 +217,9 @@ export default function ProductParam({ productId, setSearchParams, searchParams 
         default:
             currencySymbol = ""; // No currency or unsupported currency
     }
+
+
+
 
     return (
         <>
@@ -300,9 +311,16 @@ export default function ProductParam({ productId, setSearchParams, searchParams 
                             </ItemName>
 
                             {!_.isEmpty(fetchedProduct?.en_price) && (
-                                <ItemPrice activeLanguage={restaurant.activeLanguage}>
-                                    {totalPrice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} {currencySymbol}
-                                </ItemPrice>
+                                <PriceContainer>
+                                    <ItemPrice activeLanguage={restaurant.activeLanguage} discounted={finalDiscount != 0.00}>
+                                        {convertPrice(totalPrice, currencySymbol)}
+                                    </ItemPrice>
+                                    {finalDiscount != 0.00 &&
+                                        <DiscountPrice activeLanguage={restaurant.activeLanguage}>
+                                            {convertPrice(totalPrice * (1 - parseFloat(finalDiscount) / 100), currencySymbol)}
+                                        </DiscountPrice>
+                                    }
+                                </PriceContainer>
                             )}
                             <ItemDescription activeLanguage={restaurant.activeLanguage}
                                 dangerouslySetInnerHTML={{ __html: description }}
@@ -330,7 +348,9 @@ export default function ProductParam({ productId, setSearchParams, searchParams 
                     <AddToCart onClick={handleAddToCart}>{restaurant.activeLanguage == "en"
                         ? "Add To Cart"
                         : "أضف إلى السلة"}
-                        <QuantityPrice>{quantity * totalPrice} {currencySymbol}</QuantityPrice>
+                        <QuantityPrice>
+                            {convertPrice(quantity * (totalPrice * (1 - parseFloat(finalDiscount) / 100)), currencySymbol)}
+                        </QuantityPrice>
 
                     </AddToCart>
                 </ButtonWrapper>

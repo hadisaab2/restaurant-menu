@@ -211,6 +211,8 @@ export default function Products({
                       showPopup={showPopup}
                       setSearchParams={setSearchParams}
                       searchParams={searchParams}
+                      activeCategoryId={activeCategory}
+                      categories={categories}
                     />
                   );
                 })}

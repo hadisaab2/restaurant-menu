@@ -116,7 +116,7 @@ export default function Categories({ setProducts }) {
         ...data,
         restaurant_id: userInformation.restaurant_id,
         image: file,
-        form_json:jsonString
+        form_json: jsonString
       };
 
       !selectedIdForAction
@@ -127,6 +127,8 @@ export default function Categories({ setProducts }) {
 
   const handleOnEdit = (category) => {
     setValue("priority", category?.priority);
+    setValue("discount", category?.discount);
+
     switch (userInformation.Lang) {
       case EN:
         setValue("en_category", category.en_category);
@@ -233,77 +235,84 @@ export default function Categories({ setProducts }) {
             <Tab activeTab={activeTab} tab={"categoryinfo"} onClick={() => { setActiveTab("categoryinfo") }}>Category Details</Tab>
             <Tab activeTab={activeTab} tab={"formbuilder"} onClick={() => { setActiveTab("formbuilder") }}>Form Builder</Tab>
           </Tabs>
-          {activeTab=="categoryinfo" ?
-        <>
-          {displayEnglish && (
-            <TextField
-              label="English category"
-              name="en_category"
-              variant="outlined"
-              {...register("en_category")}
-              error={!isEmpty(formState?.errors?.en_category)}
-              helperText={
-                !isEmpty(formState?.errors?.en_category) &&
-                formState.errors?.en_category.message
-              }
-            />
-          )}
-          {displayArabic && (
-            <TextField
-              label="Arabic category"
-              name="ar_category"
-              variant="outlined"
-              {...register("ar_category")}
-              error={!isEmpty(formState?.errors?.ar_category)}
-              helperText={
-                !isEmpty(formState?.errors?.ar_category) &&
-                formState.errors?.ar_category.message
-              }
-            />
-          )}
-          <TextField
-            label="Priority"
-            name="priority"
-            variant="outlined"
-            {...register("priority")}
-            error={!isEmpty(formState?.errors?.priority)}
-            helperText={
-              !isEmpty(formState?.errors?.priority) && "Required Field"
-            }
-            type="number"
-            defaultValue={1}
-            inputProps={{ min: 1 }}
-          />
-          <UploadPhoto
-            type="file"
-            ref={fileInputRef}
-            onChange={handleFileChange}
-          />
-          {imageUrl ? (
-            <Button
-              variant="contained"
-              color="error"
-              style={{ width: "150px", height: "40px" }}
-              onClick={() => handleOnDeleteImage()}
-            >
-              Delete
-            </Button>
-          ) : (
-            <UploadBtn onClick={handleButtonClick}>Upload Image</UploadBtn>
-          )}
-          {!imageUrl && !getValues().image && (
-            <UploadImageText>{fileErrMsg}</UploadImageText>
-          )}
-          {imageUrl && <UploadedImage src={imageUrl} alt="Uploaded" />}
-          <LoadingButton
-            loading={isPending || isEditing}
-            variant="contained"
-            style={{ backgroundColor: "turquoise", height: "55px" }}
-            onClick={handleAddCategory}
-          >
-            {!isNull(selectedIdForAction) ? "Edit Category" : "Add Category"}
-          </LoadingButton>
-          </>:<FormBuilder jsonString={jsonString} setJsonString={setJsonString}/>}
+          {activeTab == "categoryinfo" ?
+            <>
+              {displayEnglish && (
+                <TextField
+                  label="English category"
+                  name="en_category"
+                  variant="outlined"
+                  {...register("en_category")}
+                  error={!isEmpty(formState?.errors?.en_category)}
+                  helperText={
+                    !isEmpty(formState?.errors?.en_category) &&
+                    formState.errors?.en_category.message
+                  }
+                />
+              )}
+              {displayArabic && (
+                <TextField
+                  label="Arabic category"
+                  name="ar_category"
+                  variant="outlined"
+                  {...register("ar_category")}
+                  error={!isEmpty(formState?.errors?.ar_category)}
+                  helperText={
+                    !isEmpty(formState?.errors?.ar_category) &&
+                    formState.errors?.ar_category.message
+                  }
+                />
+              )}
+              <TextField
+                label="Priority"
+                name="priority"
+                variant="outlined"
+                {...register("priority")}
+                error={!isEmpty(formState?.errors?.priority)}
+                helperText={
+                  !isEmpty(formState?.errors?.priority) && "Required Field"
+                }
+                type="number"
+                defaultValue={1}
+                inputProps={{ min: 1 }}
+              />
+              <TextField
+                label={"Discount"}
+                name={"discount"}
+                variant="outlined"
+                {...register("discount")}
+                type="number"
+              />
+              <UploadPhoto
+                type="file"
+                ref={fileInputRef}
+                onChange={handleFileChange}
+              />
+              {imageUrl ? (
+                <Button
+                  variant="contained"
+                  color="error"
+                  style={{ width: "150px", height: "40px" }}
+                  onClick={() => handleOnDeleteImage()}
+                >
+                  Delete
+                </Button>
+              ) : (
+                <UploadBtn onClick={handleButtonClick}>Upload Image</UploadBtn>
+              )}
+              {!imageUrl && !getValues().image && (
+                <UploadImageText>{fileErrMsg}</UploadImageText>
+              )}
+              {imageUrl && <UploadedImage src={imageUrl} alt="Uploaded" />}
+              <LoadingButton
+                loading={isPending || isEditing}
+                variant="contained"
+                style={{ backgroundColor: "turquoise", height: "55px" }}
+                onClick={handleAddCategory}
+              >
+                {!isNull(selectedIdForAction) ? "Edit Category" : "Add Category"}
+              </LoadingButton>
+            </> : <FormBuilder jsonString={jsonString} setJsonString={setJsonString} />}
         </AddCategoryForm>
       ) : (
         <>

@@ -168,7 +168,9 @@ export default function Order({ setblock, popupHandler, restaurant }) {
     if (deliveryType === "DineIn") {
       message += `- Table Number: ${details.tableNumber}\n`;
     }
-    message += `- Order notes: ${details.note || "None"}\n`;
+    if(details.note){
+      message += `- Order notes: ${details.note || "None"}\n`;
+    }
 
     const encodedMessage = encodeURIComponent(message);
     let whatsappUrl = "", newWhatsappNumber = "";

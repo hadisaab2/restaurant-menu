@@ -342,13 +342,33 @@ export const ItemDescription = styled.span`
   opacity: 0.8;
 `;
 
+export const PriceContainer = styled.div`
+display: flex;
+flex-direction: row;
+gap:8px;
+`;
+
 export const ItemPrice = styled.span`
   font-size: 16px;
   font-weight: 600;
-  word-spacing: 3px;
+  transform: scale(1);
   color: ${(props) => props.theme.mainColor};;
   border-radius: 10px;
+  text-decoration: ${props=>props.discounted?"line-through":"none"};
+  word-spacing: 0px;
+
 `;
+export const DiscountPrice = styled.span`
+  font-size: 16px;
+  font-weight: 600;
+  word-spacing: 3px;
+  transform: scale(1);
+  color: ${(props) => props.theme.mainColor};;
+  border-radius: 10px;
+  word-spacing: 0px;
+
+`;
+
 
 
 const AddToCartAnimation = keyframes`

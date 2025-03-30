@@ -28,6 +28,7 @@ const addCategory = async (payload) => {
 
     formData.append("image", payload.image);
     formData.append("priority", payload.priority);
+    formData.append("discount", payload.discount);
     formData.append(`form_json`, payload.form_json);
 
     const response = await axios.post(url, formData, {
