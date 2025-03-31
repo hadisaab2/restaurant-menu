@@ -191,7 +191,7 @@ export default function Order({ setblock, popupHandler, restaurant }) {
       restaurant_id: restaurant.id
     }));
 
-    handleAddOrder({ products: simplifiedCart })
+    handleAddOrder({ products: simplifiedCart,restaurant_id:restaurant.id,branch_id:selectedBranch?.id,delivery_type:deliveryType })
 
     window.open(whatsappUrl, "_blank");
     dispatch(clearCart(restaurantName));

@@ -14,6 +14,7 @@ import {
 } from "./styles";
 import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
+import { useLogCategory } from "../../../../../apis/categories/logCategory";
 
 export default function VerticalCategory({
   categories,
@@ -35,6 +36,11 @@ export default function VerticalCategory({
   const activeLanuguage = useSelector(
     (state) => state.restaurant?.[restaurantName].activeLanguage
   );
+
+  const { refetch } = useLogCategory({
+    CategoryId: activeCategory,
+  });
+
 
   const handleArrow = () => {
     if (carouselPosition < categories.length - 4) {

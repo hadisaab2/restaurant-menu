@@ -25,6 +25,9 @@ export const EDIT_CATEGORY_URL = (id) =>
   `${REACT_APP_BASE_URL}/categories/${id}`;
 export const DELETE_CATEGORY_URL = (id) =>
   `${REACT_APP_BASE_URL}/categories/${id}`;
+export const LOG_CATEGORY_URL = (id) =>
+  `${REACT_APP_BASE_URL}/categories/logs/${id}`;
+
 
 export const ADD_RESTAURANT_URL = `${REACT_APP_BASE_URL}/restaurants`;
 export const ADD_ORDER_URL = `${REACT_APP_BASE_URL}/restaurants/order`;
