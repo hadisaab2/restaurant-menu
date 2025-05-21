@@ -75,6 +75,10 @@ const backgroundColors=[
   {
     name:"powermunch",
     color:"#A9D05E"
+  },
+  {
+    name:"albahar",
+    color:"#EDEDED"
   }
 ]
 export default function Loading({ restaurantName,viewLoading }) {
