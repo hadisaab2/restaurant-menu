@@ -114,7 +114,7 @@ const Product = React.forwardRef(
           </ImageContainer>
           <TextContainer activeLanuguage={restaurant?.activeLanguage}>
             {plate.new && <NEW activeLanuguage={restaurant?.activeLanguage}>{restaurant?.activeLanguage === 'en' ? "NEW !" : "! جديد"} </NEW>}
-            <PlateName>
+            <PlateName fontSize={restaurant?.font_size}>
               {/* {restaurant?.activeLanguage === "en"
                 ? truncateText(plate.en_name, 30)
                 : truncateText(plate.ar_name, 30)} */}

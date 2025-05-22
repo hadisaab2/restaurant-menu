@@ -60,7 +60,7 @@ margin-top: 5px;
 
 `;
 export const PlateName = styled.span`
-font-size: 14px;
+font-size: ${props=>props.fontSize};
 font-weight: 500;
 color:${props=>props.theme.BoxTextColor};
 

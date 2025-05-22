@@ -11,6 +11,7 @@ import {
   TextContainer,
   Icon,
   ArrowIcon,
+  LeftArrowIcon
 } from "./styles";
 import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
@@ -48,6 +49,12 @@ export default function VerticalCategory({
     }
   }
 
+  const handleLeftArrow = ()=>{
+    if (carouselPosition >0) {
+      setcarouselPosition(carouselPosition - 1);
+    }
+  }
+
   const itemClick = (id,index) => {
     setactiveCategory(id);
     setcarouselPosition(index)
@@ -75,6 +82,7 @@ export default function VerticalCategory({
   }, [carouselPosition]); // Trigger scrolling when carouselPosition changes
   return (
     <Container>
+      {(categories?.length > 4 && carouselPosition >= 1 ) && <LeftArrowIcon onClick={handleLeftArrow} />}
       <CarouselContainer
      
       >

@@ -118,4 +118,17 @@ position: absolute;
 font-size: 22px;
 right: 0px;
 color:${props => props.theme.textColor};
+@media (min-width: 1024px) {
+        right: 20px;
+    }
+`;
+export const LeftArrowIcon = styled(MdOutlineChevronRight)`
+position: absolute;
+font-size: 22px;
+left: 0px;
+color:${props => props.theme.textColor};
+rotate: calc(180deg);
+@media (min-width: 1024px) {
+        left: 20px;
+    }
 `;

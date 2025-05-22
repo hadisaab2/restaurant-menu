@@ -172,7 +172,8 @@ export default function Restaurants() {
     currency,
     category_type,
     font,
-    cover_url
+    cover_url,
+    font_size
   }) => {
     const theme = JSON.parse(themeString);
     const features = JSON.parse(featureString);
@@ -185,7 +186,8 @@ export default function Restaurants() {
       currency,
       category_type,
       font,
-      cover_url
+      cover_url,
+      font_size
     });
     setIsEditMode(true);
     setTemplate(template_id);
@@ -199,6 +201,8 @@ export default function Restaurants() {
     setValue("category_type", category_type);
 
     setValue("font", font);
+    setValue("font_size", font_size);
+
     if (cover_url) {
       setImageUrl(
         `https://storage.googleapis.com/ecommerce-bucket-testing/${cover_url}`
@@ -418,6 +422,27 @@ export default function Restaurants() {
                 </Select>
               </FormControl>
             </Box>
+
+            <Box sx={{ width: "30%" }}>
+              <FormControl fullWidth>
+                <InputLabel>Font Size</InputLabel>
+                <Select
+                  label="Font Size"
+                  {...register("font_size", { required: "Required" })}
+                  error={!isEmpty(formState?.errors?.font_size)}
+                  defaultValue={selectedProduct?.font_size}
+                >
+                  <MenuItem value="14px">14px</MenuItem>
+                  <MenuItem value="15px">15px</MenuItem>
+                  <MenuItem value="16px">16px</MenuItem>
+                  <MenuItem value="17px">17px</MenuItem>
+                  <MenuItem value="18px">18px</MenuItem>
+                  
+                </Select>
+              </FormControl>
+            </Box>
+
+
             <UploadPhoto
               type="file"
               ref={fileInputRef}
