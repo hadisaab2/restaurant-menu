@@ -23,7 +23,7 @@ export default function Home() {
   ];
   const handleWhatsAppClick = () => {
     // Replace with your WhatsApp number (ensure it's in the correct format)
-    const phoneNumber = "961 78911634"; // Add your WhatsApp phone number here
+    const phoneNumber = "96178911634"; // Add your WhatsApp phone number here
 
     const whatsappUrl = `https://wa.me/${phoneNumber}`;
     window.open(whatsappUrl, "_blank"); // Opens WhatsApp in a new tab
