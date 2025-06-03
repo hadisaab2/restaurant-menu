@@ -81,7 +81,7 @@ const backgroundColors=[
   },
   {
     name:"harkousfoods",
-    color:"white"
+    color:"#FCFCFF"
   }
 ]
 export default function Loading({ restaurantName,viewLoading }) {
