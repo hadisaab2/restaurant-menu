@@ -68,7 +68,7 @@ export const AddButton = styled.button`
   color: white;
   cursor: pointer;
   border-radius: 10px;
-  background-color: ${dashboardColors.mainColor};
+  background-color: turquoise;
   display: flex;
   flex-direction: row;
   gap: 10px;

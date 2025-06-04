@@ -26,6 +26,7 @@ import Categories from "./categories";
 import { getCookie, deleteCookie } from "../../utilities/manageCookies";
 import { useNavigate } from "react-router-dom";
 import { ADMINSIGNIN } from "../../routes/URLs";
+import Report from "./report";
 
 
 
@@ -76,6 +77,10 @@ export default function RestaurantDash() {
             <CateogoryIcon />
             <TabText>Settings</TabText>
           </Tab>
+          <Tab  onClick={() =>handlesection("Report")}>
+            <CateogoryIcon />
+            <TabText>Report</TabText>
+          </Tab>
 
         </SidebarContent>
         <SidebarBottom>
@@ -114,6 +119,10 @@ export default function RestaurantDash() {
             <CateogoryIcon />
             <TabText>Settings</TabText>
           </Tab>
+          <Tab onClick={() => setSection("Report")}>
+            <CateogoryIcon />
+            <TabText>Report</TabText>
+          </Tab>
         </SidebarContent>
         <SidebarBottom>
           <ProfileIcon />
@@ -144,6 +153,8 @@ export default function RestaurantDash() {
         )}
         {section == "Settings" && <Settings userInformation={userInformation} setSection={setSection} />}
         {section == "Categories" && <Categories setProducts={setProducts} />}
+        {section == "Report" && <Report userInformation={userInformation}/>}
+
       </Content>
     </Container>
   );
