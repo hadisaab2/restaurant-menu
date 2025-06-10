@@ -86,8 +86,13 @@ const backgroundColors=[
   {
     name:"pizzalata",
     color:"#80A475"
+  },
+  {
+    name:"syrian-restaurant",
+    color:"#80A475"
   }
 ]
+
 export default function Loading({ restaurantName,viewLoading }) {
   const [removeAnimation,setRemoveAnimation]=useState(false)
   const [imagesrc,setImagesrc]=useState("emptysrc")
