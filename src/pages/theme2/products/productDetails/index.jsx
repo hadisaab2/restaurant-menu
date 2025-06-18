@@ -132,9 +132,8 @@ export default function ProductDetails({
       setactivePlate(null);
       document.body.style.overflow = "auto";
 
-    }, 800);
+    }, 700);
     setCloseAnimation(false);
-    setcarouselIndex(0);
     searchParams.delete("productId"); // Remove the parameter
     setSearchParams(searchParams);
   };
@@ -279,9 +278,9 @@ export default function ProductDetails({
     <>
 
       <Wrapper
-        x={productPositions[activePlate]?.x}
-        y={productPositions[activePlate]?.y}
-        width={productPositions[activePlate]?.width}
+        // x={productPositions[activePlate]?.x}
+        // y={productPositions[activePlate]?.y}
+        // width={productPositions[activePlate]?.width}
         CloseAnimation={CloseAnimation}
       >
         <ItemCategory CloseAnimation={CloseAnimation}>

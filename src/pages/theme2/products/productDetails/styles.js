@@ -3,21 +3,14 @@ import { keyframes } from "styled-components";
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 import _ from "lodash";
 
+
 const slideAnimation = (x, y, width) => keyframes`
  0% { 
-    left: ${x}px;
-    top:${y}px;
-    width:${width}px;
-    height:20vh;
-    border-radius: 10px;
+    right: -100%;
     
 }
  100% { 
-    left: 0;
-    top:0;
-    width:100%;
-    height: 100vh;
-    border-radius: 0px;
+    right: 0;
 
 }
 `;
@@ -40,31 +33,35 @@ const slideAnimationScreen = (x, y, width) => keyframes`
 
 }
 `;
+
 export const Wrapper = styled.div`
-  position: fixed;
-  width: ${(props) => (props.CloseAnimation ? "100%" : `${props.width}px`)};
-  top: ${(props) => (props.CloseAnimation ? "0" : `${props.y}px`)};
-  left: ${(props) => (props.CloseAnimation ? "0" : `${props.x}px`)};
-  height: ${(props) => (props.CloseAnimation ? "100vh" : `20vh`)};
-  border-radius: ${(props) => (props.CloseAnimation ? "0px" : `10px`)};
+  
+position: fixed;
+height: 100vh;
+width: 100%;
+align-items: center;
+justify-content: center;
+top:0;
+right: ${props => props.CloseAnimation ? 0 : "-100%"};
+color:${props => props.theme.textColor};
+background-color:${props => props.theme.backgroundColor};
+padding-bottom:150px;
+
   overflow: scroll;
-  transition: all 0.8s;
-  padding-bottom:150px;
-  animation: ${({ x, y, width }) => slideAnimation(x, y, width)} 0.8s;
+  transition: all 0.7s;
+  animation: ${slideAnimation} 0.5s;
   z-index: 6;
   ::-webkit-scrollbar {
     display: none;
   }
-  background-color: ${(props) => props.theme.backgroundColor};
   @media (min-width: 1024px) {
-    animation: ${({ x, y, width }) => slideAnimationScreen(x, y, width)} 0.8s;
-    height: ${(props) => (props.CloseAnimation ? "100vh" : `30vh`)};
-
-
+    /* animation: ${({ x, y, width }) => slideAnimationScreen(x, y, width)} 0.8s;
+    height: ${(props) => (props.CloseAnimation ? "100vh" : `30vh`)}; */
 
     }
 
 `;
+
 
 
 
@@ -95,21 +92,20 @@ const ImageAnimationScreen = keyframes`
 
 export const ImagesContainer = styled.div`
   width: 100%;
-  height: ${(props) => (props.CloseAnimation ? "45vh" : "20vh")};
+  height: 45vh;
   position: absolute;
-  top: ${(props) => (props.CloseAnimation ? "80px" : "0px")};
-  
+  top:80px;
   transition: all 0.8s;
-  animation: ${ImageAnimation} 0.8s;
   display: flex;
   justify-content: center;
   overflow: hidden;
   @media (min-width: 1024px) {
-    height: ${(props) => (props.CloseAnimation ? "70vh" : "30vh")};
-    animation: ${ImageAnimationScreen} 0.8s;
+    /* height: ${(props) => (props.CloseAnimation ? "70vh" : "30vh")};
+    animation: ${ImageAnimationScreen} 0.8s; */
 
     }
 `;
+
 export const Carousel = styled.div`
   width: 100%;
   height: 100%;
@@ -236,7 +232,7 @@ export const BackBtn = styled.button`
   border: 0;
   background-color: transparent;
   display: ${(props) => (props.CloseAnimation ? "flex" : "none")};
-  animation: ${BackIconAnimation} 0.8s ease-in-out;
+  animation: ${BackIconAnimation} 0.4s ease-in-out;
 `;
 
 export const ItemCategory = styled.div`
@@ -269,7 +265,7 @@ export const Category = styled.span`
   font-weight: 600;
   margin-top: 0px;
   color: ${(props) => props.theme.textColor};
-  animation: ${CategoryAnimation} 1.8s ease-in-out;
+  animation: ${CategoryAnimation} 1s ease-in-out;
 `;
 
 export const FakeContainer = styled.div`
@@ -280,7 +276,7 @@ export const FakeContainer = styled.div`
   display: ${(props) => (props.CloseAnimation ? "flex" : "none")};
   overflow: hidden;
   transition: all 1s;
-  animation: ${ImageAnimation} 0.8s;
+  animation: ${ImageAnimation} 0.4s;
   @media (min-width: 1024px) {
     height: ${(props) => (props.CloseAnimation ? "70vh" : "30vh")};
     }
@@ -315,7 +311,7 @@ export const InfoContainer = styled.div`
   align-items: center;
   margin-left: 0;
 
-  animation: ${QuantityAnimation} 1.8s ease-in-out;
+  animation: ${QuantityAnimation} 0.8s ease-in-out;
 
 `;
 
@@ -401,7 +397,7 @@ export const ButtonWrapper = styled.div`
   justify-content: center;
   flex-direction: column;
   align-items: center;
-  animation: ${AddToCartAnimation} 1.4s ease-in-out;
+  animation: ${AddToCartAnimation} 0.7s ease-in-out;
   background-color: ${(props) => props.theme.backgroundColor};
 
   display: ${(props) => (props.CloseAnimation ? "flex" : "none")};
@@ -495,7 +491,7 @@ export const CopyButton = styled.div`
   color: ${props => props.theme.backgroundColor};
   right: 30px;
   display: ${(props) => (props.CloseAnimation ? "flex" : "none")};
-  animation: ${CopyBtnAnimation} 0.8s ease-in-out;
+  animation: ${CopyBtnAnimation} 0.4s ease-in-out;
   font-size: 14px;
   cursor: pointer;
 `;
