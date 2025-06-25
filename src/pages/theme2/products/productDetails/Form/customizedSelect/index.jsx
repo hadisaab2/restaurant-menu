@@ -8,11 +8,14 @@ import {
     CircularOption,
     OptionsWrapper,
     CircularOptionWrapper,
+    ErrorLabel,
 } from "./styles";
 import { Label } from "../styles";
 
-export default function CustomizedSelect({ component, formData, handleChange, placeholder = "Select an option",index }) {
+export default function CustomizedSelect({ component, formData, handleChange, placeholder = "Select an option",index ,componentKey,formErrors}) {
 
+    {console.log(componentKey)}
+    {console.log(formErrors)}
 
     const [isOpen, setIsOpen] = useState(false); // Tracks if the dropdown is open
     const [selectedOption, setSelectedOption] = useState(formData[component.key]?.value || ""); // Tracks selected option
@@ -41,6 +44,10 @@ export default function CustomizedSelect({ component, formData, handleChange, pl
         return () => document.removeEventListener("mousedown", handleClickOutside);
     }, []);
 
+
+    function hasFieldError(key) {
+        return key in formErrors;
+      }
     return (
         <SelectContainer ref={dropdownRef} index={index}>
             <Label>{component.label}</Label>
@@ -78,6 +85,7 @@ export default function CustomizedSelect({ component, formData, handleChange, pl
 
                     </OptionsWrapper>
                 </>}
+                {hasFieldError(componentKey) ? <ErrorLabel>This field is required</ErrorLabel> : null}
 
         </SelectContainer>
     );

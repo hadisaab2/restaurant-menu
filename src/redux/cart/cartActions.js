@@ -16,6 +16,7 @@ const hashFormData = (formData) => {
 // Action Creators
 export const addToCart = (restaurantName, itemDetails, quantity, formData,price,instruction) => {
   const uniqueId = `${itemDetails.id}_${hashFormData(formData)}`;
+  console.log(itemDetails)
   return {
     type: ADD_TO_CART,
     payload: {

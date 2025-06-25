@@ -69,6 +69,9 @@ export default function ProductParam({ productId, setSearchParams, searchParams 
     }, [formJson]);
 
     const [formData, setFormData] = useState({});
+    const [formErrors, setFormErrors] = useState({});
+
+
     const dispatch = useDispatch();
     const [quantity, setQuantity] = useState(1);
     const [carouselSwiped, setCarouselSwiped] = useState(false);
@@ -151,8 +154,37 @@ export default function ProductParam({ productId, setSearchParams, searchParams 
         return () => window.removeEventListener("popstate", handlePopState);
     }, []);
 
+    function getRequiredKeys(formSchema) {
+        return formSchema.components
+            .filter(component => component.validate?.required)
+            .map(component => component.key);
+    }
+
+    function validateFormData(formSchema, formData) {
+        const errors = {};
+        const requiredKeys = getRequiredKeys(formSchema);
+
+        requiredKeys.forEach(key => {
+            if (
+                !(key in formData) ||
+                formData[key]?.length === 0 ||
+                JSON.stringify(formData[key]) === '{}'
+            ) {
+                errors[key] = 'This field is required.';
+            }
+        });
+
+        return errors;
+    }
 
     const handleAddToCart = () => {
+        const errors = validateFormData(formSchema, formData);
+
+        if (Object.keys(errors).length > 0) {
+            setFormErrors(errors); // update state with errors
+            return; // block add to cart
+        }
+
         let discountedPrice = (totalPrice * (1 - parseFloat(finalDiscount) / 100))
         setTimeout(() => {
             searchParams.delete("productId"); // Remove the parameter
@@ -230,130 +262,133 @@ export default function ProductParam({ productId, setSearchParams, searchParams 
                 // width={productPositions[activePlate]?.width}
                 CloseAnimation={CloseAnimation}
             >
-                <ItemCategory CloseAnimation={CloseAnimation}>
-                    <Category>
-                        {restaurant.activeLanguage == "en"
-                            ? fetchedProduct?.category?.en_category
-                            : fetchedProduct?.category?.ar_category}
-                    </Category>
-                </ItemCategory>
-                <ImagesContainer CloseAnimation={CloseAnimation}>
-                    {images.length !== 1 && (
-                        <CarouselBack
-                            CloseAnimation={CloseAnimation}
-                            onClick={() => carouselIndex !== 0 && handleleft()}
-                        />
-                    )}
-                    <Carousel
-                        carouselIndex={carouselIndex}
-                        ref={divRef}
-                        onTouchStart={handleTouchStart}
-                        onTouchMove={handleTouchMove}
-                    >
-                        {images.map((image, index) => {
-                            return (
-                                <CarouselItem>
-                                    <ImageWrapper>
-                                        {!loadedIndices[index] && (
-                                            <LoaderWrapper>
-                                                <Loader />
-                                            </LoaderWrapper>
-                                        )}
-                                        <Image
-                                            // src={`https://storage.googleapis.com/ecommerce-bucket-testing/${image.url}`}
-                                            src={
-                                                loadedIndices[index] || index === carouselIndex
-                                                    ? `https://storage.googleapis.com/ecommerce-bucket-testing/${image.url}`
-                                                    : ""
-                                            }
-                                            // src={
-
-                                            //      `https://storage.googleapis.com/ecommerce-bucket-testing/${image.url}`
-
-                                            // }
-                                            onLoad={() => handleImageLoad(index)}
-                                            CloseAnimation={CloseAnimation}
-                                            Loaded={loadedIndices[index]}
-                                            alt={`Image ${index}`}
-                                        />
-                                    </ImageWrapper>
-                                </CarouselItem>
-                            );
-                        })}
-                    </Carousel>
-                    {images.length !== 1 && (
-                        <CarouselForward
-                            CloseAnimation={CloseAnimation}
-                            onClick={() =>
-                                fetchedProduct?.images.length > carouselIndex + 1 &&
-                                handleright()
-                            }
-                        />
-                    )}
-                </ImagesContainer>
-                <FakeContainer CloseAnimation={CloseAnimation} />
-                {images.length !== 1 && (
-                    <CarouselLoader
-                        images={images}
-                        carouselIndex={carouselIndex}
-                        CloseAnimation={CloseAnimation}
-                        carouselSwiped={carouselSwiped}
-                    />
-                )}
-                <ItemInfoWrapper>
-                    <InfoContainer>
-
-                        <ItemInfo CloseAnimation={CloseAnimation} activeLanguage={restaurant.activeLanguage}>
-                            <ItemName activeLanguage={restaurant.activeLanguage} >
-                                {restaurant.activeLanguage == "en"
-                                    ? fetchedProduct?.en_name
-                                    : fetchedProduct?.ar_name}
-                            </ItemName>
-
-                            {!_.isEmpty(fetchedProduct?.en_price) && (
-                                <PriceContainer>
-                                    <ItemPrice activeLanguage={restaurant.activeLanguage} discounted={finalDiscount != 0.00}>
-                                        {convertPrice(totalPrice, currencySymbol)}
-                                    </ItemPrice>
-                                    {finalDiscount != 0.00 &&
-                                        <DiscountPrice activeLanguage={restaurant.activeLanguage}>
-                                            {convertPrice(totalPrice * (1 - parseFloat(finalDiscount) / 100), currencySymbol)}
-                                        </DiscountPrice>
-                                    }
-                                </PriceContainer>
-                            )}
-                            <ItemDescription activeLanguage={restaurant.activeLanguage}
-                                dangerouslySetInnerHTML={{ __html: description }}
+                {!productLoading && <>
+                    <ItemCategory CloseAnimation={CloseAnimation}>
+                        <Category>
+                            {restaurant.activeLanguage == "en"
+                                ? fetchedProduct?.category?.en_category
+                                : fetchedProduct?.category?.ar_category}
+                        </Category>
+                    </ItemCategory>
+                    <ImagesContainer CloseAnimation={CloseAnimation}>
+                        {images.length !== 1 && (
+                            <CarouselBack
+                                CloseAnimation={CloseAnimation}
+                                onClick={() => carouselIndex !== 0 && handleleft()}
                             />
-                            {formSchema?.components && <ProductForm formSchema={formSchema} onPriceChange={handlePriceChange} formData={formData} setFormData={setFormData} basePrice={fetchedProduct?.en_price} />}
-                            <InstructionContainer activeLanguage={restaurant.activeLanguage}>
-                                <InstructionLabel>{restaurant.activeLanguage == "en"
-                                    ? "Any Special Instuction ?"
-                                    : "أي تعليمات خاصة؟"}</InstructionLabel>
-                                <Instruction activeLanguage={restaurant.activeLanguage} onChange={(e) => setInstruction(e.target.value)} placeholder={restaurant.activeLanguage == "en"
-                                    ? "Special Instruction"
-                                    : "تعليمات خاصة"} />
-                            </InstructionContainer>
+                        )}
+                        <Carousel
+                            carouselIndex={carouselIndex}
+                            ref={divRef}
+                            onTouchStart={handleTouchStart}
+                            onTouchMove={handleTouchMove}
+                        >
+                            {images.map((image, index) => {
+                                return (
+                                    <CarouselItem>
+                                        <ImageWrapper>
+                                            {!loadedIndices[index] && (
+                                                <LoaderWrapper>
+                                                    <Loader />
+                                                </LoaderWrapper>
+                                            )}
+                                            <Image
+                                                // src={`https://storage.googleapis.com/ecommerce-bucket-testing/${image.url}`}
+                                                src={
+                                                    loadedIndices[index] || index === carouselIndex
+                                                        ? `https://storage.googleapis.com/ecommerce-bucket-testing/${image.url}`
+                                                        : ""
+                                                }
+                                                // src={
+
+                                                //      `https://storage.googleapis.com/ecommerce-bucket-testing/${image.url}`
+
+                                                // }
+                                                onLoad={() => handleImageLoad(index)}
+                                                CloseAnimation={CloseAnimation}
+                                                Loaded={loadedIndices[index]}
+                                                alt={`Image ${index}`}
+                                            />
+                                        </ImageWrapper>
+                                    </CarouselItem>
+                                );
+                            })}
+                        </Carousel>
+                        {images.length !== 1 && (
+                            <CarouselForward
+                                CloseAnimation={CloseAnimation}
+                                onClick={() =>
+                                    fetchedProduct?.images.length > carouselIndex + 1 &&
+                                    handleright()
+                                }
+                            />
+                        )}
+                    </ImagesContainer>
+                    <FakeContainer CloseAnimation={CloseAnimation} />
+                    {images.length !== 1 && (
+                        <CarouselLoader
+                            images={images}
+                            carouselIndex={carouselIndex}
+                            CloseAnimation={CloseAnimation}
+                            carouselSwiped={carouselSwiped}
+                        />
+                    )}
+                    <ItemInfoWrapper>
+                        <InfoContainer>
+
+                            <ItemInfo CloseAnimation={CloseAnimation} activeLanguage={restaurant.activeLanguage}>
+                                <ItemName activeLanguage={restaurant.activeLanguage} >
+                                    {restaurant.activeLanguage == "en"
+                                        ? fetchedProduct?.en_name
+                                        : fetchedProduct?.ar_name}
+                                </ItemName>
+
+                                {!_.isEmpty(fetchedProduct?.en_price) && (
+                                    <PriceContainer>
+                                        <ItemPrice activeLanguage={restaurant.activeLanguage} discounted={finalDiscount != 0.00}>
+                                            {convertPrice(totalPrice, currencySymbol)}
+                                        </ItemPrice>
+                                        {finalDiscount != 0.00 &&
+                                            <DiscountPrice activeLanguage={restaurant.activeLanguage}>
+                                                {convertPrice(totalPrice * (1 - parseFloat(finalDiscount) / 100), currencySymbol)}
+                                            </DiscountPrice>
+                                        }
+                                    </PriceContainer>
+                                )}
+                                <ItemDescription activeLanguage={restaurant.activeLanguage}
+                                    dangerouslySetInnerHTML={{ __html: description }}
+                                />
+                                {formSchema?.components && <ProductForm formSchema={formSchema} onPriceChange={handlePriceChange} formData={formData} setFormData={setFormData} basePrice={fetchedProduct?.en_price} formErrors={formErrors} />}
+                                <InstructionContainer activeLanguage={restaurant.activeLanguage}>
+                                    <InstructionLabel>{restaurant.activeLanguage == "en"
+                                        ? "Any Special Instuction ?"
+                                        : "أي تعليمات خاصة؟"}</InstructionLabel>
+                                    <Instruction activeLanguage={restaurant.activeLanguage} onChange={(e) => setInstruction(e.target.value)} placeholder={restaurant.activeLanguage == "en"
+                                        ? "Special Instruction"
+                                        : "تعليمات خاصة"} />
+                                </InstructionContainer>
 
 
-                        </ItemInfo>
-                    </InfoContainer>
-                </ItemInfoWrapper>
-                <ButtonWrapper CloseAnimation={CloseAnimation}>
-                    <QuantityWrapper CloseAnimation={CloseAnimation}>
-                        <Plus onClick={handleIncrement}>+</Plus>
-                        <Quantity>{quantity}</Quantity>
-                        <Minus onClick={handleDecrement}>-</Minus>
-                    </QuantityWrapper>
-                    <AddToCart onClick={handleAddToCart}>{restaurant.activeLanguage == "en"
-                        ? "Add To Cart"
-                        : "أضف إلى السلة"}
-                        <QuantityPrice>
-                            {convertPrice(quantity * (totalPrice * (1 - parseFloat(finalDiscount) / 100)), currencySymbol)}
-                        </QuantityPrice>
+                            </ItemInfo>
+                        </InfoContainer>
+                    </ItemInfoWrapper>
+                    <ButtonWrapper CloseAnimation={CloseAnimation}>
+                        <QuantityWrapper CloseAnimation={CloseAnimation}>
+                            <Plus onClick={handleIncrement}>+</Plus>
+                            <Quantity>{quantity}</Quantity>
+                            <Minus onClick={handleDecrement}>-</Minus>
+                        </QuantityWrapper>
+                        <AddToCart onClick={handleAddToCart}>{restaurant.activeLanguage == "en"
+                            ? "Add To Cart"
+                            : "أضف إلى السلة"}
+                            <QuantityPrice>
+                                {convertPrice(quantity * (totalPrice * (1 - parseFloat(finalDiscount) / 100)), currencySymbol)}
+                            </QuantityPrice>
 
-                    </AddToCart>
-                </ButtonWrapper>
+                        </AddToCart>
+                    </ButtonWrapper>
+                </>
+                }
             </SearchProductContainer>
 
             <BackBtn onClick={handleBack} CloseAnimation={CloseAnimation}>
@@ -362,6 +397,7 @@ export default function ProductParam({ productId, setSearchParams, searchParams 
             <CopyButton onClick={handleCopy} CloseAnimation={CloseAnimation}>
                 {!copied ? <FaRegCopy /> : <TiTick />}
             </CopyButton>
+
         </>
     )
 }

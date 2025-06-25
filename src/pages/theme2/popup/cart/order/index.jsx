@@ -133,7 +133,8 @@ export default function Order({ setblock, popupHandler, restaurant }) {
     let totalPrice = 0;
 
     cart.forEach((item) => {
-      message += `• ${item.quantity} of *${restaurant.languages == "ar" ? item.ar_name : item.en_name}* \n`;
+      message += `• ${item.quantity} of *${restaurant.languages == "ar" ? item.ar_name : item.en_name}*`;
+      message += `(${restaurant.languages=="ar"?item.category.ar_category:item.category.en_category})\n`;
 
       if (item.formData) {
         Object.keys(item.formData).forEach((key) => {

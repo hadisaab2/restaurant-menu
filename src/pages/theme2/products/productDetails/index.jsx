@@ -96,12 +96,11 @@ export default function ProductDetails({
 
   }, [restaurant.activeLanguage])
 
-
-
-
   const [formSchema, setFormSchema] = useState({});
 
   const [formData, setFormData] = useState({});
+
+  const [formErrors, setFormErrors] = useState({});
 
   const dispatch = useDispatch();
 
@@ -193,7 +192,39 @@ export default function ProductDetails({
     return () => window.removeEventListener("popstate", handlePopState);
   }, []);
 
+  function getRequiredKeys(formSchema) {
+    return formSchema.components
+      .filter(component => component.validate?.required)
+      .map(component => component.key);
+  }
+  
+  function validateFormData(formSchema, formData) {
+    const errors = {};
+    const requiredKeys = getRequiredKeys(formSchema);
+  
+    requiredKeys.forEach(key => {
+      if (
+        !(key in formData) ||
+        formData[key]?.length === 0 ||
+        JSON.stringify(formData[key]) === '{}'
+      ) {
+        errors[key] = 'This field is required.';
+      }
+    });
+  
+    return errors;
+  }
+
+
   const handleAddToCart = () => {
+    const errors = validateFormData(formSchema, formData);
+
+    if (Object.keys(errors).length > 0) {
+      setFormErrors(errors); // update state with errors
+      return; // block add to cart
+    }
+
+
     let discountedPrice=(totalPrice * (1 - parseFloat(finalDiscount) / 100))
     setTimeout(() => {
       setactivePlate(null);
@@ -205,6 +236,7 @@ export default function ProductDetails({
     );
     setCloseAnimation(false);
     setQuantity(1);
+    setFormErrors({})
   };
 
   const handleIncrement = () => {
@@ -276,7 +308,6 @@ export default function ProductDetails({
 
   return (
     <>
-
       <Wrapper
         // x={productPositions[activePlate]?.x}
         // y={productPositions[activePlate]?.y}
@@ -376,7 +407,7 @@ export default function ProductDetails({
                 />
               )}
 
-              {formSchema?.components && <ProductForm formSchema={formSchema} onPriceChange={handlePriceChange} formData={formData} setFormData={setFormData} basePrice={basePrice} />}
+              {formSchema?.components && <ProductForm formSchema={formSchema} onPriceChange={handlePriceChange} formData={formData} setFormData={setFormData} basePrice={basePrice} formErrors={formErrors}/>}
               <InstructionContainer activeLanguage={restaurant.activeLanguage}>
                 <InstructionLabel>{restaurant.activeLanguage == "en"
                   ? "Any Special Instuction ?"

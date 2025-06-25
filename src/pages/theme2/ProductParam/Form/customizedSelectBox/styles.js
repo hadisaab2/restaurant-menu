@@ -89,3 +89,11 @@ export const Label = styled.label`
   color:${(props) => props.theme.formColor};
 
 `;
+
+export const ErrorLabel = styled.label`
+  font-weight: bold;
+  color:red;
+  margin-top: 10px;
+  font-size: 10px;
+
+`;

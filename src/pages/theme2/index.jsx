@@ -42,9 +42,7 @@ export default function Theme2() {
   const [deferredPrompt, setDeferredPrompt] = useState(null);
   const [showInstallPopup, setShowInstallPopup] = useState(true);
 
-  console.log(restaurant.categories)
   const [carouselPosition, setcarouselPosition] = useState(!categoryId?0:restaurant.categories.findIndex(category => category.id == categoryId));
-  console.log(carouselPosition)
  
 
   const itemCount = useSelector((state) => {

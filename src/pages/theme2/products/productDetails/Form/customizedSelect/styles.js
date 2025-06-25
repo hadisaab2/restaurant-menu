@@ -121,3 +121,10 @@ export const Label = styled.label`
   font-size: 14px;
 
 `;
+export const ErrorLabel = styled.label`
+  font-weight: bold;
+  color:red;
+  margin-top: 12px;
+  font-size: 10px;
+
+`;

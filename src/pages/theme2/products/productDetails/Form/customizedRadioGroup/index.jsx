@@ -1,12 +1,12 @@
 import React, { useState } from 'react'
-import { SelectBoxWrapper, Option, OptionWrapper } from './styles'
+import { SelectBoxWrapper, Option, OptionWrapper, ErrorLabel } from './styles'
 import { FaPlus } from "react-icons/fa";
 import { TiTick } from "react-icons/ti";
 import { Label } from '../styles';
 import { DynamicCircle } from './styles';
 import { OptionCircle } from './styles';
 
-export default function CustomizedRadioGroup({component, formData,handleChange,index }) {
+export default function CustomizedRadioGroup({ component, formData, handleChange, index, componentKey, formErrors }) {
   const [selectedOption, setSelectedOption] = useState(formData[component.key] || "")
 
 
@@ -14,7 +14,9 @@ export default function CustomizedRadioGroup({component, formData,handleChange,i
     setSelectedOption(option)
     handleChange(component.key, option);
   }
-
+  function hasFieldError(key) {
+    return key in formErrors;
+  }
   return (
     <SelectBoxWrapper index={index}>
       <Label>{component.label}</Label>
@@ -22,13 +24,13 @@ export default function CustomizedRadioGroup({component, formData,handleChange,i
       {component.values.map((option) => {
         return (
           <OptionWrapper>
-            
-            
-              <OptionCircle onClick={() => { HandleSelect(option) }}>
-                <DynamicCircle selected={selectedOption.label==option.label } />
-              </OptionCircle>
-              
-            
+
+
+            <OptionCircle onClick={() => { HandleSelect(option) }}>
+              <DynamicCircle selected={selectedOption.label == option.label} />
+            </OptionCircle>
+
+
             <Option>{option.label}</Option>
 
           </OptionWrapper>
@@ -36,6 +38,9 @@ export default function CustomizedRadioGroup({component, formData,handleChange,i
 
         )
       })}
+
+    {hasFieldError(componentKey) ? <ErrorLabel>This field is required</ErrorLabel> : null}
+
     </SelectBoxWrapper>
   )
 }

@@ -1,10 +1,10 @@
 import React, { useState } from 'react'
-import { SelectBoxWrapper, Option, AddBox, OptionWrapper, RemoveBox } from './styles'
+import { SelectBoxWrapper, Option, AddBox, OptionWrapper, RemoveBox, ErrorLabel } from './styles'
 import { FaPlus } from "react-icons/fa";
 import { TiTick } from "react-icons/ti";
 import { Label } from '../styles';
 
-export default function CustomizedSelectBox({component, formData,handleChange,index }) {
+export default function CustomizedSelectBox({ component, formData, handleChange, index, componentKey, formErrors }) {
   const [selectedOptions, setSelectedOptions] = useState(formData[component.key] || [])
 
 
@@ -18,6 +18,10 @@ export default function CustomizedSelectBox({component, formData,handleChange,in
     handleChange(component.key, editedOptions);
 
   }
+
+  function hasFieldError(key) {
+    return key in formErrors;
+  }
   return (
     <SelectBoxWrapper index={index}>
       <Label>{component.label}</Label>
@@ -25,7 +29,7 @@ export default function CustomizedSelectBox({component, formData,handleChange,in
       {component.values.map((option) => {
         return (
           <OptionWrapper>
-            
+
             {selectedOptions.some(item => item === option.label) ?
               <RemoveBox onClick={() => { HandleRemoveOption(option) }}>
                 <TiTick size={"15px"} />
@@ -41,6 +45,9 @@ export default function CustomizedSelectBox({component, formData,handleChange,in
 
         )
       })}
+
+      {hasFieldError(componentKey) ? <ErrorLabel>This field is required</ErrorLabel> : null}
+
     </SelectBoxWrapper>
   )
 }

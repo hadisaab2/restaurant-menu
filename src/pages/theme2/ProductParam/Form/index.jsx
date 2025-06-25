@@ -12,7 +12,7 @@ import CustomizedSelectBox from "./customizedSelectBox";
 import CustomSelect from "./customizedSelect";
 import CustomizedRadioGroup from "./customizedRadioGroup";
 
-export default function ProductForm({ formSchema, onPriceChange, basePrice, formData, setFormData }) {
+export default function ProductForm({ formSchema, onPriceChange, basePrice, formData, setFormData,formErrors }) {
   useEffect(() => {
     calculateTotalPrice(formData);
   }, [formData]);
@@ -88,13 +88,14 @@ export default function ProductForm({ formSchema, onPriceChange, basePrice, form
   const renderComponent = (component,index) => {
     switch (component.type) {
       case "selectboxes":
-        console.log(component.key)
         return (
           <CustomizedSelectBox
             component={component}
             formData={formData}
             handleChange={handleChange} 
             index={index}
+            componentKey={component.key}
+            formErrors={formErrors}
             />
         );
       case "select":
@@ -104,7 +105,8 @@ export default function ProductForm({ formSchema, onPriceChange, basePrice, form
             formData={formData}
             handleChange={handleChange}
             index={index}
-
+            componentKey={component.key}
+            formErrors={formErrors}
             />
         );
       case "radio":
@@ -114,7 +116,8 @@ export default function ProductForm({ formSchema, onPriceChange, basePrice, form
             formData={formData}
             handleChange={handleChange} 
             index={index}
-
+            componentKey={component.key}
+            formErrors={formErrors}
             />
         );
 
