@@ -90,6 +90,14 @@ const backgroundColors=[
   {
     name:"syrian-restaurant",
     color:"#80A475"
+  },
+  {
+    name:"majedzuheir",
+    color:"#29AEB7"
+  },
+  {
+    name:"frieslab",
+    color:"#FFF5E6"
   }
 ]
 
