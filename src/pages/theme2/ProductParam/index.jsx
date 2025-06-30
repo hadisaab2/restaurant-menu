@@ -178,12 +178,15 @@ export default function ProductParam({ productId, setSearchParams, searchParams 
     }
 
     const handleAddToCart = () => {
+        if (JSON.stringify(formSchema) !== "{}") {
+
         const errors = validateFormData(formSchema, formData);
 
         if (Object.keys(errors).length > 0) {
             setFormErrors(errors); // update state with errors
             return; // block add to cart
         }
+    }
 
         let discountedPrice = (totalPrice * (1 - parseFloat(finalDiscount) / 100))
         setTimeout(() => {
