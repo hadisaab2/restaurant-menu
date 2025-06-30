@@ -197,11 +197,11 @@ export default function ProductDetails({
       .filter(component => component.validate?.required)
       .map(component => component.key);
   }
-  
+
   function validateFormData(formSchema, formData) {
     const errors = {};
     const requiredKeys = getRequiredKeys(formSchema);
-  
+
     requiredKeys.forEach(key => {
       if (
         !(key in formData) ||
@@ -211,21 +211,23 @@ export default function ProductDetails({
         errors[key] = 'This field is required.';
       }
     });
-  
+
     return errors;
   }
 
 
-  const handleAddToCart = () => {
-    const errors = validateFormData(formSchema, formData);
+  const handleAddToCart = () => {    
+    if (JSON.stringify(formSchema) !== "{}") {
+      const errors = validateFormData(formSchema, formData);
 
-    if (Object.keys(errors).length > 0) {
-      setFormErrors(errors); // update state with errors
-      return; // block add to cart
+      if (Object.keys(errors).length > 0) {
+        setFormErrors(errors); // update state with errors
+        return; // block add to cart
+      }
     }
 
 
-    let discountedPrice=(totalPrice * (1 - parseFloat(finalDiscount) / 100))
+    let discountedPrice = (totalPrice * (1 - parseFloat(finalDiscount) / 100))
     setTimeout(() => {
       setactivePlate(null);
       document.body.style.overflow = "auto";
@@ -391,11 +393,11 @@ export default function ProductDetails({
               {!_.isEmpty(plates[activePlate]?.en_price) && (
                 <PriceContainer>
                   <ItemPrice activeLanguage={restaurant.activeLanguage} discounted={finalDiscount != 0.00}>
-                    {convertPrice(totalPrice,currencySymbol)}
+                    {convertPrice(totalPrice, currencySymbol)}
                   </ItemPrice>
                   {finalDiscount != 0.00 &&
                     <DiscountPrice activeLanguage={restaurant.activeLanguage}>
-                      {convertPrice(totalPrice * (1 - parseFloat(finalDiscount) / 100),currencySymbol)}
+                      {convertPrice(totalPrice * (1 - parseFloat(finalDiscount) / 100), currencySymbol)}
                     </DiscountPrice>
                   }
                 </PriceContainer>
@@ -407,7 +409,7 @@ export default function ProductDetails({
                 />
               )}
 
-              {formSchema?.components && <ProductForm formSchema={formSchema} onPriceChange={handlePriceChange} formData={formData} setFormData={setFormData} basePrice={basePrice} formErrors={formErrors}/>}
+              {formSchema?.components && <ProductForm formSchema={formSchema} onPriceChange={handlePriceChange} formData={formData} setFormData={setFormData} basePrice={basePrice} formErrors={formErrors} />}
               <InstructionContainer activeLanguage={restaurant.activeLanguage}>
                 <InstructionLabel>{restaurant.activeLanguage == "en"
                   ? "Any Special Instuction ?"
@@ -431,7 +433,7 @@ export default function ProductDetails({
               ? "Add To Cart"
               : "أضف إلى السلة"}
               <QuantityPrice>
-                {convertPrice(quantity * (totalPrice * (1 - parseFloat(finalDiscount) / 100)),currencySymbol)}
+                {convertPrice(quantity * (totalPrice * (1 - parseFloat(finalDiscount) / 100)), currencySymbol)}
               </QuantityPrice>
             </AddToCart>
           </ButtonWrapper>
