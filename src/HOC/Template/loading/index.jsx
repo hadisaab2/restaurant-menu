@@ -98,7 +98,16 @@ const backgroundColors=[
   {
     name:"frieslab",
     color:"#FFF5E6"
+  },
+  {
+    name:"aseel",
+    color:"#184A47"
+  },
+  {
+    name:"kraydes",
+    color:"#0f003b"
   }
+  
 ]
 
 export default function Loading({ restaurantName,viewLoading }) {
