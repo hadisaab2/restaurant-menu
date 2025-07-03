@@ -93,8 +93,8 @@ const ImageAnimationScreen = keyframes`
 export const ImagesContainer = styled.div`
   width: 100%;
   height: ${(props)=>props.squareDimension?"45vh":"60vh"};
-  position: absolute;
-  top:80px;
+  /* position: absolute; */
+  margin-top:80px;
   transition: all 0.8s;
   display: flex;
   justify-content: center;

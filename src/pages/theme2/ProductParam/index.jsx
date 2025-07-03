@@ -273,7 +273,7 @@ export default function ProductParam({ productId, setSearchParams, searchParams 
                                 : fetchedProduct?.category?.ar_category}
                         </Category>
                     </ItemCategory>
-                    <ImagesContainer CloseAnimation={CloseAnimation}>
+                    <ImagesContainer  squareDimension={fetchedProduct?.square_dimension}  CloseAnimation={CloseAnimation}>
                         {images.length !== 1 && (
                             <CarouselBack
                                 CloseAnimation={CloseAnimation}
@@ -327,7 +327,6 @@ export default function ProductParam({ productId, setSearchParams, searchParams 
                             />
                         )}
                     </ImagesContainer>
-                    <FakeContainer CloseAnimation={CloseAnimation} />
                     {images.length !== 1 && (
                         <CarouselLoader
                             images={images}

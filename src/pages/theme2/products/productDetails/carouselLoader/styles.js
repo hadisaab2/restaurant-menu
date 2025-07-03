@@ -9,7 +9,7 @@ justify-content: center;
 align-items: center;
 margin-top: 20px;
 flex-direction: column;
-display: ${(props) => (props.CloseAnimation ? "flex" : "none")};
+display: flex;
 `;
 export const Wrapper = styled.div`
 display: flex;

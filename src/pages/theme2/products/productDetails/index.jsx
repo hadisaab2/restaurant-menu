@@ -371,7 +371,7 @@ export default function ProductDetails({
             />
           )}
         </ImagesContainer>
-        <FakeContainer squareDimension={plates[activePlate]?.square_dimension} CloseAnimation={CloseAnimation} />
+        {/* <FakeContainer squareDimension={plates[activePlate]?.square_dimension} CloseAnimation={CloseAnimation} /> */}
         {images.length !== 1 && (
           <CarouselLoader
             images={images}
