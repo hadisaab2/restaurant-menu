@@ -66,6 +66,8 @@ export default function AddProduct({
   const [fileErrMsg, setFileErrMsg] = useState("");
   const [coverId, setCoverId] = useState(null);
   const [isNew, setIsNew] = useState(false); // Default false
+  const [squareDimension, setSquareDimension] = useState(userInformation?.square_dimension); // Default false
+
   const [jsonString, setJsonString] = useState("{}");
   const [activeTab,setActiveTab]=useState("productinfo")
   const [categories, setCategories] = useState([]);
@@ -227,7 +229,11 @@ export default function AddProduct({
       setCoverId(selectedProduct.cover_id);
       selectedProduct.form_json && setJsonString(selectedProduct.form_json)
       setValue("new", selectedProduct.new);
+      setValue("square_dimension", selectedProduct.square_dimension);
+
       setIsNew(selectedProduct.new)
+      setSquareDimension(selectedProduct.square_dimension)
+
     }
   }, []);
 
@@ -249,7 +255,8 @@ export default function AddProduct({
           restaurant_id: userInformation.restaurant_id,
           cover_id: coverId,
           form_json:jsonString,
-          new:isNew
+          new:isNew,
+          square_dimension:squareDimension
         });
       } else {
         handleApiCall({
@@ -258,7 +265,8 @@ export default function AddProduct({
           restaurant_id: userInformation.restaurant_id,
           cover_id: coverId,
           form_json:jsonString,
-          new:isNew
+          new:isNew,
+          square_dimension:squareDimension
         });
       }
     })();
@@ -296,7 +304,11 @@ export default function AddProduct({
   const handleisNew = (event) => {
     setIsNew(!isNew); // Toggle between true/false
   };
+  const handleSquareDimension = (event) => {
+    setSquareDimension(!squareDimension); // Toggle between true/false
+  };
 
+  
   const handleCover = (url) => {
     let id;
     if (url.includes("blob")) {
@@ -527,6 +539,14 @@ export default function AddProduct({
                 label="New Item"
               />
           </FormControl>
+
+          <FormControl component="fieldset">
+              <FormLabel component="legend">Square Dimension</FormLabel>
+              <FormControlLabel
+                control={<Checkbox checked={squareDimension} onChange={handleSquareDimension} />}
+                label="Square Dimension"
+              />
+          </FormControl>          
         <Row>
           <LoadingButton
             loading={isPending || isEditing}

@@ -46,6 +46,7 @@ const addProduct = async (payload) => {
     formData.append(`cover_id`, payload.cover_id);
     formData.append(`form_json`, payload.form_json);
     formData.append(`new`, payload.new);
+    formData.append(`square_dimension`, payload.square_dimension);
 
     const response = await axios.post(url, formData, {
       headers: {

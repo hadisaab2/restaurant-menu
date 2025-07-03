@@ -57,6 +57,7 @@ export default function Restaurants() {
   const fileInputRef = useRef(null);
   const [viewColorSection, setViewColorSection] = useState(false);
   const [viewFeaturesSection, setViewFeaturesSection] = useState(false);
+  const [squareDimension, setSquareDimension] = useState(false); // Default false
 
 
 
@@ -135,6 +136,11 @@ export default function Restaurants() {
     setIsEditMode(false)
   }
 
+  const handleSquareDimension = (event) => {
+    setSquareDimension(!squareDimension); // Toggle between true/false
+    setValue("square_dimension", !squareDimension);
+
+  };
 
 
 
@@ -173,7 +179,8 @@ export default function Restaurants() {
     category_type,
     font,
     cover_url,
-    font_size
+    font_size,
+    square_dimension
   }) => {
     const theme = JSON.parse(themeString);
     const features = JSON.parse(featureString);
@@ -187,7 +194,8 @@ export default function Restaurants() {
       category_type,
       font,
       cover_url,
-      font_size
+      font_size,
+      square_dimension
     });
     setIsEditMode(true);
     setTemplate(template_id);
@@ -202,6 +210,7 @@ export default function Restaurants() {
 
     setValue("font", font);
     setValue("font_size", font_size);
+    setValue("square_dimension", square_dimension);
 
     if (cover_url) {
       setImageUrl(
@@ -209,6 +218,8 @@ export default function Restaurants() {
       );
     }
     setShowAddComponent(true);
+    setSquareDimension(square_dimension);
+
   };
 
   const handleAddRestaurant = () => {
@@ -385,6 +396,13 @@ export default function Restaurants() {
                 </Select>
               </FormControl>
             </Box>
+            <FormControl component="fieldset">
+              <FormLabel component="legend">Square Dimension</FormLabel>
+              <FormControlLabel
+                control={<Checkbox checked={squareDimension} onChange={handleSquareDimension} />}
+                label="Square Dimension"
+              />
+            </FormControl>
             <Box sx={{ width: "30%" }}>
               <FormControl fullWidth>
                 <InputLabel>Category Type</InputLabel>
@@ -418,7 +436,7 @@ export default function Restaurants() {
                   <MenuItem value="Teko">Teko</MenuItem>
                   <MenuItem value="Gotu">Gotu</MenuItem>
 
-                  
+
                 </Select>
               </FormControl>
             </Box>
@@ -437,7 +455,7 @@ export default function Restaurants() {
                   <MenuItem value="16px">16px</MenuItem>
                   <MenuItem value="17px">17px</MenuItem>
                   <MenuItem value="18px">18px</MenuItem>
-                  
+
                 </Select>
               </FormControl>
             </Box>

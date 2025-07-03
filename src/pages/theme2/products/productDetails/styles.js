@@ -92,7 +92,7 @@ const ImageAnimationScreen = keyframes`
 
 export const ImagesContainer = styled.div`
   width: 100%;
-  height: 45vh;
+  height: ${(props)=>props.squareDimension?"45vh":"60vh"};
   position: absolute;
   top:80px;
   transition: all 0.8s;
@@ -269,16 +269,18 @@ export const Category = styled.span`
 `;
 
 export const FakeContainer = styled.div`
-  width: ${(props) => (props.CloseAnimation ? "90%" : "100%")};
-  height: ${(props) => (props.CloseAnimation ? "45vh" : "25vh")};
-  border-radius: ${(props) => (props.CloseAnimation ? "40px" : "10px")};
-  margin-top: ${(props) => (props.CloseAnimation ? "80px" : "0px")};
-  display: ${(props) => (props.CloseAnimation ? "flex" : "none")};
+  width:90%;
+  /* height: ${(props) => (props.CloseAnimation ? "45vh" : "25vh")}; */
+  height: ${(props)=>props.squareDimension?"45vh":"60vh"};
+
+  border-radius:40px;
+  margin-top: 80px;
+  display:flex;
   overflow: hidden;
   transition: all 1s;
   animation: ${ImageAnimation} 0.4s;
   @media (min-width: 1024px) {
-    height: ${(props) => (props.CloseAnimation ? "70vh" : "30vh")};
+    height: 70vh;
     }
   /* background-color: red; */
 `;

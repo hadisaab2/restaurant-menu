@@ -323,7 +323,7 @@ export default function ProductDetails({
               : menu?.ar_category}
           </Category>
         </ItemCategory>
-        <ImagesContainer CloseAnimation={CloseAnimation}>
+        <ImagesContainer squareDimension={plates[activePlate]?.square_dimension} CloseAnimation={CloseAnimation}>
           {images.length !== 1 && (
             <CarouselBack
               CloseAnimation={CloseAnimation}
@@ -371,7 +371,7 @@ export default function ProductDetails({
             />
           )}
         </ImagesContainer>
-        <FakeContainer CloseAnimation={CloseAnimation} />
+        <FakeContainer squareDimension={plates[activePlate]?.square_dimension} CloseAnimation={CloseAnimation} />
         {images.length !== 1 && (
           <CarouselLoader
             images={images}
