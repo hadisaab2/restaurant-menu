@@ -57,7 +57,7 @@ export default function Restaurants() {
   const fileInputRef = useRef(null);
   const [viewColorSection, setViewColorSection] = useState(false);
   const [viewFeaturesSection, setViewFeaturesSection] = useState(false);
-  const [squareDimension, setSquareDimension] = useState(false); // Default false
+  const [squareDimension, setSquareDimension] = useState(true); // Default false
 
 
 
@@ -401,6 +401,7 @@ export default function Restaurants() {
               <FormControlLabel
                 control={<Checkbox checked={squareDimension} onChange={handleSquareDimension} />}
                 label="Square Dimension"
+                {...register("square_dimension", { required: "Required" })}
               />
             </FormControl>
             <Box sx={{ width: "30%" }}>
