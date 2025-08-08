@@ -38,7 +38,6 @@ export default function Products({
     useGetProducts(activeCategory);
 
 
-
   //function to find or change the x and y of the products images
   const changepositions = () => {
     const positions = productRefs?.map((ref) => {
@@ -97,23 +96,18 @@ export default function Products({
   }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
   // filtering products based on search
-  const filteredProducts =
-    data?.pages
-      ?.flat()
-      ?.filter((plate) => {
-        console.log(plate["en_name"])
-        console.log(plate["ar_name"])
-        plate[activeLanguage === "en" ? "en_name" : "ar_name"]
-          .toLowerCase()
-          .includes(searchText.toLowerCase())
-      }
-      ) || [];
+const filteredProducts =
+  data?.pages
+    ?.flat()
+    ?.filter((plate) => {
+      return plate[activeLanguage === "en" ? "en_name" : "ar_name"]
+        .toLowerCase()
+        .includes(searchText.toLowerCase());
+    }) || [];
 
 
 
-
-
-
+console.log(filteredProducts)
 
 
 
