@@ -21,8 +21,8 @@ export default function Products({
 
   const { restaurantName: paramRestaurantName } = useParams();
   const subdomain = window.location.hostname.split(".")[0];
-    // Determine the restaurant name to use
-    const restaurantName =
+  // Determine the restaurant name to use
+  const restaurantName =
     subdomain !== "menugic" && subdomain !== "localhost" && subdomain !== "www"
       ? subdomain
       : paramRestaurantName;
@@ -100,11 +100,16 @@ export default function Products({
   const filteredProducts =
     data?.pages
       ?.flat()
-      ?.filter((plate) =>
+      ?.filter((plate) => {
+        console.log(plate["en_name"])
+        console.log(plate["ar_name"])
         plate[activeLanguage === "en" ? "en_name" : "ar_name"]
           .toLowerCase()
           .includes(searchText.toLowerCase())
+      }
       ) || [];
+
+
 
 
 
@@ -115,7 +120,7 @@ export default function Products({
   // handling page swipe to change category
   const [swipePosition, setswipePosition] = useState(carouselPosition);
   const [scrollInProgress, setScrollInProgress] = useState(false);
-  const [uiCategorynb, setUiCategorynb] = useState(categories.length<4?3:4);
+  const [uiCategorynb, setUiCategorynb] = useState(categories.length < 4 ? 3 : 4);
   const touchStartX = useRef(0);
   const touchStartY = useRef(0);
 
@@ -191,9 +196,9 @@ export default function Products({
   return (
     <Container
       activeCategory={activeCategory}
-      // onTouchStart={handleTouchStart}
-      // onTouchMove={handleTouchMove}
-      // onTouchEnd={handleTouchEnd}
+    // onTouchStart={handleTouchStart}
+    // onTouchMove={handleTouchMove}
+    // onTouchEnd={handleTouchEnd}
     >
       <ProductWrapper activePlate={activePlate}>
         {menu?.map((singlemenu, index) => {

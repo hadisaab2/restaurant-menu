@@ -106,6 +106,10 @@ const backgroundColors=[
   {
     name:"kraydes",
     color:"#0f003b"
+  },
+  {
+    name:"lafleur-doree",
+    color:"#DFC4CA"
   }
   
 ]

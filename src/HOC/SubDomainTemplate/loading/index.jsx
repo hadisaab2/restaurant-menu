@@ -107,7 +107,12 @@ const backgroundColors=[
   {
     name:"kraydes",
     color:"#0f003b"
+  },
+  {
+    name:"lafleur-doree",
+    color:"#DFC4CA"
   }
+
 ]
 export default function Loading({ restaurantName,viewLoading }) {
   const [removeAnimation,setRemoveAnimation]=useState(false)
