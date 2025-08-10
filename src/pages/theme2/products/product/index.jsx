@@ -13,9 +13,8 @@ import {
   TextContainer,
   Wrapper,
 } from "./styles";
-import { useParams, useSearchParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { useEffect } from "react";
 import { convertPrice } from "../../../../utilities/convertPrice";
 const _ = require('lodash');
 
@@ -47,7 +46,6 @@ const Product = React.forwardRef(
     const plateHandle = () => {
       if (activePlate == null && imageLoaded && !showPopup) {
         setactivePlate(index);
-        // window.history.pushState({ isZoomed: true }, "");
         const newParams = new URLSearchParams(searchParams);
         newParams.set("productId", plate?.id);
         // Push updated URL without reloading or navigating
@@ -73,12 +71,7 @@ const Product = React.forwardRef(
       default:
         currencySymbol = ""; // No currency or unsupported currency
     }
-    const truncateText = (text, maxLength) => {
-      if (text.length <= maxLength) {
-        return text;
-      }
-      return text.slice(0, maxLength) + "...";
-    };
+
     const activeCategory = categories.find((category) => category.id == activeCategoryId)
 
     let finalDiscount;
@@ -89,6 +82,7 @@ const Product = React.forwardRef(
       finalDiscount = parseFloat(activeCategory.discount);
     }
 
+const coverIndex = plate.images.findIndex((image) => image.id === plate.new_cover_id);
     return (
       <Container index={index} activePlate={activePlate} className="lazy-load">
         <Wrapper>
@@ -102,12 +96,7 @@ const Product = React.forwardRef(
               ref={ref}
               onLoad={handleImageLoaded}
               src={
-                plate.images.length == 0
-                  ? `https://storage.googleapis.com/ecommerce-bucket-testing/${plate.images[0]}`
-                  : `https://storage.googleapis.com/ecommerce-bucket-testing/${plate.images.find((image) =>
-                    image.url.includes(plate.cover_id)
-                  ).url
-                  }`
+                `https://storage.googleapis.com/ecommerce-bucket-testing/${plate.images[coverIndex].url}`
               }
               imageLoaded={imageLoaded}
             />
@@ -115,15 +104,12 @@ const Product = React.forwardRef(
           <TextContainer activeLanuguage={restaurant?.activeLanguage}>
             {plate.new && <NEW activeLanuguage={restaurant?.activeLanguage}>{restaurant?.activeLanguage === 'en' ? "NEW !" : "! جديد"} </NEW>}
             <PlateName fontSize={restaurant?.font_size}>
-              {/* {restaurant?.activeLanguage === "en"
-                ? truncateText(plate.en_name, 30)
-                : truncateText(plate.ar_name, 30)} */}
+              
               {restaurant?.activeLanguage === 'en' ? plate.en_name : plate.ar_name}
             </PlateName>
             {!_.isEmpty(plate.en_price) && (
               <PriceContainer>
                 <PlatePrice discounted={finalDiscount != 0.00}>
-                  {/* {plate.en_price.replace(/\B(?=(\d{3})+(?!\d))/g, ",")} {currencySymbol} */}
                   {convertPrice(parseFloat(plate.en_price),currencySymbol)}
                 </PlatePrice>
                 <DiscountPrice>

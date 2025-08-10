@@ -212,9 +212,7 @@ export default function ProductParam({ productId, setSearchParams, searchParams 
 
     let images = [...(fetchedProduct?.images ?? [])];
     // Find the index of the image that should be first
-    const index = images.findIndex((image) =>
-        image.url.includes(fetchedProduct.cover_id)
-    );
+  const index = images.findIndex((image) => image.id === fetchedProduct.new_cover_id);
 
     // If the image is found and it's not already the first element, move it to the front
     if (index > 0) {
