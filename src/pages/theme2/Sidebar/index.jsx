@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import {
-    BlurLayer,
+  BlurLayer,
   Brand,
   CategoryName,
   Container,
@@ -39,9 +39,9 @@ export default function SideBar({
       : paramRestaurantName;
 
   const restaurant = useSelector((state) => state.restaurant?.[restaurantName]);
-  const[searchText,setSearchText]=useState("")
+  const [searchText, setSearchText] = useState("")
 
-  const handlesearch=(e)=>{
+  const handlesearch = (e) => {
     setSearchText(e.target.value)
 
   }
@@ -52,7 +52,7 @@ export default function SideBar({
       : category.ar_category.toLowerCase().includes(searchText.toLowerCase())
   );
 
-  const itemClick = (id,index) => {
+  const itemClick = (id, index) => {
     setactiveCategory(id);
 
     setcarouselPosition(index)
@@ -61,20 +61,20 @@ export default function SideBar({
 
   return (
     <Wrapper showSidebar={showSidebar}>
-        <BlurLayer onClick={()=>{setshowSidebar(false)}} showSidebar={showSidebar}/>
-    <Container >
-      
+      <BlurLayer onClick={() => { setshowSidebar(false) }} showSidebar={showSidebar} />
+      <Container >
+
         <MenuIcon />
-      <BrandContainer>
-        <Brand
-        showSidebar={showSidebar}
-          src={
-            restaurant.logoURL &&
-            `https://storage.googleapis.com/ecommerce-bucket-testing/${restaurant.logoURL}`
-          }
-        />
+        <BrandContainer>
+          <Brand
+            showSidebar={showSidebar}
+            src={
+              restaurant.logoURL &&
+              `https://storage.googleapis.com/ecommerce-bucket-testing/${restaurant.logoURL}`
+            }
+          />
         </BrandContainer>
-        <SearchContainer  showSidebar={showSidebar}>
+        <SearchContainer showSidebar={showSidebar}>
           <SearchIcon activeLanguage={restaurant?.activeLanguage} />
           <Search
             type="text"
@@ -85,33 +85,35 @@ export default function SideBar({
             value={searchText}
           />
         </SearchContainer>
-      <Tabs showSidebar={showSidebar}>
-        {filteredCategories
-          ?.sort((a, b) => b.priority - a.priority)
-          .map((category, index) => {
-            return (
-              <Tab key={index} onClick={() => itemClick(category.id,index)}>
-                <IconWrapper
-                  activeCategory={activeCategory}
-                  categoryId={category.id}
-                >
-                  <Icon
-                    src={`https://storage.googleapis.com/ecommerce-bucket-testing/${category.image_url}`}
-                  />
-                </IconWrapper>
-                <CategoryName
-                  activeCategory={activeCategory}
-                  categoryId={category.id}
-                >
-                  {restaurant?.activeLanguage == "en"
-                    ? category.en_category
-                    : category.ar_category}
-                </CategoryName>
-              </Tab>
-            );
-          })}
-      </Tabs>
-    </Container>
+        <Tabs showSidebar={showSidebar}>
+          {filteredCategories
+            ?.sort((a, b) => b.priority - a.priority)
+            .map((category, index) => {
+              return (
+                <Tab key={index} onClick={() => itemClick(category.id, index)}>
+                  {restaurant.category_type != "horizantal-withoutIcon" && <IconWrapper
+                    activeCategory={activeCategory}
+                    categoryId={category.id}
+                  >
+                    <Icon
+                      src={`https://storage.googleapis.com/ecommerce-bucket-testing/${category.image_url}`}
+                    />
+                  </IconWrapper>}
+
+                  <CategoryName
+                    categoryType={restaurant.category_type=="horizantal-withoutIcon"}
+                    activeCategory={activeCategory}
+                    categoryId={category.id}
+                  >
+                    {restaurant?.activeLanguage == "en"
+                      ? category.en_category
+                      : category.ar_category}
+                  </CategoryName>
+                </Tab>
+              );
+            })}
+        </Tabs>
+      </Container>
     </Wrapper>
   );
 }

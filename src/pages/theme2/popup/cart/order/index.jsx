@@ -15,6 +15,7 @@ import { clearCart } from "../../../../../redux/cart/cartActions";
 import BranchSelect from "./branchSelect";
 import RegionSelect from "./regionSelect";
 import { useAddOrderQuery } from "../../../../../apis/restaurants/addOrder";
+import { convertPrice } from "../../../../../utilities/convertPrice";
 
 export default function Order({ setblock, popupHandler, restaurant }) {
   const { restaurantName: paramRestaurantName } = useParams();
@@ -156,7 +157,7 @@ export default function Order({ setblock, popupHandler, restaurant }) {
       totalPrice += item.price * item.quantity;
     });
 
-    message += `Total Price: ${totalPrice} ${currencySymbol}\n\n`;
+    message += `Total Price: ${convertPrice(totalPrice,currencySymbol)}\n\n`;
     message += `Contact Info:\n`;
     message += `- Name: ${details.fullName}\n`;
     if (selectedRegion) {
