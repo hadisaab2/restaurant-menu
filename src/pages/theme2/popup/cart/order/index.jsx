@@ -49,7 +49,7 @@ export default function Order({ setblock, popupHandler, restaurant }) {
 
   }
 
-  const [selectedBranch, setSelectedBranch] = useState(!hasOnlineBranch() ? "" : restaurant?.branches[0]);
+  const [selectedBranch, setSelectedBranch] = useState(restaurant?.branches[0]);
   const [selectedRegion, setSelectedRegion] = useState("");
   const [regions, setRegions] = useState([""]);
 
@@ -214,7 +214,7 @@ export default function Order({ setblock, popupHandler, restaurant }) {
         value={deliveryType}
         onChange={(e) => {
           setDeliveryType(e.target.value);
-          setSelectedBranch(!hasOnlineBranch() ? "" : restaurant?.branches[0])
+          setSelectedBranch(restaurant?.branches[0])
           setErrors({})
         }}
       >
