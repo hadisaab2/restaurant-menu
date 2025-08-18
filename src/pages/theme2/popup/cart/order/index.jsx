@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Wrapper,
   Input,
@@ -201,7 +201,27 @@ export default function Order({ setblock, popupHandler, restaurant }) {
     popupHandler(null);
   };
 
+  let features=JSON.parse(restaurant.features)
 
+useEffect(() => {
+  if (restaurant?.features) {
+    const features = JSON.parse(restaurant.features);
+
+    const enabledTypes = Object.entries(features)
+      .filter(([key, value]) => value === true)
+      .map(([key]) => {
+        if (key === "delivery_order") return "Delivery";
+        if (key === "takeaway_order") return "TakeAway";
+        if (key === "dinein_order") return "DineIn";
+        return null;
+      })
+      .filter(Boolean); // remove nulls
+
+    if (enabledTypes.length === 1) {
+      setDeliveryType(enabledTypes[0]);
+    }
+  }
+}, []);
   return (
     <Wrapper>
       <BackIcon
@@ -219,9 +239,9 @@ export default function Order({ setblock, popupHandler, restaurant }) {
         }}
       >
         <option value="">Select Order Type</option>
-        <option value="Delivery">Delivery</option>
-        <option value="TakeAway">TakeAway</option>
-        <option value="DineIn">DineIn</option>
+        {features.delivery_order &&<option value="Delivery">Delivery</option>}
+        {features.takeaway_order && <option value="TakeAway">TakeAway</option>}
+        {features.dinein_order && <option value="DineIn">DineIn</option>}
 
       </Select>
       {errors.deliveryType && <Error>{errors.deliveryType}</Error>}
