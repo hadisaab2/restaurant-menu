@@ -83,6 +83,7 @@ const Product = React.forwardRef(
     }
 
 const coverIndex = plate.images.findIndex((image) => image.id === plate.new_cover_id);
+console.log(coverIndex + "coveerrrrindexx")
     return (
       <Container index={index} activePlate={activePlate} className="lazy-load">
         <Wrapper>
