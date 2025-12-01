@@ -88,14 +88,14 @@ export default function Order({ setblock, popupHandler, restaurant }) {
       currencySymbol = ""; // No currency or unsupported currency
   }
 
-  const openWhatsApp = (url) => {
- const w = window.open(url, "_blank", "noopener,noreferrer");
+//   const openWhatsApp = (url) => {
+//  const w = window.open(url, "_blank", "noopener,noreferrer");
 
-  // If blocked (common in TikTok webview), fallback to same tab
-  if (!w) {
-    window.location.href = url;
-  }
-};
+//   // If blocked (common in TikTok webview), fallback to same tab
+//   if (!w) {
+//     window.location.href = url;
+//   }
+// };
 
 
   const handlePurchase = () => {
@@ -204,7 +204,7 @@ export default function Order({ setblock, popupHandler, restaurant }) {
 
     handleAddOrder({ products: simplifiedCart,restaurant_id:restaurant.id,branch_id:selectedBranch?.id,delivery_type:deliveryType })
 
-  window.location.assign(whatsappUrl);    // window.open(whatsappUrl, "_blank");
+const w = window.open(whatsappUrl, "_blank", "noopener,noreferrer");
     dispatch(clearCart(restaurantName));
     setblock("cart");
     popupHandler(null);
