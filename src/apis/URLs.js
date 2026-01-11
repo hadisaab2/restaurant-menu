@@ -1,5 +1,13 @@
 const { REACT_APP_BASE_URL } = process.env;
 
+// Log the base URL to verify it's set correctly
+console.log("🌐 REACT_APP_BASE_URL:", REACT_APP_BASE_URL);
+if (!REACT_APP_BASE_URL) {
+  console.warn("⚠️  WARNING: REACT_APP_BASE_URL is not set! API calls will fail!");
+  console.warn("   Create a .env file in restaurant-menu directory with:");
+  console.warn("   REACT_APP_BASE_URL=https://77.37.51.25");
+}
+
 export const SIGNIN_URL = `${REACT_APP_BASE_URL}/auth/signin`;
 export const VALIDATE_TOKEN_URL = `${REACT_APP_BASE_URL}/auth/validateToken`;
 
@@ -33,6 +41,8 @@ export const ADD_RESTAURANT_URL = `${REACT_APP_BASE_URL}/restaurants`;
 export const ADD_ORDER_URL = `${REACT_APP_BASE_URL}/restaurants/order`;
 export const ADD_RESTAURANT_COVER_URL = `${REACT_APP_BASE_URL}/restaurants/addcover`;
 export const EDIT_RESTAURANT_COVER_URL = `${REACT_APP_BASE_URL}/restaurants/editcover`;
+export const ADD_HOMEPAGE_COVER_URL = `${REACT_APP_BASE_URL}/restaurants/addhomepagecover`;
+export const EDIT_HOMEPAGE_COVER_URL = `${REACT_APP_BASE_URL}/restaurants/edithomepagecover`;
 
 
 export const GET_RESTAURANTS_URL = `${REACT_APP_BASE_URL}/restaurants`;
@@ -59,3 +69,9 @@ export const GET_MEDIA_URL = (restaurantId) =>
   `${REACT_APP_BASE_URL}/media?restaurantId=${restaurantId}`;
 export const EDIT_MEDIA_URL = (id) => `${REACT_APP_BASE_URL}/media/${id}`;
 export const DELETE_MEDIA_URL = (id) => `${REACT_APP_BASE_URL}/media/${id}`;
+
+export const ADD_SLIDER_IMAGE_URL = `${REACT_APP_BASE_URL}/slider-images`;
+export const GET_SLIDER_IMAGES_URL = (restaurantId) =>
+  `${REACT_APP_BASE_URL}/slider-images/${restaurantId}`;
+export const EDIT_SLIDER_IMAGE_URL = (id) => `${REACT_APP_BASE_URL}/slider-images/${id}`;
+export const DELETE_SLIDER_IMAGE_URL = (id) => `${REACT_APP_BASE_URL}/slider-images/${id}`;

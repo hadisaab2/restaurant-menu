@@ -4,6 +4,7 @@ import Branches from "./branches";
 import SocialMedia from "./socialmedia";
 import Logo from "./logo";
 import QrCode from "./qrcode";
+import SliderImages from "./sliderImages";
 
 export default function Settings({ setSection,userInformation }) {
   const [activetab, setActivetab] = useState("Branches");
@@ -38,6 +39,13 @@ export default function Settings({ setSection,userInformation }) {
         >
           QrCode
         </Tab>
+        <Tab
+          tab={"SliderImages"}
+          activetab={activetab}
+          onClick={() => setActivetab("SliderImages")}
+        >
+          Slider Images
+        </Tab>
 
 
       </TabContainer>
@@ -45,6 +53,7 @@ export default function Settings({ setSection,userInformation }) {
       {activetab == "SocialMedia" && <SocialMedia />}
       {activetab == "Logo" && <Logo setSection={setSection} />}
       {activetab == "QrCode" && <QrCode userInformation={userInformation} setSection={setSection} />}
+      {activetab == "SliderImages" && <SliderImages />}
     </Container>
   );
 }

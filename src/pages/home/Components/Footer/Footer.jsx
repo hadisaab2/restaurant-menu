@@ -7,31 +7,50 @@ import { FaInstagram } from "react-icons/fa";
 
 
 const Footerwrapper = styled.div`
-    background-color: #f3f3f3;
-    height: 350px;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    min-height: 350px;
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding-top: 45px;
+    padding: 60px 20px 40px;
+    border-top: 1px solid rgba(0, 0, 0, 0.05);
+    
+    @media (max-width: 768px) {
+        padding: 50px 15px 30px;
+        min-height: 300px;
+    }
 `;
 const Title = styled.div`
-    display : flex;
-    align-items : center;
-    justify-content : center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     text-align: center;
     font-weight: 700;
-    font-size: 25px;
+    font-size: 28px;
     color: #00112b;
-    padding-top: 15px;
+    padding-top: 20px;
+    letter-spacing: -0.3px;
+    
+    @media (max-width: 768px) {
+        font-size: 24px;
+        padding-top: 15px;
+    }
 `
 const UnderTitle = styled.div`
-
-    display : flex;
-    align-items : center;
-    justify-content : center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     text-align: center;
     font-size: 15px;
-    padding: 15px 5px 5px 0;
+    color: #666;
+    padding: 15px 20px 20px;
+    line-height: 1.6;
+    max-width: 600px;
+    
+    @media (max-width: 768px) {
+        font-size: 14px;
+        padding: 12px 15px 15px;
+    }
 `
 const Dot = styled.div`
     background-color: #8b8b8b;
@@ -72,13 +91,39 @@ const MediaItem = styled.div`
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 40px;
-    height: 40px;   
-    background-color: #d8d8d8;
+    width: 48px;
+    height: 48px;   
+    background-color: white;
     margin: 10px;
     border-radius: 50%;
     cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    color: #00112b;
     
+    &:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+        background-color: #f8f9fa;
+    }
+    
+    &:active {
+        transform: translateY(-1px);
+    }
+    
+    svg {
+        font-size: 20px;
+    }
+    
+    @media (max-width: 768px) {
+        width: 44px;
+        height: 44px;
+        margin: 8px;
+        
+        svg {
+            font-size: 18px;
+        }
+    }
 `
 const menuItems = [
     { name: 'Home', sectionId: 'home' },
@@ -107,10 +152,10 @@ const menuItems = [
         "link":"https://www.instagram.com/menugic/"
 
     },
-    {
-        "Name":"Email",
-        "Icon":MdOutlineMail
-    }
+    //{
+    //    "Name":"Email",
+    //    "Icon":MdOutlineMail
+    //}
 ];
 
 export default function Footer() {

@@ -39,10 +39,13 @@ const getProducts = async (categoryId, page = 0) => {
 };
 
 
-export const useGetProducts = ( categoryId) => {
+export const useGetProducts = (categoryId) => {
+  // Ensure categoryId is always a serializable primitive value
+  const serializableCategoryId = categoryId != null ? String(categoryId) : null;
+  
   return useInfiniteQuery({
-    queryKey: ['products', categoryId],
-    queryFn: ({ pageParam = 0 }) => getProducts(categoryId, pageParam),
+    queryKey: ['products', serializableCategoryId],
+    queryFn: ({ pageParam = 0 }) => getProducts(serializableCategoryId, pageParam),
     getNextPageParam: (lastPage, allPages) => {
       // Check if the number of products is less than 10 to determine if there's a next page
       if (lastPage.length < 10) {
@@ -53,7 +56,7 @@ export const useGetProducts = ( categoryId) => {
     keepPreviousData: true,
     retry: false,
     refetchOnWindowFocus: false,
-    staleTime:0,
-    enabled:!!categoryId
+    staleTime: 0,
+    enabled: !!serializableCategoryId
   });
 };

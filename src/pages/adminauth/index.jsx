@@ -8,6 +8,8 @@ import {
   SubTitle,
   Title,
   inputStyle,
+  LogoWrapper,   // 👈 new
+  LogoImage,     // 👈 new
 } from "./styles";
 import { Button, TextField } from "@mui/material";
 import { useNavigate } from "react-router-dom";
@@ -56,35 +58,55 @@ export default function AdminSignin() {
     <Container>
       <FormContainer>
         <HeaderContainer>
-          <Title>Welcome To Menugic</Title>
+          {/* 🔹 Logo on top */}
+          <LogoWrapper>
+            <LogoImage src="/main-logo.png" alt="Menugic logo" />
+          </LogoWrapper>
+
+          <Title>Welcome to Menugic</Title>
           <SubTitle>
-            Access the admin dashboard to manage and control your menu
-            effortlessly.
+            Access your admin dashboard and manage your menu effortlessly.
           </SubTitle>
         </HeaderContainer>
-        <InputsContainer>
-          <TextField
-            label="username"
-            name="username"
-            variant="outlined"
-            style={inputStyle}
-            onChange={handleOnChange}
-            error={!isNull(errorMessage)}
-          />
-          <TextField
-            label="password"
-            variant="outlined"
-            type="password"
-            name="password"
-            style={inputStyle}
-            onChange={handleOnChange}
-            error={!isNull(errorMessage)}
-          />
-          {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
-          <Button variant="contained" onClick={handleOnSubmit}>
-            sign in
-          </Button>
-        </InputsContainer>
+
+        {/* Form to allow Enter key submit */}
+        <form
+          style={{ width: "100%" }}
+          onSubmit={(e) => {
+            e.preventDefault();
+            handleOnSubmit();
+          }}
+        >
+          <InputsContainer>
+            <TextField
+              label="Username"
+              name="username"
+              variant="outlined"
+              style={inputStyle}
+              onChange={handleOnChange}
+              error={!isNull(errorMessage)}
+            />
+            <TextField
+              label="Password"
+              variant="outlined"
+              type="password"
+              name="password"
+              style={inputStyle}
+              onChange={handleOnChange}
+              error={!isNull(errorMessage)}
+            />
+
+            {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
+
+            <Button
+              variant="contained"
+              type="submit"
+              style={{ width: "80%", marginTop: "10px" }}
+            >
+              Sign in
+            </Button>
+          </InputsContainer>
+        </form>
       </FormContainer>
     </Container>
   );

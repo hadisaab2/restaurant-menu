@@ -4,7 +4,7 @@ import {
   BrowserRouter,
   Routes as RoutesWrapper,
 } from "react-router-dom";
-import { ADMINSIGNIN, HOME, NOTFOUND, RESTAURANT, RESTAURANTDASH, SUPERADMIN } from "./URLs";
+import { ADMINSIGNIN, HOME, NOTFOUND, RESTAURANT, RESTAURANTDASH, SUPERADMIN, NOTSUBSCRIBED } from "./URLs";
 // import Theme1 from "../pages/theme1";
 import AdminLayout from "../HOC/AdminLayout";
 import AdminSignin from "../pages/adminauth";
@@ -15,6 +15,7 @@ import { withRedirection } from "../HOC/sign-in";
 import SuperAdmin from "../pages/superadmin";
 import Template from "../HOC/Template";
 import NotFound from "../pages/notfound";
+import NotSubscribed from "../pages/notsubscribed";
 import SubDomainTemplate from "../HOC/SubDomainTemplate";
 
 export default function ApplicationRoutes() {
@@ -33,6 +34,7 @@ export default function ApplicationRoutes() {
 
             <Route path={RESTAURANT} element={<Template />} />
             <Route path={NOTFOUND} element={<NotFound />} />
+            <Route path={NOTSUBSCRIBED} element={<NotSubscribed />} />
             <Route path={ADMINSIGNIN} Component={withRedirection(AdminSignin)} />
             <Route path={RESTAURANTDASH} Component={AdminLayout(RestaurantDash, 2)} />
             <Route path={SUPERADMIN} Component={AdminLayout(SuperAdmin, 1)} />

@@ -10,6 +10,8 @@ import {
 import { ThemeProvider } from "styled-components";
 import Loading from "./loading";
 import Theme2 from "../../pages/theme2";
+import Theme3 from "../../pages/theme3";
+import Theme4 from "../../pages/theme4";
 
 
 
@@ -30,6 +32,30 @@ export default function Template() {
   const restaurant = useSelector((state) => state.restaurant?.[restaurantName]);
   const [isTrue, setIsTrue] = useState(true);
 
+  // Check if restaurant is valid (subscribed/activated)
+  useEffect(() => {
+    // Always prioritize response data if available
+    if (!isLoading && response?.data) {
+      // Check response data directly (supports both is_valid and IsValid)
+      const responseIsValid = response.data.is_valid !== undefined 
+        ? response.data.is_valid 
+        : (response.data.IsValid !== undefined ? response.data.IsValid : true);
+      
+      console.log('Template - Checking validity:', {
+        'response.data.is_valid': response.data.is_valid,
+        'response.data.IsValid': response.data.IsValid,
+        'responseIsValid': responseIsValid
+      });
+      
+      // Only redirect if explicitly false
+      if (responseIsValid === false || responseIsValid === 0) {
+        console.log('Template - Redirecting to notsubscribed');
+        navigate("/notsubscribed");
+      }
+    }
+    // Don't check Redux state - only use response data to avoid stale data issues
+  }, [isLoading, response, navigate]);
+
 
 
 
@@ -49,11 +75,10 @@ export default function Template() {
       dispatch(
         changelanuage({
           name: restaurantName,
-          activeLanguage: response?.data.languages.replace("&ar", ""),
+          activeLanguage: response?.data.default_language || response?.data.languages.replace("&ar", "") || "en",
         })
       );
-      // if english or arabic it stays the same
-      //if en&ar replace &ar by empty string to become en
+      // Use default_language if available, otherwise fallback to old logic
     }
   }, [isLoading]);
   useEffect(() => {
@@ -62,6 +87,24 @@ export default function Template() {
     }, 3000);
     return () => clearTimeout(timer);
   }, []);
+  // Don't render if restaurant is not valid
+  // Only check response data to avoid stale Redux data
+  const getIsValid = () => {
+    if (!isLoading && response?.data) {
+      const isValid = response.data.is_valid !== undefined 
+        ? response.data.is_valid 
+        : (response.data.IsValid !== undefined ? response.data.IsValid : true);
+      return isValid;
+    }
+    // If still loading, don't block rendering
+    return true;
+  };
+  
+  const isValid = getIsValid();
+  if (isValid === false || isValid === 0) {
+    return null;
+  }
+
  return (
      <>
        {(restaurant?.categories && !isLoading && !isTrue) && <ThemeProvider
@@ -70,8 +113,10 @@ export default function Template() {
            font: response.data.font,
          }}
        >
-         {restaurant?.template_id == 1 && <Theme1 />}
-         {restaurant?.template_id == 2 && <Theme2 />}
+        {restaurant?.template_id == 1 && <Theme1 />}
+        {restaurant?.template_id == 2 && <Theme2 />}
+        {restaurant?.template_id == 3 && <Theme3 />}
+        {restaurant?.template_id == 4 && <Theme4 />}
        </ThemeProvider>
        }
        <Loading restaurantName={restaurantName} viewLoading={restaurant?.categories && !isLoading && !isTrue} />

@@ -37,7 +37,7 @@ import { useEffect } from "react";
 import { isEmpty, rest } from "lodash";
 import DeleteRestaurantPopup from "./deleteRestauarantPopup";
 import { deleteCookie } from "../../../utilities/manageCookies";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { ADMINSIGNIN } from "../../../routes/URLs";
 import { useAddRestaurantCoverQuery } from "../../../apis/restaurants/addCoverLogo";
 import { useEditRestaurantCoverQuery } from "../../../apis/restaurants/editCoverLogo";
@@ -62,6 +62,7 @@ export default function Restaurants() {
 
 
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
 
   const {
     register,
@@ -91,6 +92,7 @@ export default function Restaurants() {
   });
 
 
+
   const { handleApiCall: handleEditApi, isPending: isEditing } =
     useEditRestaurantQuery({
       onSuccess: (response) => {
@@ -98,10 +100,14 @@ export default function Restaurants() {
         if (restaurantId && file) {
           editRestaurantCover({
             id: restaurantId,
-            cover_url: file, // Assume you have the cover image file in this variable
+            cover_url: file,
           });
         }
-        resetComponent()
+        // Show success alert
+        alert("Restaurant updated successfully!");
+        // Refetch restaurants to update the list
+        refetchRestaurants();
+        // Keep the form open - don't call resetComponent()
       },
     });
 
@@ -111,13 +117,14 @@ export default function Restaurants() {
   });
 
 
+
   const { handleApiCall, isPending } = useAddRestaurantQuery({
     onSuccess: (response) => {
       const restaurantId = response?.data?.id;
       if (restaurantId && file) {
         addRestaurantCover({
           id: restaurantId,
-          cover_url: file, // Assume you have the cover image file in this variable
+          cover_url: file,
         });
       }
       resetComponent()
@@ -180,10 +187,17 @@ export default function Restaurants() {
     font,
     cover_url,
     font_size,
-    square_dimension
+    square_dimension,
+    has_slider,
+    is_valid,
+    IsValid,
+    en_slogan,
+    ar_slogan,
+    default_language
   }) => {
     const theme = JSON.parse(themeString);
     const features = JSON.parse(featureString);
+    
     setSelectedProduct({
       languages,
       template_id,
@@ -195,7 +209,13 @@ export default function Restaurants() {
       font,
       cover_url,
       font_size,
-      square_dimension
+      square_dimension,
+      has_slider,
+      is_valid,
+      IsValid,
+      en_slogan,
+      ar_slogan,
+      default_language
     });
     setIsEditMode(true);
     setTemplate(template_id);
@@ -211,7 +231,22 @@ export default function Restaurants() {
     setValue("font", font);
     setValue("font_size", font_size);
     setValue("square_dimension", square_dimension);
-
+    setValue("has_slider", has_slider || false);
+    setValue("is_valid", is_valid !== undefined ? is_valid : (IsValid !== undefined ? IsValid : true));
+    setValue("en_slogan", en_slogan || "");
+    setValue("ar_slogan", ar_slogan || "");
+    setValue("default_language", default_language || "en");
+    
+    // Set theme colors in form
+    Object.keys(theme).forEach((key) => {
+      setValue(`theme.[${key}]`, theme[key]);
+    });
+    
+    // Ensure homepageBackgroundColor has a default value if it doesn't exist
+    if (!theme.homepageBackgroundColor) {
+      setValue(`theme.[homepageBackgroundColor]`, "#ffffff");
+    }
+    
     if (cover_url) {
       setImageUrl(
         `https://storage.googleapis.com/ecommerce-bucket-testing/${cover_url}`
@@ -220,17 +255,51 @@ export default function Restaurants() {
     setShowAddComponent(true);
     setSquareDimension(square_dimension);
 
+    // Add restaurant ID to URL
+    setSearchParams({ id: restaurant_id });
   };
 
   const handleAddRestaurant = () => {
-    handleSubmit((data) => {
-      console.log(data)
-      if (selectedProduct) {
-        handleEditApi(selectedProduct.restaurant_id, data);
-      } else {
-        handleApiCall(data);
+    handleSubmit(
+      (data) => {
+        console.log("Form data:", data);
+        
+        // Reconstruct theme object from form data
+        const theme = data.theme || {};
+        const themeObject = {};
+        Object.keys(theme).forEach((key) => {
+          // Remove brackets from key if present (e.g., "[mainColor]" -> "mainColor")
+          const cleanKey = key.replace(/[\[\]]/g, '');
+          themeObject[cleanKey] = theme[key];
+        });
+        
+        // Ensure homepageBackgroundColor has a default value if missing
+        if (!themeObject.homepageBackgroundColor || themeObject.homepageBackgroundColor.trim() === '') {
+          themeObject.homepageBackgroundColor = "#ffffff";
+        }
+        
+        // Ensure has_slider and is_valid are always sent (even if false)
+        const formData = {
+          ...data,
+          theme: themeObject, // Replace theme with properly constructed object
+          has_slider: data.has_slider === true || data.has_slider === "true" || data.has_slider === 1,
+          is_valid: data.is_valid === true || data.is_valid === "true" || data.is_valid === 1,
+          default_language: data.default_language || "en", // Ensure default_language is always set
+        };
+        console.log("Formatted form data:", formData);
+        if (selectedProduct) {
+          console.log("Editing restaurant:", selectedProduct.restaurant_id);
+          handleEditApi(selectedProduct.restaurant_id, formData);
+        } else {
+          console.log("Adding new restaurant");
+          handleApiCall(formData);
+        }
+      },
+      (errors) => {
+        console.error("Form validation errors:", errors);
+        console.error("Form state errors:", formState.errors);
       }
-    })();
+    )();
   };
 
 
@@ -260,6 +329,7 @@ export default function Restaurants() {
   const handleButtonClick = () => {
     fileInputRef.current.click();
   };
+
 
   const mainFields = [
     { label: "UserName", name: "username", required: true },
@@ -347,6 +417,9 @@ export default function Restaurants() {
                 setSelectedProduct(null);
                 setShowAddComponent(false);
                 handleOnDeleteImage();
+                setIsEditMode(false);
+                // Remove restaurant ID from URL when closing
+                setSearchParams({});
               }}
             />
 
@@ -382,6 +455,20 @@ export default function Restaurants() {
             </Box>
             <Box sx={{ width: "30%" }}>
               <FormControl fullWidth>
+                <InputLabel>Default Language</InputLabel>
+                <Select
+                  label="Default Language"
+                  {...register("default_language", { required: "Required" })}
+                  error={!isEmpty(formState?.errors?.default_language)}
+                  defaultValue={selectedProduct?.default_language || "en"}
+                >
+                  <MenuItem value="en">English</MenuItem>
+                  <MenuItem value="ar">Arabic</MenuItem>
+                </Select>
+              </FormControl>
+            </Box>
+            <Box sx={{ width: "30%" }}>
+              <FormControl fullWidth>
                 <InputLabel>Currency</InputLabel>
                 <Select
                   label="Currency"
@@ -404,6 +491,56 @@ export default function Restaurants() {
                 {...register("square_dimension", { required: "Required" })}
               />
             </FormControl>
+            <FormControl component="fieldset">
+              <FormLabel component="legend">Has Slider</FormLabel>
+              <FormControlLabel
+                control={
+                  <Checkbox 
+                    {...register("has_slider")} 
+                    defaultChecked={selectedProduct?.has_slider || false}
+                    onChange={(e) => {
+                      setValue("has_slider", e.target.checked);
+                    }}
+                  />
+                }
+                label="Enable Slider on Homepage"
+              />
+            </FormControl>
+            <FormControl component="fieldset">
+              <FormLabel component="legend">Is Valid</FormLabel>
+              <FormControlLabel
+                control={
+                  <Checkbox 
+                    {...register("is_valid")} 
+                    defaultChecked={selectedProduct?.is_valid !== undefined ? selectedProduct.is_valid : (selectedProduct?.IsValid !== undefined ? selectedProduct.IsValid : true)}
+                    onChange={(e) => {
+                      setValue("is_valid", e.target.checked);
+                    }}
+                  />
+                }
+                label="Restaurant is Valid/Active"
+              />
+            </FormControl>
+            <Box sx={{ width: "48%" }}>
+              <TextField
+                label="English Slogan"
+                {...register("en_slogan")}
+                defaultValue={selectedProduct?.en_slogan || ""}
+                fullWidth
+                multiline
+                rows={2}
+              />
+            </Box>
+            <Box sx={{ width: "48%" }}>
+              <TextField
+                label="Arabic Slogan"
+                {...register("ar_slogan")}
+                defaultValue={selectedProduct?.ar_slogan || ""}
+                fullWidth
+                multiline
+                rows={2}
+              />
+            </Box>
             <Box sx={{ width: "30%" }}>
               <FormControl fullWidth>
                 <InputLabel>Category Type</InputLabel>
@@ -509,13 +646,14 @@ export default function Restaurants() {
               {templates
                 .find((t) => t.id == template)
                 ?.colors.map((color) => {
+                  const defaultValue = selectedProduct?.theme?.[color] || (color === "homepageBackgroundColor" ? "#ffffff" : "");
                   return (
                     <TextField
                       label={color}
                       name={color}
                       variant="outlined"
                       {...register(`theme.[${color}]`, { required: "Required" })}
-                      defaultValue={selectedProduct?.theme?.[color]}
+                      defaultValue={defaultValue}
                       style={{ width: "32%", marginTop: "5px" }}
 
                     />
