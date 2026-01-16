@@ -22,7 +22,13 @@ import { useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { addFeedback } from "../../../../apis/feedback/addFeedback";
 
-export default function ContactFormPopup({ showPopup, popupHandler, restaurant }) {
+export default function ContactFormPopup({
+  showPopup,
+  popupHandler,
+  restaurant,
+  isPage = false,
+  onClose,
+}) {
   const { restaurantName: paramRestaurantName } = useParams();
   const hostname = window.location.hostname;
   const subdomain = hostname.split(".")[0];
@@ -48,13 +54,14 @@ export default function ContactFormPopup({ showPopup, popupHandler, restaurant }
   const [submitSuccess, setSubmitSuccess] = useState(false);
 
   useEffect(() => {
+    if (isPage) return;
     const handlePopState = () => {
       popupHandler(null);
     };
 
     window.addEventListener("popstate", handlePopState);
     return () => window.removeEventListener("popstate", handlePopState);
-  }, [popupHandler]);
+  }, [isPage, popupHandler]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -74,11 +81,20 @@ export default function ContactFormPopup({ showPopup, popupHandler, restaurant }
   const validateForm = () => {
     const newErrors = {};
 
-    // Email is mandatory
-    if (!formData.email || !formData.email.trim()) {
-      newErrors.email = activeLanguage === "en" ? "Email is required" : "البريد الإلكتروني مطلوب";
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      newErrors.email = activeLanguage === "en" ? "Please enter a valid email" : "يرجى إدخال بريد إلكتروني صحيح";
+    // Message is mandatory
+    if (!formData.message || !formData.message.trim()) {
+      newErrors.message =
+        activeLanguage === "en" ? "Message is required" : "الرسالة مطلوبة";
+    }
+
+    // Email is optional, but validate format if provided
+    if (formData.email && formData.email.trim()) {
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+        newErrors.email =
+          activeLanguage === "en"
+            ? "Please enter a valid email"
+            : "يرجى إدخال بريد إلكتروني صحيح";
+      }
     }
 
     setErrors(newErrors);
@@ -112,11 +128,17 @@ export default function ContactFormPopup({ showPopup, popupHandler, restaurant }
       setSubmitSuccess(true);
       setFormData({ name: "", email: "", subject: "", message: "" });
       
-      // Auto close after 2 seconds
-      setTimeout(() => {
-        popupHandler(null);
-        setSubmitSuccess(false);
-      }, 2000);
+      // Auto close after 2 seconds (popup only)
+      if (!isPage) {
+        setTimeout(() => {
+          popupHandler(null);
+          setSubmitSuccess(false);
+        }, 2000);
+      } else {
+        setTimeout(() => {
+          setSubmitSuccess(false);
+        }, 2000);
+      }
     } catch (error) {
       setErrors({
         submit: activeLanguage === "en" ? "Failed to send message. Please try again." : "فشل إرسال الرسالة. يرجى المحاولة مرة أخرى.",
@@ -127,37 +149,33 @@ export default function ContactFormPopup({ showPopup, popupHandler, restaurant }
   };
 
   return (
-    <Container showPopup={showPopup}>
+    <Container showPopup={showPopup} isPage={isPage}>
       <Close
         onClick={() => {
+          if (onClose) {
+            onClose();
+            return;
+          }
           popupHandler(null);
         }}
         activeLanguage={activeLanguage}
       />
       
-      {/* Logo at Top */}
-      {restaurant?.logoURL && (
-        <LogoContainer activeLanguage={activeLanguage}>
-          <Logo
-            src={`https://storage.googleapis.com/ecommerce-bucket-testing/${restaurant.logoURL}`}
-            alt={restaurant?.name || "Restaurant Logo"}
-          />
-        </LogoContainer>
-      )}
+     
 
       <Title activeLanguage={activeLanguage}>
         {activeLanguage === "en" ? "Contact Us" : "اتصل بنا"}
       </Title>
 
       <Subtitle activeLanguage={activeLanguage}>
-        {activeLanguage === "en" ? "DO YOU HAVE ANY QUESTION?" : "هل لديك أي سؤال؟"}
+        {activeLanguage === "en" ? "DO YOU HAVE ANY QUESTION OR SUGGESTION?" : "هل لديك أي سؤال أو اقتراح؟"}
       </Subtitle>
 
       <Description activeLanguage={activeLanguage}>
-        {activeLanguage === "en"
-          ? "Exceptional customer support: prompt, friendly, and reliable. Your satisfaction is our priority. Trust us to exceed expectations."
-          : "دعم عملاء استثنائي: سريع، ودود، وموثوق. رضاكم هو أولويتنا. ثق بنا لتجاوز التوقعات."}
-      </Description>
+  {activeLanguage === "en"
+    ? "Our team is always ready to listen and provide the support you deserve."
+    : " فريقنا دائمًا جاهز للاستماع وتقديم الدعم الذي تستحقه."}
+</Description>
 
       <FormContainer activeLanguage={activeLanguage}>
         <Form onSubmit={handleSubmit}>
@@ -180,7 +198,6 @@ export default function ContactFormPopup({ showPopup, popupHandler, restaurant }
               onChange={handleChange}
               placeholder={activeLanguage === "en" ? "E-mail" : "البريد الإلكتروني"}
               activeLanguage={activeLanguage}
-              required
             />
             {errors.email && <ErrorMessage>{errors.email}</ErrorMessage>}
           </FormGroup>
@@ -205,6 +222,7 @@ export default function ContactFormPopup({ showPopup, popupHandler, restaurant }
               activeLanguage={activeLanguage}
               rows={5}
             />
+            {errors.message && <ErrorMessage>{errors.message}</ErrorMessage>}
           </FormGroup>
 
           {errors.submit && <ErrorMessage>{errors.submit}</ErrorMessage>}

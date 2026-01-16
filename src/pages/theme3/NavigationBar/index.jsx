@@ -37,7 +37,7 @@ import {
   MobileMenuCloseButton,
 } from "./styles";
 import { HiMenuAlt2 } from "react-icons/hi";
-import { FaTimes, FaHome, FaList, FaShoppingBag, FaCommentAlt, FaAddressBook, FaChevronDown, FaChevronUp, FaFacebook, FaInstagram, FaTwitter, FaLinkedin, FaYoutube, FaGlobe, FaTiktok } from "react-icons/fa";
+import { FaTimes, FaHome, FaList, FaShoppingBag, FaCommentAlt, FaAddressBook, FaChevronDown, FaChevronUp, FaFacebook, FaInstagram, FaTwitter, FaLinkedin, FaYoutube, FaGlobe, FaTiktok, FaQuestionCircle } from "react-icons/fa";
 import { useParams } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { changelanuage } from "../../../redux/restaurant/restaurantActions";
@@ -233,7 +233,7 @@ export default function NavigationBar({
               activeLanguage={activeLanguage}
             >
               <NavLinkText activeLanguage={activeLanguage}>
-                {activeLanguage === "en" ? "Contact Us" : "اتصل بنا"}
+                {activeLanguage === "en" ? "Questions & Suggestions" : "أسئلة واقتراحات"}
               </NavLinkText>
             </NavLink>
           </NavLinks>
@@ -405,10 +405,10 @@ export default function NavigationBar({
               <MobileMenuSection>
                 <MobileMenuSectionHeader onClick={handleContactFormClick}>
                   <MobileMenuSectionIcon>
-                    <FaAddressBook />
+                    <FaQuestionCircle />
                   </MobileMenuSectionIcon>
                   <MobileMenuSectionTitle activeLanguage={activeLanguage}>
-                    {activeLanguage === "en" ? "Contact Us" : "اتصل بنا"}
+                    {activeLanguage === "en" ? "Questions & Suggestions" : "أسئلة واقتراحات"}
                   </MobileMenuSectionTitle>
                 </MobileMenuSectionHeader>
               </MobileMenuSection>

@@ -5,8 +5,8 @@ export const ReviewContainer = styled.div`
   max-width: 600px;
   display: flex;
   flex-direction: column;
-  gap: 25px;
-  max-height: 500px;
+  gap: 20px;
+  max-height: 440px;
   overflow-y: auto;
   padding-right: 5px;
   
@@ -28,35 +28,35 @@ export const ReviewContainer = styled.div`
 export const ReviewSection = styled.div`
   background: ${(props) => props.theme.categoryUnActive || "#ffffff"};
   border-radius: 12px;
-  padding: 20px;
+  padding: 16px;
   border: 1px solid ${(props) => props.theme.borderColor || "rgba(0, 0, 0, 0.05)"};
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 `;
 
 export const SectionTitle = styled.h3`
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 700;
   color: ${(props) => props.theme.popupTextColor || "#00112b"};
-  margin-bottom: 15px;
+  margin-bottom: 12px;
 `;
 
 export const ReviewItem = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  padding: 12px 0;
-  gap: 15px;
+  padding: 10px 0;
+  gap: 12px;
 `;
 
 export const ReviewLabel = styled.div`
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
   color: ${(props) => props.theme.popupTextColor || "#666"};
   flex: 1;
 `;
 
 export const ReviewValue = styled.div`
-  font-size: 14px;
+  font-size: 13px;
   color: ${(props) => props.theme.popupTextColor || "#00112b"};
   text-align: right;
   flex: 1;
@@ -66,24 +66,24 @@ export const ReviewValue = styled.div`
 export const ItemsList = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  margin-bottom: 15px;
+  gap: 8px;
+  margin-bottom: 12px;
 `;
 
 export const ReviewCartItem = styled.div`
-  padding: 10px 0;
+  padding: 8px 0;
 `;
 
 export const ItemSummary = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 15px;
+  gap: 12px;
 `;
 
 export const ReviewItemImage = styled.img`
-  width: 60px;
-  height: 60px;
+  width: 52px;
+  height: 52px;
   object-fit: cover;
   border-radius: 8px;
   flex-shrink: 0;
@@ -92,11 +92,11 @@ export const ReviewItemImage = styled.img`
 export const Divider = styled.div`
   height: 1px;
   background: ${(props) => props.theme.borderColor || "rgba(0, 0, 0, 0.1)"};
-  margin: 15px 0;
+  margin: 12px 0;
 `;
 
 export const TotalValue = styled.div`
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 700;
   color: ${(props) => props.theme.mainColor || props.theme.maincolor || "#007bff"};
   text-align: right;

@@ -5,7 +5,7 @@ export const OrderTypeContainer = styled.div`
   max-width: 500px;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 16px;
 `;
 
 export const DropdownWrapper = styled.div`
@@ -20,18 +20,18 @@ export const DropdownWrapper = styled.div`
   
   /* Enhance SelectWrapper styling */
   [class*="SelectWrapper"] {
-    height: 50px !important;
+    height: 44px !important;
     margin-top: 0 !important;
   }
   
   /* Enhance SelectedValue styling */
   [class*="SelectedValue"] {
-    padding: 14px 16px !important;
+    padding: 12px 14px !important;
     border-radius: 10px !important;
     border: 2px solid ${(props) => props.theme.mainColor || props.theme.maincolor || "#007bff"} !important;
     background-color: ${(props) => props.theme.categoryUnActive || "#ffffff"} !important;
     color: ${(props) => props.theme.popupTextColor || "#00112b"} !important;
-    font-size: 16px !important;
+    font-size: 14px !important;
     transition: all 0.2s ease !important;
     
     &:hover {
@@ -49,24 +49,24 @@ export const DropdownWrapper = styled.div`
 `;
 
 export const SectionTitle = styled.h3`
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 700;
   color: ${(props) => props.theme.popupTextColor || "#00112b"};
   margin-bottom: 8px;
 `;
 
 export const SectionDescription = styled.p`
-  font-size: 14px;
+  font-size: 13px;
   color: ${(props) => props.theme.popupTextColor || "#666"};
   opacity: 0.8;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
 `;
 
 export const Select = styled.select`
   width: 100%;
-  padding: 14px 16px;
+  padding: 12px 14px;
   border-radius: 10px;
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 500;
   border: 2px solid
     ${(props) =>
@@ -83,7 +83,7 @@ export const Select = styled.select`
   background-repeat: no-repeat;
   background-position: right 16px center;
   background-size: 12px;
-  padding-right: 40px;
+  padding-right: 36px;
 
   &:focus {
     box-shadow: 0 0 0 3px
@@ -107,16 +107,16 @@ export const Select = styled.select`
   }
 
   option {
-    padding: 12px;
+    padding: 10px;
     background: ${(props) => props.theme.categoryUnActive || "#ffffff"};
     color: ${(props) => props.theme.popupTextColor || "#00112b"};
-    font-size: 16px;
+    font-size: 14px;
   }
 `;
 
 export const Error = styled.span`
   color: #ff4444;
-  font-size: 13px;
+  font-size: 12px;
   margin-top: 5px;
   display: block;
 `;

@@ -2,22 +2,24 @@ import styled from "styled-components";
 import { IoMdClose } from "react-icons/io";
 
 export const Container = styled.div`
-  position: fixed;
-  bottom: ${(props) => (props.showPopup === "contactForm" ? "0px" : "-100%")};
-  min-height: 70vh;
-  max-height: 90vh;
+  position: ${(props) => (props.isPage ? "relative" : "fixed")};
+  bottom: ${(props) =>
+    props.isPage ? "auto" : props.showPopup === "contactForm" ? "0px" : "-100%"};
+  min-height: ${(props) => (props.isPage ? "100vh" : "70vh")};
+  max-height: ${(props) => (props.isPage ? "none" : "90vh")};
   background-color: ${(props) => props.theme?.popupbackgroundColor || "#ffffff"};
   width: 100%;
-  transition: all 0.8s ease-in-out;
-  border-top-right-radius: 60px;
-  border-top-left-radius: 60px;
-  box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.2);
+  transition: ${(props) => (props.isPage ? "none" : "all 0.8s ease-in-out")};
+  border-top-right-radius: ${(props) => (props.isPage ? "0" : "60px")};
+  border-top-left-radius: ${(props) => (props.isPage ? "0" : "60px")};
+  box-shadow: ${(props) =>
+    props.isPage ? "none" : "0 -4px 10px rgba(0, 0, 0, 0.2)"};
   display: flex;
   flex-direction: column;
   align-items: center;
   z-index: 1000;
   padding: 20px;
-  padding-top: 40px;
+  padding-top: ${(props) => (props.isPage ? "32px" : "40px")};
   padding-bottom: 40px;
   overflow-y: auto;
 `;

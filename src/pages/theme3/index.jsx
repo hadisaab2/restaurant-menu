@@ -33,6 +33,9 @@ export default function Theme3() {
   const [searchParams, setSearchParams] = useSearchParams();
   const productId = searchParams.get("productId"); // Get productId from URL
   const categoryId = searchParams.get("categoryId"); // Get productId from URL
+  const page = searchParams.get("page");
+  const isFeedbackPage = page === "feedback";
+  const isContactPage = page === "contact";
   const [isProductDetailsOpen, setIsProductDetailsOpen] = useState(false);
   const { restaurantName: paramRestaurantName } = useParams();
   const hostname = window.location.hostname;
@@ -90,13 +93,23 @@ export default function Theme3() {
   };
 
   const handleFeedbackClick = () => {
-    window.history.pushState({}, "");
-    popupHandler("feedback");
+    const newParams = new URLSearchParams(searchParams);
+    newParams.set("page", "feedback");
+    newParams.delete("productId");
+    newParams.delete("categoryId");
+    setSearchParams(newParams);
+    popupHandler(null);
+    setViewMode("home");
   };
 
   const handleContactClick = () => {
-    window.history.pushState({}, "");
-    popupHandler("contactForm");
+    const newParams = new URLSearchParams(searchParams);
+    newParams.set("page", "contact");
+    newParams.delete("productId");
+    newParams.delete("categoryId");
+    setSearchParams(newParams);
+    popupHandler(null);
+    setViewMode("home");
   };
 
   const handleOrderClick = () => {
@@ -176,6 +189,12 @@ export default function Theme3() {
       document.body.style.overflow = "hidden";
     }
     setshowPopup(type);
+  };
+
+  const handleClosePage = () => {
+    const newParams = new URLSearchParams(searchParams);
+    newParams.delete("page");
+    setSearchParams(newParams);
   };
 
   const handleClickOutside = () => {
@@ -299,9 +318,28 @@ export default function Theme3() {
       
       <MenuWrapper onClick={handleClickOutside} >
         <BlurOverlay showPopup={showPopup} />
+
+        {isFeedbackPage && (
+          <FeedbackPopup
+            restaurant={restaurant}
+            showPopup="feedback"
+            popupHandler={popupHandler}
+            isPage
+            onClose={handleClosePage}
+          />
+        )}
+
+        {isContactPage && (
+          <ContactFormPopup
+            restaurant={restaurant}
+            showPopup="contactForm"
+            popupHandler={popupHandler}
+            isPage
+            onClose={handleClosePage}
+          />
+        )}
         
-        {/* Show Home Page */}
-        {viewMode === "home" && (
+        {!isFeedbackPage && !isContactPage && viewMode === "home" && (
           <HomePage
             onExploreClick={handleExploreClick}
             categories={restaurant?.categories || []}
@@ -309,7 +347,7 @@ export default function Theme3() {
         )}
 
         {/* Show HeaderTop only (logo and menu) */}
-        {viewMode === "categories" && (
+        {!isFeedbackPage && !isContactPage && viewMode === "categories" && (
           <Header
             categories={restaurant?.categories || []}
             activeCategory={activeCategory}
@@ -325,7 +363,7 @@ export default function Theme3() {
         )}
 
         {/* Show Category Header when viewing products, but not when viewing a product directly */}
-        {viewMode === "products" && activeCategory && !productId && (
+        {!isFeedbackPage && !isContactPage && viewMode === "products" && activeCategory && !productId && (
           <CategoryHeader
             categoryId={activeCategory}
             categories={restaurant?.categories || []}
@@ -338,7 +376,7 @@ export default function Theme3() {
         )}
 
         {/* Show Categories Grid initially */}
-        {viewMode === "categories" && (
+        {!isFeedbackPage && !isContactPage && viewMode === "categories" && (
           <CategoriesGrid
             categories={
               searchText
@@ -354,7 +392,7 @@ export default function Theme3() {
         )}
 
         {/* Show Products when a category is selected */}
-        {viewMode === "products" && activeCategory && (
+        {!isFeedbackPage && !isContactPage && viewMode === "products" && activeCategory && (
           <Products
             menu={restaurant?.categories || []}
             activeCategory={activeCategory}
@@ -367,7 +405,7 @@ export default function Theme3() {
           />
         )}
       </MenuWrapper>
-      {viewMode !== "home" && (
+      {!isFeedbackPage && !isContactPage && viewMode !== "home" && (
         <>
           <DetailsBtn onClick={() => {
             window.history.pushState({}, ""); // Add a history entry
@@ -399,17 +437,7 @@ export default function Theme3() {
         popupHandler={popupHandler}
         activeCategory={activeCategory}
       />
-      <FeedbackPopup
-        restaurant={restaurant}
-        showPopup={showPopup}
-        popupHandler={popupHandler}
-      />
       <ContactPopup
-        restaurant={restaurant}
-        showPopup={showPopup}
-        popupHandler={popupHandler}
-      />
-      <ContactFormPopup
         restaurant={restaurant}
         showPopup={showPopup}
         popupHandler={popupHandler}

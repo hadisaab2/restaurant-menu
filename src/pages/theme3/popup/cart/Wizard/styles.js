@@ -5,7 +5,7 @@ export const WizardContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 20px;
+  padding: 16px;
   min-height: 60vh;
   max-height: 85vh;
   overflow-y: auto;
@@ -13,15 +13,45 @@ export const WizardContainer = styled.div`
 `;
 
 export const StepTitle = styled.h2`
-  font-size: 24px;
+  font-size: 20px;
   font-weight: 700;
   color: ${(props) => props.theme.popupTextColor || "#00112b"};
-  margin-bottom: 30px;
+  margin-bottom: 24px;
   text-align: center;
   
   @media (max-width: 768px) {
-    font-size: 20px;
-    margin-bottom: 20px;
+    font-size: 18px;
+    margin-bottom: 16px;
+  }
+`;
+
+export const StepHeader = styled.div`
+  width: 100%;
+  max-width: 600px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+`;
+
+export const StepTitleText = styled(StepTitle)`
+  margin-bottom: 0;
+  flex: 1;
+`;
+
+export const StepCloseButton = styled.button`
+  border: none;
+  background: transparent;
+  color: ${(props) => props.theme.mainColor || "#00112b"};
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 3px 6px;
+  line-height: 1;
+  border-radius: 8px;
+
+  &:hover {
+    background: rgba(0, 0, 0, 0.06);
   }
 `;
 
@@ -31,22 +61,22 @@ export const ProgressBar = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 40px;
+  margin-bottom: 30px;
   position: relative;
   
   &::before {
     content: "";
     position: absolute;
-    top: 20px;
+    top: 15px;
     left: 0;
     right: 0;
     height: 2px;
-    background: ${(props) => props.theme.borderColor || "rgba(0, 0, 0, 0.1)"};
+    background: ${(props) => props.theme.mainColor || "rgba(0, 0, 0, 0.1)"};
     z-index: 0;
   }
   
   @media (max-width: 768px) {
-    margin-bottom: 30px;
+    margin-bottom: 24px;
   }
 `;
 
@@ -59,30 +89,30 @@ export const ProgressStep = styled.div`
   z-index: 1;
   
   span {
-    font-size: 12px;
+    font-size: 11px;
     color: ${(props) =>
       props.active
         ? props.theme.mainColor || props.theme.maincolor || "#007bff"
         : "#999"};
-    margin-top: 8px;
+    margin-top: 6px;
     font-weight: ${(props) => (props.active ? "600" : "400")};
     text-align: center;
     
     @media (max-width: 768px) {
-      font-size: 10px;
+      font-size: 9px;
     }
   }
 `;
 
 export const StepIndicator = styled.div`
-  width: 40px;
-  height: 40px;
+  width: 34px;
+  height: 34px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: 700;
-  font-size: 16px;
+  font-size: 14px;
   background: ${(props) =>
     props.completed
       ? props.theme.mainColor || props.theme.maincolor || "#007bff"
@@ -103,9 +133,9 @@ export const StepIndicator = styled.div`
       : "none"};
   
   @media (max-width: 768px) {
-    width: 32px;
-    height: 32px;
-    font-size: 14px;
+    width: 28px;
+    height: 28px;
+    font-size: 12px;
   }
 `;
 
@@ -115,15 +145,15 @@ export const StepContent = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 20px 0;
-  min-height: 300px;
+  padding: 16px 0;
+  min-height: 260px;
   overflow-y: auto;
-  max-height: calc(85vh - 250px);
+  max-height: calc(85vh - 230px);
   
   @media (max-width: 768px) {
-    padding: 15px 0;
-    min-height: 250px;
-    max-height: calc(85vh - 220px);
+    padding: 12px 0;
+    min-height: 220px;
+    max-height: calc(85vh - 200px);
   }
 `;
 
@@ -132,30 +162,30 @@ export const NavigationButtons = styled.div`
   max-width: 500px;
   display: flex;
   justify-content: space-between;
-  gap: 15px;
+  gap: 12px;
   margin-top: auto;
-  padding-top: 20px;
-  border-top: 1px solid ${(props) => props.theme.borderColor || "rgba(0, 0, 0, 0.1)"};
+  padding-top: 16px;
   position: sticky;
   bottom: 0;
   background: ${(props) => props.theme.popupbackgroundColor || "#ffffff"};
   z-index: 10;
   
   @media (max-width: 768px) {
-    padding-top: 15px;
+    padding-top: 12px;
   }
 `;
 
 export const NavButton = styled.button`
   flex: ${(props) => (props.variant === "primary" ? "1.5" : "1")};
-  padding: 14px 24px;
-  border-radius: 12px;
-  font-size: 16px;
+  padding: 12px 20px;
+  border-radius: 10px;
+  font-size: 14px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   border: none;
   outline: none;
+  -webkit-tap-highlight-color: transparent;
   
   ${(props) =>
     props.variant === "primary"
@@ -184,18 +214,20 @@ export const NavButton = styled.button`
     border: 1px solid ${props.theme.borderColor || "rgba(0, 0, 0, 0.1)"};
     
     &:hover {
-      background: ${props.theme.borderColor || "#e0e0e0"};
+      background: ${props.theme.categoryUnActive || "#e0e0e0"};
       transform: translateY(-1px);
     }
     
     &:active {
+      background: ${props.theme.categoryUnActive || "#f5f5f5"};
+      color: ${props.theme.textColor || "#333"};
       transform: translateY(0);
     }
   `}
   
   @media (max-width: 768px) {
-    padding: 12px 20px;
-    font-size: 14px;
+    padding: 10px 18px;
+    font-size: 13px;
   }
 `;
 

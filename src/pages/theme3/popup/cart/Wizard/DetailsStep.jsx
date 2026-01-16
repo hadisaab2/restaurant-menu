@@ -9,7 +9,7 @@ import {
   InputGroup,
   Label,
 } from "./DetailsStepStyles";
-import LocationSelector from "./LocationSelector";
+// import LocationSelector from "./LocationSelector";
 
 export default function DetailsStep({
   formData,
@@ -58,25 +58,12 @@ export default function DetailsStep({
       {formData.deliveryType === "Delivery" && (
         <>
           <InputGroup>
-            <Label>Select Location (Optional)</Label>
-            <LocationSelector
-              onLocationSelect={(location) => {
-                updateFormData({
-                  selectedLocation: location,
-                  fullAddress: location.address || formData.fullAddress || `${location.latitude}, ${location.longitude}`,
-                });
-              }}
-              selectedLocation={formData.selectedLocation}
-              hasError={false}
-            />
-          </InputGroup>
-          <InputGroup>
             <Label>Full Address *</Label>
             <TextArea
               name="fullAddress"
               value={formData.fullAddress}
               onChange={handleChange}
-              placeholder="Enter your delivery address or select location above"
+              placeholder="Enter your delivery address"
               hasError={!!errors.fullAddress}
               rows="3"
             />

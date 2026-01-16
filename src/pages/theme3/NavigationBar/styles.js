@@ -229,24 +229,28 @@ export const MobileMenuOverlay = styled.div`
 export const MobileMenu = styled.div`
   position: fixed;
   top: 0;
-  left: 0;
+  left: ${(props) => (props.activeLanguage === "ar" ? "auto" : "0")};
+  right: ${(props) => (props.activeLanguage === "ar" ? "0" : "auto")};
   width: 280px;
   max-width: 85vw;
   height: calc(100vh - 40px);
   margin-top: 20px;
   margin-bottom: 20px;
   background: ${(props) => props.theme?.backgroundColor || "#ffffff"};
-  box-shadow: 2px 0 20px rgba(0, 0, 0, 0.15);
+  box-shadow: ${(props) =>
+    props.activeLanguage === "ar"
+      ? "-2px 0 20px rgba(0, 0, 0, 0.15)"
+      : "2px 0 20px rgba(0, 0, 0, 0.15)"};
   z-index: 1000;
   padding: 0;
   padding-top: 50px;
   display: flex;
   flex-direction: column;
   gap: 0;
-  transform: ${(props) =>
-    props.isOpen
-      ? "translateX(0)"
-      : "translateX(-100%)"};
+  transform: ${(props) => {
+    if (props.isOpen) return "translateX(0)";
+    return props.activeLanguage === "ar" ? "translateX(100%)" : "translateX(-100%)";
+  }};
   transition: transform 0.3s ease;
   overflow-y: auto;
   direction: ${(props) => (props.activeLanguage === "ar" ? "rtl" : "ltr")};
@@ -409,9 +413,8 @@ export const MobileMenuLogoContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 20px 24px;
-  margin-bottom: 20px;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  padding: 0px 24px;
+  margin-bottom: 5px;
   animation: slideInFromLeft 0.3s ease-out;
   
   @keyframes slideInFromLeft {

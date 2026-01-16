@@ -20,7 +20,13 @@ import { useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { useAddFeedback } from "../../../../apis/feedback/addFeedback";
 
-export default function FeedbackPopup({ showPopup, popupHandler, restaurant }) {
+export default function FeedbackPopup({
+  showPopup,
+  popupHandler,
+  restaurant,
+  isPage = false,
+  onClose,
+}) {
   const { restaurantName: paramRestaurantName } = useParams();
   const hostname = window.location.hostname;
   const subdomain = hostname.split(".")[0];
@@ -49,7 +55,9 @@ export default function FeedbackPopup({ showPopup, popupHandler, restaurant }) {
       setSuccess(true);
       setIsSubmitting(false);
       setTimeout(() => {
-        popupHandler(null);
+        if (!isPage) {
+          popupHandler(null);
+        }
         // Reset form
         setRating(0);
         setName("");
@@ -70,13 +78,14 @@ export default function FeedbackPopup({ showPopup, popupHandler, restaurant }) {
   });
 
   useEffect(() => {
+    if (isPage) return;
     const handlePopState = () => {
       popupHandler(null);
     };
 
     window.addEventListener("popstate", handlePopState);
     return () => window.removeEventListener("popstate", handlePopState);
-  }, []);
+  }, [isPage, popupHandler]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -104,7 +113,7 @@ export default function FeedbackPopup({ showPopup, popupHandler, restaurant }) {
   };
 
   return (
-    <Container showPopup={showPopup}>
+    <Container showPopup={showPopup} isPage={isPage}>
       <HeaderContainer activeLanguage={activeLanguage}>
         <Title activeLanguage={activeLanguage}>
           {activeLanguage === "en" ? "Feedback" : "التعليقات"}
@@ -112,6 +121,10 @@ export default function FeedbackPopup({ showPopup, popupHandler, restaurant }) {
         <Close
           activeLanguage={activeLanguage}
           onClick={() => {
+            if (onClose) {
+              onClose();
+              return;
+            }
             popupHandler(null);
           }}
         />

@@ -5,46 +5,46 @@ export const DetailsContainer = styled.div`
   max-width: 500px;
   display: flex;
   flex-direction: column;
-  gap: 20px;
-  padding-bottom: 20px;
+  gap: 10px;
+  padding-bottom: 16px;
 `;
 
 export const SectionTitle = styled.h3`
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 700;
   color: ${(props) => props.theme.popupTextColor || "#00112b"};
   margin-bottom: 8px;
 `;
 
 export const SectionDescription = styled.p`
-  font-size: 14px;
+  font-size: 13px;
   color: ${(props) => props.theme.popupTextColor || "#666"};
   opacity: 0.8;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
 `;
 
 export const InputGroup = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
 `;
 
 export const Label = styled.label`
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
   color: ${(props) => props.theme.popupTextColor || "#00112b"};
 `;
 
 export const Input = styled.input`
   width: 100%;
-  padding: 14px 16px;
+  padding: 12px 14px;
   border-radius: 10px;
-  font-size: 16px;
+  font-size: 14px;
   border: 2px solid
     ${(props) =>
       props.hasError
         ? "#ff4444"
-        : props.theme.borderColor || "rgba(0, 0, 0, 0.1)"};
+        : props.theme.mainColor || "rgba(0, 0, 0, 0.1)"};
   background-color: ${(props) => props.theme.categoryUnActive || "#ffffff"};
   color: ${(props) => props.theme.popupTextColor || "#00112b"};
   transition: all 0.2s ease;
@@ -72,14 +72,14 @@ export const Input = styled.input`
 
 export const TextArea = styled.textarea`
   width: 100%;
-  padding: 14px 16px;
+  padding: 12px 14px;
   border-radius: 10px;
-  font-size: 16px;
+  font-size: 14px;
   border: 2px solid
     ${(props) =>
       props.hasError
         ? "#ff4444"
-        : props.theme.borderColor || "rgba(0, 0, 0, 0.1)"};
+        : props.theme.mainColor || "rgba(0, 0, 0, 0.1)"};
   background-color: ${(props) => props.theme.categoryUnActive || "#ffffff"};
   color: ${(props) => props.theme.popupTextColor || "#00112b"};
   transition: all 0.2s ease;
@@ -109,7 +109,7 @@ export const TextArea = styled.textarea`
 
 export const Error = styled.span`
   color: #ff4444;
-  font-size: 13px;
+  font-size: 12px;
   display: block;
 `;
 

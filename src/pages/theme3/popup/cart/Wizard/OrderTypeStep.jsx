@@ -1,9 +1,10 @@
 import React from "react";
+import ReactSelect from "react-select";
+import { useTheme } from "styled-components";
 import BranchSelect from "../order/branchSelect";
 import RegionSelect from "../order/regionSelect";
 import {
   OrderTypeContainer,
-  Select,
   Error,
   SectionTitle,
   SectionDescription,
@@ -17,6 +18,7 @@ export default function OrderTypeStep({
   errors,
   setErrors,
 }) {
+  const theme = useTheme();
   const hasOnlineBranch = () => {
     return restaurant?.branches?.some((branch) => branch.is_online);
   };
@@ -30,11 +32,89 @@ export default function OrderTypeStep({
 
   const handleDeliveryTypeChange = (e) => {
     updateFormData({
-      deliveryType: e.target.value,
+      deliveryType: e?.value || "",
       selectedBranch: restaurant?.branches?.[0] || null,
       selectedRegion: "",
     });
     setErrors({});
+  };
+
+  const deliveryOptions = [
+    features.delivery_order && { value: "Delivery", label: "Delivery" },
+    features.takeaway_order && { value: "TakeAway", label: "Take Away" },
+    features.dinein_order && { value: "DineIn", label: "Dine In" },
+  ].filter(Boolean);
+
+  const selectStyles = {
+    control: (base, state) => ({
+      ...base,
+      minHeight: 44,
+      borderRadius: 10,
+      borderColor: errors.deliveryType ? "#ff4444" : theme.mainColor || theme.maincolor || "#007bff",
+      boxShadow: state.isFocused
+        ? `0 0 0 3px ${
+            errors.deliveryType
+              ? "rgba(255, 68, 68, 0.1)"
+              : theme.mainColor
+              ? `${theme.mainColor}20`
+              : "rgba(0, 123, 255, 0.1)"
+          }`
+        : "none",
+      backgroundColor: theme.categoryUnActive || "#ffffff",
+      cursor: "pointer",
+      "&:hover": {
+        borderColor: errors.deliveryType ? "#ff4444" : theme.mainColor || theme.maincolor || "#007bff",
+      },
+    }),
+    valueContainer: (base) => ({
+      ...base,
+      padding: "0 10px",
+    }),
+    input: (base) => ({
+      ...base,
+      margin: 0,
+      padding: 0,
+    }),
+    singleValue: (base) => ({
+      ...base,
+      color: theme.popupTextColor || "#00112b",
+      fontSize: 14,
+    }),
+    placeholder: (base) => ({
+      ...base,
+      color: theme.popupTextColor || "#666",
+      fontSize: 14,
+    }),
+    indicatorSeparator: () => ({
+      display: "none",
+    }),
+    dropdownIndicator: (base) => ({
+      ...base,
+      color: theme.popupTextColor || "#00112b",
+      padding: 6,
+    }),
+    menu: (base) => ({
+      ...base,
+      borderRadius: 10,
+      zIndex: 2000,
+      backgroundColor: theme.categoryUnActive || "#ffffff",
+      border: `1px solid ${theme.borderColor || "rgba(0, 0, 0, 0.1)"}`,
+      boxShadow: "0 4px 16px rgba(0, 0, 0, 0.15)",
+    }),
+    option: (base, state) => ({
+      ...base,
+      color: theme.popupTextColor || "#00112b",
+      fontSize: 14,
+      backgroundColor: state.isSelected
+        ? theme.categoryUnActive || "#ffffff"
+        : state.isFocused
+        ? theme.popupbackgroundColor || "#f5f5f5"
+        : "transparent",
+    }),
+    menuPortal: (base) => ({
+      ...base,
+      zIndex: 2000,
+    }),
   };
 
   return (
@@ -45,20 +125,18 @@ export default function OrderTypeStep({
       </SectionDescription>
 
       <DropdownWrapper>
-        <Select
-          value={formData.deliveryType}
+        <ReactSelect
+          value={deliveryOptions.find(
+            (option) => option.value === formData.deliveryType
+          )}
           onChange={handleDeliveryTypeChange}
-          hasError={!!errors.deliveryType}
-        >
-          <option value="">Select Order Type</option>
-          {features.delivery_order && (
-            <option value="Delivery">Delivery</option>
-          )}
-          {features.takeaway_order && (
-            <option value="TakeAway">Take Away</option>
-          )}
-          {features.dinein_order && <option value="DineIn">Dine In</option>}
-        </Select>
+          options={deliveryOptions}
+          placeholder="Select Order Type"
+          isSearchable={false}
+          styles={selectStyles}
+          menuPortalTarget={typeof document !== "undefined" ? document.body : null}
+          menuPosition="fixed"
+        />
         {errors.deliveryType && <Error>{errors.deliveryType}</Error>}
       </DropdownWrapper>
 
@@ -79,11 +157,13 @@ export default function OrderTypeStep({
       )}
 
       {formData.selectedBranch &&
-        formData.deliveryType === "Delivery" && (
+        formData.deliveryType === "Delivery" &&
+        Array.isArray(formData.regions) &&
+        formData.regions.length > 0 && (
           <DropdownWrapper>
             <RegionSelect
               selectedRegion={formData.selectedRegion}
-              setSelectedRegion={(region) =>
+              onRegionChange={(region) =>
                 updateFormData({ selectedRegion: region })
               }
               selectedBranch={
@@ -93,7 +173,7 @@ export default function OrderTypeStep({
               }
               setErrors={setErrors}
               errors={errors}
-              setRegions={(regions) => updateFormData({ regions })}
+              onRegionsChange={(regions) => updateFormData({ regions })}
             />
             {errors.region && <Error>{errors.region}</Error>}
           </DropdownWrapper>

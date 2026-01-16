@@ -22,7 +22,7 @@ export const Container = styled.div`
 // Hero Section
 export const HeroSection = styled.section`
   width: 100%;
-  padding: 60px 60px 0px 60px;
+  padding: 48px 48px 0px 48px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -32,20 +32,20 @@ export const HeroSection = styled.section`
   background: ${props => props.theme.backgroundColor || "#f8f9fa"};
   
   @media (min-width: 768px) {
-    padding: 80px 5%;
+    padding: 64px 5%;
   }
 `;
 
 export const RestaurantLogo = styled.img`
-  max-width: 500px;
-  max-height: 375px;
+  max-width: 430px;
+  max-height: 320px;
   object-fit: contain;
-  margin-bottom: 32px;
+  margin-bottom: 24px;
   
   @media (min-width: 768px) {
-    max-width: 600px;
-    max-height: 450px;
-    margin-bottom: 40px;
+    max-width: 520px;
+    max-height: 390px;
+    margin-bottom: 32px;
   }
 `;
 
@@ -53,8 +53,8 @@ export const CategoriesCarouselContainer = styled.div`
   width: 100%;
   overflow-x: auto;
   overflow-y: hidden;
-  padding: 20px 0px;
-  margin-bottom: 30px;
+  padding: 16px 0px;
+  margin-bottom: 24px;
   direction: ${props => props.activeLanguage === "ar" ? "rtl" : "ltr"};
   scroll-behavior: smooth;
   -webkit-overflow-scrolling: touch;
@@ -89,8 +89,8 @@ export const CategoriesCarouselContainer = styled.div`
   }
   
   @media (min-width: 768px) {
-    padding: 30px 0px;
-    margin-bottom: 40px;
+    padding: 24px 0px;
+    margin-bottom: 32px;
     
     &::after {
       width: 80px;
@@ -101,7 +101,7 @@ export const CategoriesCarouselContainer = styled.div`
 export const ScrollHint = styled.div`
   position: absolute;
   ${props => props.activeLanguage === "ar" ? "left: 20px;" : "right: 20px;"}
-  top: 98%;
+  top: 95%;
   transform: translateY(-50%);
   font-size: 12px;
   color: ${props => props.theme?.textColor || "#666"};
@@ -144,13 +144,13 @@ export const CategoriesLink = styled.button`
   position: relative;
   width: 100%;
   max-width: 320px;
-  height: 64px;
-  font-size: 18px;
+  height: 56px;
+  font-size: 16px;
   font-weight: 600;
   color: ${props => props.theme.slidingButtonTextColor || "#ffffff"};
   background: ${props => props.theme.slidingButtonBackgroundColor || props.theme.mainColor || "#007bff"};
   border: none;
-  border-radius: 16px;
+  border-radius: 14px;
   padding: 0;
   cursor: ${props => props.swipeProgress >= 0.6 ? "pointer" : "default"};
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -159,7 +159,7 @@ export const CategoriesLink = styled.button`
     const bgColor = props.theme.slidingButtonBackgroundColor || props.theme.mainColor || "#007bff";
     return bgColor ? `${bgColor}40` : "rgba(0, 123, 255, 0.4)";
   }};
-  margin: 40px auto;
+  margin: 32px auto;
   overflow: hidden;
   user-select: none;
   display: block;
@@ -180,10 +180,10 @@ export const CategoriesLink = styled.button`
   }
   
   @media (min-width: 768px) {
-    max-width: 420px;
-    height: 72px;
-    font-size: 20px;
-    margin: 40px auto;
+    max-width: 380px;
+    height: 64px;
+    font-size: 18px;
+    margin: 32px auto;
   }
 `;
 
@@ -224,15 +224,15 @@ export const ArrowButton = styled.div`
   }}
   top: 50%;
   transform: translateY(-50%);
-  width: 48px;
-  height: 48px;
+  width: 42px;
+  height: 42px;
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.25);
   backdrop-filter: blur(10px);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 20px;
+  font-size: 18px;
   color: #ffffff;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   z-index: 3;
@@ -244,9 +244,9 @@ export const ArrowButton = styled.div`
   }
   
   @media (min-width: 768px) {
-    width: 56px;
-    height: 56px;
-    font-size: 24px;
+    width: 50px;
+    height: 50px;
+    font-size: 22px;
     ${props => {
       const maxWidth = 420; // max-width of CategoriesLink on desktop
       const buttonSize = 56;
@@ -462,16 +462,16 @@ export const Dot = styled.button`
 
 // Section Title
 export const SectionTitle = styled.h2`
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 500;
   color: ${props => props.theme.textColor || "#1a1a1a"};
-  margin: 0 0 30px 0;
+  margin: 0 0 24px 0;
   text-align: center;
   direction: ${props => props.activeLanguage === "ar" ? "rtl" : "ltr"};
   
   @media (min-width: 768px) {
-    font-size: 18px;
-    margin-bottom: 40px;
+    font-size: 16px;
+    margin-bottom: 32px;
   }
 `;
 
@@ -490,8 +490,8 @@ export const TopCategoriesSection = styled.section`
 `;
 
 export const TopCategoryItem = styled.div`
-  min-width: 140px;
-  width: 140px;
+  min-width: 120px;
+  width: 120px;
   flex-shrink: 0;
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -500,26 +500,26 @@ export const TopCategoryItem = styled.div`
   flex-direction: column;
   align-items: center;
   align-self: flex-start;
-  gap: 12px;
+  gap: 10px;
   
   &:hover {
     transform: translateY(-4px) scale(1.05);
   }
   
   @media (min-width: 768px) {
-    min-width: 180px;
-    width: 180px;
-    gap: 16px;
+    min-width: 160px;
+    width: 160px;
+    gap: 14px;
   }
 `;
 
 export const TopCategoryContent = styled.div`
   display: flex;
   align-items: center;
-  gap: 20px;
+  gap: 16px;
   background: ${props => props.theme.BoxColor || "#ffffff"};
-  border-radius: 24px;
-  padding: 20px;
+  border-radius: 20px;
+  padding: 16px;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
   position: relative;
   overflow: hidden;
@@ -554,8 +554,8 @@ export const TopCategoryContent = styled.div`
   }
   
   @media (min-width: 768px) {
-    padding: 28px 32px;
-    gap: 32px;
+    padding: 22px 26px;
+    gap: 26px;
   }
 `;
 
@@ -569,47 +569,47 @@ export const TopCategoryInfo = styled.div`
 `;
 
 export const TopCategoryName = styled.h3`
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
   color: ${props => props.theme.textColor || "#1a1a1a"};
   margin: 0;
   line-height: 1.3;
   direction: ${props => props.activeLanguage === "ar" ? "rtl" : "ltr"};
-  max-width: 100px;
+  max-width: 90px;
   text-align: center;
   word-wrap: break-word;
   word-break: break-word;
   white-space: normal;
   
   @media (min-width: 768px) {
-    font-size: 16px;
-    max-width: 140px;
+    font-size: 14px;
+    max-width: 120px;
   }
 `;
 
 export const TopCategoryDescription = styled.p`
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 400;
   color: ${props => props.theme.textColor || "#666"};
-  margin: 8px 0 0 0;
+  margin: 6px 0 0 0;
   line-height: 1.5;
   direction: ${props => props.activeLanguage === "ar" ? "rtl" : "ltr"};
   
   @media (min-width: 768px) {
-    font-size: 16px;
-    margin-top: 12px;
+    font-size: 14px;
+    margin-top: 8px;
   }
 `;
 
 export const TopCategoryIcon = styled.img`
-  width: 100px;
-  height: 100px;
-  border-radius: 20px;    
-  padding: 10px;
+  width: 84px;
+  height: 84px;
+  border-radius: 16px;    
+  padding: 8px;
   object-fit: contain;
   flex-shrink: 0;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  border: 3px solid ${props => props.theme.mainColor || "#007bff"}20;
+  border: 2px solid ${props => props.theme.mainColor || "#007bff"}20;
   transition: all 0.3s ease;
   z-index: 2;
   position: relative;
@@ -621,18 +621,18 @@ export const TopCategoryIcon = styled.img`
   }
   
   @media (min-width: 768px) {
-    width: 140px;
-    height: 140px;
-    border-radius: 28px;
+    width: 120px;
+    height: 120px;
+    border-radius: 22px;
   }
 `;
 
 export const ShowAllButton = styled.button`
   width: 100%;
-  max-width: 400px;
+  max-width: 360px;
   margin: 0 auto;
-  padding: 16px 32px;
-  font-size: 16px;
+  padding: 14px 28px;
+  font-size: 15px;
   font-weight: 600;
   color: #ffffff;
   background: ${props => props.theme.mainColor || "#007bff"};
@@ -655,9 +655,9 @@ export const ShowAllButton = styled.button`
   }
   
   @media (min-width: 768px) {
-    padding: 18px 40px;
-    font-size: 18px;
-    max-width: 500px;
+    padding: 16px 36px;
+    font-size: 16px;
+    max-width: 440px;
   }
 `;
 
@@ -676,9 +676,9 @@ export const LocationCardsSection = styled.section`
 
 export const LocationCard = styled.div`
   background: ${props => props.theme.hplocationBackgroundColor || props.theme.categoryUnActive || "#ffffff"};
-  border-radius: 16px;
-  padding: 12px 24px;
-  margin-bottom: 16px;
+  border-radius: 14px;
+  padding: 10px 20px;
+  margin-bottom: 12px;
   border: 1px solid rgba(0, 0, 0, 0.04);
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08), 0 1px 3px rgba(0, 0, 0, 0.05);
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
@@ -689,7 +689,7 @@ export const LocationCard = styled.div`
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
+  gap: 12px;
   
   &::before {
     content: '';
@@ -718,8 +718,8 @@ export const LocationCard = styled.div`
   }
   
   @media (min-width: 768px) {
-    padding: 24px 28px;
-    margin-bottom: 20px;
+    padding: 20px 24px;
+    margin-bottom: 16px;
   }
 `;
 
@@ -1088,13 +1088,13 @@ export const Copyright = styled.p`
 // Social Media Section
 export const SocialMediaSection = styled.section`
   width: 100%;
-  padding: 20px;
+  padding: 16px;
   max-width: 1200px;
   margin: 0 auto;
   background: ${props => props.theme.backgroundColor || "#f8f9fa"};
   
   @media (min-width: 768px) {
-    padding: 60px 5%;
+    padding: 48px 5%;
   }
 `;
 
@@ -1118,10 +1118,10 @@ export const SocialLink = styled.a`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 12px;
-  padding: 24px 16px;
+  gap: 10px;
+  padding: 18px 14px;
   background: ${props => props.theme.categoryUnActive || "#ffffff"};
-  border-radius: 12px;
+  border-radius: 10px;
   text-decoration: none;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08), 0 1px 3px rgba(0, 0, 0, 0.05);
@@ -1134,18 +1134,18 @@ export const SocialLink = styled.a`
   }
   
   span {
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 500;
     color: ${props => props.theme.textColor || "#1a1a1a"};
     
     @media (min-width: 768px) {
-      font-size: 16px;
+      font-size: 14px;
     }
   }
 `;
 
 export const SocialIcon = styled.div`
-  font-size: 32px;
+  font-size: 28px;
   color: ${props => {
     if (props.platform?.toLowerCase().includes("facebook")) return "#1877F2";
     if (props.platform?.toLowerCase().includes("instagram")) return "#E4405F";
@@ -1158,7 +1158,7 @@ export const SocialIcon = styled.div`
   justify-content: center;
   
   @media (min-width: 768px) {
-    font-size: 40px;
+    font-size: 34px;
   }
 `;
 
@@ -1169,42 +1169,42 @@ export const WelcomeSection = styled.section`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 40px 20px 0px 20px;
+  padding: 32px 20px 0px 20px;
   background: ${props => props.theme.backgroundColor || "#f8f9fa"};
   direction: ${props => props.activeLanguage === "ar" ? "rtl" : "ltr"};
-  min-height: 400px;
+  min-height: 340px;
   
   @media (min-width: 768px) {
-    padding: 120px 20px 100px 20px;
-    min-height: 500px;
+    padding: 96px 20px 80px 20px;
+    min-height: 420px;
   }
 `;
 
 export const WelcomeText = styled.h1`
-  font-size: 36px;
+  font-size: 30px;
   font-weight: 700;
   color: ${props => props.theme.textColor || "#1a1a1a"};
-  margin: 0 0 40px 0;
+  margin: 0 0 32px 0;
   text-align: center;
   direction: ${props => props.activeLanguage === "ar" ? "rtl" : "ltr"};
   letter-spacing: -0.02em;
   
   @media (min-width: 768px) {
-    font-size: 48px;
-    margin-bottom: 50px;
+    font-size: 40px;
+    margin-bottom: 40px;
   }
 `;
 
 export const WelcomeLogo = styled.img`
-  max-width: 300px;
-  max-height: 300px;
+  max-width: 240px;
+  max-height: 240px;
   width: auto;
   height: auto;
   object-fit: contain;
   filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.1));
   
   @media (min-width: 768px) {
-    max-width: 400px;
-    max-height: 400px;
+    max-width: 320px;
+    max-height: 320px;
   }
 `;

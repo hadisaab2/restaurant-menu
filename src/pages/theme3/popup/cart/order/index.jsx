@@ -258,7 +258,20 @@ useEffect(() => {
       {(restaurant?.branches.length != 0 && !hasOnlineBranch()) && <BranchSelect deliveryType={deliveryType} branches={restaurant?.branches} selectedBranch={selectedBranch} setSelectedBranch={setSelectedBranch} setErrors={setErrors} errors={errors} />}
       {errors.branch && <Error>{errors.branch}</Error>}
 
-      {(selectedBranch && deliveryType === "Delivery" && regions.length > 0) && <RegionSelect selectedRegion={selectedRegion} setSelectedRegion={setSelectedRegion} selectedBranch={restaurant?.branches.length == 1 ? restaurant?.branches[0] : selectedBranch} setErrors={setErrors} errors={errors} setRegions={setRegions} />}
+      {(selectedBranch && deliveryType === "Delivery" && regions.length > 0) && (
+        <RegionSelect
+          selectedRegion={selectedRegion}
+          onRegionChange={setSelectedRegion}
+          selectedBranch={
+            restaurant?.branches.length == 1
+              ? restaurant?.branches[0]
+              : selectedBranch
+          }
+          setErrors={setErrors}
+          errors={errors}
+          onRegionsChange={setRegions}
+        />
+      )}
       {errors.region && <Error>{errors.region}</Error>}
 
 

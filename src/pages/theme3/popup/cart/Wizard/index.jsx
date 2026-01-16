@@ -17,6 +17,9 @@ import {
   NavigationButtons,
   NavButton,
   StepTitle,
+  StepHeader,
+  StepTitleText,
+  StepCloseButton,
 } from "./styles";
 
 const STEPS = [
@@ -327,7 +330,15 @@ export default function Wizard({ popupHandler, restaurant }) {
 
   return (
     <WizardContainer>
-      <StepTitle>{STEPS[currentStep].label}</StepTitle>
+      <StepHeader>
+        <StepTitleText>{STEPS[currentStep].label}</StepTitleText>
+        <StepCloseButton
+          onClick={() => popupHandler(null)}
+          aria-label="Close cart"
+        >
+          ✕
+        </StepCloseButton>
+      </StepHeader>
       <ProgressBar>
         {STEPS.map((step, index) => (
           <ProgressStep key={step.id} active={index <= currentStep}>
