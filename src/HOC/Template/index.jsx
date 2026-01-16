@@ -12,6 +12,7 @@ import Loading from "./loading";
 import Theme2 from "../../pages/theme2";
 import Theme3 from "../../pages/theme3";
 import Theme4 from "../../pages/theme4";
+import Theme3NotSubscribed from "../../pages/theme3/NotSubscribed";
 
 
 
@@ -47,8 +48,8 @@ export default function Template() {
         'responseIsValid': responseIsValid
       });
       
-      // Only redirect if explicitly false
-      if (responseIsValid === false || responseIsValid === 0) {
+      // Only redirect if explicitly false and not theme3
+      if ((responseIsValid === false || responseIsValid === 0) && response.data.template_id !== 3) {
         console.log('Template - Redirecting to notsubscribed');
         navigate("/notsubscribed");
       }
@@ -101,6 +102,20 @@ export default function Template() {
   };
   
   const isValid = getIsValid();
+  const isTheme3NotSubscribed =
+    (isValid === false || isValid === 0) && response?.data?.template_id === 3;
+  if (isTheme3NotSubscribed && response?.data) {
+    return (
+      <ThemeProvider
+        theme={{
+          ...JSON.parse(response.data.theme),
+          font: response.data.font,
+        }}
+      >
+        <Theme3NotSubscribed restaurant={response.data} />
+      </ThemeProvider>
+    );
+  }
   if (isValid === false || isValid === 0) {
     return null;
   }
