@@ -152,6 +152,24 @@ export const Input = styled.input`
   }
 `;
 
+export const Select = styled.select`
+  width: 100%;
+  padding: 14px 16px;
+  border: 1px solid ${(props) => props.theme?.borderColor || "rgba(0, 0, 0, 0.1)"};
+  border-radius: 8px;
+  font-size: 15px;
+  background: #ffffff;
+  color: ${(props) => props.theme?.textColor || "#333333"};
+  direction: ${(props) => (props.activeLanguage === "ar" ? "rtl" : "ltr")};
+  transition: all 0.3s ease;
+
+  &:focus {
+    outline: none;
+    border-color: ${(props) => props.theme?.mainColor || "#007bff"};
+    box-shadow: 0 0 0 3px ${(props) => props.theme?.mainColor ? `${props.theme.mainColor}20` : "rgba(0, 123, 255, 0.2)"};
+  }
+`;
+
 export const TextArea = styled.textarea`
   width: 100%;
   padding: 14px 16px;

@@ -27,6 +27,8 @@ import { getCookie, deleteCookie } from "../../utilities/manageCookies";
 import { useNavigate } from "react-router-dom";
 import { ADMINSIGNIN } from "../../routes/URLs";
 import Report from "./report";
+import Feedbacks from "./feedbacks";
+import QuestionsSuggestions from "./questions";
 
 
 
@@ -57,9 +59,18 @@ export default function RestaurantDash() {
   
 
 
+  const sectionLabelMap = {
+    Categories: "Categories",
+    Products: "Products",
+    Settings: "Settings",
+    Report: "Report",
+    Feedbacks: "Feedbacks",
+    QuestionsSuggestions: "Questions & Suggestions",
+  };
+
   return (
     <Container>
-      <MobileSidebar showMobileSidebar={showMobileSidebar}>
+      <MobileSidebar $showMobileSidebar={showMobileSidebar}>
       <SidebarTop>
           <Title>Menugic</Title>
           <CloseIcon onClick={onClickBurger}/>
@@ -80,6 +91,14 @@ export default function RestaurantDash() {
           <Tab  onClick={() =>handlesection("Report")}>
             <CateogoryIcon />
             <TabText>Report</TabText>
+          </Tab>
+          <Tab onClick={() => handlesection("Feedbacks")}>
+            <CateogoryIcon />
+            <TabText>Feedbacks</TabText>
+          </Tab>
+          <Tab onClick={() => handlesection("QuestionsSuggestions")}>
+            <CateogoryIcon />
+            <TabText>Questions & Suggestions</TabText>
           </Tab>
 
         </SidebarContent>
@@ -123,6 +142,14 @@ export default function RestaurantDash() {
             <CateogoryIcon />
             <TabText>Report</TabText>
           </Tab>
+          <Tab onClick={() => setSection("Feedbacks")}>
+            <CateogoryIcon />
+            <TabText>Feedbacks</TabText>
+          </Tab>
+          <Tab onClick={() => setSection("QuestionsSuggestions")}>
+            <CateogoryIcon />
+            <TabText>Questions & Suggestions</TabText>
+          </Tab>
         </SidebarContent>
         <SidebarBottom>
           <ProfileIcon />
@@ -131,7 +158,7 @@ export default function RestaurantDash() {
       </Sidebar>
       <Content>
         <Header>
-          <Path>Admin / {section}</Path>
+          <Path>Admin / {sectionLabelMap[section] || section}</Path>
           <Logout
             onClick={() => {
               localStorage.removeItem("isLoggedIn");
@@ -154,6 +181,8 @@ export default function RestaurantDash() {
         {section == "Settings" && <Settings userInformation={userInformation} setSection={setSection} />}
         {section == "Categories" && <Categories setProducts={setProducts} />}
         {section == "Report" && <Report userInformation={userInformation}/>}
+        {section == "Feedbacks" && <Feedbacks />}
+        {section == "QuestionsSuggestions" && <QuestionsSuggestions />}
 
       </Content>
     </Container>

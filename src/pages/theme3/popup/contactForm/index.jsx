@@ -12,15 +12,15 @@ import {
   FormGroup,
   Label,
   Input,
+  Select,
   TextArea,
   SubmitButton,
   ErrorMessage,
   SuccessMessage,
 } from "./styles";
-import { IoMdClose } from "react-icons/io";
 import { useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { addFeedback } from "../../../../apis/feedback/addFeedback";
+import { createThreadPublic } from "../../../../apis/threads/createThreadPublic";
 
 export default function ContactFormPopup({
   showPopup,
@@ -45,6 +45,8 @@ export default function ContactFormPopup({
   const [formData, setFormData] = useState({
     name: "",
     email: "",
+    phone: "",
+    type: "question",
     subject: "",
     message: "",
   });
@@ -112,21 +114,26 @@ export default function ContactFormPopup({
     setSubmitSuccess(false);
 
     try {
-      // Here you would call your API to submit the contact form
-      // For now, we'll use a placeholder
-      await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate API call
-      
-      // TODO: Replace with actual API call
-      // await submitContactForm({
-      //   restaurant_id: restaurant?.id,
-      //   name: formData.name,
-      //   email: formData.email,
-      //   subject: formData.subject,
-      //   message: formData.message,
-      // });
+      await createThreadPublic({
+        restaurant_id: restaurant?.id,
+        type: formData.type || "question",
+        subject: formData.subject || null,
+        message: formData.message,
+        customer_name: formData.name || null,
+        customer_email: formData.email || null,
+        customer_phone: formData.phone || null,
+        channel: "contact_form",
+      });
 
       setSubmitSuccess(true);
-      setFormData({ name: "", email: "", subject: "", message: "" });
+      setFormData({
+        name: "",
+        email: "",
+        phone: "",
+        type: "question",
+        subject: "",
+        message: "",
+      });
       
       // Auto close after 2 seconds (popup only)
       if (!isPage) {
@@ -141,7 +148,11 @@ export default function ContactFormPopup({
       }
     } catch (error) {
       setErrors({
-        submit: activeLanguage === "en" ? "Failed to send message. Please try again." : "فشل إرسال الرسالة. يرجى المحاولة مرة أخرى.",
+        submit:
+          error?.response?.data?.message ||
+          (activeLanguage === "en"
+            ? "Failed to send message. Please try again."
+            : "فشل إرسال الرسالة. يرجى المحاولة مرة أخرى."),
       });
     } finally {
       setIsSubmitting(false);
@@ -180,6 +191,24 @@ export default function ContactFormPopup({
       <FormContainer activeLanguage={activeLanguage}>
         <Form onSubmit={handleSubmit}>
           <FormGroup>
+            <Label activeLanguage={activeLanguage}>
+              {activeLanguage === "en" ? "Type" : "النوع"}
+            </Label>
+            <Select
+              name="type"
+              value={formData.type}
+              onChange={handleChange}
+              activeLanguage={activeLanguage}
+            >
+              <option value="question">
+                {activeLanguage === "en" ? "Question" : "سؤال"}
+              </option>
+              <option value="suggestion">
+                {activeLanguage === "en" ? "Suggestion" : "اقتراح"}
+              </option>
+            </Select>
+          </FormGroup>
+          <FormGroup>
             <Input
               type="text"
               name="name"
@@ -200,6 +229,17 @@ export default function ContactFormPopup({
               activeLanguage={activeLanguage}
             />
             {errors.email && <ErrorMessage>{errors.email}</ErrorMessage>}
+          </FormGroup>
+
+          <FormGroup>
+            <Input
+              type="tel"
+              name="phone"
+              value={formData.phone}
+              onChange={handleChange}
+              placeholder={activeLanguage === "en" ? "Phone Number" : "رقم الهاتف"}
+              activeLanguage={activeLanguage}
+            />
           </FormGroup>
 
           <FormGroup>

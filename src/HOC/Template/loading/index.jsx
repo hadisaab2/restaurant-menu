@@ -56,10 +56,6 @@ const backgroundColors=[
     color:"#FDE4FD"
   },
   {
-    name:"abrands",
-    color:"black"
-  },
-  {
     name:"brewsociety",
     color:"#ededed"
   },

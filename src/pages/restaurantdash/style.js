@@ -199,7 +199,7 @@ export const MobileSidebar = styled.div`
   height: 100vh;
   flex-direction: column;
   background-color: white;
-  right: ${props=>props.showMobileSidebar?"0%":"-100%"};
+  right: ${(props) => (props.$showMobileSidebar ? "0%" : "-100%")};
   top: 0;
   display:none;
   transition: all 0.5s ease-in-out;
@@ -216,7 +216,7 @@ export const MobileSidebarTop = styled.div`
   height: 100vh;
   flex-direction: column;
   background-color: white;
-  right: ${props=>props.showMobileSidebar?"0%":"-100%"};
+  right: ${(props) => (props.$showMobileSidebar ? "0%" : "-100%")};
   top: 0;
   display:none;
   transition: all 0.5s ease-in-out;

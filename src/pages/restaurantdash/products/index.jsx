@@ -30,7 +30,7 @@ export default function Products({}) {
     JSON.parse(storedUserInfo)
   );
   const [categories, setCategories] = useState([]);
-  const [selectedCategory, setSelectedCategory] = useState(null);
+  const [selectedCategory, setSelectedCategory] = useState("");
 
   const { isLoading, response, refetch } = useGetCategories({
     onSuccess: () => {},
@@ -38,7 +38,7 @@ export default function Products({}) {
   });
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, status } =
-    useGetProducts(selectedCategory);
+    useGetProducts(selectedCategory || null);
 
   useEffect(() => {
     if (!isLoading) {
@@ -78,16 +78,20 @@ export default function Products({}) {
                 <StyledSelect
                   labelId="demo-simple-select-label"
                   id="demo-simple-select"
-                  value={selectedCategory}
+                  value={selectedCategory || ""}
                   label="Category"
-                  defaultValue={selectedCategory}
                   onChange={handlecategory}
                   // defaultValue={selectedMedia?.platform}
                   // error={!isEmpty(formState?.errors?.platform)}
                 >
+                  <MenuItem value="">
+                    {userInformation.Lang === LANGUAGES.AR
+                      ? "كل الفئات"
+                      : "All Categories"}
+                  </MenuItem>
                   {categories.map((category) => {
                     return (
-                      <MenuItem value={category.id}>
+                      <MenuItem key={category.id} value={category.id}>
                   { userInformation.Lang === LANGUAGES.AR ?category.ar_category:category.en_category }
                       </MenuItem>
                     );

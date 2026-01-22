@@ -75,3 +75,15 @@ export const GET_SLIDER_IMAGES_URL = (restaurantId) =>
   `${REACT_APP_BASE_URL}/slider-images/${restaurantId}`;
 export const EDIT_SLIDER_IMAGE_URL = (id) => `${REACT_APP_BASE_URL}/slider-images/${id}`;
 export const DELETE_SLIDER_IMAGE_URL = (id) => `${REACT_APP_BASE_URL}/slider-images/${id}`;
+
+export const THREADS_ADMIN_URL = `${REACT_APP_BASE_URL}/threads/admin`;
+export const THREADS_ADMIN_STATS_URL = `${REACT_APP_BASE_URL}/threads/admin/stats`;
+export const THREAD_ADMIN_URL = (id) => `${REACT_APP_BASE_URL}/threads/admin/${id}`;
+export const THREAD_ADMIN_REPLY_URL = (id) =>
+  `${REACT_APP_BASE_URL}/threads/admin/${id}/reply`;
+export const THREAD_ADMIN_STATUS_URL = (id) =>
+  `${REACT_APP_BASE_URL}/threads/admin/${id}/status`;
+export const THREADS_PUBLIC_URL = `${REACT_APP_BASE_URL}/threads`;
+
+export const GET_FEEDBACKS_URL = (restaurantId) =>
+  `${REACT_APP_BASE_URL}/feedback/${restaurantId}`;
