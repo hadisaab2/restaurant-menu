@@ -63,6 +63,24 @@ export const Category = styled.span`
   font-weight: 300;
 `;
 
+export const StatusBadges = styled.div`
+  display: flex;
+  gap: 6px;
+  margin-top: 8px;
+  flex-wrap: wrap;
+`;
+
+export const StatusBadge = styled.span`
+  font-size: 11px;
+  font-weight: 600;
+  padding: 4px 8px;
+  border-radius: 999px;
+  border: 1px solid rgba(148, 163, 184, 0.5);
+  color: ${(props) => (props.$variant === "hidden" ? "#b45309" : "#b91c1c")};
+  background: ${(props) =>
+    props.$variant === "hidden" ? "rgba(251, 191, 36, 0.15)" : "rgba(239, 68, 68, 0.12)"};
+`;
+
 export const DeleteButton = styled.button`
   position: absolute;
   right: 0px;

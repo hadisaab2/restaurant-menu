@@ -29,12 +29,13 @@ const CategoryItem = ({ category, index, activeLanuguage, activeCategory, itemCl
       activeLanuguage={activeLanuguage}
       activeCategory={activeCategory}
       categoryId={category.id}
+      isAllItems={category.isAllItems}
       onClick={() => itemClick(category.id, index)}
       ref={(el) => (carouselRefs.current[index] = el)}
     >
-      <CategoryWrapper activeCategory={activeCategory} categoryId={category.id}>
+      <CategoryWrapper activeCategory={activeCategory} categoryId={category.id} isAllItems={category.isAllItems}>
         <IconContainer>
-          <IconWrapper activeCategory={activeCategory} categoryId={category.id}>
+          <IconWrapper activeCategory={activeCategory} categoryId={category.id} isAllItems={category.isAllItems}>
             <Icon 
               src={imageError || !categoryImageUrl ? logoURL : categoryImageUrl}
               onError={() => setImageError(true)}
@@ -42,7 +43,7 @@ const CategoryItem = ({ category, index, activeLanuguage, activeCategory, itemCl
           </IconWrapper>
         </IconContainer>
         <TextContainer>
-          <CategoryName activeCategory={activeCategory} categoryId={category.id}>
+          <CategoryName activeCategory={activeCategory} categoryId={category.id} isAllItems={category.isAllItems}>
             {activeLanuguage == "en"
               ? category.en_category
               : category.ar_category}

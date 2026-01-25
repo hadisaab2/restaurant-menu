@@ -18,7 +18,10 @@ import {
   BurgerIcon,
   MobileSidebar,
   CloseIcon,
-  LogoutMobile
+  LogoutMobile,
+  AccessNotice,
+  AccessNoticeTitle,
+  AccessNoticeText
 } from "./style";
 import Products from "./products";
 import Settings from "./settings";
@@ -45,6 +48,11 @@ export default function RestaurantDash() {
     const storedUserInfo = getCookie("userInfo") || "{}";
     setUserInformation(JSON.parse(storedUserInfo));
   }, []);
+
+  const isTheme3 = Number(userInformation?.template_id) === 3;
+  const isFeedbacksSection = section === "Feedbacks";
+  const isQuestionsSection = section === "QuestionsSuggestions";
+  const isRestrictedSection = isFeedbacksSection || isQuestionsSection;
 
   const onClickBurger=()=>{
     setShowMobileSidebar(!showMobileSidebar)
@@ -92,11 +100,14 @@ export default function RestaurantDash() {
             <CateogoryIcon />
             <TabText>Report</TabText>
           </Tab>
-          <Tab onClick={() => handlesection("Feedbacks")}>
+          <Tab $disabled={!isTheme3} onClick={() => handlesection("Feedbacks")}>
             <CateogoryIcon />
             <TabText>Feedbacks</TabText>
           </Tab>
-          <Tab onClick={() => handlesection("QuestionsSuggestions")}>
+          <Tab
+            $disabled={!isTheme3}
+            onClick={() => handlesection("QuestionsSuggestions")}
+          >
             <CateogoryIcon />
             <TabText>Questions & Suggestions</TabText>
           </Tab>
@@ -142,11 +153,14 @@ export default function RestaurantDash() {
             <CateogoryIcon />
             <TabText>Report</TabText>
           </Tab>
-          <Tab onClick={() => setSection("Feedbacks")}>
+          <Tab $disabled={!isTheme3} onClick={() => setSection("Feedbacks")}>
             <CateogoryIcon />
             <TabText>Feedbacks</TabText>
           </Tab>
-          <Tab onClick={() => setSection("QuestionsSuggestions")}>
+          <Tab
+            $disabled={!isTheme3}
+            onClick={() => setSection("QuestionsSuggestions")}
+          >
             <CateogoryIcon />
             <TabText>Questions & Suggestions</TabText>
           </Tab>
@@ -181,8 +195,20 @@ export default function RestaurantDash() {
         {section == "Settings" && <Settings userInformation={userInformation} setSection={setSection} />}
         {section == "Categories" && <Categories setProducts={setProducts} />}
         {section == "Report" && <Report userInformation={userInformation}/>}
-        {section == "Feedbacks" && <Feedbacks />}
-        {section == "QuestionsSuggestions" && <QuestionsSuggestions />}
+        {isRestrictedSection && !isTheme3 && (
+          <AccessNotice>
+            <AccessNoticeTitle>Feature unavailable</AccessNoticeTitle>
+            <AccessNoticeText>
+              This section is available only for Theme 3 restaurants. Please
+              upgrade your package to enable Feedbacks and Questions &
+              Suggestions.
+            </AccessNoticeText>
+          </AccessNotice>
+        )}
+        {section == "Feedbacks" && isTheme3 && <Feedbacks />}
+        {section == "QuestionsSuggestions" && isTheme3 && (
+          <QuestionsSuggestions />
+        )}
 
       </Content>
     </Container>

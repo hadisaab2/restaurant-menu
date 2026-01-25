@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   BlurOverlay,
   Cart,
@@ -7,7 +7,7 @@ import {
   DetailsBtn,
   Location,
   MenuWrapper,
-  Number,
+  CartCount,
   ParamProductContainer,
 } from "./styles";
 import Header from "./Header";
@@ -51,6 +51,21 @@ export default function Theme3() {
     (state) => state.restaurant?.[restaurantName]?.activeLanguage || "en"
   );
   const dispatch = useDispatch();
+  const showAllItemsCategory =
+    Number(restaurant?.template_id) === 3 &&
+    (restaurant?.show_all_items_category === true ||
+      restaurant?.show_all_items_category === 1 ||
+      restaurant?.show_all_items_category === "1");
+  const allItemsCategory = {
+    id: "all-items",
+    en_category: "All Items",
+    ar_category: "كل الأصناف",
+    isAllItems: true,
+    priority: 999999,
+  };
+  const theme3Categories = showAllItemsCategory
+    ? [allItemsCategory, ...(restaurant?.categories || [])]
+    : restaurant?.categories || [];
 
   const handleLanguage = (lang) => {
     dispatch(changelanuage({ name: restaurantName, activeLanguage: lang }));
@@ -125,10 +140,18 @@ export default function Theme3() {
   const [deferredPrompt, setDeferredPrompt] = useState(null);
   const [showInstallPopup, setShowInstallPopup] = useState(true);
 
-  const [carouselPosition, setcarouselPosition] = useState(!categoryId?0:restaurant?.categories?.findIndex(category => category.id == categoryId) || 0);
+  const initialCarouselIndex = (() => {
+    if (!categoryId) return 0;
+    const index = theme3Categories.findIndex((category) => category.id == categoryId);
+    return index >= 0 ? index : 0;
+  })();
+  const [carouselPosition, setcarouselPosition] = useState(initialCarouselIndex);
  
   // State to track if we're viewing home, categories, or products
   const [viewMode, setViewMode] = useState(categoryId ? "products" : "home");
+  const prevViewModeRef = useRef(viewMode);
+  const prevPopupRef = useRef(showPopup);
+  const prevSidebarRef = useRef(showSidebar);
 
   const itemCount = useSelector((state) => {
     const items = state.cart[restaurantName] || []; // Access cart by restaurant name, default to empty array if not found
@@ -267,6 +290,43 @@ export default function Theme3() {
     }
   }, [viewMode]);
 
+  // Add history entries for view modes/popup states that don't change the URL,
+  // so the phone back button can step back inside the app.
+  useEffect(() => {
+    const prevView = prevViewModeRef.current;
+    if (prevView !== viewMode) {
+      if (
+        viewMode === "categories" &&
+        !categoryId &&
+        !productId &&
+        !page
+      ) {
+        window.history.pushState({ viewMode: "categories" }, "", window.location.href);
+      }
+      prevViewModeRef.current = viewMode;
+    }
+  }, [viewMode, categoryId, productId, page]);
+
+  useEffect(() => {
+    const prevPopup = prevPopupRef.current;
+    if (prevPopup !== showPopup) {
+      if (showPopup) {
+        window.history.pushState({ popup: showPopup }, "", window.location.href);
+      }
+      prevPopupRef.current = showPopup;
+    }
+  }, [showPopup]);
+
+  useEffect(() => {
+    const prevSidebar = prevSidebarRef.current;
+    if (prevSidebar !== showSidebar) {
+      if (showSidebar) {
+        window.history.pushState({ sidebar: true }, "", window.location.href);
+      }
+      prevSidebarRef.current = showSidebar;
+    }
+  }, [showSidebar]);
+
   // Check if product details are open by checking URL directly
   // This handles both direct URL access and clicking from product list
   useEffect(() => {
@@ -295,6 +355,36 @@ export default function Theme3() {
     };
   }, [searchParams]);
 
+  useEffect(() => {
+    const handlePopState = (event) => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const hasProductId = urlParams.get("productId");
+      const hasCategoryId = urlParams.get("categoryId");
+      const hasPage = urlParams.get("page");
+
+      if (showSidebar) {
+        setshowSidebar(false);
+        return;
+      }
+
+      if (showPopup) {
+        popupHandler(null);
+        return;
+      }
+
+      if (hasProductId || hasPage || hasCategoryId) {
+        return;
+      }
+
+      const nextViewMode = event?.state?.viewMode === "categories" ? "categories" : "home";
+      setViewMode(nextViewMode);
+      setactiveCategory(null);
+    };
+
+    window.addEventListener("popstate", handlePopState);
+    return () => window.removeEventListener("popstate", handlePopState);
+  }, [showPopup]);
+
   return (
     <Container id="wrapper">
       {/* Navigation Bar - Hide when viewing product details */}
@@ -309,7 +399,7 @@ export default function Theme3() {
           onHomeClick={handleBackToHome}
           onCategoryClick={handleCategoryClick}
           onContactClick={handleContactClick}
-          categories={restaurant?.categories || []}
+          categories={theme3Categories}
           activeCategory={activeCategory}
           setshowSidebar={setshowSidebar}
           showSidebar={showSidebar}
@@ -342,14 +432,14 @@ export default function Theme3() {
         {!isFeedbackPage && !isContactPage && viewMode === "home" && (
           <HomePage
             onExploreClick={handleExploreClick}
-            categories={restaurant?.categories || []}
+            categories={theme3Categories}
           />
         )}
 
         {/* Show HeaderTop only (logo and menu) */}
         {!isFeedbackPage && !isContactPage && viewMode === "categories" && (
           <Header
-            categories={restaurant?.categories || []}
+            categories={theme3Categories}
             activeCategory={activeCategory}
             setactiveCategory={setactiveCategory}
             setSearchText={setSearchText}
@@ -366,7 +456,7 @@ export default function Theme3() {
         {!isFeedbackPage && !isContactPage && viewMode === "products" && activeCategory && !productId && (
           <CategoryHeader
             categoryId={activeCategory}
-            categories={restaurant?.categories || []}
+            categories={theme3Categories}
             onBack={handleBackToCategories}
             searchText={searchText}
             setSearchText={setSearchText}
@@ -380,12 +470,12 @@ export default function Theme3() {
           <CategoriesGrid
             categories={
               searchText
-                ? (restaurant?.categories || []).filter((cat) =>
+                ? theme3Categories.filter((cat) =>
                     activeLanguage === "en"
                       ? cat.en_category.toLowerCase().includes(searchText.toLowerCase())
                       : cat.ar_category.toLowerCase().includes(searchText.toLowerCase())
                   )
-                : restaurant?.categories || []
+                : theme3Categories
             }
             onCategoryClick={handleCategoryClick}
           />
@@ -401,7 +491,7 @@ export default function Theme3() {
             setactiveCategory={setactiveCategory}
             setcarouselPosition={setcarouselPosition}
             carouselPosition={carouselPosition}
-            categories={restaurant?.categories || []}
+            categories={theme3Categories}
           />
         )}
       </MenuWrapper>
@@ -417,7 +507,7 @@ export default function Theme3() {
             window.history.pushState({}, ""); // Add a history entry
             popupHandler("cart")
           }}>
-            <Number>{itemCount}</Number>
+            <CartCount>{itemCount}</CartCount>
             <Cart />
           </CartBtn>}
         </>
@@ -443,7 +533,7 @@ export default function Theme3() {
         popupHandler={popupHandler}
       />
       <SideBar
-        categories={restaurant?.categories || []}
+        categories={theme3Categories}
         activeCategory={activeCategory}
         setactiveCategory={setactiveCategory}
         setshowSidebar={setshowSidebar}

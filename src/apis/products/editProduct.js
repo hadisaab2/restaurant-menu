@@ -51,6 +51,8 @@ const editProduct = async (id, payload) => {
     formData.append(`form_json`, payload.form_json);
     formData.append(`new`, payload.new);
     formData.append(`square_dimension`, payload.square_dimension);
+    formData.append(`hide`, payload.hide);
+    formData.append(`out_of_stock`, payload.out_of_stock);
 
     
     const response = await axios.put(url, formData, {

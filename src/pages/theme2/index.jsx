@@ -7,7 +7,7 @@ import {
   DetailsBtn,
   Location,
   MenuWrapper,
-  Number,
+  CartCount,
   ParamProductContainer,
 } from "./styles";
 import Header from "./Header";
@@ -42,7 +42,26 @@ export default function Theme2() {
   const [deferredPrompt, setDeferredPrompt] = useState(null);
   const [showInstallPopup, setShowInstallPopup] = useState(true);
 
-  const [carouselPosition, setcarouselPosition] = useState(!categoryId?0:restaurant.categories.findIndex(category => category.id == categoryId));
+  const showAllItemsCategory =
+    Number(restaurant?.template_id) === 2 &&
+    (restaurant?.show_all_items_category === true ||
+      restaurant?.show_all_items_category === 1 ||
+      restaurant?.show_all_items_category === "1");
+  const allItemsCategory = {
+    id: "all-items",
+    en_category: "All Items",
+    ar_category: "كل الأصناف",
+    isAllItems: true,
+    priority: 999999,
+  };
+  const theme2Categories = showAllItemsCategory
+    ? [allItemsCategory, ...(restaurant?.categories || [])]
+    : restaurant?.categories || [];
+  const [carouselPosition, setcarouselPosition] = useState(
+    !categoryId
+      ? 0
+      : theme2Categories.findIndex((category) => category.id == categoryId)
+  );
  
 
   const itemCount = useSelector((state) => {
@@ -50,7 +69,7 @@ export default function Theme2() {
     return items.reduce((total, item) => total + item.quantity, 0); // Sum up all quantities in the restaurant's cart
   });
   const [activeCategory, setactiveCategory] = useState(
-    categoryId?categoryId:restaurant?.categories?.[0]?.id
+    categoryId ? categoryId : theme2Categories?.[0]?.id
   );
 
   const popupHandler = (type) => {
@@ -119,7 +138,7 @@ export default function Theme2() {
       <MenuWrapper onClick={handleClickOutside} >
         <BlurOverlay showPopup={showPopup} />
         <Header
-          categories={restaurant.categories}
+          categories={theme2Categories}
           activeCategory={activeCategory}
           setactiveCategory={setactiveCategory}
           setSearchText={setSearchText}
@@ -138,7 +157,7 @@ export default function Theme2() {
           setactiveCategory={setactiveCategory}
           setcarouselPosition={setcarouselPosition}
           carouselPosition={carouselPosition}
-          categories={restaurant.categories}
+          categories={theme2Categories}
         />
       </MenuWrapper>
       <DetailsBtn onClick={() => {
@@ -151,7 +170,7 @@ export default function Theme2() {
         window.history.pushState({}, ""); // Add a history entry
         popupHandler("cart")
       }}>
-        <Number>{itemCount}</Number>
+        <CartCount>{itemCount}</CartCount>
         <Cart />
       </CartBtn>}
       <LocationPopup
@@ -170,7 +189,7 @@ export default function Theme2() {
         activeCategory={activeCategory}
       />
       <SideBar
-        categories={restaurant.categories}
+        categories={theme2Categories}
         activeCategory={activeCategory}
         setactiveCategory={setactiveCategory}
         setshowSidebar={setshowSidebar}

@@ -108,7 +108,7 @@ z-index: 50;
 }
 `;
 
-export const Number = styled.div`
+export const CartCount = styled.div`
 position: absolute;
 left: -6px;
 top: -6px;

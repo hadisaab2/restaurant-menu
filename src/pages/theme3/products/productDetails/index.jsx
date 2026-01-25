@@ -40,6 +40,7 @@ import {
   ImageCounter,
   ProductHeader,
   ProductHeaderTitle,
+  OutOfStockNotice,
 } from "./styles";
 import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -53,6 +54,7 @@ import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 import { translateForm } from "../../../../utilities/translate";
 import { useLogProduct } from "../../../../apis/products/logProduct";
 import { convertPrice } from "../../../../utilities/convertPrice";
+import { toast } from "react-toastify";
 
 const _ = require('lodash');
 
@@ -133,8 +135,15 @@ export default function ProductDetails({
 
   const [CloseAnimation, setCloseAnimation] = useState(true);
   const [carouselIndex, setcarouselIndex] = useState(0);
-  const handleBack = () => {
+  const CLOSE_ANIMATION_MS = 450;
+  const closeDetails = () => {
     setCloseAnimation(false);
+    setTimeout(() => {
+      setactivePlate(null);
+      document.body.style.overflow = "auto";
+    }, CLOSE_ANIMATION_MS);
+  };
+  const handleBack = () => {
     // Remove only productId, keep categoryId to stay on the products page
     searchParams.delete("productId");
     setSearchParams(searchParams);
@@ -143,11 +152,7 @@ export default function ProductDetails({
       searchParams.set("categoryId", activeCategoryId);
       setSearchParams(searchParams);
     }
-    // Smooth transition - delay the actual state change
-    setTimeout(() => {
-      setactivePlate(null);
-      document.body.style.overflow = "auto";
-    }, 400);
+    closeDetails();
   };
   const [copied, setCopied] = useState(false);
 
@@ -195,9 +200,7 @@ export default function ProductDetails({
   useEffect(() => {
     const handlePopState = () => {
       // Revert to the products list (selected category) when browser back is pressed
-      setactivePlate(null);
-      document.body.style.overflow = "auto";
-      setCloseAnimation(false);
+      closeDetails();
       searchParams.delete("productId");
       // Keep categoryId to stay on products page
       if (activeCategoryId && !searchParams.get("categoryId")) {
@@ -249,15 +252,16 @@ export default function ProductDetails({
 
 
     let discountedPrice = (totalPrice * (1 - parseFloat(finalDiscount) / 100))
-    setTimeout(() => {
-      setactivePlate(null);
-      document.body.style.overflow = "auto";
-    }, 800);
+    closeDetails();
     dispatch(
       addToCart(restaurantName, plates[activePlate], quantity, formData, discountedPrice, instruction)
 
     );
-    setCloseAnimation(false);
+    toast.success(
+      restaurant?.activeLanguage === "en"
+        ? "Added to cart"
+        : "تمت الإضافة إلى السلة"
+    );
     setQuantity(1);
     setFormErrors({})
   };
@@ -322,6 +326,9 @@ export default function ProductDetails({
   }
 
   let features = JSON.parse(restaurant.features)
+  const isOutOfStock =
+    Boolean(plates[activePlate]?.out_of_stock) ||
+    Number(plates[activePlate]?.out_of_stock) === 1;
 
 
 
@@ -469,6 +476,13 @@ export default function ProductDetails({
                   dangerouslySetInnerHTML={{ __html: description }}
                 />
               )}
+              {isOutOfStock && (
+                <OutOfStockNotice>
+                  {restaurant.activeLanguage === "en"
+                    ? "Out of stock"
+                    : "غير متوفر حالياً"}
+                </OutOfStockNotice>
+              )}
 
               {formSchema?.components && <ProductForm formSchema={formSchema} onPriceChange={handlePriceChange} formData={formData} setFormData={setFormData} basePrice={basePrice} formErrors={formErrors} />}
               <InstructionContainer activeLanguage={restaurant.activeLanguage}>
@@ -483,7 +497,7 @@ export default function ProductDetails({
             </ItemInfo>
           </InfoContainer>
         </ItemInfoWrapper>
-        {features?.cart &&
+        {features?.cart && !isOutOfStock &&
           <ButtonWrapper CloseAnimation={CloseAnimation}>
             <QuantityWrapper CloseAnimation={CloseAnimation}>
               <Plus onClick={handleIncrement}>+</Plus>

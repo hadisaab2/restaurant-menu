@@ -74,13 +74,14 @@ export default function HorizantalWithoutIcon({
               activeLanuguage={activeLanuguage}
               activeCategory={activeCategory}
               categoryId={category.id}
+              isAllItems={category.isAllItems}
               onClick={() => itemClick(category.id,index)}
               index={index}
               ref={(el) => (carouselRefs.current[index] = el)} // Assign ref to each category item
             >
-              <CategoryWrapper activeCategory={activeCategory} categoryId={category.id}>
+              <CategoryWrapper activeCategory={activeCategory} categoryId={category.id} isAllItems={category.isAllItems}>
                 <TextContainer>
-                  <CategoryName activeCategory={activeCategory} categoryId={category.id}>
+                  <CategoryName activeCategory={activeCategory} categoryId={category.id} isAllItems={category.isAllItems}>
                     {activeLanuguage === "en"
                       ? category.en_category
                       : category.ar_category}

@@ -22,6 +22,7 @@ export const useLogCategory = ({ onSuccess, CategoryId }) => {
     queryKey: [`logcategories-${CategoryId}`],
     onSuccess,
     refetchOnWindowFocus: false,
+    enabled: !!CategoryId && CategoryId !== "all-items",
   });
 
   return { error, isLoading, status, response: data?.data, refetch };

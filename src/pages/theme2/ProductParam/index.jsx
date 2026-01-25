@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { AddToCart, BackBtn, BackIcon, ButtonWrapper, Carousel, CarouselBack, CarouselForward, CarouselItem, Category, CopyButton, DiscountPrice, FakeContainer, Image, ImagesContainer, ImageWrapper, InfoContainer, Instruction, InstructionContainer, InstructionLabel, ItemCategory, ItemDescription, ItemInfo, ItemInfoWrapper, ItemName, ItemPrice, Loader, LoaderWrapper, Minus, Plus, PriceContainer, Quantity, QuantityPrice, QuantityWrapper, SearchProductContainer } from './styles'
+import { AddToCart, BackBtn, BackIcon, ButtonWrapper, Carousel, CarouselBack, CarouselForward, CarouselItem, Category, CopyButton, DiscountPrice, FakeContainer, Image, ImagesContainer, ImageWrapper, InfoContainer, Instruction, InstructionContainer, InstructionLabel, ItemCategory, ItemDescription, ItemInfo, ItemInfoWrapper, ItemName, ItemPrice, Loader, LoaderWrapper, Minus, Plus, PriceContainer, Quantity, QuantityPrice, QuantityWrapper, SearchProductContainer, OutOfStockNotice } from './styles'
 import { useGetProduct } from '../../../apis/products/getProduct';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
@@ -80,6 +80,9 @@ export default function ProductParam({ productId, setSearchParams, searchParams 
     const [totalPrice, setTotalPrice] = useState(parseFloat(fetchedProduct?.en_price)); // Example base price
     const [instruction, setInstruction] = useState(""); // Example base price
     const [finalDiscount, setfinalDiscount] = useState(0); // Example base price
+    const isOutOfStock =
+        Boolean(fetchedProduct?.out_of_stock) ||
+        Number(fetchedProduct?.out_of_stock) === 1;
 
 
     const handlePriceChange = (newPrice) => {
@@ -358,6 +361,13 @@ export default function ProductParam({ productId, setSearchParams, searchParams 
                                 <ItemDescription activeLanguage={restaurant.activeLanguage}
                                     dangerouslySetInnerHTML={{ __html: description }}
                                 />
+                                {isOutOfStock && (
+                                    <OutOfStockNotice>
+                                        {restaurant.activeLanguage === "en"
+                                            ? "Out of stock"
+                                            : "غير متوفر حالياً"}
+                                    </OutOfStockNotice>
+                                )}
                                 {formSchema?.components && <ProductForm formSchema={formSchema} onPriceChange={handlePriceChange} formData={formData} setFormData={setFormData} basePrice={fetchedProduct?.en_price} formErrors={formErrors} />}
                                 <InstructionContainer activeLanguage={restaurant.activeLanguage}>
                                     <InstructionLabel>{restaurant.activeLanguage == "en"
@@ -372,6 +382,7 @@ export default function ProductParam({ productId, setSearchParams, searchParams 
                             </ItemInfo>
                         </InfoContainer>
                     </ItemInfoWrapper>
+                    {!isOutOfStock && (
                     <ButtonWrapper CloseAnimation={CloseAnimation}>
                         <QuantityWrapper CloseAnimation={CloseAnimation}>
                             <Plus onClick={handleIncrement}>+</Plus>
@@ -387,6 +398,7 @@ export default function ProductParam({ productId, setSearchParams, searchParams 
 
                         </AddToCart>
                     </ButtonWrapper>
+                    )}
                 </>
                 }
             </SearchProductContainer>

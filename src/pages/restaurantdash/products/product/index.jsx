@@ -9,6 +9,8 @@ import {
   Category,
   DeleteButton,
   Delete,
+  StatusBadges,
+  StatusBadge,
 } from "./styles";
 import { useDeleteProductQuery } from "../../../../apis/products/deleteProduct";
 import { LANGUAGES } from "../../../../global";
@@ -44,6 +46,14 @@ export default function Product({
           <Category>
             { userInformation.Lang === LANGUAGES.AR ?category.ar_category:category.en_category }
           </Category>
+          {(product?.hide || product?.out_of_stock) && (
+            <StatusBadges>
+              {product?.hide && <StatusBadge $variant="hidden">Hidden</StatusBadge>}
+              {product?.out_of_stock && (
+                <StatusBadge $variant="out">Out of stock</StatusBadge>
+              )}
+            </StatusBadges>
+          )}
           <DeleteButton
             onClick={() => {
               setSelectedIdForAction(product.id);

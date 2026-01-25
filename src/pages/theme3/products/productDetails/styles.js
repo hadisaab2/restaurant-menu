@@ -441,7 +441,7 @@ export const InfoContainer = styled.div`
 
 export const ItemInfo = styled.div`
   width: 90%;
-  display: ${(props) => (props.CloseAnimation ? "flex" : "none")};
+  display: flex;
   align-items: ${props => props.activeLanguage == "en" ? "flex-start" : "flex-end"};;
   flex-direction: column;
   /* align-items: center; */
@@ -449,6 +449,9 @@ export const ItemInfo = styled.div`
   margin-top: 20px;
   padding-bottom: 10vh;
   color: ${(props) => props.theme.textColor};
+  opacity: ${(props) => (props.CloseAnimation ? 1 : 0)};
+  transition: opacity 0.3s ease;
+  pointer-events: ${(props) => (props.CloseAnimation ? "auto" : "none")};
   @media (min-width: 1024px) {
         width: 50%;
     }
@@ -475,6 +478,18 @@ export const ItemDescription = styled.span`
   text-align:${props => props.activeLanguage == "en" ? "left" : "right"};
   direction: ${props => props.activeLanguage == "en" ? "ltr" : "rtl"} ;
   opacity: 0.8;
+`;
+
+export const OutOfStockNotice = styled.div`
+  margin-top: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  color: ${(props) => props.theme.popupbackgroundColor};
+  background: ${(props) => props.theme.mainColor};
+  border: 0;
+  padding: 4px 10px;
+  border-radius: 999px;
+  align-self: flex-start;
 `;
 
 export const PriceContainer = styled.div`
@@ -524,10 +539,13 @@ export const ButtonWrapper = styled.div`
   animation: ${AddToCartAnimation} 0.7s ease-in-out;
   background-color: ${(props) => props.theme.backgroundColor};
 
-  display: ${(props) => (props.CloseAnimation ? "flex" : "none")};
+  display: flex;
   box-shadow: 0px -3px 5px rgba(180, 180, 180, 0.1); /* Slight shadow on the top */
   padding-bottom: 10px;
   margin-top: 30px;
+  opacity: ${(props) => (props.CloseAnimation ? 1 : 0)};
+  transition: opacity 0.3s ease;
+  pointer-events: ${(props) => (props.CloseAnimation ? "auto" : "none")};
   @media (min-width: 1024px) {
         width: 50%;
     }
@@ -556,12 +574,15 @@ right: 10%;
 
 
 export const QuantityWrapper = styled.div`
-  display: ${(props) => (props.CloseAnimation ? "flex" : "none")};
+  display: flex;
   flex-direction: row;
   height: 45px;
   color: ${(props) => props.theme.mainColor};
   width: 60%;
   z-index: 2000;
+  opacity: ${(props) => (props.CloseAnimation ? 1 : 0)};
+  transition: opacity 0.3s ease;
+  pointer-events: ${(props) => (props.CloseAnimation ? "auto" : "none")};
 
 `;
 

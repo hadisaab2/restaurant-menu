@@ -67,10 +67,20 @@ export const CategoryWrapper = styled.div`
   align-items: center;
   justify-content: center;
   flex-direction: column;
-  background-color:${props => props.categoryId == props.activeCategory ? props.theme.categoryActive : props.theme.categoryUnActive};
+  background-color:${props =>
+    props.isAllItems
+      ? props.theme.mainColor
+      : props.categoryId == props.activeCategory
+      ? props.theme.categoryActive
+      : props.theme.categoryUnActive};
   box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.1);
   transition: 0.2s all ease-in-out;
-  color:${props => props.categoryId == props.activeCategory ? "white" : "black"};//edit thiss
+  color:${props =>
+    props.isAllItems
+      ? props.theme.popupbuttonText
+      : props.categoryId == props.activeCategory
+      ? "white"
+      : "black"};//edit thiss
 `;
 
 
@@ -112,6 +122,7 @@ export const CategoryName = styled.span`
     white-space: normal;
     word-wrap: break-word;
     font-size: 12px;
+    color: ${props => (props.isAllItems ? props.theme.popupbuttonText : "inherit")};
   user-select: none !important;
   -webkit-user-select: none !important;  /* For Safari (iOS) */
   -moz-user-select: none !important;     /* For Firefox */

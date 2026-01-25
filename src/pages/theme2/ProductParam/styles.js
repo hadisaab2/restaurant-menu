@@ -341,6 +341,18 @@ export const ItemDescription = styled.span`
   opacity: 0.8;
 `;
 
+export const OutOfStockNotice = styled.div`
+  margin-top: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  color: ${(props) => props.theme.mainColor};
+  background: ${(props) => props.theme.backgroundColor};
+  border: 0;
+  padding: 4px 10px;
+  border-radius: 999px;
+  align-self: flex-start;
+`;
+
 export const PriceContainer = styled.div`
 display: flex;
 flex-direction: row;

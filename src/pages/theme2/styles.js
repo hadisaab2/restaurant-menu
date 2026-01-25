@@ -68,7 +68,7 @@ color:white;
 font-size: 25px;
 cursor: pointer;
 `;
-export const Number = styled.div`
+export const CartCount = styled.div`
 position: absolute;
 left: -5px;
 top:-5px;

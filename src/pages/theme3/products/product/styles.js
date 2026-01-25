@@ -146,3 +146,36 @@ padding-right: 5px;
  border-radius: 4px;
 
 `;
+
+export const QuickAddButton = styled.button`
+  position: absolute;
+  bottom: 8px;
+  right: ${(props) => (props.activeLanuguage === "en" ? "8px" : "auto")};
+  left: ${(props) => (props.activeLanuguage === "en" ? "auto" : "8px")};
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 0;
+  background-color: ${(props) => props.theme.mainColor};
+  color: ${(props) => props.theme.popupbuttonText};
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  opacity: ${(props) => (props.disabled ? 0.5 : 1)};
+  pointer-events: ${(props) => (props.disabled ? "none" : "auto")};
+`;
+
+export const OutOfStockBadge = styled.div`
+  position: absolute;
+  bottom: 8px;
+  right: ${(props) => (props.activeLanuguage === "en" ? "8px" : "auto")};
+  left: ${(props) => (props.activeLanuguage === "en" ? "auto" : "8px")};
+  font-size: 11px;
+  font-weight: 600;
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: ${(props) => props.theme.backgroundColor};
+  color: ${(props) => props.theme.mainColor};
+  border: 0;
+`;

@@ -241,7 +241,7 @@ export const MobileMenu = styled.div`
     props.activeLanguage === "ar"
       ? "-2px 0 20px rgba(0, 0, 0, 0.15)"
       : "2px 0 20px rgba(0, 0, 0, 0.15)"};
-  z-index: 1000;
+  z-index: 5000;
   padding: 0;
   padding-top: 50px;
   display: flex;

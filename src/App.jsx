@@ -16,7 +16,11 @@ function App() {
       <PersistGate loading={null} persistor={persistor}>
         <QueryClientProvider client={queryClient}>
           <ApplicationRoutes />
-          <ToastContainer />
+          <ToastContainer
+            position="bottom-center"
+            autoClose={1500}
+            style={{ marginBottom: "20px" }}
+          />
             {/* <HelmetFn /> */}
         </QueryClientProvider>
       </PersistGate>

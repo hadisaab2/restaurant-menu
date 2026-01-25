@@ -25,6 +25,9 @@ export const DELETE_PRODUCT_URL = (id) =>
   export const GET_PRODUCTS_URL = (categoryId,page) =>
   `${REACT_APP_BASE_URL}/products?categoryId=${categoryId}&page=${page}`;
 
+export const GET_PRODUCTS_BY_RESTAURANT_URL = (restaurantId, page) =>
+  `${REACT_APP_BASE_URL}/products?restaurantId=${restaurantId}&page=${page}`;
+
 
 export const ADD_CATEGORY_URL = `${REACT_APP_BASE_URL}/categories`;
 export const GET_CATEGORIES_URL = (restaurantId) =>

@@ -193,7 +193,8 @@ export default function Restaurants() {
     IsValid,
     en_slogan,
     ar_slogan,
-    default_language
+    default_language,
+    show_all_items_category
   }) => {
     const theme = JSON.parse(themeString);
     const features = JSON.parse(featureString);
@@ -215,7 +216,8 @@ export default function Restaurants() {
       IsValid,
       en_slogan,
       ar_slogan,
-      default_language
+      default_language,
+      show_all_items_category
     });
     setIsEditMode(true);
     setTemplate(template_id);
@@ -236,6 +238,7 @@ export default function Restaurants() {
     setValue("en_slogan", en_slogan || "");
     setValue("ar_slogan", ar_slogan || "");
     setValue("default_language", default_language || "en");
+    setValue("show_all_items_category", !!show_all_items_category);
     
     // Set theme colors in form
     Object.keys(theme).forEach((key) => {
@@ -285,6 +288,10 @@ export default function Restaurants() {
           has_slider: data.has_slider === true || data.has_slider === "true" || data.has_slider === 1,
           is_valid: data.is_valid === true || data.is_valid === "true" || data.is_valid === 1,
           default_language: data.default_language || "en", // Ensure default_language is always set
+          show_all_items_category:
+            data.show_all_items_category === true ||
+            data.show_all_items_category === "true" ||
+            data.show_all_items_category === 1,
         };
         console.log("Formatted form data:", formData);
         if (selectedProduct) {
@@ -688,6 +695,21 @@ export default function Restaurants() {
                   );
                 })}
             </FeaturesBlock>
+            {Number(template) === 3 && (
+              <FormControl component="fieldset" style={{ display: "flex", flexDirection: "row" }}>
+                <FormLabel component="legend">Theme 3 Only</FormLabel>
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      {...register("show_all_items_category")}
+                      defaultChecked={getValues("show_all_items_category") ?? false}
+                      onChange={(e) => setValue("show_all_items_category", e.target.checked)}
+                    />
+                  }
+                  label="Show All Items Category"
+                />
+              </FormControl>
+            )}
             <button onClick={() => console.log(getValues("features"))}>hadi</button>
             <LoadingButton
               onClick={handleAddRestaurant}

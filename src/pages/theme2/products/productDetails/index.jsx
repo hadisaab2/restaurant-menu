@@ -34,6 +34,7 @@ import {
   QuantityPrice,
   DiscountPrice,
   PriceContainer,
+  OutOfStockNotice,
 } from "./styles";
 import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -301,6 +302,9 @@ export default function ProductDetails({
   }
 
   let features = JSON.parse(restaurant.features)
+  const isOutOfStock =
+    Boolean(plates[activePlate]?.out_of_stock) ||
+    Number(plates[activePlate]?.out_of_stock) === 1;
 
 
 
@@ -406,6 +410,13 @@ export default function ProductDetails({
                   dangerouslySetInnerHTML={{ __html: description }}
                 />
               )}
+              {isOutOfStock && (
+                <OutOfStockNotice>
+                  {restaurant.activeLanguage === "en"
+                    ? "Out of stock"
+                    : "غير متوفر حالياً"}
+                </OutOfStockNotice>
+              )}
 
               {formSchema?.components && <ProductForm formSchema={formSchema} onPriceChange={handlePriceChange} formData={formData} setFormData={setFormData} basePrice={basePrice} formErrors={formErrors} />}
               <InstructionContainer activeLanguage={restaurant.activeLanguage}>
@@ -420,7 +431,7 @@ export default function ProductDetails({
             </ItemInfo>
           </InfoContainer>
         </ItemInfoWrapper>
-        {features?.cart &&
+        {features?.cart && !isOutOfStock &&
           <ButtonWrapper CloseAnimation={CloseAnimation}>
             <QuantityWrapper CloseAnimation={CloseAnimation}>
               <Plus onClick={handleIncrement}>+</Plus>

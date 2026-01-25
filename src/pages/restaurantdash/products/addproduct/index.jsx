@@ -67,6 +67,8 @@ export default function AddProduct({
   const [coverId, setCoverId] = useState(null);
   const [isNew, setIsNew] = useState(false); // Default false
   const [squareDimension, setSquareDimension] = useState(userInformation?.square_dimension); // Default false
+  const [isHidden, setIsHidden] = useState(false);
+  const [isOutOfStock, setIsOutOfStock] = useState(false);
 
   const [jsonString, setJsonString] = useState("{}");
   const [activeTab,setActiveTab]=useState("productinfo")
@@ -230,9 +232,13 @@ export default function AddProduct({
       selectedProduct.form_json && setJsonString(selectedProduct.form_json)
       setValue("new", selectedProduct.new);
       setValue("square_dimension", selectedProduct.square_dimension);
+      setValue("hide", selectedProduct.hide);
+      setValue("out_of_stock", selectedProduct.out_of_stock);
 
       setIsNew(selectedProduct.new)
       setSquareDimension(selectedProduct.square_dimension)
+      setIsHidden(Boolean(selectedProduct.hide));
+      setIsOutOfStock(Boolean(selectedProduct.out_of_stock));
 
     }
   }, []);
@@ -256,7 +262,9 @@ export default function AddProduct({
           cover_id: coverId,
           form_json:jsonString,
           new:isNew,
-          square_dimension:squareDimension
+          square_dimension:squareDimension,
+          hide: isHidden,
+          out_of_stock: isOutOfStock
         });
       } else {
         handleApiCall({
@@ -266,7 +274,9 @@ export default function AddProduct({
           cover_id: coverId,
           form_json:jsonString,
           new:isNew,
-          square_dimension:squareDimension
+          square_dimension:squareDimension,
+          hide: isHidden,
+          out_of_stock: isOutOfStock
         });
       }
     })();
@@ -306,6 +316,12 @@ export default function AddProduct({
   };
   const handleSquareDimension = (event) => {
     setSquareDimension(!squareDimension); // Toggle between true/false
+  };
+  const handleHidden = () => {
+    setIsHidden(!isHidden);
+  };
+  const handleOutOfStock = () => {
+    setIsOutOfStock(!isOutOfStock);
   };
 
   
@@ -547,6 +563,21 @@ export default function AddProduct({
                 label="Square Dimension"
               />
           </FormControl>          
+          <FormControl component="fieldset">
+              <FormLabel component="legend">Visibility</FormLabel>
+              <FormControlLabel
+                control={<Checkbox checked={isHidden} onChange={handleHidden} />}
+                label="Hide product"
+              />
+          </FormControl>
+
+          <FormControl component="fieldset">
+              <FormLabel component="legend">Stock</FormLabel>
+              <FormControlLabel
+                control={<Checkbox checked={isOutOfStock} onChange={handleOutOfStock} />}
+                label="Out of stock"
+              />
+          </FormControl>
         <Row>
           <LoadingButton
             loading={isPending || isEditing}

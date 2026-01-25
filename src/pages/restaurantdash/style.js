@@ -53,9 +53,10 @@ export const Tab = styled.div`
   align-items: center;
   gap: 5px;
   color: black;
-  cursor: pointer;
+  cursor: ${(props) => (props.$disabled ? "not-allowed" : "pointer")};
+  opacity: ${(props) => (props.$disabled ? 0.6 : 1)};
   &:hover {
-    background-color: #edeeef;
+    background-color: ${(props) => (props.$disabled ? "transparent" : "#edeeef")};
   }
   @media (max-width: ${breakingPoints.sm}px) {
     font-size: 18px;
@@ -208,6 +209,29 @@ export const MobileSidebar = styled.div`
   @media (max-width: ${breakingPoints.sm}px) {
     display: flex;
   }
+`;
+
+export const AccessNotice = styled.div`
+  width: 90%;
+  margin-top: 24px;
+  background: #ffffff;
+  border-radius: 12px;
+  border: 1px solid rgba(148, 163, 184, 0.3);
+  padding: 24px;
+  box-shadow: 0 6px 16px rgba(15, 23, 42, 0.06);
+`;
+
+export const AccessNoticeTitle = styled.h3`
+  margin: 0 0 8px 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #0f172a;
+`;
+
+export const AccessNoticeText = styled.p`
+  margin: 0;
+  font-size: 14px;
+  color: #475569;
 `;
 
 export const MobileSidebarTop = styled.div`

@@ -19,7 +19,7 @@ import { convertPrice } from "../../../../utilities/convertPrice";
 const _ = require('lodash');
 
 const Product = React.forwardRef(
-  ({ plate, setactivePlate, activePlate, index, showPopup, setSearchParams, searchParams, activeCategoryId, categories }, ref) => {
+  ({ plate, setactivePlate, activePlate, index, showPopup, setSearchParams, searchParams, activeCategoryId, categories, disableDetails }, ref) => {
     const { restaurantName: paramRestaurantName } = useParams();
 
     const hostname = window.location.hostname;
@@ -45,7 +45,9 @@ const Product = React.forwardRef(
     };
     const plateHandle = () => {
       if (activePlate == null && imageLoaded && !showPopup) {
-        setactivePlate(index);
+        if (!disableDetails) {
+          setactivePlate(index);
+        }
         const newParams = new URLSearchParams(searchParams);
         newParams.set("productId", plate?.id);
         // Push updated URL without reloading or navigating
