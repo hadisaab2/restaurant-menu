@@ -149,7 +149,7 @@ const allItemsSections = React.useMemo(() => {
     .filter((cat) => !cat.isAllItems)
     .sort(
       (a, b) =>
-        (a.priority || 0) - (b.priority || 0) ||
+        (b.priority || 0) - (a.priority || 0) ||
         (a.id || 0) - (b.id || 0)
     );
   return categoriesOnly
@@ -164,7 +164,7 @@ const allItemsSections = React.useMemo(() => {
         })
         .sort(
           (a, b) =>
-            (a.priority || 0) - (b.priority || 0) ||
+            (b.priority || 0) - (a.priority || 0) ||
             (a.id || 0) - (b.id || 0)
         );
       return { category, items };

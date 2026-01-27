@@ -52,11 +52,11 @@ export default function Theme2() {
     en_category: "All Items",
     ar_category: "كل الأصناف",
     isAllItems: true,
-    priority: -1,
+    priority: 999999,
   };
-  // Sort categories by priority ASC, then id ASC to match display order
+  // Sort categories by priority DESC, then id ASC to match display order
   const sortedCategories = [...(restaurant?.categories || [])].sort(
-    (a, b) => (a.priority || 0) - (b.priority || 0) || (a.id || 0) - (b.id || 0)
+    (a, b) => (b.priority || 0) - (a.priority || 0) || (a.id || 0) - (b.id || 0)
   );
   const theme2Categories = showAllItemsCategory
     ? [allItemsCategory, ...sortedCategories]

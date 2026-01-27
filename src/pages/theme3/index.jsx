@@ -63,9 +63,13 @@ export default function Theme3() {
     isAllItems: true,
     priority: 999999,
   };
+  // Sort categories by priority DESC, then id ASC
+  const sortedCategories = [...(restaurant?.categories || [])].sort(
+    (a, b) => (b.priority || 0) - (a.priority || 0) || (a.id || 0) - (b.id || 0)
+  );
   const theme3Categories = showAllItemsCategory
-    ? [allItemsCategory, ...(restaurant?.categories || [])]
-    : restaurant?.categories || [];
+    ? [allItemsCategory, ...sortedCategories]
+    : sortedCategories;
 
   const handleLanguage = (lang) => {
     dispatch(changelanuage({ name: restaurantName, activeLanguage: lang }));
