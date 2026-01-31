@@ -69,6 +69,7 @@ export default function AddProduct({
   const [squareDimension, setSquareDimension] = useState(userInformation?.square_dimension); // Default false
   const [isHidden, setIsHidden] = useState(false);
   const [isOutOfStock, setIsOutOfStock] = useState(false);
+  const [isFeatured, setIsFeatured] = useState(false);
 
   const [jsonString, setJsonString] = useState("{}");
   const [activeTab,setActiveTab]=useState("productinfo")
@@ -234,11 +235,13 @@ export default function AddProduct({
       setValue("square_dimension", selectedProduct.square_dimension);
       setValue("hide", selectedProduct.hide);
       setValue("out_of_stock", selectedProduct.out_of_stock);
+      setValue("featured", selectedProduct.featured);
 
       setIsNew(selectedProduct.new)
       setSquareDimension(selectedProduct.square_dimension)
       setIsHidden(Boolean(selectedProduct.hide));
       setIsOutOfStock(Boolean(selectedProduct.out_of_stock));
+      setIsFeatured(Boolean(selectedProduct.featured));
 
     }
   }, []);
@@ -264,7 +267,8 @@ export default function AddProduct({
           new:isNew,
           square_dimension:squareDimension,
           hide: isHidden,
-          out_of_stock: isOutOfStock
+          out_of_stock: isOutOfStock,
+          featured: isFeatured
         });
       } else {
         handleApiCall({
@@ -276,7 +280,8 @@ export default function AddProduct({
           new:isNew,
           square_dimension:squareDimension,
           hide: isHidden,
-          out_of_stock: isOutOfStock
+          out_of_stock: isOutOfStock,
+          featured: isFeatured
         });
       }
     })();
@@ -322,6 +327,9 @@ export default function AddProduct({
   };
   const handleOutOfStock = () => {
     setIsOutOfStock(!isOutOfStock);
+  };
+  const handleFeatured = () => {
+    setIsFeatured(!isFeatured);
   };
 
   
@@ -576,6 +584,14 @@ export default function AddProduct({
               <FormControlLabel
                 control={<Checkbox checked={isOutOfStock} onChange={handleOutOfStock} />}
                 label="Out of stock"
+              />
+          </FormControl>
+
+          <FormControl component="fieldset">
+              <FormLabel component="legend">Featured</FormLabel>
+              <FormControlLabel
+                control={<Checkbox checked={isFeatured} onChange={handleFeatured} />}
+                label="Featured product"
               />
           </FormControl>
         <Row>

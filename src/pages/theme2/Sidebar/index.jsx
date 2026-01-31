@@ -96,7 +96,15 @@ export default function SideBar({
                     categoryId={category.id}
                   >
                     <Icon
-                      src={`https://storage.googleapis.com/ecommerce-bucket-testing/${category.image_url}`}
+                      src={
+                        category.image_url 
+                          ? `https://storage.googleapis.com/ecommerce-bucket-testing/${category.image_url}`
+                          : category.isAllItems && restaurant?.logoURL
+                          ? `https://storage.googleapis.com/ecommerce-bucket-testing/${restaurant.logoURL}`
+                          : category.isAllItems && restaurant?.cover_url
+                          ? `https://storage.googleapis.com/ecommerce-bucket-testing/${restaurant.cover_url}`
+                          : ""
+                      }
                     />
                   </IconWrapper>}
 

@@ -49,6 +49,7 @@ const addProduct = async (payload) => {
     formData.append(`square_dimension`, payload.square_dimension);
     formData.append(`hide`, payload.hide);
     formData.append(`out_of_stock`, payload.out_of_stock);
+    formData.append(`featured`, payload.featured);
 
     const response = await axios.post(url, formData, {
       headers: {

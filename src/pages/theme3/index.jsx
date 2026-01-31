@@ -1,13 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
 import {
   BlurOverlay,
-  Cart,
-  CartBtn,
   Container,
-  DetailsBtn,
-  Location,
   MenuWrapper,
-  CartCount,
   ParamProductContainer,
 } from "./styles";
 import Header from "./Header";
@@ -28,6 +23,8 @@ import CategoriesGrid from "./CategoriesGrid";
 import CategoryHeader from "./CategoryHeader";
 import HomePage from "./HomePage";
 import NavigationBar from "./NavigationBar";
+import BottomTabBar from "./BottomTabBar";
+import CartAnimation from "./CartAnimation";
 
 export default function Theme3() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -108,7 +105,7 @@ export default function Theme3() {
 
   const handleBranchesClick = () => {
     window.history.pushState({}, "");
-    popupHandler("contact");
+    popupHandler("location");
   };
 
   const handleFeedbackClick = () => {
@@ -156,6 +153,8 @@ export default function Theme3() {
   const prevViewModeRef = useRef(viewMode);
   const prevPopupRef = useRef(showPopup);
   const prevSidebarRef = useRef(showSidebar);
+  const [cartAnimationTrigger, setCartAnimationTrigger] = useState(0);
+  const [cartAnimationSource, setCartAnimationSource] = useState(null);
 
   const itemCount = useSelector((state) => {
     const items = state.cart[restaurantName] || []; // Access cart by restaurant name, default to empty array if not found
@@ -325,6 +324,8 @@ export default function Theme3() {
     const prevSidebar = prevSidebarRef.current;
     if (prevSidebar !== showSidebar) {
       if (showSidebar) {
+        // Close any opened popup when opening sidebar
+        popupHandler(null);
         window.history.pushState({ sidebar: true }, "", window.location.href);
       }
       prevSidebarRef.current = showSidebar;
@@ -407,6 +408,7 @@ export default function Theme3() {
           activeCategory={activeCategory}
           setshowSidebar={setshowSidebar}
           showSidebar={showSidebar}
+          popupHandler={popupHandler}
         />
       )}
       
@@ -436,6 +438,8 @@ export default function Theme3() {
         {!isFeedbackPage && !isContactPage && viewMode === "home" && (
           <HomePage
             onExploreClick={handleExploreClick}
+            setSearchParams={setSearchParams}
+            searchParams={searchParams}
             categories={theme3Categories}
           />
         )}
@@ -499,23 +503,6 @@ export default function Theme3() {
           />
         )}
       </MenuWrapper>
-      {!isFeedbackPage && !isContactPage && viewMode !== "home" && (
-        <>
-          <DetailsBtn onClick={() => {
-            window.history.pushState({}, ""); // Add a history entry
-            popupHandler("location")
-          }}>
-            <Location />
-          </DetailsBtn>
-          {features?.cart &&<CartBtn onClick={() => {
-            window.history.pushState({}, ""); // Add a history entry
-            popupHandler("cart")
-          }}>
-            <CartCount>{itemCount}</CartCount>
-            <Cart />
-          </CartBtn>}
-        </>
-      )}
       <LocationPopup
         restaurant={restaurant}
         showPopup={showPopup}
@@ -547,9 +534,55 @@ export default function Theme3() {
         onCategoryClick={handleCategoryClick}
         onFeedbackClick={handleFeedbackClick}
         onContactClick={handleContactClick}
+        onBranchesClick={() => {
+          window.history.pushState({}, "");
+          popupHandler("location");
+        }}
+        branches={restaurant?.branches || []}
       />
       {productId &&<ProductParam productId={productId} searchParams={searchParams} setSearchParams={setSearchParams} />}
       {features?.install_app && <InstallPrompt showInstallPopup={showInstallPopup} onInstall={handleInstallClick} restaurantName={restaurantName} onDismiss={() => setShowInstallPopup(false)} />}
+      
+      {/* Bottom Tab Bar - only show when not in product details, feedback, or contact pages */}
+      {!productId && !isFeedbackPage && !isContactPage && (
+        <BottomTabBar
+          activeView={viewMode}
+          onHomeClick={handleBackToHome}
+          onCategoriesClick={() => {
+            if (viewMode === "products") {
+              handleBackToCategories();
+            } else {
+              setViewMode("categories");
+              setactiveCategory(null);
+              const newParams = new URLSearchParams(searchParams);
+              newParams.delete("categoryId");
+              setSearchParams(newParams);
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+          }}
+          onCartClick={() => {
+            if (features?.cart) {
+              popupHandler("cart");
+            }
+          }}
+          onBranchesClick={() => {
+            window.history.pushState({}, "");
+            popupHandler("location");
+          }}
+          onContactClick={handleContactClick}
+          restaurantName={restaurantName}
+          branches={restaurant?.branches || []}
+        />
+      )}
+
+      {/* Cart Animation */}
+      <CartAnimation
+        trigger={cartAnimationTrigger}
+        sourceElement={cartAnimationSource}
+        onComplete={() => {
+          setCartAnimationSource(null);
+        }}
+      />
 
     </Container>
   );

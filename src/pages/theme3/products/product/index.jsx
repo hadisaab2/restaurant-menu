@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import {
   Container,
   DiscountPrice,
@@ -24,7 +24,7 @@ import { toast } from "react-toastify";
 const _ = require('lodash');
 
 const Product = React.forwardRef(
-  ({ plate, setactivePlate, activePlate, index, showPopup, setSearchParams, searchParams, activeCategoryId, categories, disableDetails }, ref) => {
+  ({ plate, setactivePlate, activePlate, index, showPopup, setSearchParams, searchParams, activeCategoryId, categories, disableDetails, $isFeatured, onAddToCart }, ref) => {
     const { restaurantName: paramRestaurantName } = useParams();
 
     const hostname = window.location.hostname;
@@ -45,6 +45,7 @@ const Product = React.forwardRef(
       (state) => state.restaurant?.[restaurantName].activeLanguage
     );
     const [imageLoaded, setimageLoaded] = useState(false);
+    const containerRef = useRef(null);
     const handleImageLoaded = () => {
       setimageLoaded(true);
     };
@@ -55,7 +56,15 @@ const Product = React.forwardRef(
         }
         const newParams = new URLSearchParams(searchParams);
         newParams.set("productId", plate?.id);
-        // Push updated URL without reloading or navigating
+        // Preserve the categoryId we came from (either "all-items" or the specific category)
+        // This ensures the back button returns to the correct view
+        if (activeCategoryId === "all-items") {
+          newParams.set("categoryId", "all-items");
+        } else if (activeCategoryId && activeCategoryId !== "all-items") {
+          newParams.set("categoryId", activeCategoryId);
+        }
+        // Update React state first, then push to history
+        setSearchParams(newParams);
         window.history.pushState({}, "", `?${newParams.toString()}`);
 
         document.body.style.overflow = "hidden";
@@ -80,14 +89,16 @@ const Product = React.forwardRef(
         currencySymbol = ""; // No currency or unsupported currency
     }
 
-    const activeCategory = categories.find((category) => category.id == activeCategoryId)
+    // If activeCategoryId is "all-items", use the product's actual category_id
+    const categoryIdToUse = activeCategoryId === "all-items" ? plate.category_id : activeCategoryId;
+    const activeCategory = categories.find((category) => category.id == categoryIdToUse);
 
     let finalDiscount;
 
-    if (parseFloat(activeCategory.discount) === 0.00) {
-      finalDiscount = parseFloat(plate.discount);
+    if (activeCategory && parseFloat(activeCategory.discount || 0) !== 0.00) {
+      finalDiscount = parseFloat(activeCategory.discount || 0);
     } else {
-      finalDiscount = parseFloat(activeCategory.discount);
+      finalDiscount = parseFloat(plate.discount || 0);
     }
 
     const features = JSON.parse(restaurant?.features || "{}");
@@ -103,6 +114,7 @@ const Product = React.forwardRef(
     const hasForm = hasProductForm || hasCategoryForm;
 
     const handleQuickAdd = (event) => {
+      event.preventDefault();
       event.stopPropagation();
       if (!features?.cart || isOutOfStock) return;
       if (hasForm) {
@@ -112,6 +124,12 @@ const Product = React.forwardRef(
       const basePrice = parseFloat(plate?.en_price || "0");
       const discountedPrice = basePrice * (1 - parseFloat(finalDiscount) / 100);
       dispatch(addToCart(restaurantName, plate, 1, {}, discountedPrice, ""));
+      
+      // Trigger cart animation
+      if (onAddToCart && containerRef.current) {
+        onAddToCart(containerRef.current);
+      }
+      
       toast.success(
         restaurant?.activeLanguage === "en"
           ? "Added to cart"
@@ -120,7 +138,7 @@ const Product = React.forwardRef(
     };
     console.log(coverIndex + "coveerrrrindexx")
     return (
-      <Container index={index} activePlate={activePlate} className="lazy-load">
+      <Container ref={containerRef} data-product-container index={index} activePlate={activePlate} className="lazy-load" $isFeatured={$isFeatured}>
         <Wrapper>
           {!imageLoaded && (
             <LoaderWrapper>

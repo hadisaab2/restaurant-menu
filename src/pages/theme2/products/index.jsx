@@ -3,10 +3,15 @@ import { Container, ProductWrapper } from "./styles";
 import * as AllStyles from "./allItemsStyles";
 import Product from "./product";
 import ProductDetails from "./productDetails";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { useParams, useSearchParams } from "react-router-dom";
 import { useGetProducts } from "../../../apis/products/getProductsByCategory";
 import { useGetProductsByRestaurant } from "../../../apis/products/getProductsByRestaurant";
+import { addToCart } from "../../../redux/cart/cartActions";
+import { FaCartPlus } from "react-icons/fa";
+import { toast } from "react-toastify";
+import { convertPrice } from "../../../utilities/convertPrice";
+const _ = require('lodash');
 
 export default function Products({
   menu,
@@ -35,12 +40,14 @@ export default function Products({
   const restaurant = useSelector(
     (state) => state.restaurant?.[restaurantName]
   );
+  const dispatch = useDispatch();
 
   const [productPositions, setProductPositions] = useState([]); // x y and width of product
   const [productRefs, setProductRefs] = useState([]);
   const loadMoreRef = useRef();
   const allItemsLoadMoreRef = useRef();
   const isAllItemsCategory = activeCategory === "all-items";
+  const allItemsStyle = restaurant?.all_items_style || "grid";
   const categoryId = activeCategory && !isAllItemsCategory ? String(activeCategory) : null;
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage } =
     useGetProducts(categoryId);
@@ -276,23 +283,143 @@ console.log(filteredProducts)
                   ? section.category.en_category
                   : section.category.ar_category}
               </AllStyles.AllItemsTitle>
-              <ProductWrapper>
-                {section.items.map((plate, index) => (
-                  <Product
-                    key={plate.id}
-                    index={index}
-                    plate={plate}
-                    activePlate={null}
-                    setactivePlate={setactivePlate}
-                    showPopup={showPopup}
-                    setSearchParams={setSearchParams}
-                    searchParams={searchParams}
-                    activeCategoryId={section.category.id}
-                    categories={categories}
-                    disableDetails
-                  />
-                ))}
-              </ProductWrapper>
+              {allItemsStyle === "list" ? (
+                <AllStyles.AllItemsListWrapper>
+                  {section.items.map((plate, index) => {
+                    // Use the product's actual category for discount calculation
+                    const productCategory = categories.find((cat) => cat.id == plate.category_id);
+                    let finalDiscount;
+                    if (productCategory && parseFloat(productCategory.discount || 0) !== 0.00) {
+                      finalDiscount = parseFloat(productCategory.discount || 0);
+                    } else {
+                      finalDiscount = parseFloat(plate.discount || 0);
+                    }
+                    const discountedPrice = finalDiscount !== 0.00 
+                      ? parseFloat(plate.en_price) * (1 - parseFloat(finalDiscount) / 100) 
+                      : parseFloat(plate.en_price);
+                    let currencySymbol;
+                    switch (restaurant?.currency) {
+                      case "dollar": currencySymbol = "$"; break;
+                      case "lb": currencySymbol = "L.L."; break;
+                      case "gram": currencySymbol = "g"; break;
+                      case "kilogram": currencySymbol = "kg"; break;
+                      default: currencySymbol = "";
+                    }
+                    const coverIndex = plate.images?.findIndex(img => img.id == plate.new_cover_id) ?? 0;
+                    const imageUrl = plate.images?.[coverIndex]?.url;
+                    const features = JSON.parse(restaurant?.features || "{}");
+                    const isOutOfStock = Boolean(plate?.out_of_stock) || Number(plate?.out_of_stock) === 1;
+                    const hasProductForm = !_.isEmpty(plate?.form_json) && !_.isEmpty(JSON.parse(plate?.form_json || "{}"));
+                    const hasCategoryForm = !_.isEmpty(productCategory?.form_json) && !_.isEmpty(JSON.parse(productCategory?.form_json || "{}"));
+                    const hasForm = hasProductForm || hasCategoryForm;
+
+                    const handleQuickAdd = (event) => {
+                      event.preventDefault();
+                      event.stopPropagation();
+                      if (!features?.cart || isOutOfStock) return;
+                      if (hasForm) {
+                        const newParams = new URLSearchParams(searchParams);
+                        newParams.set("productId", plate.id);
+                        newParams.set("categoryId", "all-items");
+                        setSearchParams(newParams);
+                        window.history.pushState({}, "", `?${newParams.toString()}`);
+                        document.body.style.overflow = "hidden";
+                        return;
+                      }
+                      const basePrice = parseFloat(plate?.en_price || "0");
+                      const discountedPrice = basePrice * (1 - parseFloat(finalDiscount) / 100);
+                      dispatch(addToCart(restaurantName, plate, 1, {}, discountedPrice, ""));
+                      toast.success(
+                        activeLanguage === "en"
+                          ? "Added to cart"
+                          : "تمت الإضافة إلى السلة"
+                      );
+                    };
+
+                    return (
+                      <AllStyles.AllItemsListItemWrapper key={plate.id}>
+                        <AllStyles.AllItemsListItem 
+                          onClick={() => {
+                            const newParams = new URLSearchParams(searchParams);
+                            newParams.set("productId", plate.id);
+                            // Preserve "all-items" as categoryId so back button returns to All Items
+                            newParams.set("categoryId", "all-items");
+                            setSearchParams(newParams);
+                            window.history.pushState({}, "", `?${newParams.toString()}`);
+                            document.body.style.overflow = "hidden";
+                          }}
+                          style={{ cursor: "pointer" }}
+                        >
+                          <AllStyles.AllItemsListImage>
+                            {imageUrl && (
+                              <img 
+                                src={`https://storage.googleapis.com/ecommerce-bucket-testing/${imageUrl}`}
+                                alt={activeLanguage === "en" ? plate.en_name : plate.ar_name}
+                              />
+                            )}
+                          </AllStyles.AllItemsListImage>
+                          <AllStyles.AllItemsListDetails activeLanguage={activeLanguage}>
+                            <AllStyles.AllItemsListName>
+                              {activeLanguage === "en" ? plate.en_name : plate.ar_name}
+                            </AllStyles.AllItemsListName>
+                            {plate.en_price && (
+                              <AllStyles.AllItemsListPrice activeLanguage={activeLanguage}>
+                                {finalDiscount !== 0.00 && (
+                                  <AllStyles.AllItemsListDiscountPrice>
+                                    {convertPrice(parseFloat(plate.en_price), currencySymbol)}
+                                  </AllStyles.AllItemsListDiscountPrice>
+                                )}
+                                <span>
+                                  {convertPrice(discountedPrice, currencySymbol)}
+                                </span>
+                              </AllStyles.AllItemsListPrice>
+                            )}
+                          </AllStyles.AllItemsListDetails>
+                        </AllStyles.AllItemsListItem>
+                        {features?.cart &&
+                          (isOutOfStock ? (
+                            <AllStyles.AllItemsListOutOfStockBadge activeLanguage={activeLanguage}>
+                              {activeLanguage === "en"
+                                ? "Out of stock"
+                                : "غير متوفر حالياً"}
+                            </AllStyles.AllItemsListOutOfStockBadge>
+                          ) : (
+                            <AllStyles.AllItemsListQuickAddButton
+                              type="button"
+                              onClick={handleQuickAdd}
+                              activeLanguage={activeLanguage}
+                              title={
+                                activeLanguage === "en"
+                                  ? "Add to cart"
+                                  : "أضف إلى السلة"
+                              }
+                            >
+                              <FaCartPlus size={12} />
+                            </AllStyles.AllItemsListQuickAddButton>
+                          ))}
+                      </AllStyles.AllItemsListItemWrapper>
+                    );
+                  })}
+                </AllStyles.AllItemsListWrapper>
+              ) : (
+                <ProductWrapper>
+                  {section.items.map((plate, index) => (
+                    <Product
+                      key={plate.id}
+                      index={index}
+                      plate={plate}
+                      activePlate={null}
+                      setactivePlate={setactivePlate}
+                      showPopup={showPopup}
+                      setSearchParams={setSearchParams}
+                      searchParams={searchParams}
+                      activeCategoryId={section.category.id}
+                      categories={categories}
+                      disableDetails={false}
+                    />
+                  ))}
+                </ProductWrapper>
+              )}
             </AllStyles.AllItemsSection>
           ))}
           {hasNextPageAll && (

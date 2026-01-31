@@ -53,6 +53,7 @@ export default function Theme2() {
     ar_category: "كل الأصناف",
     isAllItems: true,
     priority: 999999,
+    image_url: restaurant?.logoURL || restaurant?.cover_url || null,
   };
   // Sort categories by priority DESC, then id ASC to match display order
   const sortedCategories = [...(restaurant?.categories || [])].sort(

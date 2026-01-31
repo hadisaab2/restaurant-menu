@@ -90,9 +90,14 @@ export default function ProductParam({ productId, setSearchParams, searchParams 
     const [CloseAnimation, setCloseAnimation] = useState(true);
     const [carouselIndex, setcarouselIndex] = useState(0);
     const handleBack = () => {
+        // Restore body overflow immediately so scrolling works when we return
+        document.body.style.overflow = "auto";
+        
         setTimeout(() => {
-            searchParams.delete("productId"); // Remove the parameter
-            setSearchParams(searchParams);
+            const newParams = new URLSearchParams(searchParams);
+            newParams.delete("productId"); // Remove the productId parameter
+            // Keep categoryId so we return to the correct view (All Items or specific category)
+            setSearchParams(newParams);
         }, 800);
 
         setCloseAnimation(false);

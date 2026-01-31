@@ -17,6 +17,7 @@ display: flex;
 flex-direction: column;
 height: 100%;
 position: relative;
+padding-bottom: 80px; /* Space for bottom tab bar */
 `;
 
 

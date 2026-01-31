@@ -3,7 +3,6 @@ import {
   Container,
   HeroSection,
   RestaurantLogo,
-  CategoriesLink,
   TopCategoriesSection,
   TopCategoryItem,
   TopCategoryContent,
@@ -41,12 +40,18 @@ import {
   WelcomeSection,
   WelcomeText,
   WelcomeLogo,
+  FeaturedProductsSection,
+  FeaturedProductsGrid,
+  ExploreButton,
+  SloganText,
 } from "./styles";
 import { useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { IoLocationOutline } from "react-icons/io5";
 import { FaPhone, FaWhatsapp, FaFacebook, FaInstagram, FaTwitter, FaGlobe, FaTiktok, FaChevronRight, FaChevronLeft } from "react-icons/fa";
 import Slider from "./Slider";
+import { useGetFeaturedProducts } from "../../../apis/products/getFeaturedProducts";
+import Product from "../products/product";
 
 // Component for category carousel item with image fallback
 const CategoryCarouselItem = ({ category, activeLanguage, onExploreClick, logoURL }) => {
@@ -74,7 +79,7 @@ const CategoryCarouselItem = ({ category, activeLanguage, onExploreClick, logoUR
   );
 };
 
-export default function HomePage({ onExploreClick, categories }) {
+export default function HomePage({ onExploreClick, categories, setSearchParams, searchParams }) {
   const { restaurantName: paramRestaurantName } = useParams();
   const hostname = window.location.hostname;
   const subdomain = hostname.split(".")[0];
@@ -95,16 +100,14 @@ export default function HomePage({ onExploreClick, categories }) {
   const socialMedia = restaurant?.socialMedia || [];
   const sliderImages = restaurant?.sliderImages || [];
   const hasSlider = restaurant?.has_slider || false;
+  const restaurantId = restaurant?.id;
+  const { data: featuredProducts = [], isLoading: isLoadingFeatured } = useGetFeaturedProducts(restaurantId);
   
   // Categories will be shown in carousel, sorted by priority
   
-  const [swipeProgress, setSwipeProgress] = useState(0);
-  const [isSliding, setIsSliding] = useState(false);
   const [showScrollIndicator, setShowScrollIndicator] = useState(false);
   const [hasScrolled, setHasScrolled] = useState(false);
   const categoriesCarouselRef = useRef(null);
-  const touchStartXRef = useRef(null);
-  const currentProgressRef = useRef(0);
   
   // Debug logging
   useEffect(() => {
@@ -181,93 +184,14 @@ export default function HomePage({ onExploreClick, categories }) {
   const branchesTitle = activeLanguage === "en" ? "Our Locations" : "فروعنا";
   const socialTitle = activeLanguage === "en" ? "Follow Us" : "تابعنا";
   const viewOnMapText = activeLanguage === "en" ? "View on Map" : "عرض على الخريطة";
-  const exploreMenuText = activeLanguage === "en" ? "Slide to explore products" : "اسحب لاستكشاف القائمة";
+  const businessType = restaurant?.business_type || "restaurant";
+  const exploreMenuText = activeLanguage === "en" 
+    ? (businessType === "restaurant" ? "Explore Menu" : "Explore Products")
+    : (businessType === "restaurant" ? "استكشف القائمة" : "استكشف المنتجات");
   const copyrightText = activeLanguage === "en" 
     ? `© ${new Date().getFullYear()} Menugic. All rights reserved.`
     : `© ${new Date().getFullYear()} Menugic. جميع الحقوق محفوظة.`;
 
-  // Handle swipe gesture for sliding button
-  const handleTouchStart = (e) => {
-    const touch = e.touches[0];
-    touchStartXRef.current = touch.clientX;
-    currentProgressRef.current = 0;
-    setIsSliding(true);
-    setSwipeProgress(0);
-  };
-
-  const handleTouchMove = (e) => {
-    if (!isSliding || touchStartXRef.current === null) return;
-    e.preventDefault();
-    const touch = e.touches[0];
-    const button = e.currentTarget;
-    const rect = button.getBoundingClientRect();
-    const currentX = touch.clientX;
-    const startX = touchStartXRef.current;
-    
-    const isRTL = activeLanguage === "ar";
-    const maxDistance = rect.width * 0.8;
-    // For RTL, dragging left (decreasing X) should increase progress
-    // For LTR, dragging right (increasing X) should increase progress
-    const deltaX = isRTL ? startX - currentX : currentX - startX;
-    const progress = Math.min(Math.max(deltaX / maxDistance, 0), 1);
-    
-    currentProgressRef.current = progress;
-    setSwipeProgress(progress);
-  };
-
-  const handleTouchEnd = (e) => {
-    if (e) {
-      e.preventDefault();
-    }
-    const finalProgress = currentProgressRef.current;
-    touchStartXRef.current = null;
-    currentProgressRef.current = 0;
-    
-    if (finalProgress >= 0.6) {
-      onExploreClick();
-    }
-    setIsSliding(false);
-    setSwipeProgress(0);
-  };
-
-  // Handle mouse drag (for desktop)
-  const handleMouseDown = (e) => {
-    const startX = e.clientX;
-    const button = e.currentTarget;
-    const rect = button.getBoundingClientRect();
-    const isRTL = activeLanguage === "ar";
-    let currentProgress = 0;
-    
-    setIsSliding(true);
-    setSwipeProgress(0);
-    currentProgressRef.current = 0;
-    
-    const handleMouseMove = (e) => {
-      const currentX = e.clientX;
-      const maxDistance = rect.width * 0.8;
-      // For RTL, dragging left (decreasing X) should increase progress
-      // For LTR, dragging right (increasing X) should increase progress
-      const deltaX = isRTL ? startX - currentX : currentX - startX;
-      currentProgress = Math.min(Math.max(deltaX / maxDistance, 0), 1);
-      
-      currentProgressRef.current = currentProgress;
-      setSwipeProgress(currentProgress);
-    };
-
-    const handleMouseUp = () => {
-      if (currentProgress >= 0.6) {
-        onExploreClick();
-      }
-      setIsSliding(false);
-      setSwipeProgress(0);
-      currentProgressRef.current = 0;
-      document.removeEventListener("mousemove", handleMouseMove);
-      document.removeEventListener("mouseup", handleMouseUp);
-    };
-
-    document.addEventListener("mousemove", handleMouseMove);
-    document.addEventListener("mouseup", handleMouseUp);
-  };
 
   const handleIconClick = (branch, type) => {
     setSelectedBranch(branch);
@@ -283,7 +207,16 @@ export default function HomePage({ onExploreClick, categories }) {
     <Container>
       {/* Slider Section */}
       {hasSlider && sliderImages.length > 0 && (
-        <Slider images={sliderImages} activeLanguage={activeLanguage} />
+        <>
+          <Slider images={sliderImages} activeLanguage={activeLanguage} />
+          {restaurant?.en_slogan || restaurant?.ar_slogan ? (
+            <SloganText activeLanguage={activeLanguage}>
+              {activeLanguage === "en" 
+                ? (restaurant.en_slogan || restaurant.ar_slogan)
+                : (restaurant.ar_slogan || restaurant.en_slogan)}
+            </SloganText>
+          ) : null}
+        </>
       )}
 
       {/* Welcome Message - Show only if no slider images */}
@@ -339,29 +272,42 @@ export default function HomePage({ onExploreClick, categories }) {
             )}
           </CategoriesCarouselContainer>
           
-          {/* Sliding Button Below Categories */}
-          <CategoriesLink 
-            onClick={swipeProgress >= 0.6 ? () => onExploreClick() : undefined}
-            onTouchStart={handleTouchStart}
-            onTouchMove={handleTouchMove}
-            onTouchEnd={handleTouchEnd}
-            onMouseDown={handleMouseDown}
+          {/* Explore Menu Button Below Categories */}
+          <ExploreButton
+            onClick={() => onExploreClick()}
             activeLanguage={activeLanguage}
-            swipeProgress={swipeProgress}
             theme={restaurant?.theme ? (typeof restaurant.theme === 'string' ? JSON.parse(restaurant.theme) : restaurant.theme) : {}}
           >
-            <CTAText activeLanguage={activeLanguage} swipeProgress={swipeProgress}>
-              {exploreMenuText}
-            </CTAText>
-            <ArrowButton
-              activeLanguage={activeLanguage}
-              swipeProgress={swipeProgress}
-              theme={restaurant?.theme ? (typeof restaurant.theme === 'string' ? JSON.parse(restaurant.theme) : restaurant.theme) : {}}
-            >
-              {activeLanguage === "ar" ? <FaChevronLeft /> : <FaChevronRight />}
-            </ArrowButton>
-          </CategoriesLink>
+            {exploreMenuText}
+            {activeLanguage === "ar" ? <FaChevronLeft /> : <FaChevronRight />}
+          </ExploreButton>
         </TopCategoriesSection>
+      )}
+
+      {/* Featured Products Section */}
+      {featuredProducts && featuredProducts.length > 0 && (
+        <FeaturedProductsSection activeLanguage={activeLanguage}>
+          <FeaturedProductsGrid>
+            {featuredProducts.map((product, index) => {
+              return (
+                <Product
+                  key={product.id}
+                  plate={product}
+                  index={index}
+                  activePlate={null}
+                  setactivePlate={() => {}}
+                  showPopup={null}
+                  setSearchParams={setSearchParams}
+                  searchParams={searchParams}
+                  activeCategoryId={product.category_id}
+                  categories={categories}
+                  disableDetails={false}
+                  $isFeatured={true}
+                />
+              );
+            })}
+          </FeaturedProductsGrid>
+        </FeaturedProductsSection>
       )}
 
       {/* Location Cards Section */}

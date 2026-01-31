@@ -57,6 +57,7 @@ export default function NavigationBar({
   setshowSidebar,
   showSidebar,
   restaurant: restaurantProp,
+  popupHandler,
 }) {
   const { restaurantName: paramRestaurantName } = useParams();
   const hostname = window.location.hostname;
@@ -81,6 +82,10 @@ export default function NavigationBar({
   };
 
   const toggleMobileMenu = () => {
+    // Close any opened popup when opening mobile menu
+    if (popupHandler) {
+      popupHandler(null);
+    }
     setMobileMenuOpen(!mobileMenuOpen);
   };
 

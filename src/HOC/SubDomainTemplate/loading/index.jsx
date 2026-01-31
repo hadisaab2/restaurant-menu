@@ -52,10 +52,6 @@ const backgroundColors=[
     color:"#bcc1aa"
   },
   {
-    name:"abrands",
-    color:"black"
-  },
-  {
     name:"shamacosmetics",
     color:"#FDE4FD"
   },

@@ -1,13 +1,13 @@
 import styled, { keyframes } from "styled-components";
 
 export const Container = styled.div`
-    width:50%;
+    width: ${props => props.$isFeatured ? '100%' : '50%'};
     display: flex;
     align-items: center;
     justify-content: center;
     margin-top: 10px;
     @media (min-width: 1024px) {
-        width: 20%;
+        width: ${props => props.$isFeatured ? '100%' : '20%'};
     }
 `;
 export const Wrapper = styled.div`
@@ -164,6 +164,16 @@ export const QuickAddButton = styled.button`
   cursor: pointer;
   opacity: ${(props) => (props.disabled ? 0.5 : 1)};
   pointer-events: ${(props) => (props.disabled ? "none" : "auto")};
+  z-index: 10;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+  
+  &:hover {
+    transform: scale(1.1);
+  }
+  
+  &:active {
+    transform: scale(0.95);
+  }
 `;
 
 export const OutOfStockBadge = styled.div`

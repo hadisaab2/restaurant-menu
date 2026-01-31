@@ -32,6 +32,7 @@ export const StepHeader = styled.div`
   align-items: center;
   justify-content: space-between;
   margin-bottom: 24px;
+      margin-top: 24px;
 `;
 
 export const StepTitleText = styled(StepTitle)`

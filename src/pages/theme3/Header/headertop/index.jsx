@@ -13,7 +13,7 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { changelanuage } from "../../../../redux/restaurant/restaurantActions";
 import { useParams } from "react-router-dom";
-export default function HeaderTop({setshowSidebar,showSidebar}) {
+export default function HeaderTop({setshowSidebar,showSidebar,popupHandler}) {
   const { restaurantName: paramRestaurantName } = useParams();
 
   const hostname = window.location.hostname;
@@ -35,7 +35,10 @@ export default function HeaderTop({setshowSidebar,showSidebar}) {
       <HeaderWrapper>
         {/* Menu Icon (3 dashes) - Left */}
         <ButtonsContainer style={{ order: restaurant.activeLanguage === "ar" ? 3 : 1 }}>
-          <MenuIcon onClick={()=>{setshowSidebar(!showSidebar)}}/>
+          <MenuIcon onClick={()=>{
+            if (popupHandler) popupHandler(null); // Close any opened popup
+            setshowSidebar(!showSidebar);
+          }}/>
         </ButtonsContainer>
 
         {/* Logo - Center */}

@@ -20,7 +20,7 @@ import {
   CategoryList,
   CategoryItem,
 } from "./styles";
-import { FaHome, FaList, FaShoppingBag, FaCommentAlt, FaAddressBook, FaChevronDown, FaChevronUp } from "react-icons/fa";
+import { FaHome, FaList, FaShoppingBag, FaCommentAlt, FaAddressBook, FaChevronDown, FaChevronUp, FaMapMarkerAlt } from "react-icons/fa";
 import { useParams, useSearchParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 
@@ -35,6 +35,8 @@ export default function SideBar({
   onCategoryClick,
   onFeedbackClick,
   onContactClick,
+  onBranchesClick,
+  branches,
 }) {
   const { restaurantName: paramRestaurantName } = useParams();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -71,6 +73,13 @@ export default function SideBar({
   const handleContactClick = () => {
     if (onContactClick) {
       onContactClick();
+    }
+    setshowSidebar(false);
+  };
+
+  const handleBranchesClick = () => {
+    if (onBranchesClick) {
+      onBranchesClick();
     }
     setshowSidebar(false);
   };
@@ -170,6 +179,20 @@ export default function SideBar({
             </SectionTitle>
           </SectionHeader>
         </SidebarSection>
+
+        {/* Branches Section */}
+        {branches && branches.length > 0 && (
+          <SidebarSection>
+            <SectionHeader onClick={handleBranchesClick}>
+              <SectionIcon>
+                <FaMapMarkerAlt />
+              </SectionIcon>
+              <SectionTitle activeLanguage={restaurant?.activeLanguage}>
+                {restaurant?.activeLanguage === "en" ? "Branches" : "الفروع"}
+              </SectionTitle>
+            </SectionHeader>
+          </SidebarSection>
+        )}
 
         {/* Contact Us Section */}
         <SidebarSection>

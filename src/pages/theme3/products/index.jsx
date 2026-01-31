@@ -1,11 +1,16 @@
 import React, { useEffect, useRef, useState } from "react";
-import { AllItemsLoader, AllItemsLoaderWrap, AllItemsSection, AllItemsTitle, AllItemsWrapper, Container, GoToTopButton, LoaderDot, ProductWrapper } from "./styles";
+import { AllItemsLoader, AllItemsLoaderWrap, AllItemsSection, AllItemsTitle, AllItemsWrapper, Container, GoToTopButton, LoaderDot, ProductWrapper, AllItemsListWrapper, AllItemsListItem, AllItemsListImage, AllItemsListDetails, AllItemsListName, AllItemsListPrice, AllItemsListDiscountPrice, AllItemsListQuickAddButton, AllItemsListOutOfStockBadge, AllItemsListItemWrapper } from "./styles";
 import Product from "./product";
 import ProductDetails from "./productDetails";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { useParams, useSearchParams } from "react-router-dom";
 import { useGetProducts } from "../../../apis/products/getProductsByCategory";
 import { useGetProductsByRestaurant } from "../../../apis/products/getProductsByRestaurant";
+import { convertPrice } from "../../../utilities/convertPrice";
+import { addToCart } from "../../../redux/cart/cartActions";
+import { FaCartPlus } from "react-icons/fa";
+import { toast } from "react-toastify";
+const _ = require('lodash');
 
 export default function Products({
   menu,
@@ -15,7 +20,8 @@ export default function Products({
   carouselPosition,
   setcarouselPosition,
   setactiveCategory,
-  categories
+  categories,
+  onAddToCart
 }) {
   const [activePlate, setactivePlate] = useState(null);
   const [searchParams, setSearchParams] = useSearchParams();
@@ -34,6 +40,7 @@ export default function Products({
   const restaurant = useSelector(
     (state) => state.restaurant?.[restaurantName]
   );
+  const dispatch = useDispatch();
 
   const [productPositions, setProductPositions] = useState([]); // x y and width of product
   const [productRefs, setProductRefs] = useState([]);
@@ -43,6 +50,7 @@ export default function Products({
   const isAllItemsCategory = activeCategory === "all-items";
   // Ensure activeCategory is a serializable value (string or number)
   const categoryId = activeCategory && !isAllItemsCategory ? String(activeCategory) : null;
+  const allItemsStyle = restaurant?.all_items_style || "grid";
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage } =
     useGetProducts(categoryId);
   const {
@@ -113,23 +121,36 @@ export default function Products({
 
   useEffect(() => {
     if (!isAllItemsCategory) return undefined;
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (
-          entries[0].isIntersecting &&
-          hasNextPageAll &&
-          !isFetchingNextPageAll
-        ) {
-          fetchNextPageAll();
-        }
-      },
-      { threshold: 0.2 }
-    );
-    if (allItemsLoadMoreRef.current) observer.observe(allItemsLoadMoreRef.current);
+    
+    let observer;
+    let timeoutId;
+    
+    // Small delay to ensure the ref is attached after DOM updates (e.g., when returning from product details)
+    timeoutId = setTimeout(() => {
+      observer = new IntersectionObserver(
+        (entries) => {
+          if (
+            entries[0].isIntersecting &&
+            hasNextPageAll &&
+            !isFetchingNextPageAll
+          ) {
+            fetchNextPageAll();
+          }
+        },
+        { threshold: 0.2 }
+      );
+      if (allItemsLoadMoreRef.current) {
+        observer.observe(allItemsLoadMoreRef.current);
+      }
+    }, 100);
+    
     return () => {
-      if (allItemsLoadMoreRef.current) observer.unobserve(allItemsLoadMoreRef.current);
+      clearTimeout(timeoutId);
+      if (observer && allItemsLoadMoreRef.current) {
+        observer.unobserve(allItemsLoadMoreRef.current);
+      }
     };
-  }, [fetchNextPageAll, hasNextPageAll, isAllItemsCategory, isFetchingNextPageAll]);
+  }, [fetchNextPageAll, hasNextPageAll, isAllItemsCategory, isFetchingNextPageAll, allProducts]);
 
   // filtering products based on search
 const filteredProducts =
@@ -277,23 +298,150 @@ console.log(filteredProducts)
                   ? section.category.en_category
                   : section.category.ar_category}
               </AllItemsTitle>
-              <ProductWrapper>
-                {section.items.map((plate, index) => (
-                  <Product
-                    key={plate.id}
-                    index={index}
-                    plate={plate}
-                    activePlate={null}
-                    setactivePlate={setactivePlate}
-                    showPopup={showPopup}
-                    setSearchParams={setSearchParams}
-                    searchParams={searchParams}
-                    activeCategoryId={section.category.id}
-                    categories={categories}
-                    disableDetails
-                  />
-                ))}
-              </ProductWrapper>
+              {allItemsStyle === "list" ? (
+                <AllItemsListWrapper>
+                  {section.items.map((plate, index) => {
+                    // Use the product's actual category for discount calculation
+                    const productCategory = categories.find((cat) => cat.id == plate.category_id);
+                    let finalDiscount;
+                    if (productCategory && parseFloat(productCategory.discount || 0) !== 0.00) {
+                      finalDiscount = parseFloat(productCategory.discount || 0);
+                    } else {
+                      finalDiscount = parseFloat(plate.discount || 0);
+                    }
+                    const discountedPrice = finalDiscount !== 0.00 
+                      ? parseFloat(plate.en_price) * (1 - parseFloat(finalDiscount) / 100) 
+                      : parseFloat(plate.en_price);
+                    let currencySymbol;
+                    switch (restaurant?.currency) {
+                      case "dollar": currencySymbol = "$"; break;
+                      case "lb": currencySymbol = "L.L."; break;
+                      case "gram": currencySymbol = "g"; break;
+                      case "kilogram": currencySymbol = "kg"; break;
+                      default: currencySymbol = "";
+                    }
+                    const coverIndex = plate.images?.findIndex(img => img.id == plate.new_cover_id) ?? 0;
+                    const imageUrl = plate.images?.[coverIndex]?.url;
+                    const features = JSON.parse(restaurant?.features || "{}");
+                    const isOutOfStock = Boolean(plate?.out_of_stock) || Number(plate?.out_of_stock) === 1;
+                    const hasProductForm = !_.isEmpty(plate?.form_json) && !_.isEmpty(JSON.parse(plate?.form_json || "{}"));
+                    const hasCategoryForm = !_.isEmpty(productCategory?.form_json) && !_.isEmpty(JSON.parse(productCategory?.form_json || "{}"));
+                    const hasForm = hasProductForm || hasCategoryForm;
+
+                    const handleQuickAdd = (event) => {
+                      event.preventDefault();
+                      event.stopPropagation();
+                      if (!features?.cart || isOutOfStock) return;
+                      if (hasForm) {
+                        const newParams = new URLSearchParams(searchParams);
+                        newParams.set("productId", plate.id);
+                        newParams.set("categoryId", "all-items");
+                        setSearchParams(newParams);
+                        window.history.pushState({}, "", `?${newParams.toString()}`);
+                        document.body.style.overflow = "hidden";
+                        return;
+                      }
+                      const basePrice = parseFloat(plate?.en_price || "0");
+                      const discountedPrice = basePrice * (1 - parseFloat(finalDiscount) / 100);
+                      dispatch(addToCart(restaurantName, plate, 1, {}, discountedPrice, ""));
+                      
+                      // Trigger cart animation
+                      if (onAddToCart && event.currentTarget) {
+                        onAddToCart(event.currentTarget);
+                      }
+                      
+                      toast.success(
+                        activeLanguage === "en"
+                          ? "Added to cart"
+                          : "تمت الإضافة إلى السلة"
+                      );
+                    };
+
+                    return (
+                      <AllItemsListItemWrapper key={plate.id}>
+                        <AllItemsListItem 
+                          onClick={() => {
+                            const newParams = new URLSearchParams(searchParams);
+                            newParams.set("productId", plate.id);
+                            // Preserve "all-items" as categoryId so back button returns to All Items
+                            newParams.set("categoryId", "all-items");
+                            setSearchParams(newParams);
+                            window.history.pushState({}, "", `?${newParams.toString()}`);
+                            document.body.style.overflow = "hidden";
+                          }}
+                          style={{ cursor: "pointer" }}
+                        >
+                          <AllItemsListImage>
+                            {imageUrl && (
+                              <img 
+                                src={`https://storage.googleapis.com/ecommerce-bucket-testing/${imageUrl}`}
+                                alt={activeLanguage === "en" ? plate.en_name : plate.ar_name}
+                              />
+                            )}
+                          </AllItemsListImage>
+                          <AllItemsListDetails activeLanguage={activeLanguage}>
+                            <AllItemsListName>
+                              {activeLanguage === "en" ? plate.en_name : plate.ar_name}
+                            </AllItemsListName>
+                            {plate.en_price && (
+                              <AllItemsListPrice activeLanguage={activeLanguage}>
+                                {finalDiscount !== 0.00 && (
+                                  <AllItemsListDiscountPrice>
+                                    {convertPrice(parseFloat(plate.en_price), currencySymbol)}
+                                  </AllItemsListDiscountPrice>
+                                )}
+                                <span>
+                                  {convertPrice(discountedPrice, currencySymbol)}
+                                </span>
+                              </AllItemsListPrice>
+                            )}
+                          </AllItemsListDetails>
+                        </AllItemsListItem>
+                        {features?.cart &&
+                          (isOutOfStock ? (
+                            <AllItemsListOutOfStockBadge activeLanguage={activeLanguage}>
+                              {activeLanguage === "en"
+                                ? "Out of stock"
+                                : "غير متوفر حالياً"}
+                            </AllItemsListOutOfStockBadge>
+                          ) : (
+                            <AllItemsListQuickAddButton
+                              type="button"
+                              onClick={handleQuickAdd}
+                              activeLanguage={activeLanguage}
+                              title={
+                                activeLanguage === "en"
+                                  ? "Add to cart"
+                                  : "أضف إلى السلة"
+                              }
+                            >
+                              <FaCartPlus size={12} />
+                            </AllItemsListQuickAddButton>
+                          ))}
+                      </AllItemsListItemWrapper>
+                    );
+                  })}
+                </AllItemsListWrapper>
+              ) : (
+                <ProductWrapper>
+                  {section.items.map((plate, index) => (
+                    <Product
+                      key={plate.id}
+                      index={index}
+                      plate={plate}
+                      activePlate={null}
+                      setactivePlate={setactivePlate}
+                      showPopup={showPopup}
+                      setSearchParams={setSearchParams}
+                      searchParams={searchParams}
+                      activeCategoryId={activeCategory}
+                      categories={categories}
+                      disableDetails={false}
+                      onAddToCart={onAddToCart}
+                    />
+                  ))}
+                </ProductWrapper>
+              )}
             </AllItemsSection>
           ))}
           {hasNextPageAll && (
@@ -328,6 +476,7 @@ console.log(filteredProducts)
                           searchParams={searchParams}
                           activeCategoryId={activeCategory}
                           categories={categories}
+                          onAddToCart={onAddToCart}
                         />
                       );
                     })}

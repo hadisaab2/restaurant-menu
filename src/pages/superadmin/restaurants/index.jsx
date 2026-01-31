@@ -194,7 +194,9 @@ export default function Restaurants() {
     en_slogan,
     ar_slogan,
     default_language,
-    show_all_items_category
+    show_all_items_category,
+    business_type,
+    all_items_style
   }) => {
     const theme = JSON.parse(themeString);
     const features = JSON.parse(featureString);
@@ -217,7 +219,9 @@ export default function Restaurants() {
       en_slogan,
       ar_slogan,
       default_language,
-      show_all_items_category
+      show_all_items_category,
+      business_type,
+      all_items_style
     });
     setIsEditMode(true);
     setTemplate(template_id);
@@ -239,6 +243,8 @@ export default function Restaurants() {
     setValue("ar_slogan", ar_slogan || "");
     setValue("default_language", default_language || "en");
     setValue("show_all_items_category", !!show_all_items_category);
+    setValue("business_type", business_type || "restaurant");
+    setValue("all_items_style", all_items_style || "grid");
     
     // Set theme colors in form
     Object.keys(theme).forEach((key) => {
@@ -292,6 +298,8 @@ export default function Restaurants() {
             data.show_all_items_category === true ||
             data.show_all_items_category === "true" ||
             data.show_all_items_category === 1,
+          business_type: data.business_type || "restaurant",
+          all_items_style: data.all_items_style || "grid",
         };
         console.log("Formatted form data:", formData);
         if (selectedProduct) {
@@ -695,21 +703,57 @@ export default function Restaurants() {
                   );
                 })}
             </FeaturesBlock>
-            {Number(template) === 3 && (
-              <FormControl component="fieldset" style={{ display: "flex", flexDirection: "row" }}>
-                <FormLabel component="legend">Theme 3 Only</FormLabel>
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      {...register("show_all_items_category")}
-                      defaultChecked={getValues("show_all_items_category") ?? false}
-                      onChange={(e) => setValue("show_all_items_category", e.target.checked)}
-                    />
-                  }
-                  label="Show All Items Category"
-                />
-              </FormControl>
+            {(Number(template) === 3 || Number(template) === 2) && (
+              <>
+                <FormControl component="fieldset" style={{ display: "flex", flexDirection: "row" }}>
+                  <FormLabel component="legend">Theme 2 & 3 Only</FormLabel>
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        {...register("show_all_items_category")}
+                        defaultChecked={getValues("show_all_items_category") ?? false}
+                        onChange={(e) => setValue("show_all_items_category", e.target.checked)}
+                      />
+                    }
+                    label="Show All Items Category"
+                  />
+                </FormControl>
+                {getValues("show_all_items_category") && (
+                  <Box sx={{ width: "30%" }}>
+                    <FormControl fullWidth>
+                      <InputLabel>All Items Style</InputLabel>
+                      <Select
+                        label="All Items Style"
+                        error={!isEmpty(formState?.errors?.all_items_style)}
+                        value={getValues("all_items_style") || selectedProduct?.all_items_style || "grid"}
+                        onChange={(e) => {
+                          setValue("all_items_style", e.target.value, { shouldValidate: true });
+                        }}
+                      >
+                        <MenuItem value="grid">Grid (Default)</MenuItem>
+                        <MenuItem value="list">List (Image Left, Details Right)</MenuItem>
+                      </Select>
+                    </FormControl>
+                  </Box>
+                )}
+              </>
             )}
+            <Box sx={{ width: "30%" }}>
+              <FormControl fullWidth>
+                <InputLabel>Business Type</InputLabel>
+                <Select
+                  label="Business Type"
+                  error={!isEmpty(formState?.errors?.business_type)}
+                  value={getValues("business_type") || selectedProduct?.business_type || "restaurant"}
+                  onChange={(e) => {
+                    setValue("business_type", e.target.value, { shouldValidate: true });
+                  }}
+                >
+                  <MenuItem value="restaurant">Restaurant (Menu)</MenuItem>
+                  <MenuItem value="business">Business (Products)</MenuItem>
+                </Select>
+              </FormControl>
+            </Box>
             <button onClick={() => console.log(getValues("features"))}>hadi</button>
             <LoadingButton
               onClick={handleAddRestaurant}
