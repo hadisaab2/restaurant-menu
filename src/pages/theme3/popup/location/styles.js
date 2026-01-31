@@ -23,7 +23,7 @@ display: flex;
 flex-direction: column;
 align-items: center;
 z-index: 5;
-padding-bottom: 8vh;
+padding-bottom: 12vh;
 `;
 export const Title = styled.span`
 font-size: 26px;

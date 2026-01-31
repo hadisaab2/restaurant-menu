@@ -1224,12 +1224,12 @@ export const FeaturedProductsGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 16px;
-  margin-top: 24px;
+  margin-top: 0;
   
   @media (min-width: 768px) {
     grid-template-columns: repeat(2, 1fr);
     gap: 24px;
-    margin-top: 32px;
+    margin-top: 0;
   }
 `;
 
@@ -1291,5 +1291,49 @@ export const SloganText = styled.p`
   @media (min-width: 768px) {
     padding: 32px 5%;
     font-size: 20px;
+  }
+`;
+
+export const ViewAllButton = styled.button`
+  width: 100%;
+  max-width: 320px;
+  height: 56px;
+  margin: 24px auto 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  color: ${props => props.theme.slidingButtonTextColor || "#ffffff"};
+  background: ${props => props.theme.slidingButtonBackgroundColor || props.theme.mainColor || "#007bff"};
+  border: none;
+  border-radius: 14px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  direction: ${props => props.activeLanguage === "ar" ? "rtl" : "ltr"};
+  box-shadow: 0 4px 16px ${props => {
+    const bgColor = props.theme.slidingButtonBackgroundColor || props.theme.mainColor || "#007bff";
+    return bgColor ? `${bgColor}40` : "rgba(0, 123, 255, 0.4)";
+  }};
+  
+  &:hover {
+    background: ${props => props.theme.slidingButtonBackgroundColor || props.theme.mainColor || "#0056b3"};
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px ${props => {
+      const bgColor = props.theme.slidingButtonBackgroundColor || props.theme.mainColor || "#007bff";
+      return bgColor ? `${bgColor}50` : "rgba(0, 123, 255, 0.5)";
+    }};
+  }
+  
+  &:active {
+    transform: translateY(0);
+  }
+  
+  @media (min-width: 768px) {
+    max-width: 380px;
+    height: 64px;
+    font-size: 18px;
+    margin: 32px auto 0;
   }
 `;

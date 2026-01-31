@@ -19,15 +19,17 @@ export const Container = styled.div`
   flex-direction: column;
   align-items: center;
   z-index: 1000;
-  padding: 20px;
-  padding-top: ${(props) => (props.isPage ? "40px" : "60px")};
-  padding-bottom: 40px;
+  padding: 16px;
+  padding-top: ${(props) => (props.isPage ? "24px" : "60px")};
+  padding-bottom: 24px;
   overflow-y: auto;
   margin-top: ${(props) => (props.isPage ? "0" : "5vh")};
   
   @media (max-width: 768px) {
     margin-top: ${(props) => (props.isPage ? "0" : "3vh")};
-    padding-top: ${(props) => (props.isPage ? "32px" : "50px")};
+    padding-top: ${(props) => (props.isPage ? "20px" : "50px")};
+    padding: 14px;
+    padding-bottom: 20px;
   }
 `;
 
@@ -36,7 +38,7 @@ export const HeaderContainer = styled.div`
   align-items: center;
   justify-content: space-between;
   width: 100%;
-  margin-bottom: 30px;
+  margin-bottom: 20px;
   direction: ${(props) => (props.activeLanguage === "ar" ? "rtl" : "ltr")};
 `;
 
@@ -67,7 +69,7 @@ export const FormContainer = styled.form`
   max-width: 500px;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 8px;
   direction: ${(props) => (props.activeLanguage === "ar" ? "rtl" : "ltr")};
 `;
 
@@ -75,15 +77,15 @@ export const Label = styled.label`
   font-size: 14px;
   font-weight: 500;
   color: ${(props) => props.theme?.popupTextColor || "#333333"};
-  margin-top: 5px;
+  margin-top: 2px;
   text-align: ${(props) => (props.activeLanguage === "ar" ? "right" : "left")};
 `;
 
 export const StarContainer = styled.div`
   display: flex;
-  gap: 10px;
+  gap: 8px;
   justify-content: ${(props) => (props.activeLanguage === "ar" ? "flex-end" : "flex-start")};
-  margin-bottom: 10px;
+  margin-bottom: 6px;
 `;
 
 export const Star = styled.div`
@@ -109,7 +111,7 @@ export const Star = styled.div`
 
 export const Input = styled.input`
   width: 100%;
-  padding: 12px 16px;
+  padding: 10px 14px;
   border: 1px solid ${(props) => props.theme?.mainColor || "#007bff"}30;
   border-radius: 8px;
   font-size: 14px;
@@ -130,7 +132,7 @@ export const Input = styled.input`
 
 export const TextArea = styled.textarea`
   width: 100%;
-  padding: 12px 16px;
+  padding: 10px 14px;
   border: 1px solid ${(props) => props.theme?.mainColor || "#007bff"}30;
   border-radius: 8px;
   font-size: 14px;
@@ -138,7 +140,7 @@ export const TextArea = styled.textarea`
   color: ${(props) => props.theme?.textColor || "#333333"};
   outline: none;
   resize: vertical;
-  min-height: 100px;
+  min-height: 80px;
   font-family: inherit;
   transition: all 0.3s ease;
 
@@ -154,8 +156,8 @@ export const TextArea = styled.textarea`
 
 export const SubmitButton = styled.button`
   width: 100%;
-  padding: 14px;
-  margin-top: 10px;
+  padding: 12px;
+  margin-top: 6px;
   background-color: ${(props) => props.theme?.mainColor || "#007bff"};
   color: ${(props) => props.theme?.backgroundColor || "#ffffff"};
   border: none;

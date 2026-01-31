@@ -6,8 +6,9 @@ import {
   TabLabel,
   CartBadge,
 } from "./styles";
-import { FaHome, FaTh, FaShoppingCart, FaQuestionCircle, FaMapMarkerAlt } from "react-icons/fa";
-import { useSelector } from "react-redux";
+import { FaHome, FaTh, FaShoppingCart, FaQuestionCircle, FaMapMarkerAlt, FaGlobe } from "react-icons/fa";
+import { useSelector, useDispatch } from "react-redux";
+import { changelanuage } from "../../../redux/restaurant/restaurantActions";
 
 export default function BottomTabBar({
   activeView,
@@ -19,11 +20,18 @@ export default function BottomTabBar({
   restaurantName,
   branches,
 }) {
+  const dispatch = useDispatch();
   const activeLanguage = useSelector(
     (state) => state.restaurant?.[restaurantName]?.activeLanguage || "en"
   );
+  const restaurant = useSelector((state) => state.restaurant?.[restaurantName]);
   const cart = useSelector((state) => state.cart?.[restaurantName] || []);
   const itemCount = cart.reduce((total, item) => total + item.quantity, 0);
+
+  const handleLanguageToggle = () => {
+    const newLanguage = activeLanguage === "en" ? "ar" : "en";
+    dispatch(changelanuage({ name: restaurantName, activeLanguage: newLanguage }));
+  };
 
   const tabs = [
     {
@@ -70,6 +78,9 @@ export default function BottomTabBar({
     return true;
   });
 
+  // Show language changer only if restaurant supports both languages
+  const showLanguageChanger = restaurant?.languages === "en&ar";
+
   return (
     <TabBarContainer data-tab-bar>
       {tabs.map((tab) => (
@@ -86,6 +97,22 @@ export default function BottomTabBar({
           <TabLabel activeLanguage={activeLanguage}>{tab.label}</TabLabel>
         </TabItem>
       ))}
+      
+      {/* Language Changer - Earth Icon */}
+      {showLanguageChanger && (
+        <TabItem
+          onClick={handleLanguageToggle}
+          $active={false}
+          activeLanguage={activeLanguage}
+        >
+          <TabIcon>
+            <FaGlobe />
+          </TabIcon>
+          <TabLabel activeLanguage={activeLanguage}>
+            {activeLanguage === "en" ? "Language" : "اللغة"}
+          </TabLabel>
+        </TabItem>
+      )}
     </TabBarContainer>
   );
 }

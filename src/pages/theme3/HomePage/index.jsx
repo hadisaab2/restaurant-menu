@@ -44,6 +44,7 @@ import {
   FeaturedProductsGrid,
   ExploreButton,
   SloganText,
+  ViewAllButton,
 } from "./styles";
 import { useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
@@ -287,6 +288,9 @@ export default function HomePage({ onExploreClick, categories, setSearchParams, 
       {/* Featured Products Section */}
       {featuredProducts && featuredProducts.length > 0 && (
         <FeaturedProductsSection activeLanguage={activeLanguage}>
+          <SectionTitle activeLanguage={activeLanguage}>
+            {activeLanguage === "en" ? "Featured Products" : "المنتجات المميزة"}
+          </SectionTitle>
           <FeaturedProductsGrid>
             {featuredProducts.map((product, index) => {
               return (
@@ -307,6 +311,14 @@ export default function HomePage({ onExploreClick, categories, setSearchParams, 
               );
             })}
           </FeaturedProductsGrid>
+          <ViewAllButton
+            onClick={() => onExploreClick()}
+            activeLanguage={activeLanguage}
+            theme={restaurant?.theme ? (typeof restaurant.theme === 'string' ? JSON.parse(restaurant.theme) : restaurant.theme) : {}}
+          >
+            {activeLanguage === "en" ? "View All Products" : "عرض جميع المنتجات"}
+            {activeLanguage === "ar" ? <FaChevronLeft /> : <FaChevronRight />}
+          </ViewAllButton>
         </FeaturedProductsSection>
       )}
 

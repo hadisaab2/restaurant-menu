@@ -26,7 +26,7 @@ export const NavContent = styled.div`
 
   @media (max-width: 768px) {
     padding: 0 16px;
-    height: 90px;
+    height: 70px;
     gap: 16px;
   }
 `;
@@ -49,14 +49,14 @@ export const LogoContainer = styled.div`
 `;
 
 export const Logo = styled.img`
-  height: 75px;
+  height: 60px;
   width: auto;
   max-width: 250px;
   object-fit: contain;
   transition: all 0.3s ease;
 
   @media (max-width: 768px) {
-    height: 75px;
+    height: 60px;
     max-width: 200px;
   }
 `;
@@ -128,7 +128,7 @@ export const LanguageContainer = styled.div`
   flex-direction: row;
   position: relative;
   border-radius: 10px;
-  width: 60px;
+  width: 50px;
   height: 25px;
   display: flex;
   align-items: center;
@@ -166,7 +166,7 @@ export const Language = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 14px;
+  font-size: 10px;
   cursor: pointer;
   user-select: none;
 `;

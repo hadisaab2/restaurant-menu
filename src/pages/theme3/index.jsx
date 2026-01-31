@@ -392,7 +392,7 @@ export default function Theme3() {
 
   return (
     <Container id="wrapper">
-      {/* Navigation Bar - Hide when viewing product details */}
+      {/* Navigation Bar - Hide only when viewing product details */}
       {!isProductDetailsOpen && (
         <NavigationBar
           onProductsClick={handleProductsClick}
@@ -543,7 +543,7 @@ export default function Theme3() {
       {productId &&<ProductParam productId={productId} searchParams={searchParams} setSearchParams={setSearchParams} />}
       {features?.install_app && <InstallPrompt showInstallPopup={showInstallPopup} onInstall={handleInstallClick} restaurantName={restaurantName} onDismiss={() => setShowInstallPopup(false)} />}
       
-      {/* Bottom Tab Bar - only show when not in product details, feedback, or contact pages */}
+      {/* Bottom Tab Bar - show always except in product details, feedback, or contact pages */}
       {!productId && !isFeedbackPage && !isContactPage && (
         <BottomTabBar
           activeView={viewMode}
