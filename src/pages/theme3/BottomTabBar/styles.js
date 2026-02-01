@@ -29,12 +29,17 @@ export const TabItem = styled.button`
   align-items: center;
   justify-content: center;
   gap: 4px;
-  background: transparent;
+  background: ${(props) => 
+    props.$active 
+      ? (props.theme?.mainColor ? `${props.theme.mainColor}15` : "rgba(0, 123, 255, 0.15)")
+      : "transparent"
+  };
   border: none;
   cursor: pointer;
   padding: 8px 4px;
   transition: all 0.2s ease;
   position: relative;
+  border-radius: 12px;
   color: ${(props) => 
     props.$active 
       ? (props.theme?.mainColor || "#007bff")
@@ -48,6 +53,11 @@ export const TabItem = styled.button`
   
   &:hover {
     opacity: 0.8;
+    background: ${(props) => 
+      props.$active 
+        ? (props.theme?.mainColor ? `${props.theme.mainColor}15` : "rgba(0, 123, 255, 0.15)")
+        : (props.theme?.mainColor ? `${props.theme.mainColor}08` : "rgba(0, 123, 255, 0.08)")
+    };
   }
 `;
 
@@ -56,8 +66,8 @@ export const TabIcon = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 22px;
-  transition: transform 0.2s ease;
+  font-size: ${(props) => (props.$isLanguage && props.$activeLanguage === "ar" ? "20px" : "22px")};
+  transition: transform 0.2s ease, font-size 0.2s ease;
   
   ${TabItem}:active & {
     transform: scale(0.9);

@@ -570,6 +570,7 @@ export default function Theme3() {
             popupHandler("location");
           }}
           onContactClick={handleContactClick}
+          onFeedbackClick={handleFeedbackClick}
           restaurantName={restaurantName}
           branches={restaurant?.branches || []}
         />

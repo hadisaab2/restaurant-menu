@@ -6,7 +6,7 @@ import {
   TabLabel,
   CartBadge,
 } from "./styles";
-import { FaHome, FaTh, FaShoppingCart, FaQuestionCircle, FaMapMarkerAlt, FaGlobe } from "react-icons/fa";
+import { FaHome, FaTh, FaShoppingCart, FaCommentAlt, FaMapMarkerAlt, FaGlobe } from "react-icons/fa";
 import { useSelector, useDispatch } from "react-redux";
 import { changelanuage } from "../../../redux/restaurant/restaurantActions";
 
@@ -16,6 +16,7 @@ export default function BottomTabBar({
   onCategoriesClick,
   onCartClick,
   onContactClick,
+  onFeedbackClick,
   onBranchesClick,
   restaurantName,
   branches,
@@ -64,10 +65,10 @@ export default function BottomTabBar({
       active: false,
     },
     {
-      id: "contact",
-      icon: FaQuestionCircle,
-      label: activeLanguage === "en" ? "Contact" : "اتصل بنا",
-      onClick: onContactClick,
+      id: "feedback",
+      icon: FaCommentAlt,
+      label: activeLanguage === "en" ? "Feedback" : "التعليقات",
+      onClick: onFeedbackClick,
       active: false,
     },
   ].filter(tab => {
@@ -90,7 +91,11 @@ export default function BottomTabBar({
           $active={tab.active}
           activeLanguage={activeLanguage}
         >
-          <TabIcon id={tab.id === "cart" ? "cart-tab-icon" : undefined}>
+          <TabIcon 
+            id={tab.id === "cart" ? "cart-tab-icon" : undefined}
+            $isLanguage={false}
+            $activeLanguage={activeLanguage}
+          >
             <tab.icon data-icon={tab.id} />
             {tab.badge && <CartBadge>{tab.badge}</CartBadge>}
           </TabIcon>
@@ -104,8 +109,9 @@ export default function BottomTabBar({
           onClick={handleLanguageToggle}
           $active={false}
           activeLanguage={activeLanguage}
+          style={{ flex: '0 0 auto' }}
         >
-          <TabIcon>
+          <TabIcon $isLanguage $activeLanguage={activeLanguage}>
             <FaGlobe />
           </TabIcon>
           <TabLabel activeLanguage={activeLanguage}>

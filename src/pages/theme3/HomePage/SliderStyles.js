@@ -11,22 +11,22 @@ const fadeIn = keyframes`
 
 export const SliderContainer = styled.div`
   width: 100%;
-  height: 500px;
+  height: 350px;
   position: relative;
   overflow: hidden;
-  margin-bottom: 40px;
-  border-radius: 0 0 40px 40px;
+  margin-bottom: 30px;
+  border-radius: 0;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
 
   @media (max-width: 768px) {
-    height: 300px;
-    margin-bottom: 30px;
-    border-radius: 0 0 30px 30px;
+    height: 220px;
+    margin-bottom: 20px;
+    border-radius: 0;
   }
 
   @media (min-width: 1200px) {
-    height: 600px;
-    border-radius: 0 0 50px 50px;
+    height: 420px;
+    border-radius: 0;
   }
 `;
 
@@ -52,14 +52,14 @@ export const SlideImage = styled.img`
   height: 100%;
   object-fit: cover;
   display: block;
-  border-radius: 0 0 40px 40px;
+  border-radius: 0;
 
   @media (max-width: 768px) {
-    border-radius: 0 0 30px 30px;
+    border-radius: 0;
   }
 
   @media (min-width: 1200px) {
-    border-radius: 0 0 50px 50px;
+    border-radius: 0;
   }
 `;
 

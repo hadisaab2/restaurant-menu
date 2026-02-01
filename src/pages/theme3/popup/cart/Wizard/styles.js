@@ -10,6 +10,7 @@ export const WizardContainer = styled.div`
   max-height: 85vh;
   overflow-y: auto;
   position: relative;
+      margin-bottom: 50px;
 `;
 
 export const StepTitle = styled.h2`

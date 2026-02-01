@@ -149,7 +149,7 @@ export const Wrapper = styled.div`
 export const Ball = styled.div`
   position: absolute;
   background-color: ${(props) => props.theme?.languagebackground || "#f0f0f0"};
-  left: ${(props) => (props.activeLanguage === "en" ? "0px" : "32px")};
+  left: ${(props) => (props.activeLanguage === "en" ? "0px" : "25px")};
   transition: all ease-in-out 0.2s;
   height: 100%;
   width: 50%;

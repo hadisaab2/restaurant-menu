@@ -41,6 +41,7 @@ import { FaTimes, FaHome, FaList, FaShoppingBag, FaCommentAlt, FaAddressBook, Fa
 import { useParams } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { changelanuage } from "../../../redux/restaurant/restaurantActions";
+import { FaWhatsapp } from "react-icons/fa6";
 
 export default function NavigationBar({
   onProductsClick,
@@ -434,6 +435,7 @@ export default function NavigationBar({
                       if (platformLower.includes("twitter")) return <FaTwitter />;
                       if (platformLower.includes("linkedin")) return <FaLinkedin />;
                       if (platformLower.includes("youtube")) return <FaYoutube />;
+                      if (platformLower.includes("whatsapp")) return <FaWhatsapp />;
                       return <FaGlobe />;
                     };
 

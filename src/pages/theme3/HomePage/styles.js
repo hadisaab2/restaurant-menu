@@ -93,7 +93,7 @@ export const CategoriesCarouselContainer = styled.div`
     margin-bottom: 32px;
     
     &::after {
-      width: 80px;
+      width: 70px;
     }
   }
 `;
@@ -670,15 +670,15 @@ export const LocationCardsSection = styled.section`
   background: ${props => props.theme.backgroundColor || "#f8f9fa"};
   
   @media (min-width: 768px) {
-    padding: 60px 5%;
+    padding: 40px 5%;
   }
 `;
 
 export const LocationCard = styled.div`
   background: ${props => props.theme.hplocationBackgroundColor || props.theme.categoryUnActive || "#ffffff"};
-  border-radius: 14px;
-  padding: 10px 20px;
-  margin-bottom: 12px;
+  border-radius: 12px;
+  padding: 8px 16px;
+  margin-bottom: 10px;
   border: 1px solid rgba(0, 0, 0, 0.04);
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08), 0 1px 3px rgba(0, 0, 0, 0.05);
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
@@ -689,7 +689,7 @@ export const LocationCard = styled.div`
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
+  gap: 10px;
   
   &::before {
     content: '';
@@ -718,8 +718,8 @@ export const LocationCard = styled.div`
   }
   
   @media (min-width: 768px) {
-    padding: 20px 24px;
-    margin-bottom: 16px;
+    padding: 14px 20px;
+    margin-bottom: 12px;
   }
 `;
 
@@ -886,7 +886,7 @@ export const BranchPopupMapButton = styled.a`
   direction: ${props => props.activeLanguage === "ar" ? "rtl" : "ltr"};
   box-shadow: 0 2px 8px ${props => props.theme.mainColor ? `${props.theme.mainColor}30` : "rgba(0, 123, 255, 0.3)"};
   margin-top: 8px;
-  width: 100%;
+  width: 50%;
   max-width: 280px;
   
   &:hover {
@@ -907,7 +907,7 @@ export const BranchPopupMapButton = styled.a`
 `;
 
 export const LocationName = styled.h3`
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 500;
   color: ${props => props.theme.hplocationTextColor || props.theme.textColor || "#1a1a1a"};
   margin: 0;
@@ -918,7 +918,7 @@ export const LocationName = styled.h3`
   flex: 1;
   
   @media (min-width: 768px) {
-    font-size: 22px;
+    font-size: 18px;
   }
 `;
 
@@ -926,13 +926,13 @@ export const LocationIconsContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  gap: 12px;
+  gap: 10px;
   flex-wrap: nowrap;
   direction: ${props => props.activeLanguage === "ar" ? "rtl" : "ltr"};
   flex-shrink: 0;
   
   @media (min-width: 768px) {
-    gap: 16px;
+    gap: 12px;
   }
 `;
 
@@ -1061,7 +1061,7 @@ export const LocationPhoneLink = styled.a`
 // Footer
 export const Footer = styled.footer`
   width: 100%;
-  padding: 30px 5%;
+  padding: 5px 5%;
   margin-top: auto;
   background: ${props => props.theme.backgroundColor || "#f8f9fa"};
   border-top: 1px solid rgba(0, 0, 0, 0.08);
@@ -1088,13 +1088,13 @@ export const Copyright = styled.p`
 // Social Media Section
 export const SocialMediaSection = styled.section`
   width: 100%;
-  padding: 16px;
+  padding: 12px;
   max-width: 1200px;
-  margin: 0 auto;
+  margin: 10px auto;
   background: ${props => props.theme.backgroundColor || "#f8f9fa"};
   
   @media (min-width: 768px) {
-    padding: 48px 5%;
+    padding: 32px 5%;
   }
 `;
 
@@ -1104,12 +1104,12 @@ export const SocialMediaGrid = styled.div`
   flex-wrap: wrap;
   align-items: center;
   justify-content: center;
-  gap: 16px;
+  gap: 12px;
   max-width: 100%;
   margin: 0 auto;
   
   @media (min-width: 768px) {
-    gap: 20px;
+    gap: 16px;
   }
 `;
 
@@ -1118,8 +1118,8 @@ export const SocialLink = styled.a`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 10px;
-  padding: 18px 14px;
+  gap: 8px;
+  padding: 14px 12px;
   background: ${props => props.theme.categoryUnActive || "#ffffff"};
   border-radius: 10px;
   text-decoration: none;
@@ -1134,18 +1134,18 @@ export const SocialLink = styled.a`
   }
   
   span {
-    font-size: 13px;
+    font-size: 12px;
     font-weight: 500;
     color: ${props => props.theme.textColor || "#1a1a1a"};
     
     @media (min-width: 768px) {
-      font-size: 14px;
+      font-size: 13px;
     }
   }
 `;
 
 export const SocialIcon = styled.div`
-  font-size: 28px;
+  font-size: 24px;
   color: ${props => {
     if (props.platform?.toLowerCase().includes("facebook")) return "#1877F2";
     if (props.platform?.toLowerCase().includes("instagram")) return "#E4405F";
@@ -1158,7 +1158,7 @@ export const SocialIcon = styled.div`
   justify-content: center;
   
   @media (min-width: 768px) {
-    font-size: 34px;
+    font-size: 28px;
   }
 `;
 
@@ -1225,6 +1225,7 @@ export const FeaturedProductsGrid = styled.div`
   grid-template-columns: repeat(2, 1fr);
   gap: 16px;
   margin-top: 0;
+  margin-bottom:50px;
   
   @media (min-width: 768px) {
     grid-template-columns: repeat(2, 1fr);
@@ -1234,20 +1235,20 @@ export const FeaturedProductsGrid = styled.div`
 `;
 
 export const ExploreButton = styled.button`
-  width: 100%;
-  max-width: 320px;
-  height: 56px;
-  margin: 32px auto;
+  width: 50%;
+  max-width: 280px;
+  height: 48px;
+  margin: 24px auto;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 12px;
-  font-size: 16px;
+  gap: 10px;
+  font-size: 15px;
   font-weight: 600;
   color: ${props => props.theme.slidingButtonTextColor || "#ffffff"};
   background: ${props => props.theme.slidingButtonBackgroundColor || props.theme.mainColor || "#007bff"};
   border: none;
-  border-radius: 14px;
+  border-radius: 12px;
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   direction: ${props => props.activeLanguage === "ar" ? "rtl" : "ltr"};
@@ -1270,9 +1271,9 @@ export const ExploreButton = styled.button`
   }
   
   @media (min-width: 768px) {
-    max-width: 380px;
-    height: 64px;
-    font-size: 18px;
+    max-width: 320px;
+    height: 52px;
+    font-size: 16px;
   }
 `;
 
@@ -1295,20 +1296,20 @@ export const SloganText = styled.p`
 `;
 
 export const ViewAllButton = styled.button`
-  width: 100%;
-  max-width: 320px;
-  height: 56px;
-  margin: 24px auto 0;
+  width: 55%;
+  max-width: 280px;
+  height: 48px;
+  margin: 18px auto 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 12px;
-  font-size: 16px;
+  gap: 10px;
+  font-size: 15px;
   font-weight: 600;
   color: ${props => props.theme.slidingButtonTextColor || "#ffffff"};
   background: ${props => props.theme.slidingButtonBackgroundColor || props.theme.mainColor || "#007bff"};
   border: none;
-  border-radius: 14px;
+  border-radius: 12px;
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   direction: ${props => props.activeLanguage === "ar" ? "rtl" : "ltr"};
@@ -1331,9 +1332,9 @@ export const ViewAllButton = styled.button`
   }
   
   @media (min-width: 768px) {
-    max-width: 380px;
-    height: 64px;
-    font-size: 18px;
-    margin: 32px auto 0;
+    max-width: 320px;
+    height: 52px;
+    font-size: 16px;
+    margin: 24px auto 0;
   }
 `;
