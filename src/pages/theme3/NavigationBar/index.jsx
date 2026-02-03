@@ -59,6 +59,7 @@ export default function NavigationBar({
   showSidebar,
   restaurant: restaurantProp,
   popupHandler,
+  isProductDetailsOpen = false,
 }) {
   const { restaurantName: paramRestaurantName } = useParams();
   const hostname = window.location.hostname;
@@ -166,7 +167,7 @@ export default function NavigationBar({
 
   return (
     <>
-      <NavBarContainer activeLanguage={activeLanguage}>
+      <NavBarContainer activeLanguage={activeLanguage} $isProductDetailsOpen={isProductDetailsOpen}>
         <NavContent>
           {/* Menu Button (3 dashes) - Left */}
           <MobileMenuButton onClick={toggleMobileMenu} activeLanguage={activeLanguage} style={{ order: activeLanguage === "ar" ? 3 : 1 }}>
@@ -311,7 +312,6 @@ export default function NavigationBar({
                     </MobileMenuSectionTitle>
                   </MobileMenuSectionHeader>
                 </MobileMenuSection>
-                <MobileMenuDivider />
               </>
             )}
 
@@ -358,7 +358,6 @@ export default function NavigationBar({
                   </MobileMenuSectionContent>
                 )}
               </MobileMenuSection>
-              <MobileMenuDivider />
             </>
 
             {/* Orders Section */}
@@ -373,7 +372,6 @@ export default function NavigationBar({
                   </MobileMenuSectionTitle>
                 </MobileMenuSectionHeader>
               </MobileMenuSection>
-              <MobileMenuDivider />
             </>
 
             {/* Feedback Section */}
@@ -388,7 +386,6 @@ export default function NavigationBar({
                   </MobileMenuSectionTitle>
                 </MobileMenuSectionHeader>
               </MobileMenuSection>
-              <MobileMenuDivider />
             </>
 
             {/* Branches Section */}
@@ -403,7 +400,6 @@ export default function NavigationBar({
                   </MobileMenuSectionTitle>
                 </MobileMenuSectionHeader>
               </MobileMenuSection>
-              <MobileMenuDivider />
             </>
 
             {/* Contact Us Section */}
@@ -418,7 +414,6 @@ export default function NavigationBar({
                   </MobileMenuSectionTitle>
                 </MobileMenuSectionHeader>
               </MobileMenuSection>
-              <MobileMenuDivider />
             </>
 
             {/* Social Media Section */}

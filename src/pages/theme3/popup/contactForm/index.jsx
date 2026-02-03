@@ -9,6 +9,7 @@ import {
   Description,
   FormContainer,
   Form,
+  FormRow,
   FormGroup,
   Label,
   Input,
@@ -190,77 +191,98 @@ export default function ContactFormPopup({
 
       <FormContainer activeLanguage={activeLanguage}>
         <Form onSubmit={handleSubmit}>
-          <FormGroup>
+          <FormRow>
+            <FormGroup>
+              <Label activeLanguage={activeLanguage}>
+                {activeLanguage === "en" ? "Type" : "النوع"}
+              </Label>
+              <Select
+                name="type"
+                value={formData.type}
+                onChange={handleChange}
+                activeLanguage={activeLanguage}
+              >
+                <option value="question">
+                  {activeLanguage === "en" ? "Question" : "سؤال"}
+                </option>
+                <option value="suggestion">
+                  {activeLanguage === "en" ? "Suggestion" : "اقتراح"}
+                </option>
+              </Select>
+            </FormGroup>
+            <FormGroup>
+              <Label activeLanguage={activeLanguage}>
+                {activeLanguage === "en" ? "Name" : "الاسم"}
+              </Label>
+              <Input
+                type="text"
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
+                placeholder={activeLanguage === "en" ? "Name" : "الاسم"}
+                activeLanguage={activeLanguage}
+              />
+            </FormGroup>
+          </FormRow>
+          
+          <FormRow>
+            <FormGroup>
+              <Label activeLanguage={activeLanguage}>
+                {activeLanguage === "en" ? "E-mail" : "البريد الإلكتروني"}
+              </Label>
+              <Input
+                type="email"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+                placeholder={activeLanguage === "en" ? "E-mail" : "البريد الإلكتروني"}
+                activeLanguage={activeLanguage}
+              />
+              {errors.email && <ErrorMessage>{errors.email}</ErrorMessage>}
+            </FormGroup>
+
+            <FormGroup>
+              <Label activeLanguage={activeLanguage}>
+                {activeLanguage === "en" ? "Phone Number" : "رقم الهاتف"}
+              </Label>
+              <Input
+                type="tel"
+                name="phone"
+                value={formData.phone}
+                onChange={handleChange}
+                placeholder={activeLanguage === "en" ? "Phone Number" : "رقم الهاتف"}
+                activeLanguage={activeLanguage}
+              />
+            </FormGroup>
+          </FormRow>
+
+          <FormRow>
+            <FormGroup $fullWidth>
+              <Label activeLanguage={activeLanguage}>
+                {activeLanguage === "en" ? "Subject" : "الموضوع"}
+              </Label>
+              <Input
+                type="text"
+                name="subject"
+                value={formData.subject}
+                onChange={handleChange}
+                placeholder={activeLanguage === "en" ? "Subject" : "الموضوع"}
+                activeLanguage={activeLanguage}
+              />
+            </FormGroup>
+          </FormRow>
+
+          <FormGroup $fullWidth>
             <Label activeLanguage={activeLanguage}>
-              {activeLanguage === "en" ? "Type" : "النوع"}
+              {activeLanguage === "en" ? "Message" : "الرسالة"} *
             </Label>
-            <Select
-              name="type"
-              value={formData.type}
-              onChange={handleChange}
-              activeLanguage={activeLanguage}
-            >
-              <option value="question">
-                {activeLanguage === "en" ? "Question" : "سؤال"}
-              </option>
-              <option value="suggestion">
-                {activeLanguage === "en" ? "Suggestion" : "اقتراح"}
-              </option>
-            </Select>
-          </FormGroup>
-          <FormGroup>
-            <Input
-              type="text"
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
-              placeholder={activeLanguage === "en" ? "Name" : "الاسم"}
-              activeLanguage={activeLanguage}
-            />
-          </FormGroup>
-
-          <FormGroup>
-            <Input
-              type="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              placeholder={activeLanguage === "en" ? "E-mail" : "البريد الإلكتروني"}
-              activeLanguage={activeLanguage}
-            />
-            {errors.email && <ErrorMessage>{errors.email}</ErrorMessage>}
-          </FormGroup>
-
-          <FormGroup>
-            <Input
-              type="tel"
-              name="phone"
-              value={formData.phone}
-              onChange={handleChange}
-              placeholder={activeLanguage === "en" ? "Phone Number" : "رقم الهاتف"}
-              activeLanguage={activeLanguage}
-            />
-          </FormGroup>
-
-          <FormGroup>
-            <Input
-              type="text"
-              name="subject"
-              value={formData.subject}
-              onChange={handleChange}
-              placeholder={activeLanguage === "en" ? "Subject" : "الموضوع"}
-              activeLanguage={activeLanguage}
-            />
-          </FormGroup>
-
-          <FormGroup>
             <TextArea
               name="message"
               value={formData.message}
               onChange={handleChange}
               placeholder={activeLanguage === "en" ? "Message" : "الرسالة"}
               activeLanguage={activeLanguage}
-              rows={5}
+              rows={2}
             />
             {errors.message && <ErrorMessage>{errors.message}</ErrorMessage>}
           </FormGroup>

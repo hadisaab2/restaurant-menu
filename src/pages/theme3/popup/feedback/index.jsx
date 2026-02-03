@@ -7,6 +7,7 @@ import {
   StarContainer,
   Star,
   FormContainer,
+  InputRow,
   Input,
   TextArea,
   SubmitButton,
@@ -148,29 +149,34 @@ export default function FeedbackPopup({
           ))}
         </StarContainer>
 
-        <Label activeLanguage={activeLanguage}>
-          {activeLanguage === "en" ? "Name" : "الاسم"}
-        </Label>
-        <Input
-          type="text"
-          activeLanguage={activeLanguage}
-          dir={activeLanguage === "en" ? "ltr" : "rtl"}
-          placeholder={activeLanguage === "en" ? "Your name (optional)" : "اسمك (اختياري)"}
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-        />
-
-        <Label activeLanguage={activeLanguage}>
-          {activeLanguage === "en" ? "Phone Number" : "رقم الهاتف"}
-        </Label>
-        <Input
-          type="tel"
-          activeLanguage={activeLanguage}
-          dir={activeLanguage === "en" ? "ltr" : "rtl"}
-          placeholder={activeLanguage === "en" ? "Phone number (optional)" : "رقم الهاتف (اختياري)"}
-          value={phoneNumber}
-          onChange={(e) => setPhoneNumber(e.target.value)}
-        />
+        <InputRow activeLanguage={activeLanguage}>
+          <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: "4px", minWidth: 0 }}>
+            <Label activeLanguage={activeLanguage}>
+              {activeLanguage === "en" ? "Name" : "الاسم"}
+            </Label>
+            <Input
+              type="text"
+              activeLanguage={activeLanguage}
+              dir={activeLanguage === "en" ? "ltr" : "rtl"}
+              placeholder={activeLanguage === "en" ? "Your name (optional)" : "اسمك (اختياري)"}
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+            />
+          </div>
+          <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: "4px", minWidth: 0 }}>
+            <Label activeLanguage={activeLanguage}>
+              {activeLanguage === "en" ? "Phone Number" : "رقم الهاتف"}
+            </Label>
+            <Input
+              type="tel"
+              activeLanguage={activeLanguage}
+              dir={activeLanguage === "en" ? "ltr" : "rtl"}
+              placeholder={activeLanguage === "en" ? "Phone number (optional)" : "رقم الهاتف (اختياري)"}
+              value={phoneNumber}
+              onChange={(e) => setPhoneNumber(e.target.value)}
+            />
+          </div>
+        </InputRow>
 
         <Label activeLanguage={activeLanguage}>
           {activeLanguage === "en" ? "Email" : "البريد الإلكتروني"}
@@ -182,6 +188,7 @@ export default function FeedbackPopup({
           placeholder={activeLanguage === "en" ? "Email (optional)" : "البريد الإلكتروني (اختياري)"}
           value={email}
           onChange={(e) => setEmail(e.target.value)}
+          style={{ width: "100%" }}
         />
 
         <Label activeLanguage={activeLanguage}>

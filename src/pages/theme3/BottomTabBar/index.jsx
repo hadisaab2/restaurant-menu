@@ -20,6 +20,7 @@ export default function BottomTabBar({
   onBranchesClick,
   restaurantName,
   branches,
+  isProductDetailsOpen = false,
 }) {
   const dispatch = useDispatch();
   const activeLanguage = useSelector(
@@ -83,7 +84,7 @@ export default function BottomTabBar({
   const showLanguageChanger = restaurant?.languages === "en&ar";
 
   return (
-    <TabBarContainer data-tab-bar>
+    <TabBarContainer data-tab-bar $isProductDetailsOpen={isProductDetailsOpen}>
       {tabs.map((tab) => (
         <TabItem
           key={tab.id}
@@ -103,22 +104,7 @@ export default function BottomTabBar({
         </TabItem>
       ))}
       
-      {/* Language Changer - Earth Icon */}
-      {showLanguageChanger && (
-        <TabItem
-          onClick={handleLanguageToggle}
-          $active={false}
-          activeLanguage={activeLanguage}
-          style={{ flex: '0 0 auto' }}
-        >
-          <TabIcon $isLanguage $activeLanguage={activeLanguage}>
-            <FaGlobe />
-          </TabIcon>
-          <TabLabel activeLanguage={activeLanguage}>
-            {activeLanguage === "en" ? "Language" : "اللغة"}
-          </TabLabel>
-        </TabItem>
-      )}
+     
     </TabBarContainer>
   );
 }

@@ -17,6 +17,10 @@ export const TabBarContainer = styled.nav`
   z-index: 1600;
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
+  transition: opacity 0.4s ease, transform 0.4s ease;
+  opacity: ${(props) => (props.$isProductDetailsOpen ? 0 : 1)};
+  transform: ${(props) => (props.$isProductDetailsOpen ? "translateY(20px)" : "translateY(0)")};
+  pointer-events: ${(props) => (props.$isProductDetailsOpen ? "none" : "auto")};
   
   /* Safe area for devices with notches */
   padding-bottom: max(8px, env(safe-area-inset-bottom));
@@ -29,11 +33,7 @@ export const TabItem = styled.button`
   align-items: center;
   justify-content: center;
   gap: 4px;
-  background: ${(props) => 
-    props.$active 
-      ? (props.theme?.mainColor ? `${props.theme.mainColor}15` : "rgba(0, 123, 255, 0.15)")
-      : "transparent"
-  };
+  background: transparent;
   border: none;
   cursor: pointer;
   padding: 8px 4px;
@@ -45,18 +45,25 @@ export const TabItem = styled.button`
       ? (props.theme?.mainColor || "#007bff")
       : (props.theme?.textColor || "#666666")
   };
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
   
   &:active {
     transform: scale(0.95);
     opacity: 0.8;
+    outline: none;
+    border: none;
+  }
+  
+  &:focus {
+    outline: none;
+    border: none;
   }
   
   &:hover {
     opacity: 0.8;
     background: ${(props) => 
-      props.$active 
-        ? (props.theme?.mainColor ? `${props.theme.mainColor}15` : "rgba(0, 123, 255, 0.15)")
-        : (props.theme?.mainColor ? `${props.theme.mainColor}08` : "rgba(0, 123, 255, 0.08)")
+      props.theme?.mainColor ? `${props.theme.mainColor}08` : "rgba(0, 123, 255, 0.08)"
     };
   }
 `;

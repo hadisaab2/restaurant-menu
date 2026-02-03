@@ -23,7 +23,7 @@ height: 100%;
 `;
 
 export const Container = styled.div`
-height: 100%;
+height: 100vh;
 background-color: ${props => props.theme.sidebarbackground};
 width: 80%;
 position: absolute;
@@ -203,8 +203,10 @@ export const HomeLinkText = styled.span`
 
 export const SidebarSection = styled.div`
   width: 100%;
-  margin-bottom: 4px;
+  margin-bottom: 0;
   padding: 0 10px;
+  border: none;
+  border-bottom: none;
 `;
 
 export const SectionHeader = styled.div`

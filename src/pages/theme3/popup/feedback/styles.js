@@ -5,9 +5,10 @@ import { FaStar } from "react-icons/fa";
 export const Container = styled.div`
   position: ${(props) => (props.isPage ? "relative" : "fixed")};
   bottom: ${(props) =>
-    props.isPage ? "auto" : props.showPopup === "feedback" ? "0px" : "-100%"};
-  min-height: ${(props) => (props.isPage ? "100vh" : "60vh")};
-  max-height: ${(props) => (props.isPage ? "none" : "90vh")};
+    props.isPage ? "auto" : props.showPopup === "feedback" ? "0%" : "-100%"};
+  left: ${(props) => (props.isPage ? "auto" : "0")};
+  right: ${(props) => (props.isPage ? "auto" : "0")};
+  min-height: ${(props) => (props.isPage ? "100vh" : "70vh")};
   background-color: ${(props) => props.theme?.popupbackgroundColor || "#ffffff"};
   width: 100%;
   transition: ${(props) => (props.isPage ? "none" : "all 0.8s ease-in-out")};
@@ -18,17 +19,13 @@ export const Container = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  z-index: 1000;
-  padding: 16px;
-  padding-top: ${(props) => (props.isPage ? "24px" : "60px")};
-  padding-bottom: 24px;
+  z-index: 1500;
+  padding: ${(props) => (props.isPage ? "24px 16px" : "16px")};
+  padding-bottom: 20px;
   overflow-y: auto;
-  margin-top: ${(props) => (props.isPage ? "0" : "5vh")};
   
   @media (max-width: 768px) {
-    margin-top: ${(props) => (props.isPage ? "0" : "3vh")};
-    padding-top: ${(props) => (props.isPage ? "20px" : "50px")};
-    padding: 14px;
+    padding: ${(props) => (props.isPage ? "20px 14px" : "14px")};
     padding-bottom: 20px;
   }
 `;
@@ -43,14 +40,23 @@ export const HeaderContainer = styled.div`
 `;
 
 export const Close = styled(IoMdClose)`
-  font-size: 24px;
+  font-size: 20px;
   cursor: pointer;
   color: ${(props) => props.theme?.popupTextColor || "#333333"};
   flex-shrink: 0;
-  margin-${props => props.activeLanguage === "ar" ? "left" : "right"}: auto;
+  background: transparent;
+  border: none;
+  padding: 4px;
+  line-height: 1;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 18px;
 
   &:hover {
-    opacity: 0.7;
+    background: rgba(0, 0, 0, 0.05);
   }
 `;
 
@@ -70,7 +76,20 @@ export const FormContainer = styled.form`
   display: flex;
   flex-direction: column;
   gap: 8px;
+  margin-bottom:60px;
   direction: ${(props) => (props.activeLanguage === "ar" ? "rtl" : "ltr")};
+`;
+
+export const InputRow = styled.div`
+  display: flex;
+  flex-direction: row;
+  gap: 12px;
+  width: 100%;
+  
+  @media (max-width: 280px) {
+    flex-direction: column;
+    gap: 8px;
+  }
 `;
 
 export const Label = styled.label`
@@ -110,7 +129,8 @@ export const Star = styled.div`
 `;
 
 export const Input = styled.input`
-  width: 100%;
+  flex: 1;
+  min-width: 0;
   padding: 10px 14px;
   border: 1px solid ${(props) => props.theme?.mainColor || "#007bff"}30;
   border-radius: 8px;
@@ -127,6 +147,10 @@ export const Input = styled.input`
 
   &::placeholder {
     color: ${(props) => props.theme?.textColor || "#666666"}50;
+  }
+  
+  @media (max-width: 320px) {
+    width: 100%;
   }
 `;
 

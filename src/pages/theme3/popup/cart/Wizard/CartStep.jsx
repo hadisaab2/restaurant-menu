@@ -138,11 +138,11 @@ export default function CartStep({ restaurant, activeLanguage }) {
             </ItemInfo>
           </CartItem>
         ))}
+        <TotalContainer>
+          <TotalLabel>Total:</TotalLabel>
+          <TotalPrice>{convertPrice(totalPrice, currencySymbol)}</TotalPrice>
+        </TotalContainer>
       </ItemsList>
-      <TotalContainer>
-        <TotalLabel>Total:</TotalLabel>
-        <TotalPrice>{convertPrice(totalPrice, currencySymbol)}</TotalPrice>
-      </TotalContainer>
     </CartStepContainer>
   );
 }

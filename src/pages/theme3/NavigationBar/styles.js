@@ -10,7 +10,10 @@ export const NavBarContainer = styled.nav`
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
   z-index: 1000;
   border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-  transition: all 0.3s ease;
+  transition: opacity 0.4s ease, transform 0.4s ease;
+  opacity: ${(props) => (props.$isProductDetailsOpen ? 0 : 1)};
+  transform: ${(props) => (props.$isProductDetailsOpen ? "translateY(-20px)" : "translateY(0)")};
+  pointer-events: ${(props) => (props.$isProductDetailsOpen ? "none" : "auto")};
 `;
 
 export const NavContent = styled.div`
@@ -233,9 +236,8 @@ export const MobileMenu = styled.div`
   right: ${(props) => (props.activeLanguage === "ar" ? "0" : "auto")};
   width: 280px;
   max-width: 85vw;
-  height: calc(100vh - 40px);
-  margin-top: 20px;
-  margin-bottom: 20px;
+  height: 100%;
+
   background: ${(props) => props.theme?.backgroundColor || "#ffffff"};
   box-shadow: ${(props) =>
     props.activeLanguage === "ar"

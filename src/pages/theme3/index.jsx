@@ -31,8 +31,6 @@ export default function Theme3() {
   const productId = searchParams.get("productId"); // Get productId from URL
   const categoryId = searchParams.get("categoryId"); // Get productId from URL
   const page = searchParams.get("page");
-  const isFeedbackPage = page === "feedback";
-  const isContactPage = page === "contact";
   const [isProductDetailsOpen, setIsProductDetailsOpen] = useState(false);
   const { restaurantName: paramRestaurantName } = useParams();
   const hostname = window.location.hostname;
@@ -109,23 +107,13 @@ export default function Theme3() {
   };
 
   const handleFeedbackClick = () => {
-    const newParams = new URLSearchParams(searchParams);
-    newParams.set("page", "feedback");
-    newParams.delete("productId");
-    newParams.delete("categoryId");
-    setSearchParams(newParams);
-    popupHandler(null);
-    setViewMode("home");
+    window.history.pushState({}, "");
+    popupHandler("feedback");
   };
 
   const handleContactClick = () => {
-    const newParams = new URLSearchParams(searchParams);
-    newParams.set("page", "contact");
-    newParams.delete("productId");
-    newParams.delete("categoryId");
-    setSearchParams(newParams);
-    popupHandler(null);
-    setViewMode("home");
+    window.history.pushState({}, "");
+    popupHandler("contactForm");
   };
 
   const handleOrderClick = () => {
@@ -217,11 +205,6 @@ export default function Theme3() {
     setshowPopup(type);
   };
 
-  const handleClosePage = () => {
-    const newParams = new URLSearchParams(searchParams);
-    newParams.delete("page");
-    setSearchParams(newParams);
-  };
 
   const handleClickOutside = () => {
     if (showPopup != null) {
@@ -285,6 +268,13 @@ export default function Theme3() {
     // Don't automatically change viewMode when categoryId is removed
     // Let handleBackToCategories control the viewMode change
   }, [categoryId]);
+
+  // Close popups when navigating (productId or categoryId changes)
+  useEffect(() => {
+    if ((productId || categoryId) && showPopup && (showPopup === "feedback" || showPopup === "contactForm")) {
+      popupHandler(null);
+    }
+  }, [productId, categoryId]);
 
   // Scroll to top when switching to categories view
   useEffect(() => {
@@ -392,50 +382,29 @@ export default function Theme3() {
 
   return (
     <Container id="wrapper">
-      {/* Navigation Bar - Hide only when viewing product details */}
-      {!isProductDetailsOpen && (
-        <NavigationBar
-          onProductsClick={handleProductsClick}
-          onSocialMediaClick={handleSocialMediaClick}
-          onBranchesClick={handleBranchesClick}
-          onContactFormClick={handleContactClick}
-          onFeedbackClick={handleFeedbackClick}
-          onOrderClick={handleOrderClick}
-          onHomeClick={handleBackToHome}
-          onCategoryClick={handleCategoryClick}
-          onContactClick={handleContactClick}
-          categories={theme3Categories}
-          activeCategory={activeCategory}
-          setshowSidebar={setshowSidebar}
-          showSidebar={showSidebar}
-          popupHandler={popupHandler}
-        />
-      )}
+      {/* Navigation Bar - Smooth transition when viewing product details */}
+      <NavigationBar
+        onProductsClick={handleProductsClick}
+        onSocialMediaClick={handleSocialMediaClick}
+        onBranchesClick={handleBranchesClick}
+        onContactFormClick={handleContactClick}
+        onFeedbackClick={handleFeedbackClick}
+        onOrderClick={handleOrderClick}
+        onHomeClick={handleBackToHome}
+        onCategoryClick={handleCategoryClick}
+        onContactClick={handleContactClick}
+        categories={theme3Categories}
+        activeCategory={activeCategory}
+        setshowSidebar={setshowSidebar}
+        showSidebar={showSidebar}
+        popupHandler={popupHandler}
+        isProductDetailsOpen={isProductDetailsOpen}
+      />
       
       <MenuWrapper onClick={handleClickOutside} >
         <BlurOverlay showPopup={showPopup} />
 
-        {isFeedbackPage && (
-          <FeedbackPopup
-            restaurant={restaurant}
-            showPopup="feedback"
-            popupHandler={popupHandler}
-            isPage
-            onClose={handleClosePage}
-          />
-        )}
-
-        {isContactPage && (
-          <ContactFormPopup
-            restaurant={restaurant}
-            showPopup="contactForm"
-            popupHandler={popupHandler}
-            isPage
-            onClose={handleClosePage}
-          />
-        )}
-        
-        {!isFeedbackPage && !isContactPage && viewMode === "home" && (
+        {viewMode === "home" && (
           <HomePage
             onExploreClick={handleExploreClick}
             setSearchParams={setSearchParams}
@@ -445,7 +414,7 @@ export default function Theme3() {
         )}
 
         {/* Show HeaderTop only (logo and menu) */}
-        {!isFeedbackPage && !isContactPage && viewMode === "categories" && (
+        {viewMode === "categories" && (
           <Header
             categories={theme3Categories}
             activeCategory={activeCategory}
@@ -461,20 +430,21 @@ export default function Theme3() {
         )}
 
         {/* Show Category Header when viewing products, but not when viewing a product directly */}
-        {!isFeedbackPage && !isContactPage && viewMode === "products" && activeCategory && !productId && (
+        {viewMode === "products" && activeCategory && !productId && (
           <CategoryHeader
             categoryId={activeCategory}
             categories={theme3Categories}
             onBack={handleBackToCategories}
             searchText={searchText}
             setSearchText={setSearchText}
+            popupHandler={popupHandler}
             setshowSidebar={setshowSidebar}
             showSidebar={showSidebar}
           />
         )}
 
         {/* Show Categories Grid initially */}
-        {!isFeedbackPage && !isContactPage && viewMode === "categories" && (
+        {viewMode === "categories" && (
           <CategoriesGrid
             categories={
               searchText
@@ -490,7 +460,7 @@ export default function Theme3() {
         )}
 
         {/* Show Products when a category is selected */}
-        {!isFeedbackPage && !isContactPage && viewMode === "products" && activeCategory && (
+        {viewMode === "products" && activeCategory && (
           <Products
             menu={restaurant?.categories || []}
             activeCategory={activeCategory}
@@ -523,6 +493,18 @@ export default function Theme3() {
         showPopup={showPopup}
         popupHandler={popupHandler}
       />
+      <FeedbackPopup
+        restaurant={restaurant}
+        showPopup={showPopup}
+        popupHandler={popupHandler}
+        isPage={false}
+      />
+      <ContactFormPopup
+        restaurant={restaurant}
+        showPopup={showPopup}
+        popupHandler={popupHandler}
+        isPage={false}
+      />
       <SideBar
         categories={theme3Categories}
         activeCategory={activeCategory}
@@ -543,38 +525,37 @@ export default function Theme3() {
       {productId &&<ProductParam productId={productId} searchParams={searchParams} setSearchParams={setSearchParams} />}
       {features?.install_app && <InstallPrompt showInstallPopup={showInstallPopup} onInstall={handleInstallClick} restaurantName={restaurantName} onDismiss={() => setShowInstallPopup(false)} />}
       
-      {/* Bottom Tab Bar - show always except in product details, feedback, or contact pages */}
-      {!productId && !isFeedbackPage && !isContactPage && (
-        <BottomTabBar
-          activeView={viewMode}
-          onHomeClick={handleBackToHome}
-          onCategoriesClick={() => {
-            if (viewMode === "products") {
-              handleBackToCategories();
-            } else {
-              setViewMode("categories");
-              setactiveCategory(null);
-              const newParams = new URLSearchParams(searchParams);
-              newParams.delete("categoryId");
-              setSearchParams(newParams);
-              window.scrollTo({ top: 0, behavior: 'smooth' });
-            }
-          }}
-          onCartClick={() => {
-            if (features?.cart) {
-              popupHandler("cart");
-            }
-          }}
-          onBranchesClick={() => {
-            window.history.pushState({}, "");
-            popupHandler("location");
-          }}
-          onContactClick={handleContactClick}
-          onFeedbackClick={handleFeedbackClick}
-          restaurantName={restaurantName}
-          branches={restaurant?.branches || []}
-        />
-      )}
+      {/* Bottom Tab Bar - Always visible except when product details are open */}
+      <BottomTabBar
+        isProductDetailsOpen={isProductDetailsOpen}
+        activeView={viewMode}
+        onHomeClick={handleBackToHome}
+        onCategoriesClick={() => {
+          if (viewMode === "products") {
+            handleBackToCategories();
+          } else {
+            setViewMode("categories");
+            setactiveCategory(null);
+            const newParams = new URLSearchParams(searchParams);
+            newParams.delete("categoryId");
+            setSearchParams(newParams);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }
+        }}
+        onCartClick={() => {
+          if (features?.cart) {
+            popupHandler("cart");
+          }
+        }}
+        onBranchesClick={() => {
+          window.history.pushState({}, "");
+          popupHandler("location");
+        }}
+        onContactClick={handleContactClick}
+        onFeedbackClick={handleFeedbackClick}
+        restaurantName={restaurantName}
+        branches={restaurant?.branches || []}
+      />
 
       {/* Cart Animation */}
       <CartAnimation

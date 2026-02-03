@@ -5,35 +5,35 @@ export const Container = styled.div`
   width: 90%;
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 16px;
   margin-top: 20px;
   direction: ${(props) => (props.$activeLanguage === "ar" ? "rtl" : "ltr")};
 `;
 
 export const Header = styled.div`
   background: white;
-  border-radius: 16px;
-  padding: 22px 26px;
-  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+  border-radius: 12px;
+  padding: 16px 20px;
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.06);
 `;
 
 export const HeaderTitle = styled.h2`
   margin: 0;
-  font-size: 22px;
+  font-size: 18px;
   font-weight: 700;
   color: #0f172a;
 `;
 
 export const HeaderSubtitle = styled.p`
-  margin: 8px 0 0 0;
+  margin: 6px 0 0 0;
   color: #64748b;
-  font-size: 14px;
+  font-size: 12px;
 `;
 
 export const CardsGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 16px;
+  gap: 12px;
   @media (max-width: ${breakingPoints.md}px) {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -44,43 +44,43 @@ export const CardsGrid = styled.div`
 
 export const StatCard = styled.div`
   background: white;
-  border-radius: 16px;
-  padding: 18px 20px;
-  box-shadow: 0 6px 18px rgba(15, 23, 42, 0.08);
+  border-radius: 12px;
+  padding: 14px 16px;
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.06);
   border: 1px solid rgba(148, 163, 184, 0.25);
 `;
 
 export const StatLabel = styled.span`
   display: block;
-  font-size: 13px;
+  font-size: 11px;
   color: #64748b;
-  margin-bottom: 6px;
+  margin-bottom: 4px;
 `;
 
 export const StatValue = styled.span`
   display: block;
-  font-size: 22px;
+  font-size: 18px;
   font-weight: 700;
   color: #0f172a;
 `;
 
 export const StatMeta = styled.span`
   display: block;
-  margin-top: 6px;
-  font-size: 12px;
+  margin-top: 4px;
+  font-size: 11px;
   color: #6366f1;
 `;
 
 export const Section = styled.div`
   background: white;
-  border-radius: 16px;
-  padding: 22px 26px;
-  box-shadow: 0 6px 18px rgba(15, 23, 42, 0.08);
+  border-radius: 12px;
+  padding: 16px 20px;
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.06);
 `;
 
 export const SectionTitle = styled.h3`
-  margin: 0 0 16px 0;
-  font-size: 18px;
+  margin: 0 0 12px 0;
+  font-size: 16px;
   font-weight: 600;
   color: #0f172a;
 `;
@@ -120,14 +120,14 @@ export const ListMeta = styled.span`
 `;
 
 export const Badge = styled.span`
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 600;
-  padding: 6px 10px;
+  padding: 4px 8px;
   border-radius: 999px;
   border: 1px solid transparent;
   position: absolute;
-  top: 10px;
-  right: 12px;
+  top: 8px;
+  right: 10px;
   ${({ variant }) => {
     const key = String(variant || "").toLowerCase();
     if (key.includes("status-new")) {
@@ -158,7 +158,7 @@ export const Badge = styled.span`
 export const PageGrid = styled.div`
   display: grid;
   grid-template-columns: 45% 55%;
-  gap: 18px;
+  gap: 14px;
   @media (max-width: ${breakingPoints.md}px) {
     grid-template-columns: 1fr;
   }
@@ -167,31 +167,31 @@ export const PageGrid = styled.div`
 export const FiltersRow = styled.div`
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
-  margin-bottom: 16px;
+  gap: 8px;
+  margin-bottom: 12px;
 `;
 
 export const SearchInput = styled.input`
   flex: 1;
   min-width: 180px;
-  height: 38px;
-  border-radius: 10px;
+  height: 34px;
+  border-radius: 8px;
   border: 1px solid rgba(148, 163, 184, 0.3);
-  padding: 0 12px;
-  font-size: 13px;
+  padding: 0 10px;
+  font-size: 12px;
   outline: none;
   background: #f8fafc;
 `;
 
 export const SelectInput = styled.select`
-  height: 38px;
-  border-radius: 10px;
+  height: 34px;
+  border-radius: 8px;
   border: 1px solid rgba(148, 163, 184, 0.3);
-  padding: 0 10px;
-  font-size: 13px;
+  padding: 0 8px;
+  font-size: 12px;
   background: #fff;
   outline: none;
-  min-width: 140px;
+  min-width: 120px;
 `;
 
 export const ThreadListPanel = styled(Section)`
@@ -208,15 +208,15 @@ export const ThreadDetailsPanel = styled(Section)`
 export const ThreadList = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 10px;
 `;
 
 export const ThreadListItem = styled.div`
   display: flex;
   justify-content: space-between;
-  gap: 16px;
-  padding: 14px 16px;
-  border-radius: 12px;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: 10px;
   border: 1px solid
     ${(props) =>
       props.selected ? "rgba(14, 165, 233, 0.5)" : "rgba(148, 163, 184, 0.2)"};
@@ -224,34 +224,34 @@ export const ThreadListItem = styled.div`
   cursor: pointer;
   transition: all 0.2s ease;
   position: relative;
-  padding-right: 56px;
+  padding-right: 50px;
 `;
 
 export const ThreadListMain = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 4px;
 `;
 
 export const ThreadTitle = styled.span`
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
   color: #0f172a;
 `;
 
 export const ThreadSubtitle = styled.span`
-  font-size: 12px;
+  font-size: 11px;
   color: #64748b;
 `;
 
 export const ThreadMetaRow = styled.div`
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
+  gap: 8px;
 `;
 
 export const ThreadMetaText = styled.span`
-  font-size: 11px;
+  font-size: 10px;
   color: #64748b;
 `;
 
@@ -264,19 +264,19 @@ export const ListEmpty = styled.div`
 export const DetailsHeader = styled.div`
   display: flex;
   justify-content: space-between;
-  gap: 12px;
+  gap: 10px;
   flex-wrap: wrap;
   align-items: center;
 `;
 
 export const DetailsTitle = styled.span`
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 700;
   color: #0f172a;
 `;
 
 export const DetailsSubtitle = styled.span`
-  font-size: 12px;
+  font-size: 11px;
   color: #64748b;
 `;
 
@@ -312,11 +312,11 @@ export const DetailsBadges = styled.div`
 export const ChatContainer = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  padding: 16px;
-  border-radius: 12px;
+  gap: 10px;
+  padding: 12px;
+  border-radius: 10px;
   background: #f8fafc;
-  max-height: 420px;
+  max-height: 360px;
   overflow-y: auto;
 `;
 
@@ -334,9 +334,9 @@ export const MessageRow = styled.div`
 
 export const MessageBubble = styled.div`
   max-width: 75%;
-  padding: 12px 14px;
-  border-radius: 14px;
-  font-size: 13px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  font-size: 12px;
   line-height: 1.4;
   color: #0f172a;
   background: ${(props) => (props.isOwner ? "#e0f2fe" : "white")};
@@ -345,42 +345,42 @@ export const MessageBubble = styled.div`
 `;
 
 export const MessageTime = styled.div`
-  font-size: 10px;
+  font-size: 9px;
   color: #94a3b8;
-  margin-top: 6px;
+  margin-top: 4px;
 `;
 
 export const ReplyArea = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 10px;
 `;
 
 export const ReplyInput = styled.textarea`
-  border-radius: 12px;
+  border-radius: 10px;
   border: 1px solid rgba(148, 163, 184, 0.3);
-  padding: 12px;
-  font-size: 13px;
+  padding: 10px;
+  font-size: 12px;
   resize: vertical;
-  min-height: 90px;
+  min-height: 70px;
   outline: none;
 `;
 
 export const SendButton = styled.button`
   align-self: flex-end;
-  padding: 10px 18px;
-  border-radius: 10px;
+  padding: 8px 16px;
+  border-radius: 8px;
   border: none;
   background: #0ea5e9;
   color: white;
-  font-size: 13px;
+  font-size: 12px;
   cursor: pointer;
   opacity: ${(props) => (props.disabled ? 0.6 : 1)};
 `;
 
 export const ReplyActions = styled.div`
   display: flex;
-  gap: 10px;
+  gap: 8px;
   flex-wrap: wrap;
   justify-content: flex-end;
 `;
