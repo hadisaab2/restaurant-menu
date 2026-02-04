@@ -183,12 +183,6 @@ export default function ContactFormPopup({
         {activeLanguage === "en" ? "DO YOU HAVE ANY QUESTION OR SUGGESTION?" : "هل لديك أي سؤال أو اقتراح؟"}
       </Subtitle>
 
-      <Description activeLanguage={activeLanguage}>
-  {activeLanguage === "en"
-    ? "Our team is always ready to listen and provide the support you deserve."
-    : " فريقنا دائمًا جاهز للاستماع وتقديم الدعم الذي تستحقه."}
-</Description>
-
       <FormContainer activeLanguage={activeLanguage}>
         <Form onSubmit={handleSubmit}>
           <FormRow>

@@ -886,7 +886,7 @@ export const BranchPopupMapButton = styled.a`
   direction: ${props => props.activeLanguage === "ar" ? "rtl" : "ltr"};
   box-shadow: 0 2px 8px ${props => props.theme.mainColor ? `${props.theme.mainColor}30` : "rgba(0, 123, 255, 0.3)"};
   margin-top: 8px;
-  width: 50%;
+  width: 70%;
   max-width: 280px;
   
   &:hover {

@@ -20,6 +20,7 @@ export default function Slider({ images, activeLanguage }) {
   const startX = useRef(0);
   const scrollLeftStart = useRef(0);
   const autoPlayTimer = useRef(null);
+  const dragEndTime = useRef(0);
 
   const totalSlides = images?.length || 0;
 
@@ -29,7 +30,7 @@ export default function Slider({ images, activeLanguage }) {
     const track = trackRef.current;
     const containerWidth = track.offsetWidth;
     const cardWidth = containerWidth * 0.75; // 75% card width
-    const gap = 16;
+    const gap = window.innerWidth <= 768 ? 12 : window.innerWidth >= 1200 ? 20 : 16;
     return index * (cardWidth + gap);
   }, []);
 
@@ -76,23 +77,30 @@ export default function Slider({ images, activeLanguage }) {
     }
   }, [images, scrollToSlide]);
 
-  // Handle scroll to update current index
-  const handleScroll = useCallback(() => {
-    if (!trackRef.current || isDragging.current) return;
-    
+  // Calculate current index from scroll position
+  const getCurrentIndexFromScroll = useCallback(() => {
+    if (!trackRef.current) return 0;
     const track = trackRef.current;
     const containerWidth = track.offsetWidth;
     const cardWidth = containerWidth * 0.75;
-    const gap = 16;
+    const gap = window.innerWidth <= 768 ? 12 : window.innerWidth >= 1200 ? 20 : 16;
     const scrollLeft = track.scrollLeft;
-    
-    const newIndex = Math.round(scrollLeft / (cardWidth + gap));
-    const clampedIndex = Math.max(0, Math.min(newIndex, totalSlides - 1));
-    
-    if (clampedIndex !== currentIndex) {
-      setCurrentIndex(clampedIndex);
-    }
-  }, [currentIndex, totalSlides]);
+    const slideWidth = cardWidth + gap;
+    const newIndex = Math.round(scrollLeft / slideWidth);
+    return Math.max(0, Math.min(newIndex, totalSlides - 1));
+  }, [totalSlides]);
+
+  // Handle scroll to update current index
+  const handleScroll = useCallback(() => {
+    if (!trackRef.current || isDragging.current) return;
+    const newIndex = getCurrentIndexFromScroll();
+    setCurrentIndex((prev) => {
+      if (prev !== newIndex) {
+        return newIndex;
+      }
+      return prev;
+    });
+  }, [getCurrentIndexFromScroll]);
 
   // Navigation functions
   const goToSlide = (index) => {
@@ -114,6 +122,8 @@ export default function Slider({ images, activeLanguage }) {
   // Mouse drag handlers
   const handleMouseDown = (e) => {
     if (!trackRef.current) return;
+    // Prevent click on card when dragging
+    if (e.target.closest('button') || e.target.closest('a')) return;
     isDragging.current = true;
     startX.current = e.pageX - trackRef.current.offsetLeft;
     scrollLeftStart.current = trackRef.current.scrollLeft;
@@ -132,16 +142,19 @@ export default function Slider({ images, activeLanguage }) {
 
   const handleMouseUp = () => {
     if (!trackRef.current) return;
+    dragEndTime.current = Date.now();
     isDragging.current = false;
     trackRef.current.style.cursor = "grab";
-    trackRef.current.style.scrollBehavior = "smooth";
+    
+    // Calculate nearest slide from current scroll position
+    const nearestIndex = getCurrentIndexFromScroll();
+    setCurrentIndex(nearestIndex);
     
     // Snap to nearest slide
     setTimeout(() => {
-      handleScroll();
-      const nearestIndex = currentIndex;
+      trackRef.current.style.scrollBehavior = "smooth";
       scrollToSlide(nearestIndex);
-    }, 50);
+    }, 10);
   };
 
   const handleMouseLeave = () => {
@@ -169,13 +182,18 @@ export default function Slider({ images, activeLanguage }) {
 
   const handleTouchEnd = () => {
     if (!trackRef.current) return;
+    dragEndTime.current = Date.now();
     isDragging.current = false;
-    trackRef.current.style.scrollBehavior = "smooth";
     
+    // Calculate nearest slide from current scroll position
+    const nearestIndex = getCurrentIndexFromScroll();
+    setCurrentIndex(nearestIndex);
+    
+    // Snap to nearest slide
     setTimeout(() => {
-      handleScroll();
-      scrollToSlide(currentIndex);
-    }, 50);
+      trackRef.current.style.scrollBehavior = "smooth";
+      scrollToSlide(nearestIndex);
+    }, 10);
   };
 
   // Keyboard navigation
@@ -213,7 +231,13 @@ export default function Slider({ images, activeLanguage }) {
           <SlideCard
             key={image.id || index}
             $isActive={index === currentIndex}
-            onClick={() => !isDragging.current && goToSlide(index)}
+            onClick={(e) => {
+              // Prevent click if we just finished dragging (within 200ms)
+              const timeSinceDragEnd = Date.now() - dragEndTime.current;
+              if (!isDragging.current && timeSinceDragEnd > 200 && !e.defaultPrevented) {
+                goToSlide(index);
+              }
+            }}
           >
             <SlideImage
               src={`https://storage.googleapis.com/ecommerce-bucket-testing/${image.url}`}

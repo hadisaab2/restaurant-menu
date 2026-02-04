@@ -35,7 +35,7 @@ export const HeaderContainer = styled.div`
   align-items: center;
   justify-content: space-between;
   width: 100%;
-  margin-bottom: 20px;
+  margin-bottom: 20px;margin-top: 20px;
   direction: ${(props) => (props.activeLanguage === "ar" ? "rtl" : "ltr")};
 `;
 
