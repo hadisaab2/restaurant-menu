@@ -479,11 +479,6 @@ console.log(filteredProducts)
           )}
         </>
       )}
-      {isAllItemsCategory && (
-        <AllStyles.GoToTopButton onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })} aria-label="Go to top">
-          ↑
-        </AllStyles.GoToTopButton>
-      )}
     </Container>
   );
 }

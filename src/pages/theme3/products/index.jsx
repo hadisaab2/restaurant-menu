@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { AllItemsLoader, AllItemsLoaderWrap, AllItemsSection, AllItemsTitle, AllItemsWrapper, Container, GoToTopButton, LoaderDot, ProductWrapper, AllItemsListWrapper, AllItemsListItem, AllItemsListImage, AllItemsListDetails, AllItemsListName, AllItemsListPrice, AllItemsListDiscountPrice, AllItemsListQuickAddButton, AllItemsListOutOfStockBadge, AllItemsListItemWrapper } from "./styles";
+import { AllItemsLoader, AllItemsLoaderWrap, AllItemsSection, AllItemsTitle, AllItemsWrapper, Container, LoaderDot, ProductWrapper, AllItemsListWrapper, AllItemsListItem, AllItemsListImage, AllItemsListDetails, AllItemsListName, AllItemsListPrice, AllItemsListDiscountPrice, AllItemsListQuickAddButton, AllItemsListOutOfStockBadge, AllItemsListItemWrapper } from "./styles";
 import Product from "./product";
 import ProductDetails from "./productDetails";
 import { useSelector, useDispatch } from "react-redux";
@@ -501,11 +501,6 @@ console.log(filteredProducts)
             />
           )}
         </>
-      )}
-      {isAllItemsCategory && (
-        <GoToTopButton onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })} aria-label="Go to top">
-          ↑
-        </GoToTopButton>
       )}
     </Container>
   );

@@ -32,6 +32,7 @@ import { ADMINSIGNIN } from "../../routes/URLs";
 import Report from "./report";
 import Feedbacks from "./feedbacks";
 import QuestionsSuggestions from "./questions";
+import Orders from "./orders";
 
 
 
@@ -74,6 +75,7 @@ export default function RestaurantDash() {
     Report: "Report",
     Feedbacks: "Feedbacks",
     QuestionsSuggestions: "Questions & Suggestions",
+    Orders: "Orders",
   };
 
   return (
@@ -110,6 +112,10 @@ export default function RestaurantDash() {
           >
             <CateogoryIcon />
             <TabText>Questions & Suggestions</TabText>
+          </Tab>
+          <Tab onClick={() => handlesection("Orders")}>
+            <CateogoryIcon />
+            <TabText>Orders</TabText>
           </Tab>
 
         </SidebarContent>
@@ -164,6 +170,10 @@ export default function RestaurantDash() {
             <CateogoryIcon />
             <TabText>Questions & Suggestions</TabText>
           </Tab>
+          <Tab onClick={() => setSection("Orders")}>
+            <CateogoryIcon />
+            <TabText>Orders</TabText>
+          </Tab>
         </SidebarContent>
         <SidebarBottom>
           <ProfileIcon />
@@ -209,6 +219,7 @@ export default function RestaurantDash() {
         {section == "QuestionsSuggestions" && isTheme3 && (
           <QuestionsSuggestions />
         )}
+        {section == "Orders" && <Orders />}
 
       </Content>
     </Container>

@@ -122,7 +122,7 @@ export const AllItemsListQuickAddButton = styled.button`
   cursor: pointer;
   opacity: ${(props) => (props.disabled ? 0.5 : 1)};
   pointer-events: ${(props) => (props.disabled ? "none" : "auto")};
-  z-index: 10;
+  z-index: 1;
   transition: transform 0.2s ease, opacity 0.2s ease;
   
   &:hover {

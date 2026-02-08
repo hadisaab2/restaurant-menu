@@ -7,7 +7,7 @@ export const TabBarContainer = styled.nav`
   right: 0;
   width: 100%;
   height: 70px;
-  background: ${(props) => props.theme?.popupbackgroundColor || props.theme?.backgroundColor || "#ffffff"};
+  background: ${(props) => props.theme?.navigationbarbackgroundcolor || props.theme?.navigationbarbackgroundcolor || "#ffffff"};
   border-top: 1px solid ${(props) => props.theme?.mainColor ? `${props.theme.mainColor}20` : "rgba(0, 0, 0, 0.1)"};
   display: flex;
   align-items: center;

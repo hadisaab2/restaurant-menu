@@ -264,7 +264,7 @@ export default function Wizard({ popupHandler, restaurant }) {
       whatsappUrl = `https://wa.me/${newWhatsappNumber}?text=${encodedMessage}`;
     }
 
-    // Log order to database
+    // Log order to database (simplified for analytics)
     const simplifiedCart = cart.map((item) => ({
       id: item.id,
       quantity: item.quantity,
@@ -272,11 +272,39 @@ export default function Wizard({ popupHandler, restaurant }) {
       restaurant_id: restaurant.id,
     }));
 
+    // Prepare full order items with all details
+    const fullOrderItems = cart.map((item) => ({
+      product_id: item.id,
+      product_name: activeLanguage === "en" ? item.en_name : item.ar_name,
+      quantity: item.quantity,
+      price: item.price,
+      total_price: item.price * item.quantity,
+      form_data: item.formData || {},
+      instruction: item.instruction || "",
+      product_details: {
+        en_name: item.en_name,
+        ar_name: item.ar_name,
+        en_price: item.en_price,
+        ar_price: item.ar_price,
+        category_id: item.category_id,
+      },
+    }));
+
     handleAddOrder({
-      products: simplifiedCart,
+      products: simplifiedCart, // For analytics (existing)
       restaurant_id: restaurant.id,
       branch_id: formData.selectedBranch?.id,
       delivery_type: formData.deliveryType,
+      // Full order details
+      customer_name: formData.fullName,
+      customer_phone: formData.phoneNumber,
+      customer_address: formData.deliveryType === "Delivery" ? formData.fullAddress : null,
+      table_number: formData.deliveryType === "DineIn" ? formData.tableNumber : null,
+      note: formData.note,
+      items: fullOrderItems,
+      subtotal: totalPrice,
+      total: totalPrice,
+      currency: restaurant.currency,
     });
 
     const w = window.open(whatsappUrl, "_blank", "noopener,noreferrer");
