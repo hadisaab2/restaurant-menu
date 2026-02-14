@@ -20,6 +20,10 @@ import {
   Box,
   Button,
   Checkbox,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
   FormControl,
   FormControlLabel,
   FormLabel,
@@ -27,11 +31,17 @@ import {
   MenuItem,
   Select,
   TextField,
+  Tabs,
+  Tab,
+  Typography,
+  Alert,
 } from "@mui/material";
 import { templates } from "./themedata";
 import { useAddRestaurantQuery } from "../../../apis/restaurants/addRestaurant";
 import { useGetRestaurants } from "../../../apis/restaurants/getRestaurants";
 import { useEditRestaurantQuery } from "../../../apis/restaurants/editRestaurant";
+import { useDuplicateRestaurantQuery } from "../../../apis/restaurants/duplicateRestaurant";
+import { useBulkInsertExcelQuery } from "../../../apis/restaurants/bulkInsertExcel";
 import { LoadingButton } from "@mui/lab";
 import { useEffect } from "react";
 import { isEmpty, rest } from "lodash";
@@ -58,6 +68,20 @@ export default function Restaurants() {
   const [viewColorSection, setViewColorSection] = useState(false);
   const [viewFeaturesSection, setViewFeaturesSection] = useState(false);
   const [squareDimension, setSquareDimension] = useState(true); // Default false
+  const [showExcelModal, setShowExcelModal] = useState(false);
+  const [excelTab, setExcelTab] = useState(0); // 0: Normal, 1: Duplicate, 2: Products/Categories
+  const [excelFile, setExcelFile] = useState(null);
+  const [duplicateSourceId, setDuplicateSourceId] = useState("");
+  const [duplicateFormData, setDuplicateFormData] = useState({
+    name: "",
+    username: "",
+    password: "",
+    email: "",
+    phone_number: "",
+  });
+  const [excelRestaurantId, setExcelRestaurantId] = useState("");
+  const [excelUploading, setExcelUploading] = useState(false);
+  const [excelMessage, setExcelMessage] = useState(null);
 
 
 
@@ -128,8 +152,40 @@ export default function Restaurants() {
         });
       }
       resetComponent()
+    },
+  });
 
+  const { handleApiCall: handleDuplicateRestaurant, isPending: isDuplicating } = useDuplicateRestaurantQuery({
+    onSuccess: (response) => {
+      alert("Restaurant duplicated successfully!");
+      setShowExcelModal(false);
+      setDuplicateFormData({ name: "", username: "", password: "", email: "", phone_number: "" });
+      setDuplicateSourceId("");
+      refetchRestaurants();
+    },
+    onError: (error) => {
+      alert(error.response?.data?.message || "Failed to duplicate restaurant");
+    },
+  });
 
+  const { handleApiCall: handleBulkInsertExcel, isPending: isBulkInserting } = useBulkInsertExcelQuery({
+    onSuccess: (response) => {
+      const log = response.data?.log || [];
+      const logMessage = log.length > 0 ? log.join("\n") : "Products and categories imported successfully!";
+      setExcelMessage({ type: "success", text: logMessage });
+      setTimeout(() => {
+        setShowExcelModal(false);
+        setExcelFile(null);
+        setExcelRestaurantId("");
+        setExcelMessage(null);
+        refetchRestaurants();
+      }, 3000);
+    },
+    onError: (error) => {
+      setExcelMessage({ 
+        type: "error", 
+        text: error.response?.data?.message || "Failed to import Excel file" 
+      });
     },
   });
 
@@ -365,9 +421,22 @@ export default function Restaurants() {
             selectedIdForAction={selectedIdForAction}
             setIsOpen={setIsPopupOpen}
           />
-          <AddRestaurant onClick={() => setShowAddComponent(true)}>
-            Add Restaurant
-          </AddRestaurant>
+          <div style={{ display: "flex", gap: "12px", marginBottom: "20px" }}>
+            <AddRestaurant onClick={() => setShowAddComponent(true)}>
+              Add Restaurant
+            </AddRestaurant>
+            <Button
+              variant="contained"
+              style={{
+                backgroundColor: "#4caf50",
+                color: "white",
+                textTransform: "capitalize",
+              }}
+              onClick={() => setShowExcelModal(true)}
+            >
+              Add Restaurant via Excel
+            </Button>
+          </div>
           {/* <Table>
             <thead>
               <tr>
@@ -420,6 +489,200 @@ export default function Restaurants() {
           >
             Logout
           </Button>
+          
+          {/* Excel Upload Modal */}
+          <Dialog 
+            open={showExcelModal} 
+            onClose={() => {
+              setShowExcelModal(false);
+              setExcelTab(0);
+              setExcelFile(null);
+              setDuplicateSourceId("");
+              setDuplicateFormData({ name: "", username: "", password: "", email: "", phone_number: "" });
+              setExcelRestaurantId("");
+              setExcelMessage(null);
+            }}
+            maxWidth="md"
+            fullWidth
+          >
+            <DialogTitle>Add Restaurant via Excel</DialogTitle>
+            <DialogContent>
+              <Tabs value={excelTab} onChange={(e, newValue) => setExcelTab(newValue)}>
+                <Tab label="Normal Creation" />
+                <Tab label="Duplicate Restaurant" />
+                <Tab label="Import Products/Categories" />
+              </Tabs>
+              
+              {excelMessage && (
+                <Alert severity={excelMessage.type} style={{ marginTop: "16px" }}>
+                  {excelMessage.text}
+                </Alert>
+              )}
+              
+              {excelTab === 0 && (
+                <Box sx={{ mt: 3 }}>
+                  <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+                    Use the "Add Restaurant" button above to create a restaurant normally, then use the "Import Products/Categories" tab to add products and categories from Excel.
+                  </Typography>
+                </Box>
+              )}
+              
+              {excelTab === 1 && (
+                <Box sx={{ mt: 3, display: "flex", flexDirection: "column", gap: 2 }}>
+                  <FormControl fullWidth>
+                    <InputLabel>Select Restaurant to Duplicate</InputLabel>
+                    <Select
+                      value={duplicateSourceId}
+                      onChange={(e) => setDuplicateSourceId(e.target.value)}
+                      label="Select Restaurant to Duplicate"
+                    >
+                      {restaurants.map((restaurant) => (
+                        <MenuItem key={restaurant.restaurant_id} value={restaurant.restaurant_id}>
+                          {restaurant.restaurantName} ({restaurant.username})
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                  
+                  <TextField
+                    label="New Restaurant Name"
+                    value={duplicateFormData.name}
+                    onChange={(e) => setDuplicateFormData({ ...duplicateFormData, name: e.target.value })}
+                    required
+                    fullWidth
+                  />
+                  
+                  <TextField
+                    label="New Username"
+                    value={duplicateFormData.username}
+                    onChange={(e) => setDuplicateFormData({ ...duplicateFormData, username: e.target.value })}
+                    required
+                    fullWidth
+                  />
+                  
+                  <TextField
+                    label="New Password"
+                    type="password"
+                    value={duplicateFormData.password}
+                    onChange={(e) => setDuplicateFormData({ ...duplicateFormData, password: e.target.value })}
+                    required
+                    fullWidth
+                  />
+                  
+                  <TextField
+                    label="Email (Optional)"
+                    type="email"
+                    value={duplicateFormData.email}
+                    onChange={(e) => setDuplicateFormData({ ...duplicateFormData, email: e.target.value })}
+                    fullWidth
+                  />
+                  
+                  <TextField
+                    label="Phone Number (Optional)"
+                    value={duplicateFormData.phone_number}
+                    onChange={(e) => setDuplicateFormData({ ...duplicateFormData, phone_number: e.target.value })}
+                    fullWidth
+                  />
+                  
+                  <LoadingButton
+                    variant="contained"
+                    onClick={() => {
+                      if (!duplicateSourceId || !duplicateFormData.name || !duplicateFormData.username || !duplicateFormData.password) {
+                        alert("Please fill in all required fields");
+                        return;
+                      }
+                      handleDuplicateRestaurant({
+                        source_restaurant_id: parseInt(duplicateSourceId),
+                        ...duplicateFormData,
+                      });
+                    }}
+                    loading={isDuplicating}
+                    disabled={!duplicateSourceId || !duplicateFormData.name || !duplicateFormData.username || !duplicateFormData.password}
+                  >
+                    Duplicate Restaurant
+                  </LoadingButton>
+                </Box>
+              )}
+              
+              {excelTab === 2 && (
+                <Box sx={{ mt: 3, display: "flex", flexDirection: "column", gap: 2 }}>
+                  <FormControl fullWidth>
+                    <InputLabel>Select Restaurant</InputLabel>
+                    <Select
+                      value={excelRestaurantId}
+                      onChange={(e) => setExcelRestaurantId(e.target.value)}
+                      label="Select Restaurant"
+                    >
+                      {restaurants.map((restaurant) => (
+                        <MenuItem key={restaurant.restaurant_id} value={restaurant.restaurant_id}>
+                          {restaurant.restaurantName} ({restaurant.username})
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                  
+                  <Button
+                    variant="outlined"
+                    component="label"
+                    fullWidth
+                  >
+                    {excelFile ? excelFile.name : "Upload Excel File"}
+                    <input
+                      type="file"
+                      hidden
+                      accept=".xlsx,.xls"
+                      onChange={(e) => {
+                        if (e.target.files[0]) {
+                          setExcelFile(e.target.files[0]);
+                        }
+                      }}
+                    />
+                  </Button>
+                  
+                  {excelFile && (
+                    <Typography variant="body2" color="text.secondary">
+                      Selected: {excelFile.name}
+                    </Typography>
+                  )}
+                  
+                  <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+                    Excel file should contain sheets: "Categories", "Products", and optionally "FormComponents"
+                  </Typography>
+                  
+                  <LoadingButton
+                    variant="contained"
+                    onClick={() => {
+                      if (!excelRestaurantId || !excelFile) {
+                        alert("Please select a restaurant and upload an Excel file");
+                        return;
+                      }
+                      handleBulkInsertExcel({
+                        restaurant_id: parseInt(excelRestaurantId),
+                        excel_file: excelFile,
+                      });
+                    }}
+                    loading={isBulkInserting}
+                    disabled={!excelRestaurantId || !excelFile}
+                  >
+                    Import Products & Categories
+                  </LoadingButton>
+                </Box>
+              )}
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={() => {
+                setShowExcelModal(false);
+                setExcelTab(0);
+                setExcelFile(null);
+                setDuplicateSourceId("");
+                setDuplicateFormData({ name: "", username: "", password: "", email: "", phone_number: "" });
+                setExcelRestaurantId("");
+                setExcelMessage(null);
+              }}>
+                Close
+              </Button>
+            </DialogActions>
+          </Dialog>
         </>
       ) : (
         <>

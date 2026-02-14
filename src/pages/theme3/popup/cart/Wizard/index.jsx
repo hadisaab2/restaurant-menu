@@ -4,6 +4,7 @@ import { useParams } from "react-router-dom";
 import { clearCart } from "../../../../../redux/cart/cartActions";
 import { useAddOrderQuery } from "../../../../../apis/restaurants/addOrder";
 import { convertPrice } from "../../../../../utilities/convertPrice";
+import { trackCheckoutStart, trackOrderPlaced } from "../../../../../utilities/analyticsTracking";
 import CartStep from "./CartStep";
 import OrderTypeStep from "./OrderTypeStep";
 import DetailsStep from "./DetailsStep";
@@ -145,6 +146,12 @@ export default function Wizard({ popupHandler, restaurant }) {
 
   const handleNext = () => {
     if (validateStep(currentStep)) {
+      // Track checkout start when moving from cart to order type step
+      if (currentStep === 0 && restaurant?.id) {
+        const branchId = formData.selectedBranch?.id || null;
+        trackCheckoutStart(restaurant.id, branchId, formData.deliveryType || null);
+      }
+      
       if (currentStep < STEPS.length - 1) {
         setCurrentStep(currentStep + 1);
       }
@@ -306,6 +313,22 @@ export default function Wizard({ popupHandler, restaurant }) {
       total: totalPrice,
       currency: restaurant.currency,
     });
+
+    // Track order placed (order ID will be available in onSuccess callback if needed)
+    if (restaurant?.id) {
+      const branchId = formData.selectedBranch?.id || null;
+      trackOrderPlaced(
+        restaurant.id,
+        null, // orderId - will be updated when order is created
+        formData.deliveryType,
+        totalPrice,
+        branchId,
+        {
+          items: fullOrderItems,
+          customerName: formData.fullName,
+        }
+      );
+    }
 
     const w = window.open(whatsappUrl, "_blank", "noopener,noreferrer");
     dispatch(clearCart(restaurantName));

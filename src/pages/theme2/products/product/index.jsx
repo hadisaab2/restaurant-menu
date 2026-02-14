@@ -84,8 +84,15 @@ const Product = React.forwardRef(
       finalDiscount = parseFloat(activeCategory.discount);
     }
 
-const coverIndex = plate.images.findIndex((image) => image.id === plate.new_cover_id);
-console.log(coverIndex + "coveerrrrindexx")
+const coverIndex = plate.images?.findIndex((image) => image.id === plate.new_cover_id) ?? -1;
+const hasValidImage = coverIndex >= 0 && plate.images?.[coverIndex]?.url;
+const restaurantLogoUrl = restaurant?.logoURL 
+  ? `https://storage.googleapis.com/ecommerce-bucket-testing/${restaurant.logoURL}`
+  : null;
+const imageSrc = hasValidImage 
+  ? `https://storage.googleapis.com/ecommerce-bucket-testing/${plate.images[coverIndex].url}`
+  : restaurantLogoUrl || "";
+
     return (
       <Container index={index} activePlate={activePlate} className="lazy-load">
         <Wrapper>
@@ -98,9 +105,7 @@ console.log(coverIndex + "coveerrrrindexx")
             <Image
               ref={ref}
               onLoad={handleImageLoaded}
-              src={
-                `https://storage.googleapis.com/ecommerce-bucket-testing/${plate.images[coverIndex].url}`
-              }
+              src={imageSrc}
               imageLoaded={imageLoaded}
             />
           </ImageContainer>

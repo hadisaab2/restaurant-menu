@@ -163,9 +163,10 @@ export const QuickAddButton = styled.button`
   justify-content: center;
   cursor: pointer;
   opacity: ${(props) => (props.disabled ? 0.5 : 1)};
-  pointer-events: ${(props) => (props.disabled ? "none" : "auto")};
-  z-index: 1;
+  pointer-events: auto;
+  z-index: 10;
   transition: transform 0.2s ease, opacity 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   
   &:hover {
     transform: scale(1.1);
@@ -173,6 +174,11 @@ export const QuickAddButton = styled.button`
   
   &:active {
     transform: scale(0.95);
+  }
+  
+  &:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px ${(props) => props.theme.mainColor}40;
   }
 `;
 

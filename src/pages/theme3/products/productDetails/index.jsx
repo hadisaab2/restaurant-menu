@@ -45,6 +45,7 @@ import {
 import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { addToCart } from "../../../../redux/cart/cartActions";
+import { trackAddToCart, trackItemView } from "../../../../utilities/analyticsTracking";
 import CarouselLoader from "./carouselLoader";
 import "formiojs/dist/formio.full.css";
 import ProductForm from "./Form";
@@ -103,7 +104,20 @@ export default function ProductDetails({
 
 
 
-  }, [restaurant.activeLanguage])
+  }, [restaurant.activeLanguage]);
+
+  // Track product view when product details open
+  useEffect(() => {
+    if (plates[activePlate]?.id && restaurant?.id) {
+      const branchId = restaurant?.branches?.[0]?.id || null;
+      trackItemView(
+        restaurant.id,
+        plates[activePlate].id,
+        plates[activePlate].category_id,
+        branchId
+      );
+    }
+  }, [activePlate, plates, restaurant?.id]);
 
   const [formSchema, setFormSchema] = useState({});
 
@@ -255,8 +269,20 @@ export default function ProductDetails({
     closeDetails();
     dispatch(
       addToCart(restaurantName, plates[activePlate], quantity, formData, discountedPrice, instruction)
-
     );
+    
+    // Track add to cart
+    if (restaurant?.id && plates[activePlate]?.id) {
+      const branchId = restaurant?.branches?.[0]?.id || null;
+      trackAddToCart(
+        restaurant.id,
+        plates[activePlate].id,
+        plates[activePlate].category_id,
+        quantity,
+        branchId
+      );
+    }
+    
     toast.success(
       restaurant?.activeLanguage === "en"
         ? "Added to cart"

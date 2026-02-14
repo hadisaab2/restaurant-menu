@@ -33,6 +33,8 @@ import Report from "./report";
 import Feedbacks from "./feedbacks";
 import QuestionsSuggestions from "./questions";
 import Orders from "./orders";
+import Customers from "./customers";
+import Analytics from "./analytics";
 
 
 
@@ -76,6 +78,8 @@ export default function RestaurantDash() {
     Feedbacks: "Feedbacks",
     QuestionsSuggestions: "Questions & Suggestions",
     Orders: "Orders",
+    Customers: "Customers",
+    Analytics: "Analytics",
   };
 
   return (
@@ -116,6 +120,14 @@ export default function RestaurantDash() {
           <Tab onClick={() => handlesection("Orders")}>
             <CateogoryIcon />
             <TabText>Orders</TabText>
+          </Tab>
+          <Tab onClick={() => handlesection("Customers")}>
+            <CateogoryIcon />
+            <TabText>Customers</TabText>
+          </Tab>
+          <Tab onClick={() => handlesection("Analytics")}>
+            <CateogoryIcon />
+            <TabText>Analytics</TabText>
           </Tab>
 
         </SidebarContent>
@@ -174,6 +186,14 @@ export default function RestaurantDash() {
             <CateogoryIcon />
             <TabText>Orders</TabText>
           </Tab>
+          <Tab onClick={() => setSection("Customers")}>
+            <CateogoryIcon />
+            <TabText>Customers</TabText>
+          </Tab>
+          <Tab onClick={() => setSection("Analytics")}>
+            <CateogoryIcon />
+            <TabText>Analytics</TabText>
+          </Tab>
         </SidebarContent>
         <SidebarBottom>
           <ProfileIcon />
@@ -220,6 +240,8 @@ export default function RestaurantDash() {
           <QuestionsSuggestions />
         )}
         {section == "Orders" && <Orders />}
+        {section == "Customers" && <Customers />}
+        {section == "Analytics" && <Analytics />}
 
       </Content>
     </Container>

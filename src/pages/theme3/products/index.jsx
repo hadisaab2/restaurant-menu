@@ -345,6 +345,14 @@ console.log(filteredProducts)
                       const discountedPrice = basePrice * (1 - parseFloat(finalDiscount) / 100);
                       dispatch(addToCart(restaurantName, plate, 1, {}, discountedPrice, ""));
                       
+                      // Track add to cart
+                      if (restaurant?.id && plate?.id) {
+                        const { trackAddToCart } = require("../../../utilities/analyticsTracking");
+                        const categoryIdToUse = activeCategory === "all-items" ? plate.category_id : activeCategory;
+                        const branchId = restaurant?.branches?.[0]?.id || null;
+                        trackAddToCart(restaurant.id, plate.id, categoryIdToUse, 1, branchId);
+                      }
+                      
                       // Trigger cart animation
                       if (onAddToCart && event.currentTarget) {
                         onAddToCart(event.currentTarget);

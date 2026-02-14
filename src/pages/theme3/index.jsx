@@ -25,6 +25,7 @@ import HomePage from "./HomePage";
 import NavigationBar from "./NavigationBar";
 import BottomTabBar from "./BottomTabBar";
 import CartAnimation from "./CartAnimation";
+import { trackVisit, trackPageView } from "../../utilities/analyticsTracking";
 
 export default function Theme3() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -240,6 +241,15 @@ export default function Theme3() {
         window.removeEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
       };
     }, []);
+
+    // Track visit when restaurant is loaded
+    useEffect(() => {
+      if (restaurant?.id) {
+        const branchId = restaurant?.branches?.[0]?.id || null;
+        trackVisit(restaurant.id, branchId);
+        trackPageView(restaurant.id, branchId);
+      }
+    }, [restaurant?.id]);
   
     const handleInstallClick = async () => {
       if (!deferredPrompt) return;

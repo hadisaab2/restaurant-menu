@@ -27,6 +27,9 @@ export const InputGroup = styled.div`
   display: flex;
   flex-direction: column;
   gap: 6px;
+  width: 100%;
+  min-width: 0;
+  position: relative;
 `;
 
 export const Label = styled.label`
@@ -72,9 +75,20 @@ export const Input = styled.input`
 
 export const TextArea = styled.textarea`
   width: 100%;
+  min-width: 100%;
+  min-height: 80px;
+  height: ${(props) => {
+    // Calculate height based on rows attribute (default 3 rows)
+    const rows = props.rows || 3;
+    // Approximate line height: 14px font-size + 4px line spacing = ~18px per line
+    // Plus padding: 12px top + 12px bottom = 24px
+    // Plus border: 2px top + 2px bottom = 4px
+    return `${rows * 18 + 24 + 4}px`;
+  }};
   padding: 12px 14px;
   border-radius: 10px;
   font-size: 14px;
+  line-height: 1.5;
   border: 2px solid
     ${(props) =>
       props.hasError
@@ -86,6 +100,16 @@ export const TextArea = styled.textarea`
   outline: none;
   resize: vertical;
   font-family: inherit;
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  position: relative;
+  z-index: 1;
+  box-sizing: border-box;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  overflow: auto;
 
   &:focus {
     border-color: ${(props) =>
@@ -104,6 +128,12 @@ export const TextArea = styled.textarea`
   &::placeholder {
     color: ${(props) => props.theme.popupTextColor || "#999"};
     opacity: 0.6;
+  }
+
+  /* Ensure visibility on Android/Samsung devices */
+  @media screen and (-webkit-min-device-pixel-ratio: 0) {
+    -webkit-appearance: textarea;
+    display: block !important;
   }
 `;
 

@@ -21,6 +21,7 @@ import { convertPrice } from "../../../../utilities/convertPrice";
 import { addToCart } from "../../../../redux/cart/cartActions";
 import { FaCartPlus } from "react-icons/fa";
 import { toast } from "react-toastify";
+import { trackItemView, trackAddToCart } from "../../../../utilities/analyticsTracking";
 const _ = require('lodash');
 
 const Product = React.forwardRef(
@@ -67,6 +68,13 @@ const Product = React.forwardRef(
         setSearchParams(newParams);
         window.history.pushState({}, "", `?${newParams.toString()}`);
 
+        // Track product view
+        if (restaurant?.id && plate?.id) {
+          const categoryIdToUse = activeCategoryId === "all-items" ? plate.category_id : activeCategoryId;
+          const branchId = restaurant?.branches?.[0]?.id || null;
+          trackItemView(restaurant.id, plate.id, categoryIdToUse, branchId);
+        }
+
         document.body.style.overflow = "hidden";
       }
     };
@@ -104,7 +112,14 @@ const Product = React.forwardRef(
     const features = JSON.parse(restaurant?.features || "{}");
     const isOutOfStock =
       Boolean(plate?.out_of_stock) || Number(plate?.out_of_stock) === 1;
-    const coverIndex = plate.images.findIndex((image) => image.id === plate.new_cover_id);
+    const coverIndex = plate.images?.findIndex((image) => image.id === plate.new_cover_id) ?? -1;
+    const hasValidImage = coverIndex >= 0 && plate.images?.[coverIndex]?.url;
+    const restaurantLogoUrl = restaurant?.logoURL 
+      ? `https://storage.googleapis.com/ecommerce-bucket-testing/${restaurant.logoURL}`
+      : null;
+    const imageSrc = hasValidImage 
+      ? `https://storage.googleapis.com/ecommerce-bucket-testing/${plate.images[coverIndex].url}`
+      : restaurantLogoUrl || "";
     const hasProductForm =
       !_.isEmpty(plate?.form_json) &&
       !_.isEmpty(JSON.parse(plate?.form_json || "{}"));
@@ -125,6 +140,13 @@ const Product = React.forwardRef(
       const discountedPrice = basePrice * (1 - parseFloat(finalDiscount) / 100);
       dispatch(addToCart(restaurantName, plate, 1, {}, discountedPrice, ""));
       
+      // Track add to cart
+      if (restaurant?.id && plate?.id) {
+        const categoryIdToUse = activeCategoryId === "all-items" ? plate.category_id : activeCategoryId;
+        const branchId = restaurant?.branches?.[0]?.id || null;
+        trackAddToCart(restaurant.id, plate.id, categoryIdToUse, 1, branchId);
+      }
+      
       // Trigger cart animation
       if (onAddToCart && containerRef.current) {
         onAddToCart(containerRef.current);
@@ -136,7 +158,6 @@ const Product = React.forwardRef(
           : "تمت الإضافة إلى السلة"
       );
     };
-    console.log(coverIndex + "coveerrrrindexx")
     return (
       <Container ref={containerRef} data-product-container index={index} activePlate={activePlate} className="lazy-load" $isFeatured={$isFeatured}>
         <Wrapper>
@@ -149,9 +170,7 @@ const Product = React.forwardRef(
             <Image
               ref={ref}
               onLoad={handleImageLoaded}
-              src={
-                `https://storage.googleapis.com/ecommerce-bucket-testing/${plate.images[coverIndex].url}`
-              }
+              src={imageSrc}
               imageLoaded={imageLoaded}
             />
           </ImageContainer>
@@ -166,6 +185,8 @@ const Product = React.forwardRef(
               <QuickAddButton
                 type="button"
                 onClick={handleQuickAdd}
+                onMouseDown={(e) => e.stopPropagation()}
+                onTouchStart={(e) => e.stopPropagation()}
                 activeLanuguage={restaurant?.activeLanguage}
                 title={
                   restaurant?.activeLanguage === "en"
