@@ -4,62 +4,183 @@ import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 import _ from "lodash";
 
 
-const slideAnimation = (x, y, width) => keyframes`
- 0% { 
-    right: -100%;
-    
-}
- 100% { 
-    right: 0;
-
-}
+// Backdrop fade-in animation - smoother
+const backdropFadeIn = keyframes`
+  0% {
+    opacity: 0;
+    backdrop-filter: blur(0px);
+  }
+  100% {
+    opacity: 1;
+    backdrop-filter: blur(4px);
+  }
 `;
 
-const slideAnimationScreen = (x, y, width) => keyframes`
- 0% { 
-    left: ${x}px;
-    top:${y}px;
-    width:${width}px;
-    height:30vh;
-    border-radius: 10px;
-    
-}
- 100% { 
-    left: 0;
-    top:0;
-    width:100%;
-    height: 100vh;
+// Popup expand animation - starts as a line in the middle, then expands to floating modal
+const popupExpand = keyframes`
+  0% {
+    width: 0%;
+    height: 2px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(1);
     border-radius: 0px;
+    opacity: 0;
+  }
+  8% {
+    opacity: 1;
+  }
+  35% {
+    width: 92%;
+    height: 2px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(1);
+    border-radius: 0px;
+  }
+  65% {
+    width: 92%;
+    height: calc(100vh - 40px);
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.98);
+    border-radius: 20px;
+    opacity: 1;
+  }
+  85% {
+    transform: translate(-50%, -50%) scale(1.01);
+  }
+  100% {
+    width: 92%;
+    height: calc(100vh - 40px);
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(1);
+    border-radius: 24px;
+    opacity: 1;
+  }
+`;
 
-}
+// Popup close animation - collapses back to a line
+const popupCollapse = keyframes`
+  0% {
+    width: 92%;
+    height: calc(100vh - 40px);
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(1);
+    border-radius: 24px;
+    opacity: 1;
+  }
+  20% {
+    transform: translate(-50%, -50%) scale(0.98);
+    opacity: 0.95;
+  }
+  50% {
+    width: 92%;
+    height: 2px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(1);
+    border-radius: 0px;
+    opacity: 0.6;
+  }
+  80% {
+    opacity: 0.3;
+  }
+  100% {
+    width: 0%;
+    height: 2px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(1);
+    border-radius: 0px;
+    opacity: 0;
+  }
+`;
+
+// Backdrop component
+export const Backdrop = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  z-index: 299;
+  opacity: ${props => props.CloseAnimation ? 1 : 0};
+  animation: ${props => props.CloseAnimation ? backdropFadeIn : 'none'} 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  transition: opacity 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  pointer-events: ${props => props.CloseAnimation ? 'auto' : 'none'};
 `;
 
 export const Wrapper = styled.div`
-  
-position: fixed;
-height: 100vh;
-width: 100%;
-align-items: center;
-justify-content: center;
-top:0;
-left: 0;
-right: ${props => props.CloseAnimation ? 0 : "-100%"};
-color:${props => props.theme.textColor};
-background-color:${props => props.theme.backgroundColor};
-padding-bottom:150px;
-
-  overflow: scroll;
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  animation: ${slideAnimation} 0.5s;
+  position: fixed;
+  width: 92%;
+  height: calc(100vh - 40px);
+  max-height: calc(100vh - 40px);
+  align-items: center;
+  justify-content: flex-start;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: ${props => props.theme.textColor};
+  background-color: ${props => props.theme.backgroundColor};
+  padding-bottom: 0;
+  overflow-y: ${props => props.CloseAnimation ? 'auto' : 'hidden'};
+  overflow-x: hidden;
   z-index: 300;
+  border-radius: 24px;
+  box-shadow: ${props => props.CloseAnimation 
+    ? '0 20px 60px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(0, 0, 0, 0.05)' 
+    : 'none'};
+  display: flex;
+  flex-direction: column;
+  
+  /* Animation based on CloseAnimation state - smoother easing */
+  animation: ${props => props.CloseAnimation ? popupExpand : popupCollapse} 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  animation-fill-mode: forwards;
+  
+  /* Smooth scrolling */
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+  
   ::-webkit-scrollbar {
-    display: none;
+    width: 6px;
   }
-  @media (min-width: 1024px) {
-    /* animation: ${({ x, y, width }) => slideAnimationScreen(x, y, width)} 0.8s;
-    height: ${(props) => (props.CloseAnimation ? "100vh" : `30vh`)}; */
-
+  
+  ::-webkit-scrollbar-track {
+    background: transparent;
+    border-radius: 10px;
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    background: ${props => props.theme.mainColor || '#007bff'}40;
+    border-radius: 10px;
+    
+    &:hover {
+      background: ${props => props.theme.mainColor || '#007bff'}60;
     }
+  }
+  
+  @media (min-width: 768px) {
+    width: 88%;
+    max-width: 900px;
+    border-radius: 28px;
+    box-shadow: ${props => props.CloseAnimation 
+      ? '0 24px 80px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(0, 0, 0, 0.05)' 
+      : 'none'};
+  }
+  
+  @media (min-width: 1024px) {
+    width: 85%;
+    max-width: 1000px;
+    border-radius: 32px;
+    box-shadow: ${props => props.CloseAnimation 
+      ? '0 32px 100px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(0, 0, 0, 0.05)' 
+      : 'none'};
+  }
 
 `;
 
@@ -442,12 +563,12 @@ export const InfoContainer = styled.div`
 export const ItemInfo = styled.div`
   width: 90%;
   display: flex;
-  align-items: ${props => props.activeLanguage == "en" ? "flex-start" : "flex-end"};;
+  align-items: ${props => props.activeLanguage == "en" ? "flex-start" : "flex-end"};; 
   flex-direction: column;
   /* align-items: center; */
   position: relative;
   margin-top: 20px;
-  padding-bottom: 10vh;
+  padding-bottom: 100px;
   color: ${(props) => props.theme.textColor};
   opacity: ${(props) => (props.CloseAnimation ? 1 : 0)};
   transition: opacity 0.3s ease;
@@ -531,18 +652,20 @@ const AddToCartAnimation = keyframes`
 
 export const ButtonWrapper = styled.div`
   width: 100%;
-  position: fixed;
+  position: sticky;
   bottom: 0;
+  left: 0;
   justify-content: center;
   flex-direction: column;
   align-items: center;
   animation: ${AddToCartAnimation} 0.7s ease-in-out;
   background-color: ${(props) => props.theme.backgroundColor};
-
+  z-index: 301;
   display: flex;
   box-shadow: 0px -3px 5px rgba(180, 180, 180, 0.1); /* Slight shadow on the top */
   padding-bottom: 10px;
-  margin-top: 30px;
+  padding-top: 10px;
+  margin-top: auto;
   opacity: ${(props) => (props.CloseAnimation ? 1 : 0)};
   transition: opacity 0.3s ease;
   pointer-events: ${(props) => (props.CloseAnimation ? "auto" : "none")};
@@ -563,6 +686,7 @@ export const AddToCart = styled.button`
   background-color: ${(props) => props.theme.mainColor};
   font-size: 12px;
 `;
+
 export const QuantityPrice = styled.span`
 position: absolute;
 right: 10%;

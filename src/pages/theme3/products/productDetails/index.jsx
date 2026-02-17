@@ -3,6 +3,7 @@ import {
   AddToCart,
   BackBtn,
   BackIcon,
+  Backdrop,
   ButtonWrapper,
   Category,
   FakeContainer,
@@ -150,6 +151,20 @@ export default function ProductDetails({
   const [CloseAnimation, setCloseAnimation] = useState(true);
   const [carouselIndex, setcarouselIndex] = useState(0);
   const CLOSE_ANIMATION_MS = 450;
+  
+  // Prevent body scroll when popup is open
+  useEffect(() => {
+    if (CloseAnimation) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "auto";
+    }
+    
+    return () => {
+      document.body.style.overflow = "auto";
+    };
+  }, [CloseAnimation]);
+  
   const closeDetails = () => {
     setCloseAnimation(false);
     setTimeout(() => {
@@ -307,10 +322,25 @@ export default function ProductDetails({
 
     setFormData(submission.data);
   };
+  // Get restaurant logo URL for fallback
+  const restaurantLogoUrl = restaurant?.logoURL
+    ? `https://storage.googleapis.com/ecommerce-bucket-testing/${restaurant.logoURL}`
+    : null;
+
   // this code is to put the image cover at the beggining of the array
   let images = [...(plates[activePlate]?.images ?? [])];
+  
+  // If no images available, create a fallback image object with restaurant logo
+  if (images.length === 0 && restaurantLogoUrl) {
+    images = [{
+      id: 'fallback-logo',
+      url: restaurant.logoURL,
+      isFallback: true
+    }];
+  }
+  
   // Find the index of the image that should be first
-  const index = images.findIndex((image) => image.id === plates[activePlate].new_cover_id);
+  const index = images.findIndex((image) => image.id === plates[activePlate]?.new_cover_id);
 
   // If the image is found and it's not already the first element, move it to the front
   if (index > 0) {
@@ -328,10 +358,15 @@ export default function ProductDetails({
   };
 
 
-  const description =
+  const rawDescription =
     restaurant?.activeLanguage === "en"
       ? plates[activePlate]?.en_description
       : plates[activePlate]?.ar_description;
+  
+  // Remove <br> tags from description
+  const description = rawDescription 
+    ? rawDescription.replace(/<br\s*\/?>/gi, '')
+    : '';
 
   let currencySymbol;
   switch (restaurant?.currency) {
@@ -369,6 +404,10 @@ export default function ProductDetails({
 
   return (
     <>
+      <Backdrop 
+        CloseAnimation={CloseAnimation}
+        onClick={handleBack}
+      />
       <Wrapper
         // x={productPositions[activePlate]?.x}
         // y={productPositions[activePlate]?.y}
@@ -400,10 +439,10 @@ export default function ProductDetails({
               <CarouselForward
                 CloseAnimation={CloseAnimation}
                 onClick={() =>
-                  plates[activePlate].images.length > carouselIndex + 1 &&
+                  images.length > carouselIndex + 1 &&
                   handleright()
                 }
-                disabled={plates[activePlate].images.length <= carouselIndex + 1}
+                disabled={images.length <= carouselIndex + 1}
               >
                 <IoIosArrowForward />
               </CarouselForward>
@@ -427,10 +466,18 @@ export default function ProductDetails({
                     <Image
                       src={
                         loadedIndices[index] || index === carouselIndex
-                          ? `https://storage.googleapis.com/ecommerce-bucket-testing/${image.url}`
+                          ? (image.url 
+                              ? `https://storage.googleapis.com/ecommerce-bucket-testing/${image.url}`
+                              : restaurantLogoUrl || "")
                           : ""
                       }
                       onLoad={() => handleImageLoad(index)}
+                      onError={(e) => {
+                        // If image fails to load, use restaurant logo as fallback
+                        if (restaurantLogoUrl && e.target.src !== restaurantLogoUrl) {
+                          e.target.src = restaurantLogoUrl;
+                        }
+                      }}
                       CloseAnimation={CloseAnimation}
                       Loaded={loadedIndices[index]}
                       alt={`Image ${index + 1}`}
@@ -457,8 +504,18 @@ export default function ProductDetails({
                   }}
                 >
                   <ThumbnailImage
-                    src={`https://storage.googleapis.com/ecommerce-bucket-testing/${image.url}`}
+                    src={
+                      image.url
+                        ? `https://storage.googleapis.com/ecommerce-bucket-testing/${image.url}`
+                        : restaurantLogoUrl || ""
+                    }
                     alt={`Thumbnail ${index + 1}`}
+                    onError={(e) => {
+                      // If thumbnail fails to load, use restaurant logo as fallback
+                      if (restaurantLogoUrl && e.target.src !== restaurantLogoUrl) {
+                        e.target.src = restaurantLogoUrl;
+                      }
+                    }}
                   />
                 </ThumbnailItem>
               ))}

@@ -164,7 +164,7 @@ export const QuickAddButton = styled.button`
   cursor: pointer;
   opacity: ${(props) => (props.disabled ? 0.5 : 1)};
   pointer-events: auto;
-  z-index: 10;
+  z-index: 2;
   transition: transform 0.2s ease, opacity 0.2s ease;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   

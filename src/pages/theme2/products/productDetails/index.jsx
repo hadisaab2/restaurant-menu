@@ -172,7 +172,7 @@ export default function ProductDetails({
       if (deltaX > 5) {
         if (carouselIndex !== 0) handleleft();
       } else if (deltaX < -5) {
-        if (plates[activePlate].images.length > carouselIndex + 1)
+        if (images.length > carouselIndex + 1)
           handleright();
       }
 
@@ -257,10 +257,25 @@ export default function ProductDetails({
 
     setFormData(submission.data);
   };
+  // Get restaurant logo URL for fallback
+  const restaurantLogoUrl = restaurant?.logoURL
+    ? `https://storage.googleapis.com/ecommerce-bucket-testing/${restaurant.logoURL}`
+    : null;
+
   // this code is to put the image cover at the beggining of the array
   let images = [...(plates[activePlate]?.images ?? [])];
+  
+  // If no images available, create a fallback image object with restaurant logo
+  if (images.length === 0 && restaurantLogoUrl) {
+    images = [{
+      id: 'fallback-logo',
+      url: restaurant.logoURL,
+      isFallback: true
+    }];
+  }
+  
   // Find the index of the image that should be first
-  const index = images.findIndex((image) => image.id === plates[activePlate].new_cover_id);
+  const index = images.findIndex((image) => image.id === plates[activePlate]?.new_cover_id);
 
   // If the image is found and it's not already the first element, move it to the front
   if (index > 0) {
@@ -350,10 +365,18 @@ export default function ProductDetails({
                     <Image
                       src={
                         loadedIndices[index] || index === carouselIndex
-                          ? `https://storage.googleapis.com/ecommerce-bucket-testing/${image.url}`
+                          ? (image.url 
+                              ? `https://storage.googleapis.com/ecommerce-bucket-testing/${image.url}`
+                              : restaurantLogoUrl || "")
                           : ""
                       }
                       onLoad={() => handleImageLoad(index)}
+                      onError={(e) => {
+                        // If image fails to load, use restaurant logo as fallback
+                        if (restaurantLogoUrl && e.target.src !== restaurantLogoUrl) {
+                          e.target.src = restaurantLogoUrl;
+                        }
+                      }}
                       CloseAnimation={CloseAnimation}
                       Loaded={loadedIndices[index]}
                       alt={`Image ${index}`}
@@ -367,7 +390,7 @@ export default function ProductDetails({
             <CarouselForward
               CloseAnimation={CloseAnimation}
               onClick={() =>
-                plates[activePlate].images.length > carouselIndex + 1 &&
+                images.length > carouselIndex + 1 &&
                 handleright()
               }
             />

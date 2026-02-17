@@ -2,64 +2,198 @@ import styled from "styled-components";
 import { keyframes } from "styled-components";
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 
-
-
-
-const slideAnimation = (x, y, width) => keyframes`
- 0% { 
-    right: -100%;
-    
-}
- 100% { 
-    right: 0;
-
-}
-`;
-
-const slideAnimationScreen = (x, y, width) => keyframes`
- 0% { 
-    left: ${x}px;
-    top:${y}px;
-    width:${width}px;
-    height:30vh;
-    border-radius: 10px;
-    
-}
- 100% { 
-    left: 0;
-    top:0;
-    width:100%;
-    height: 100vh;
-    border-radius: 0px;
-
-}
-`;
-export const SearchProductContainer = styled.div`
-
-position: fixed;
-height: 100vh;
-width: 100%;
-align-items: center;
-justify-content: center;
-top:0;
-right: ${props => props.CloseAnimation ? 0 : "-100%"};
-color:${props => props.theme.textColor};
-background-color:${props => props.theme.backgroundColor};
-padding-bottom:150px;
-
-  overflow: scroll;
-  transition: all 1s;
-  animation: ${slideAnimation} 1.1s;
-  z-index: 6;
-  ::-webkit-scrollbar {
-    display: none;
+// Backdrop fade-in animation - smoother
+const backdropFadeIn = keyframes`
+  0% {
+    opacity: 0;
+    backdrop-filter: blur(0px);
   }
-  @media (min-width: 1024px) {
-    /* animation: ${({ x, y, width }) => slideAnimationScreen(x, y, width)} 0.8s;
-    height: ${(props) => (props.CloseAnimation ? "100vh" : `30vh`)}; */
+  100% {
+    opacity: 1;
+    backdrop-filter: blur(4px);
+  }
+`;
 
+// Popup expand animation - starts as a line in the middle, then expands to floating modal
+const popupExpand = keyframes`
+  0% {
+    width: 0%;
+    height: 3px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.8);
+    border-radius: 0px;
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  40% {
+    width: 92%;
+    height: 3px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(1);
+    border-radius: 24px;
+  }
+  100% {
+    width: 92%;
+    height: calc(100vh - 40px);
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(1);
+    border-radius: 24px;
+    opacity: 1;
+  }
+
+  @media (min-width: 768px) {
+    40% {
+      width: 88%;
+      border-radius: 28px;
     }
+    100% {
+      width: 88%;
+      border-radius: 28px;
+    }
+  }
 
+  @media (min-width: 1024px) {
+    40% {
+      width: 85%;
+      border-radius: 32px;
+    }
+    100% {
+      width: 85%;
+      border-radius: 32px;
+    }
+  }
+`;
+
+// Popup close animation - collapses back to a line
+const popupCollapse = keyframes`
+  0% {
+    width: 92%;
+    height: calc(100vh - 40px);
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(1);
+    border-radius: 24px;
+    opacity: 1;
+  }
+  60% {
+    width: 92%;
+    height: 3px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(1);
+    border-radius: 24px;
+    opacity: 0.5;
+  }
+  90% {
+    opacity: 0.3;
+  }
+  100% {
+    width: 0%;
+    height: 3px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.8);
+    border-radius: 0px;
+    opacity: 0;
+  }
+
+  @media (min-width: 768px) {
+    0% {
+      width: 88%;
+      border-radius: 28px;
+    }
+    60% {
+      width: 88%;
+      border-radius: 28px;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    0% {
+      width: 85%;
+      border-radius: 32px;
+    }
+    60% {
+      width: 85%;
+      border-radius: 32px;
+    }
+  }
+`;
+
+// Backdrop component
+export const Backdrop = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  z-index: 299;
+  opacity: ${props => props.CloseAnimation ? 1 : 0};
+  animation: ${props => props.CloseAnimation ? backdropFadeIn : 'none'} 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  pointer-events: ${props => props.CloseAnimation ? 'auto' : 'none'};
+`;
+
+export const SearchProductContainer = styled.div`
+  position: fixed;
+  width: 92%;
+  height: calc(100vh - 40px);
+  max-height: calc(100vh - 40px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: ${props => props.theme.textColor};
+  background-color: ${props => props.theme.backgroundColor};
+  padding-bottom: 0;
+  overflow-y: ${props => props.CloseAnimation ? 'auto' : 'hidden'};
+  overflow-x: hidden;
+  z-index: 300;
+  border-radius: 24px;
+  box-shadow: ${props => props.CloseAnimation 
+    ? '0 20px 60px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(0, 0, 0, 0.05)' 
+    : 'none'};
+  
+  /* Animation based on CloseAnimation state - smoother easing */
+  animation: ${props => props.CloseAnimation ? popupExpand : popupCollapse} 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  animation-fill-mode: forwards;
+  
+  /* Smooth scrolling */
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+  
+  ::-webkit-scrollbar {
+    width: 6px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    background: ${props => props.theme.mainColor || '#007bff'}40;
+    border-radius: 3px;
+  }
+  
+  @media (min-width: 768px) {
+    width: 88%;
+    border-radius: 28px;
+  }
+  
+  @media (min-width: 1024px) {
+    width: 85%;
+    border-radius: 32px;
+  }
 `;
 
 
@@ -91,41 +225,62 @@ const ImageAnimationScreen = keyframes`
 
 export const ImagesContainer = styled.div`
   width: 100%;
-  height: ${(props)=>props.squareDimension?"45vh":"60vh"};
-  margin-top:80px;
+  min-height: ${(props) => (props.squareDimension ? "45vh" : "60vh")};
+  margin-top: 80px;
   transition: all 0.8s;
   display: flex;
+  flex-direction: column;
   justify-content: center;
-  overflow: hidden;
+  align-items: center;
+  overflow: visible;
+  position: relative;
+  padding: 0 5%;
   @media (min-width: 1024px) {
-    /* height: ${(props) => (props.CloseAnimation ? "70vh" : "30vh")};
-    animation: ${ImageAnimationScreen} 0.8s; */
-
-    }
+    min-height: ${(props) => (props.squareDimension ? "50vh" : "65vh")};
+    margin-top: 90px;
+  }
 `;
 export const Carousel = styled.div`
   width: 100%;
-  height: 100%;
+  min-height: calc(100% - 80px);
   white-space: nowrap;
-  position:relative;
+  position: relative;
   transform: ${(props) => `translateX(-${props.carouselIndex * 100}%)`};
-  transition: all 0.2s ease;
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  overflow: visible;
+  margin-top: 60px;
+  
+  @media (min-width: 768px) {
+    margin-top: 70px;
+  }
 `;
 export const CarouselItem = styled.div`
   height: 100%;
   width: 100%;
   display: inline-block;
   vertical-align: top;
-
+  flex-shrink: 0;
+  padding: 0 10px;
+  box-sizing: border-box;
+  
+  @media (min-width: 768px) {
+    padding: 0 20px;
+  }
 `;
 export const ImageWrapper = styled.div`
-  height: 100%;
+  min-height: 100%;
   width: 100%;
-  display:flex;
-  align-items:center;
-  justify-content:center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   position: relative;
-
+  padding: 0;
+  margin: 0 5px;
+  
+  @media (min-width: 768px) {
+    margin: 0 10px;
+  }
 `;
 
 const spin = keyframes`
@@ -157,15 +312,20 @@ height: 100%;
 `;
 
 export const Image = styled.img`
-  height: 100%;
-  object-fit: cover;
-  border-radius: ${(props) => (props.CloseAnimation ? "40px" : "10px")};
-  width: ${(props) => (props.CloseAnimation ? "90%" : "100%")};
+  max-height: 70vh;
+  height: auto;
+  width: auto;
+  max-width: 100%;
+  object-fit: contain;
+  border-radius: ${(props) => (props.CloseAnimation ? "20px" : "10px")};
   display:${props => props.Loaded ? 'block' : 'none'};
-  transition: all 0.8s;
-    @media (min-width: 1024px) {
-      width: ${(props) => (props.CloseAnimation ? "50%" : "100%")};
-    }
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  background: ${props => props.theme.backgroundColor || "#f5f5f5"};
+  
+  @media (min-width: 1024px) {
+    max-height: 75vh;
+    border-radius: ${(props) => (props.CloseAnimation ? "24px" : "10px")};
+  }
 `;
 const BackIconAnimation = keyframes`
  0% { 
@@ -180,12 +340,8 @@ const BackIconAnimation = keyframes`
 `;
 
 export const BackIcon = styled(IoIosArrowBack)`
-  font-size: 22px;
-  background-color: ${(props) => props.theme.mainColor};
-  color: ${(props) => props.theme.backgroundColor};
-
-  padding: 4px;
-  border-radius: 50%;
+  font-size: 14px;
+  color: ${(props) => props.theme.backgroundColor || "#ffffff"};
 `;
 
 export const CarouselBack = styled(IoIosArrowBack)`
@@ -218,16 +374,68 @@ export const CarouselForward = styled(IoIosArrowForward)`
 
     }
 `;
-export const BackBtn = styled.button`
+export const ProductHeader = styled.div`
   position: fixed;
-  z-index: 8;
-  top: 30px;
-  left: 30px;
+  top: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  display: ${(props) => (props.CloseAnimation ? "flex" : "none")};
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 30px;
+  z-index: 301;
+  background-color: ${props => props.theme.backgroundColor || "transparent"};
+  transition: opacity 0.4s ease-in-out;
+  
+  @media (min-width: 1024px) {
+    padding: 25px 40px;
+  }
+`;
+
+export const ProductHeaderTitle = styled.h2`
+  font-size: 18px;
+  font-weight: 600;
+  color: ${props => props.theme.textColor || "#1a1a1a"};
+  margin: 0;
+  text-align: center;
+  flex: 1;
+  direction: ${props => props.activeLanguage === "ar" ? "rtl" : "ltr"};
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  padding: 0 20px;
+  
+  @media (min-width: 768px) {
+    font-size: 22px;
+    font-weight: 700;
+  }
+`;
+
+export const BackBtn = styled.button`
+  position: relative;
+  z-index: 302;
   outline: none;
   border: 0;
-  background-color: transparent;
-  display: ${(props) => (props.CloseAnimation ? "flex" : "none")};
-  animation: ${BackIconAnimation} 0.8s ease-in-out;
+  background-color: ${(props) => props.theme.mainColor || "#007bff"};
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  width: 27px;
+  height: 27px;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    transform: scale(1.1);
+    opacity: 0.9;
+  }
+  
+  &:active {
+    transform: scale(0.95);
+  }
 `;
 
 export const ItemCategory = styled.div`
@@ -312,11 +520,14 @@ export const ItemInfo = styled.div`
   flex-direction: column;
   position: relative;
   margin-top: 20px;
-  padding-bottom: 10vh;
+  padding-bottom: 100px;
   color: ${(props) => props.theme.textColor};
+  opacity: ${(props) => (props.CloseAnimation ? 1 : 0)};
+  transition: opacity 0.3s ease;
+  pointer-events: ${(props) => (props.CloseAnimation ? "auto" : "none")};
   @media (min-width: 1024px) {
-        width: 50%;
-    }
+    width: 50%;
+  }
 `;
 
 export const ItemName = styled.span`
@@ -381,21 +592,27 @@ const AddToCartAnimation = keyframes`
 
 export const ButtonWrapper = styled.div`
   width: 100%;
-  position: fixed;
+  position: sticky;
   bottom: 0;
+  left: 0;
+  right: 0;
+  margin-top: auto;
   justify-content: center;
   flex-direction: column;
   align-items: center;
-  animation: ${AddToCartAnimation} 1.4s ease-in-out;
+  animation: ${AddToCartAnimation} 0.7s ease-in-out;
   background-color: ${(props) => props.theme.backgroundColor};
-
-  display: ${(props) => (props.CloseAnimation ? "flex" : "none")};
-  box-shadow: 0px -3px 5px rgba(180, 180, 180, 0.1); /* Slight shadow on the top */
+  z-index: 301;
+  display: flex;
+  box-shadow: 0px -3px 5px rgba(180, 180, 180, 0.1);
   padding-bottom: 10px;
-  margin-top: 30px;
+  padding-top: 10px;
+  opacity: ${(props) => (props.CloseAnimation ? 1 : 0)};
+  transition: opacity 0.3s ease;
+  pointer-events: ${(props) => (props.CloseAnimation ? "auto" : "none")};
   @media (min-width: 1024px) {
-        width: 50%;
-    }
+    width: 50%;
+  }
 `;
 export const AddToCart = styled.button`
   outline: none;
@@ -468,21 +685,33 @@ const CopyBtnAnimation = keyframes`
 
 export const CopyButton = styled.div`
   display: flex;
- align-items: center;
- justify-content: center;
- height: 27px;
- width: 27px;
- border-radius: 50%;
- position: fixed;
-  z-index: 8;
-  top: 30px;
+  align-items: center;
+  justify-content: center;
+  height: 27px;
+  width: 27px;
+  border-radius: 50%;
+  position: relative;
+  z-index: 302;
   background-color: ${props => props.theme.mainColor};
   color: ${props => props.theme.backgroundColor};
-  right: 30px;
-  display: ${(props) => (props.CloseAnimation ? "flex" : "none")};
-  animation: ${CopyBtnAnimation} 0.8s ease-in-out;
+  flex-shrink: 0;
   font-size: 14px;
   cursor: pointer;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    transform: scale(1.1);
+  }
+  
+  &:active {
+    transform: scale(0.95);
+  }
+  
+  @media (min-width: 1024px) {
+    height: 30px;
+    width: 30px;
+    font-size: 16px;
+  }
 `;
 
 

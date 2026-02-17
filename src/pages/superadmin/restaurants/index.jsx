@@ -652,8 +652,12 @@ export default function Restaurants() {
                   <LoadingButton
                     variant="contained"
                     onClick={() => {
-                      if (!excelRestaurantId || !excelFile) {
-                        alert("Please select a restaurant and upload an Excel file");
+                      if (!excelRestaurantId) {
+                        alert("Please select a restaurant from the dropdown");
+                        return;
+                      }
+                      if (!excelFile) {
+                        alert("Please upload an Excel file");
                         return;
                       }
                       handleBulkInsertExcel({
@@ -662,7 +666,7 @@ export default function Restaurants() {
                       });
                     }}
                     loading={isBulkInserting}
-                    disabled={!excelRestaurantId || !excelFile}
+                    disabled={!excelRestaurantId || !excelFile || isBulkInserting}
                   >
                     Import Products & Categories
                   </LoadingButton>

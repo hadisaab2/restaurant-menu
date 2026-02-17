@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { AddToCart, BackBtn, BackIcon, ButtonWrapper, Carousel, CarouselBack, CarouselForward, CarouselItem, Category, CopyButton, DiscountPrice, FakeContainer, Image, ImagesContainer, ImageWrapper, InfoContainer, Instruction, InstructionContainer, InstructionLabel, ItemCategory, ItemDescription, ItemInfo, ItemInfoWrapper, ItemName, ItemPrice, Loader, LoaderWrapper, Minus, Plus, PriceContainer, Quantity, QuantityPrice, QuantityWrapper, SearchProductContainer } from './styles'
+import { AddToCart, BackBtn, BackIcon, Backdrop, ButtonWrapper, Carousel, CarouselBack, CarouselForward, CarouselItem, Category, CopyButton, DiscountPrice, FakeContainer, Image, ImagesContainer, ImageWrapper, InfoContainer, Instruction, InstructionContainer, InstructionLabel, ItemCategory, ItemDescription, ItemInfo, ItemInfoWrapper, ItemName, ItemPrice, Loader, LoaderWrapper, Minus, Plus, PriceContainer, ProductHeader, ProductHeaderTitle, Quantity, QuantityPrice, QuantityWrapper, SearchProductContainer } from './styles'
 import { useGetProduct } from '../../../apis/products/getProduct';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
@@ -89,6 +89,20 @@ export default function ProductParam({ productId, setSearchParams, searchParams 
 
     const [CloseAnimation, setCloseAnimation] = useState(true);
     const [carouselIndex, setcarouselIndex] = useState(0);
+    
+    // Prevent body scroll when popup is open
+    useEffect(() => {
+        if (CloseAnimation) {
+            document.body.style.overflow = "hidden";
+        } else {
+            document.body.style.overflow = "auto";
+        }
+        
+        return () => {
+            document.body.style.overflow = "auto";
+        };
+    }, [CloseAnimation]);
+    
     const handleBack = () => {
         // Restore body overflow immediately so scrolling works when we return
         document.body.style.overflow = "auto";
@@ -261,7 +275,10 @@ export default function ProductParam({ productId, setSearchParams, searchParams 
 
     return (
         <>
-
+            <Backdrop 
+                CloseAnimation={CloseAnimation}
+                onClick={handleBack}
+            />
             <SearchProductContainer
                 // x={productPositions[activePlate]?.x}
                 // y={productPositions[activePlate]?.y}
@@ -269,13 +286,19 @@ export default function ProductParam({ productId, setSearchParams, searchParams 
                 CloseAnimation={CloseAnimation}
             >
                 {!productLoading && <>
-                    <ItemCategory CloseAnimation={CloseAnimation}>
-                        <Category>
+                    <ProductHeader CloseAnimation={CloseAnimation}>
+                        <BackBtn onClick={handleBack} CloseAnimation={CloseAnimation}>
+                            <BackIcon />
+                        </BackBtn>
+                        <ProductHeaderTitle activeLanguage={restaurant?.activeLanguage}>
                             {restaurant.activeLanguage == "en"
                                 ? fetchedProduct?.category?.en_category
                                 : fetchedProduct?.category?.ar_category}
-                        </Category>
-                    </ItemCategory>
+                        </ProductHeaderTitle>
+                        <CopyButton onClick={handleCopy} CloseAnimation={CloseAnimation}>
+                            {!copied ? <FaRegCopy /> : <TiTick />}
+                        </CopyButton>
+                    </ProductHeader>
                     <ImagesContainer  squareDimension={fetchedProduct?.square_dimension}  CloseAnimation={CloseAnimation}>
                         {images.length !== 1 && (
                             <CarouselBack
@@ -395,14 +418,6 @@ export default function ProductParam({ productId, setSearchParams, searchParams 
                 </>
                 }
             </SearchProductContainer>
-
-            <BackBtn onClick={handleBack} CloseAnimation={CloseAnimation}>
-                <BackIcon />
-            </BackBtn>
-            <CopyButton onClick={handleCopy} CloseAnimation={CloseAnimation}>
-                {!copied ? <FaRegCopy /> : <TiTick />}
-            </CopyButton>
-
         </>
     )
 }
