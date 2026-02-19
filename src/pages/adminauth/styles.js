@@ -17,7 +17,7 @@ export const FormContainer = styled.div`
   min-height: 380px;
   padding: 28px 32px;
   box-shadow: 0 10px 30px rgba(90, 97, 105, 0.18);
-  background-color: #ffffff;
+  background-color: ${props => props.theme.backgroundColor || "#ffffff"};
   border-radius: 16px;
   display: flex;
   flex-direction: column;

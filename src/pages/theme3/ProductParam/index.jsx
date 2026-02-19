@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { AddToCart, BackBtn, BackIcon, Backdrop, ButtonWrapper, Carousel, CarouselBack, CarouselForward, CarouselItem, Category, CopyButton, DiscountPrice, FakeContainer, Image, ImagesContainer, ImageWrapper, InfoContainer, Instruction, InstructionContainer, InstructionLabel, ItemCategory, ItemDescription, ItemInfo, ItemInfoWrapper, ItemName, ItemPrice, Loader, LoaderWrapper, Minus, Plus, PriceContainer, ProductHeader, ProductHeaderTitle, Quantity, QuantityPrice, QuantityWrapper, SearchProductContainer } from './styles'
+import { AddToCart, BackBtn, BackIcon, Backdrop, ButtonWrapper, Carousel, CarouselBack, CarouselForward, CarouselItem, Category, CopyButton, DiscountPrice, FakeContainer, Image, ImagesContainer, ImageWrapper, InfoContainer, Instruction, InstructionContainer, InstructionLabel, ItemCategory, ItemDescription, ItemInfo, ItemInfoWrapper, ItemName, ItemPrice, Loader, LoaderWrapper, Minus, Plus, PriceContainer, ProductDetailSkeleton, ProductHeader, ProductHeaderTitle, Quantity, QuantityPrice, QuantityWrapper, SearchProductContainer, SkeletonBox, TitlePriceRow } from './styles'
 import { useGetProduct } from '../../../apis/products/getProduct';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
@@ -89,6 +89,7 @@ export default function ProductParam({ productId, setSearchParams, searchParams 
 
     const [CloseAnimation, setCloseAnimation] = useState(true);
     const [carouselIndex, setcarouselIndex] = useState(0);
+    const isClosingRef = useRef(false);
     
     // Prevent body scroll when popup is open
     useEffect(() => {
@@ -103,16 +104,20 @@ export default function ProductParam({ productId, setSearchParams, searchParams 
         };
     }, [CloseAnimation]);
     
-    const handleBack = () => {
-        // Restore body overflow immediately so scrolling works when we return
+    const handleBack = (e) => {
+        if (e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+        if (isClosingRef.current) return;
+        isClosingRef.current = true;
+        // Clear URL immediately so this component unmounts before any delayed tap/click
+        // can hit the product grid and reopen (fixes 2nd-close-reopens bug)
         document.body.style.overflow = "auto";
-        
-        setTimeout(() => {
-            const newParams = new URLSearchParams(searchParams);
-            newParams.delete("productId"); // Remove the productId parameter
-            // Keep categoryId so we return to the correct view (All Items or specific category)
-            setSearchParams(newParams);
-        }, 800);
+        const newParams = new URLSearchParams(searchParams);
+        newParams.delete("productId");
+        window.history.replaceState({}, "", `${window.location.pathname}${newParams.toString() ? `?${newParams.toString()}` : ""}`);
+        setSearchParams(newParams);
 
         setCloseAnimation(false);
         setcarouselIndex(0);
@@ -280,26 +285,30 @@ export default function ProductParam({ productId, setSearchParams, searchParams 
                 onClick={handleBack}
             />
             <SearchProductContainer
-                // x={productPositions[activePlate]?.x}
-                // y={productPositions[activePlate]?.y}
-                // width={productPositions[activePlate]?.width}
                 CloseAnimation={CloseAnimation}
             >
-                {!productLoading && <>
-                    <ProductHeader CloseAnimation={CloseAnimation}>
-                        <BackBtn onClick={handleBack} CloseAnimation={CloseAnimation}>
-                            <BackIcon />
-                        </BackBtn>
-                        <ProductHeaderTitle activeLanguage={restaurant?.activeLanguage}>
-                            {restaurant.activeLanguage == "en"
-                                ? fetchedProduct?.category?.en_category
-                                : fetchedProduct?.category?.ar_category}
-                        </ProductHeaderTitle>
-                        <CopyButton onClick={handleCopy} CloseAnimation={CloseAnimation}>
-                            {!copied ? <FaRegCopy /> : <TiTick />}
-                        </CopyButton>
-                    </ProductHeader>
-                    <ImagesContainer  squareDimension={fetchedProduct?.square_dimension}  CloseAnimation={CloseAnimation}>
+                <ProductHeader CloseAnimation={CloseAnimation}>
+                    <BackBtn onClick={handleBack} CloseAnimation={CloseAnimation}>
+                        <BackIcon />
+                    </BackBtn>
+                    <ProductHeaderTitle activeLanguage={restaurant?.activeLanguage}>
+                        {productLoading ? "—" : (restaurant?.activeLanguage === "en" ? fetchedProduct?.category?.en_category : fetchedProduct?.category?.ar_category)}
+                    </ProductHeaderTitle>
+                    <CopyButton onClick={handleCopy} CloseAnimation={CloseAnimation} style={{ visibility: productLoading ? "hidden" : "visible" }}>
+                        {!copied ? <FaRegCopy /> : <TiTick />}
+                    </CopyButton>
+                </ProductHeader>
+                {productLoading ? (
+                    <ProductDetailSkeleton>
+                        <SkeletonBox width="100%" height="40vh" radius="16px" style={{ maxWidth: "400px", marginBottom: "20px" }} />
+                        <SkeletonBox width="85%" height="28px" style={{ marginBottom: "12px" }} />
+                        <SkeletonBox width="45%" height="22px" style={{ marginBottom: "8px" }} />
+                        <SkeletonBox width="70%" height="14px" style={{ marginBottom: "6px" }} />
+                        <SkeletonBox width="60%" height="14px" />
+                    </ProductDetailSkeleton>
+                ) : (
+                    <React.Fragment>
+                        <ImagesContainer  squareDimension={fetchedProduct?.square_dimension}  CloseAnimation={CloseAnimation}>
                         {images.length !== 1 && (
                             <CarouselBack
                                 CloseAnimation={CloseAnimation}
@@ -365,24 +374,25 @@ export default function ProductParam({ productId, setSearchParams, searchParams 
                         <InfoContainer>
 
                             <ItemInfo CloseAnimation={CloseAnimation} activeLanguage={restaurant.activeLanguage}>
-                                <ItemName activeLanguage={restaurant.activeLanguage} >
-                                    {restaurant.activeLanguage == "en"
-                                        ? fetchedProduct?.en_name
-                                        : fetchedProduct?.ar_name}
-                                </ItemName>
-
-                                {!_.isEmpty(fetchedProduct?.en_price) && (
-                                    <PriceContainer>
-                                        <ItemPrice activeLanguage={restaurant.activeLanguage} discounted={finalDiscount != 0.00}>
-                                            {convertPrice(totalPrice, currencySymbol)}
-                                        </ItemPrice>
-                                        {finalDiscount != 0.00 &&
-                                            <DiscountPrice activeLanguage={restaurant.activeLanguage}>
-                                                {convertPrice(totalPrice * (1 - parseFloat(finalDiscount) / 100), currencySymbol)}
-                                            </DiscountPrice>
-                                        }
-                                    </PriceContainer>
-                                )}
+                                <TitlePriceRow activeLanguage={restaurant.activeLanguage}>
+                                    <ItemName activeLanguage={restaurant.activeLanguage}>
+                                        {restaurant.activeLanguage == "en"
+                                            ? fetchedProduct?.en_name
+                                            : fetchedProduct?.ar_name}
+                                    </ItemName>
+                                    {!_.isEmpty(fetchedProduct?.en_price) && (
+                                        <PriceContainer>
+                                            <ItemPrice activeLanguage={restaurant.activeLanguage} discounted={finalDiscount != 0.00}>
+                                                {convertPrice(totalPrice, currencySymbol)}
+                                            </ItemPrice>
+                                            {finalDiscount != 0.00 &&
+                                                <DiscountPrice activeLanguage={restaurant.activeLanguage}>
+                                                    {convertPrice(totalPrice * (1 - parseFloat(finalDiscount) / 100), currencySymbol)}
+                                                </DiscountPrice>
+                                            }
+                                        </PriceContainer>
+                                    )}
+                                </TitlePriceRow>
                                 <ItemDescription activeLanguage={restaurant.activeLanguage}
                                     dangerouslySetInnerHTML={{ __html: description }}
                                 />
@@ -415,8 +425,8 @@ export default function ProductParam({ productId, setSearchParams, searchParams 
 
                         </AddToCart>
                     </ButtonWrapper>
-                </>
-                }
+                    </React.Fragment>
+                )}
             </SearchProductContainer>
         </>
     )

@@ -62,7 +62,12 @@ export const Tab = styled.div`
     font-size: 18px;
   }
 `;
-export const TabText = styled.span``;
+export const TabText = styled.span`
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px;
+`;
 export const SidebarContent = styled.div`
   display: flex;
   flex-direction: column;

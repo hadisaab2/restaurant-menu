@@ -1,11 +1,13 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, useCallback } from "react";
 import { AllItemsLoader, AllItemsLoaderWrap, AllItemsSection, AllItemsTitle, AllItemsWrapper, Container, LoaderDot, ProductWrapper, AllItemsListWrapper, AllItemsListItem, AllItemsListImage, AllItemsListDetails, AllItemsListName, AllItemsListPrice, AllItemsListDiscountPrice, AllItemsListQuickAddButton, AllItemsListOutOfStockBadge, AllItemsListItemWrapper } from "./styles";
 import Product from "./product";
 import ProductDetails from "./productDetails";
 import { useSelector, useDispatch } from "react-redux";
 import { useParams, useSearchParams } from "react-router-dom";
+import { useQueryClient } from "@tanstack/react-query";
 import { useGetProducts } from "../../../apis/products/getProductsByCategory";
 import { useGetProductsByRestaurant } from "../../../apis/products/getProductsByRestaurant";
+import { getProduct, PRODUCT_QUERY_KEY } from "../../../apis/products/getProduct";
 import { convertPrice } from "../../../utilities/convertPrice";
 import { addToCart } from "../../../redux/cart/cartActions";
 import { FaCartPlus } from "react-icons/fa";
@@ -46,7 +48,17 @@ export default function Products({
   const [productRefs, setProductRefs] = useState([]);
   const loadMoreRef = useRef();
   const allItemsLoadMoreRef = useRef();
-  
+  const queryClient = useQueryClient();
+  const prefetchProduct = useCallback((productId) => {
+    if (productId) {
+      queryClient.prefetchQuery({
+        queryKey: PRODUCT_QUERY_KEY(productId),
+        queryFn: () => getProduct(productId),
+        staleTime: 5 * 60 * 1000,
+      });
+    }
+  }, [queryClient]);
+
   const isAllItemsCategory = activeCategory === "all-items";
   // Ensure activeCategory is a serializable value (string or number)
   const categoryId = activeCategory && !isAllItemsCategory ? String(activeCategory) : null;
@@ -275,6 +287,14 @@ console.log(filteredProducts)
     }
   }, [isAllItemsCategory]);
 
+  // When productId is removed from URL (e.g. closing ProductParam), clear activePlate
+  // so ProductDetails doesn’t immediately show and retrigger getProduct/logProduct/analytics
+  useEffect(() => {
+    if (!searchParams.get("productId")) {
+      setactivePlate(null);
+    }
+  }, [searchParams]);
+
 
 
 
@@ -322,6 +342,9 @@ console.log(filteredProducts)
                     }
                     const coverIndex = plate.images?.findIndex(img => img.id == plate.new_cover_id) ?? 0;
                     const imageUrl = plate.images?.[coverIndex]?.url;
+                    const restaurantLogoUrl = restaurant?.logoURL
+                      ? `https://storage.googleapis.com/ecommerce-bucket-testing/${restaurant.logoURL}`
+                      : null;
                     const features = JSON.parse(restaurant?.features || "{}");
                     const isOutOfStock = Boolean(plate?.out_of_stock) || Number(plate?.out_of_stock) === 1;
                     const hasProductForm = !_.isEmpty(plate?.form_json) && !_.isEmpty(JSON.parse(plate?.form_json || "{}"));
@@ -377,15 +400,27 @@ console.log(filteredProducts)
                             window.history.pushState({}, "", `?${newParams.toString()}`);
                             document.body.style.overflow = "hidden";
                           }}
+                          onMouseEnter={() => prefetchProduct(plate.id)}
+                          onTouchStart={() => prefetchProduct(plate.id)}
                           style={{ cursor: "pointer" }}
                         >
                           <AllItemsListImage>
-                            {imageUrl && (
+                            {imageUrl ? (
                               <img 
                                 src={`https://storage.googleapis.com/ecommerce-bucket-testing/${imageUrl}`}
                                 alt={activeLanguage === "en" ? plate.en_name : plate.ar_name}
+                                onError={(e) => {
+                                  if (restaurantLogoUrl && e.target.src !== restaurantLogoUrl) {
+                                    e.target.src = restaurantLogoUrl;
+                                  }
+                                }}
                               />
-                            )}
+                            ) : restaurantLogoUrl ? (
+                              <img 
+                                src={restaurantLogoUrl}
+                                alt={activeLanguage === "en" ? plate.en_name : plate.ar_name}
+                              />
+                            ) : null}
                           </AllItemsListImage>
                           <AllItemsListDetails activeLanguage={activeLanguage}>
                             <AllItemsListName>
@@ -495,7 +530,9 @@ console.log(filteredProducts)
             <div ref={loadMoreRef} style={{ height: "20px" }}>
             </div>
           </ProductWrapper>
-          {activePlate !== null && (
+          {activePlate !== null && 
+           !searchParams.get("productId") && 
+           activePlate < filteredProducts.length && (
             <ProductDetails
               menu={menu?.find((category) => category.id === activeCategory)}
               activePlate={activePlate}

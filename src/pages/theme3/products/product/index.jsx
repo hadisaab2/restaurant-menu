@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useCallback } from "react";
 import {
   Container,
   DiscountPrice,
@@ -17,6 +17,8 @@ import {
 } from "./styles";
 import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
+import { useQueryClient } from "@tanstack/react-query";
+import { getProduct, PRODUCT_QUERY_KEY } from "../../../../apis/products/getProduct";
 import { convertPrice } from "../../../../utilities/convertPrice";
 import { addToCart } from "../../../../redux/cart/cartActions";
 import { FaCartPlus } from "react-icons/fa";
@@ -47,11 +49,30 @@ const Product = React.forwardRef(
     );
     const [imageLoaded, setimageLoaded] = useState(false);
     const containerRef = useRef(null);
+    const queryClient = useQueryClient();
+    const prefetchProduct = useCallback(() => {
+      if (!disableDetails && plate?.id) {
+        queryClient.prefetchQuery({
+          queryKey: PRODUCT_QUERY_KEY(plate.id),
+          queryFn: () => getProduct(plate.id),
+          staleTime: 5 * 60 * 1000,
+        });
+      }
+    }, [disableDetails, plate?.id, queryClient]);
     const handleImageLoaded = () => {
       setimageLoaded(true);
     };
     const plateHandle = () => {
-      if (activePlate == null && imageLoaded && !showPopup) {
+      // Prevent opening if productId is already in URL (to avoid duplication with ProductParam)
+      const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.get("productId")) {
+        return;
+      }
+      // Prevent opening if activePlate is already set (popup is open)
+      if (activePlate !== null) {
+        return;
+      }
+      if (imageLoaded && !showPopup) {
         if (!disableDetails) {
           setactivePlate(index);
         }
@@ -199,7 +220,7 @@ const Product = React.forwardRef(
               <Loader />
             </LoaderWrapper>
           )}
-          <ImageContainer onClick={plateHandle}>
+          <ImageContainer onClick={plateHandle} onMouseEnter={prefetchProduct} onTouchStart={prefetchProduct}>
             <Image
               ref={ref}
               onLoad={handleImageLoaded}

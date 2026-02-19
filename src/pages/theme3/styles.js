@@ -6,7 +6,7 @@ export const Container = styled.div`
 min-height: 100vh;
 width: 100%;
 position: relative;
-background-color: ${props=>props.theme.homepageBackgroundColor || props.theme.backgroundColor || "#f8f9fa"};
+background-color: ${props=>props.theme.backgroundColor};
 font-family: ${(props) => `${props.theme.font || "system-ui"}, "Noto Kufi Arabic" !important`};
 overflow: visible;
 `;

@@ -138,7 +138,8 @@ export const Backdrop = styled.div`
   opacity: ${props => props.CloseAnimation ? 1 : 0};
   animation: ${props => props.CloseAnimation ? backdropFadeIn : 'none'} 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  pointer-events: ${props => props.CloseAnimation ? 'auto' : 'none'};
+  /* Always capture clicks while mounted so closing doesn't let taps pass through to product grid (avoids reopen on 2nd close) */
+  pointer-events: auto;
 `;
 
 export const SearchProductContainer = styled.div`
@@ -309,6 +310,34 @@ export const LoaderWrapper = styled.div`
   align-items: center;
   width:100%;
 height: 100%;
+`;
+
+const shimmer = keyframes`
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+`;
+
+export const SkeletonBox = styled.div`
+  width: ${(props) => props.width || "100%"};
+  height: ${(props) => props.height || "24px"};
+  border-radius: ${(props) => props.radius || "8px"};
+  background: linear-gradient(
+    90deg,
+    ${(props) => (props.theme.textColor ? `${props.theme.textColor}0c` : "rgba(0,0,0,0.06)")} 25%,
+    ${(props) => (props.theme.textColor ? `${props.theme.textColor}18` : "rgba(0,0,0,0.1)")} 50%,
+    ${(props) => (props.theme.textColor ? `${props.theme.textColor}0c` : "rgba(0,0,0,0.06)")} 75%
+  );
+  background-size: 200% 100%;
+  animation: ${shimmer} 1.2s ease-in-out infinite;
+`;
+
+export const ProductDetailSkeleton = styled.div`
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0 5%;
+  margin-top: 12px;
 `;
 
 export const Image = styled.img`
@@ -530,14 +559,30 @@ export const ItemInfo = styled.div`
   }
 `;
 
+export const TitlePriceRow = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  width: 100%;
+  margin-bottom: 14px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid ${(props) => props.theme.mainColor ? `${props.theme.mainColor}18` : "rgba(0,0,0,0.06)"};
+  flex-wrap: wrap;
+  direction: ${props => props.activeLanguage === "en" ? "ltr" : "rtl"};
+`;
+
 export const ItemName = styled.span`
-  font-size: 21px;
-  font-weight: bold;
-  margin-left:${props => props.activeLanguage == "en" ? "0px" : null} ;
-  margin-right:${props => props.activeLanguage == "en" ? null : "0px"} ;
-  text-align:center;
-  opacity: 1;
-  margin-top: 5px;
+  font-size: clamp(1.3rem, 3.8vw, 1.55rem);
+  font-weight: 700;
+  letter-spacing: ${props => props.activeLanguage === "en" ? "0.02em" : "0"};
+  line-height: 1.35;
+  text-align: ${props => props.activeLanguage === "en" ? "left" : "right"};
+  color: ${(props) => props.theme.textColor};
+  flex: 1;
+  min-width: 0;
+  margin: 0;
 `;
 
 
@@ -553,30 +598,34 @@ export const ItemDescription = styled.span`
 `;
 
 export const PriceContainer = styled.div`
-display: flex;
-flex-direction: row;
-gap:8px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+  padding: 10px 18px;
+  border-radius: 12px;
+  background: ${(props) => props.theme.mainColor ? `${props.theme.mainColor}14` : "rgba(0,0,0,0.06)"};
+  border: 1px solid ${(props) => props.theme.mainColor ? `${props.theme.mainColor}28` : "rgba(0,0,0,0.08)"};
+  box-shadow: 0 1px 3px rgba(0,0,0,0.04);
 `;
 
 export const ItemPrice = styled.span`
-  font-size: 16px;
-  font-weight: 600;
-  transform: scale(1);
-  color: ${(props) => props.theme.mainColor};;
-  border-radius: 10px;
-  text-decoration: ${props=>props.discounted?"line-through":"none"};
-  word-spacing: 0px;
-
+  font-size: clamp(0.9rem, 2.2vw, 1rem);
+  font-weight: ${props => props.discounted ? "500" : "600"};
+  color: ${(props) =>
+    props.discounted
+      ? (props.theme.textColor ? `${props.theme.textColor}88` : "rgba(0,0,0,0.45)")
+      : (props.theme.mainColor || "inherit")};
+  text-decoration: ${props => props.discounted ? "line-through" : "none"};
+  letter-spacing: 0.02em;
 `;
-export const DiscountPrice = styled.span`
-  font-size: 16px;
-  font-weight: 600;
-  word-spacing: 3px;
-  transform: scale(1);
-  color: ${(props) => props.theme.mainColor};;
-  border-radius: 10px;
-  word-spacing: 0px;
 
+export const DiscountPrice = styled.span`
+  font-size: clamp(1.15rem, 3vw, 1.4rem);
+  font-weight: 700;
+  color: ${(props) => props.theme.mainColor || "inherit"};
+  letter-spacing: 0.03em;
 `;
 
 

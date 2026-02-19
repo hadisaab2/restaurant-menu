@@ -55,16 +55,23 @@ export default function RestaurantDash() {
   const isTheme3 = Number(userInformation?.template_id) === 3;
   const isFeedbacksSection = section === "Feedbacks";
   const isQuestionsSection = section === "QuestionsSuggestions";
-  const isRestrictedSection = isFeedbacksSection || isQuestionsSection;
+  const isOrdersSection = section === "Orders";
+  const isCustomersSection = section === "Customers";
+  const isAnalyticsSection = section === "Analytics";
+  const isRestrictedSection = isFeedbacksSection || isQuestionsSection || isOrdersSection || isCustomersSection || isAnalyticsSection;
 
   const onClickBurger=()=>{
     setShowMobileSidebar(!showMobileSidebar)
   }
 
   const handlesection= (section)=>{
+    // Prevent navigation to restricted sections if not Theme 3
+    const restrictedSections = ["Feedbacks", "QuestionsSuggestions", "Orders", "Customers", "Analytics"];
+    if (restrictedSections.includes(section) && !isTheme3) {
+      return; // Don't navigate to restricted sections
+    }
     setSection(section)
     setShowMobileSidebar(!showMobileSidebar)
-
   }
 
   
@@ -108,26 +115,26 @@ export default function RestaurantDash() {
           </Tab>
           <Tab $disabled={!isTheme3} onClick={() => handlesection("Feedbacks")}>
             <CateogoryIcon />
-            <TabText>Feedbacks</TabText>
+            <TabText>Feedbacks{!isTheme3 && <span style={{ fontSize: "12px", color: "#999", marginLeft: "8px" }}>(VIP package)</span>}</TabText>
           </Tab>
           <Tab
             $disabled={!isTheme3}
             onClick={() => handlesection("QuestionsSuggestions")}
           >
             <CateogoryIcon />
-            <TabText>Questions & Suggestions</TabText>
+            <TabText>Questions & Suggestions{!isTheme3 && <span style={{ fontSize: "12px", color: "#999", marginLeft: "8px" }}>(VIP package)</span>}</TabText>
           </Tab>
-          <Tab onClick={() => handlesection("Orders")}>
+          <Tab $disabled={!isTheme3} onClick={() => handlesection("Orders")}>
             <CateogoryIcon />
-            <TabText>Orders</TabText>
+            <TabText>Orders{!isTheme3 && <span style={{ fontSize: "12px", color: "#999", marginLeft: "8px" }}>(VIP package)</span>}</TabText>
           </Tab>
-          <Tab onClick={() => handlesection("Customers")}>
+          <Tab $disabled={!isTheme3} onClick={() => handlesection("Customers")}>
             <CateogoryIcon />
-            <TabText>Customers</TabText>
+            <TabText>Customers{!isTheme3 && <span style={{ fontSize: "12px", color: "#999", marginLeft: "8px" }}>(VIP package)</span>}</TabText>
           </Tab>
-          <Tab onClick={() => handlesection("Analytics")}>
+          <Tab $disabled={!isTheme3} onClick={() => handlesection("Analytics")}>
             <CateogoryIcon />
-            <TabText>Analytics</TabText>
+            <TabText>Analytics{!isTheme3 && <span style={{ fontSize: "12px", color: "#999", marginLeft: "8px" }}>(VIP package)</span>}</TabText>
           </Tab>
 
         </SidebarContent>
@@ -171,28 +178,28 @@ export default function RestaurantDash() {
             <CateogoryIcon />
             <TabText>Report</TabText>
           </Tab>
-          <Tab $disabled={!isTheme3} onClick={() => setSection("Feedbacks")}>
+          <Tab $disabled={!isTheme3} onClick={() => !isTheme3 ? null : setSection("Feedbacks")}>
             <CateogoryIcon />
-            <TabText>Feedbacks</TabText>
+            <TabText>Feedbacks{!isTheme3 && <span style={{ fontSize: "12px", color: "#999", marginLeft: "8px" }}>(VIP package)</span>}</TabText>
           </Tab>
           <Tab
             $disabled={!isTheme3}
-            onClick={() => setSection("QuestionsSuggestions")}
+            onClick={() => !isTheme3 ? null : setSection("QuestionsSuggestions")}
           >
             <CateogoryIcon />
-            <TabText>Questions & Suggestions</TabText>
+            <TabText>Questions & Suggestions{!isTheme3 && <span style={{ fontSize: "12px", color: "#999", marginLeft: "8px" }}>(VIP package)</span>}</TabText>
           </Tab>
-          <Tab onClick={() => setSection("Orders")}>
+          <Tab $disabled={!isTheme3} onClick={() => !isTheme3 ? null : setSection("Orders")}>
             <CateogoryIcon />
-            <TabText>Orders</TabText>
+            <TabText>Orders{!isTheme3 && <span style={{ fontSize: "12px", color: "#999", marginLeft: "8px" }}>(VIP package)</span>}</TabText>
           </Tab>
-          <Tab onClick={() => setSection("Customers")}>
+          <Tab $disabled={!isTheme3} onClick={() => !isTheme3 ? null : setSection("Customers")}>
             <CateogoryIcon />
-            <TabText>Customers</TabText>
+            <TabText>Customers{!isTheme3 && <span style={{ fontSize: "12px", color: "#999", marginLeft: "8px" }}>(VIP package)</span>}</TabText>
           </Tab>
-          <Tab onClick={() => setSection("Analytics")}>
+          <Tab $disabled={!isTheme3} onClick={() => !isTheme3 ? null : setSection("Analytics")}>
             <CateogoryIcon />
-            <TabText>Analytics</TabText>
+            <TabText>Analytics{!isTheme3 && <span style={{ fontSize: "12px", color: "#999", marginLeft: "8px" }}>(VIP package)</span>}</TabText>
           </Tab>
         </SidebarContent>
         <SidebarBottom>
@@ -229,9 +236,12 @@ export default function RestaurantDash() {
           <AccessNotice>
             <AccessNoticeTitle>Feature unavailable</AccessNoticeTitle>
             <AccessNoticeText>
-              This section is available only for Theme 3 restaurants. Please
-              upgrade your package to enable Feedbacks and Questions &
-              Suggestions.
+              This section is available only for Theme 3 restaurants (VIP package). Please
+              upgrade your package to enable {section === "Feedbacks" && "Feedbacks"}
+              {section === "QuestionsSuggestions" && "Questions & Suggestions"}
+              {section === "Orders" && "Orders"}
+              {section === "Customers" && "Customers"}
+              {section === "Analytics" && "Analytics"}.
             </AccessNoticeText>
           </AccessNotice>
         )}
@@ -239,9 +249,9 @@ export default function RestaurantDash() {
         {section == "QuestionsSuggestions" && isTheme3 && (
           <QuestionsSuggestions />
         )}
-        {section == "Orders" && <Orders />}
-        {section == "Customers" && <Customers />}
-        {section == "Analytics" && <Analytics />}
+        {section == "Orders" && isTheme3 && <Orders />}
+        {section == "Customers" && isTheme3 && <Customers />}
+        {section == "Analytics" && isTheme3 && <Analytics />}
 
       </Content>
     </Container>

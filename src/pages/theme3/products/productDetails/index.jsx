@@ -15,6 +15,7 @@ import {
   ItemInfoWrapper,
   ItemName,
   ItemPrice,
+  TitlePriceRow,
   Minus,
   Plus,
   Quantity,
@@ -151,6 +152,7 @@ export default function ProductDetails({
   const [CloseAnimation, setCloseAnimation] = useState(true);
   const [carouselIndex, setcarouselIndex] = useState(0);
   const CLOSE_ANIMATION_MS = 450;
+  const isClosingRef = useRef(false);
   
   // Prevent body scroll when popup is open
   useEffect(() => {
@@ -166,22 +168,52 @@ export default function ProductDetails({
   }, [CloseAnimation]);
   
   const closeDetails = () => {
+    if (isClosingRef.current) return; // Prevent multiple close calls
+    isClosingRef.current = true;
+    
     setCloseAnimation(false);
+    // Set activePlate to null immediately to prevent reopening
+    setactivePlate(null);
+    
     setTimeout(() => {
-      setactivePlate(null);
       document.body.style.overflow = "auto";
+      isClosingRef.current = false; // Reset after animation
     }, CLOSE_ANIMATION_MS);
   };
-  const handleBack = () => {
-    // Remove only productId, keep categoryId to stay on the products page
-    searchParams.delete("productId");
-    setSearchParams(searchParams);
-    // Ensure we stay on the products page by keeping categoryId in URL
-    if (activeCategoryId && !searchParams.get("categoryId")) {
-      searchParams.set("categoryId", activeCategoryId);
-      setSearchParams(searchParams);
+  
+  const handleBack = (e) => {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
     }
-    closeDetails();
+    if (isClosingRef.current) return; // Prevent multiple close calls
+    isClosingRef.current = true;
+    
+    // Set activePlate to null FIRST to prevent any component from reopening
+    setactivePlate(null);
+    
+    // Close the popup animation
+    setCloseAnimation(false);
+    
+    // Create a new URLSearchParams object to ensure React detects the change
+    const newParams = new URLSearchParams(searchParams);
+    newParams.delete("productId");
+    
+    // Ensure we stay on the products page by keeping categoryId in URL
+    if (activeCategoryId && !newParams.get("categoryId")) {
+      newParams.set("categoryId", activeCategoryId);
+    }
+    
+    // Update URL first using replaceState (synchronously)
+    window.history.replaceState({}, "", `?${newParams.toString()}`);
+    
+    // Then update React state - this ensures URL is updated before state
+    setSearchParams(newParams);
+    
+    setTimeout(() => {
+      document.body.style.overflow = "auto";
+      isClosingRef.current = false; // Reset after animation
+    }, CLOSE_ANIMATION_MS);
   };
   const [copied, setCopied] = useState(false);
 
@@ -228,14 +260,26 @@ export default function ProductDetails({
 
   useEffect(() => {
     const handlePopState = () => {
+      // Set activePlate to null immediately to prevent reopening
+      setactivePlate(null);
+      
       // Revert to the products list (selected category) when browser back is pressed
-      closeDetails();
-      searchParams.delete("productId");
+      // Create a new URLSearchParams object to ensure React detects the change
+      const newParams = new URLSearchParams(searchParams);
+      newParams.delete("productId");
+      
       // Keep categoryId to stay on products page
-      if (activeCategoryId && !searchParams.get("categoryId")) {
-        searchParams.set("categoryId", activeCategoryId);
+      if (activeCategoryId && !newParams.get("categoryId")) {
+        newParams.set("categoryId", activeCategoryId);
       }
-      setSearchParams(searchParams);
+      
+      setSearchParams(newParams);
+      
+      // Close the popup animation
+      setCloseAnimation(false);
+      setTimeout(() => {
+        document.body.style.overflow = "auto";
+      }, CLOSE_ANIMATION_MS);
     };
 
     // Add event listener for popstate
@@ -243,7 +287,7 @@ export default function ProductDetails({
 
     // Cleanup event listener
     return () => window.removeEventListener("popstate", handlePopState);
-  }, [activeCategoryId, searchParams, setSearchParams, setactivePlate]);
+  }, [activeCategoryId, searchParams, setSearchParams, setactivePlate, CLOSE_ANIMATION_MS]);
 
   function getRequiredKeys(formSchema) {
     return formSchema.components
@@ -536,23 +580,25 @@ export default function ProductDetails({
           <InfoContainer>
 
             <ItemInfo CloseAnimation={CloseAnimation} activeLanguage={restaurant.activeLanguage}>
-              <ItemName activeLanguage={restaurant.activeLanguage} >
-                {restaurant.activeLanguage == "en"
-                  ? plates[activePlate]?.en_name
-                  : plates[activePlate]?.ar_name}
-              </ItemName>
-              {!_.isEmpty(plates[activePlate]?.en_price) && (
-                <PriceContainer>
-                  <ItemPrice activeLanguage={restaurant.activeLanguage} discounted={finalDiscount != 0.00}>
-                    {convertPrice(totalPrice, currencySymbol)}
-                  </ItemPrice>
-                  {finalDiscount != 0.00 &&
-                    <DiscountPrice activeLanguage={restaurant.activeLanguage}>
-                      {convertPrice(totalPrice * (1 - parseFloat(finalDiscount) / 100), currencySymbol)}
-                    </DiscountPrice>
-                  }
-                </PriceContainer>
-              )}
+              <TitlePriceRow activeLanguage={restaurant.activeLanguage}>
+                <ItemName activeLanguage={restaurant.activeLanguage}>
+                  {restaurant.activeLanguage == "en"
+                    ? plates[activePlate]?.en_name
+                    : plates[activePlate]?.ar_name}
+                </ItemName>
+                {!_.isEmpty(plates[activePlate]?.en_price) && (
+                  <PriceContainer>
+                    <ItemPrice activeLanguage={restaurant.activeLanguage} discounted={finalDiscount != 0.00}>
+                      {convertPrice(totalPrice, currencySymbol)}
+                    </ItemPrice>
+                    {finalDiscount != 0.00 &&
+                      <DiscountPrice activeLanguage={restaurant.activeLanguage}>
+                        {convertPrice(totalPrice * (1 - parseFloat(finalDiscount) / 100), currencySymbol)}
+                      </DiscountPrice>
+                    }
+                  </PriceContainer>
+                )}
+              </TitlePriceRow>
               {(!_.isEmpty(description)) && (
 
                 <ItemDescription activeLanguage={restaurant.activeLanguage}

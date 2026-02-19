@@ -175,7 +175,7 @@ export default function SliderImages() {
     const payload = {
       restaurant_id: userInformation.restaurant_id,
       priority: parseInt(priority) || 0,
-      type: currentImageType,
+      type: currentImageType || 1, // Ensure type is always set, default to 1 (slider image)
     };
 
     if (file) {

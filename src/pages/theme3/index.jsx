@@ -344,10 +344,17 @@ export default function Theme3() {
     // Check immediately
     checkProductDetails();
     
-    // Listen for URL changes (including pushState)
+    // Listen for URL changes (including pushState and replaceState)
     const originalPushState = window.history.pushState;
+    const originalReplaceState = window.history.replaceState;
+    
     window.history.pushState = function(...args) {
       originalPushState.apply(window.history, args);
+      setTimeout(checkProductDetails, 0);
+    };
+    
+    window.history.replaceState = function(...args) {
+      originalReplaceState.apply(window.history, args);
       setTimeout(checkProductDetails, 0);
     };
     
@@ -356,6 +363,7 @@ export default function Theme3() {
     
     return () => {
       window.history.pushState = originalPushState;
+      window.history.replaceState = originalReplaceState;
       window.removeEventListener("popstate", checkProductDetails);
     };
   }, [searchParams]);
