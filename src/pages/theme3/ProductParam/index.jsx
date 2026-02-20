@@ -1,5 +1,11 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { AddToCart, BackBtn, BackIcon, Backdrop, ButtonWrapper, Carousel, CarouselBack, CarouselForward, CarouselItem, Category, CopyButton, DiscountPrice, FakeContainer, Image, ImagesContainer, ImageWrapper, InfoContainer, Instruction, InstructionContainer, InstructionLabel, ItemCategory, ItemDescription, ItemInfo, ItemInfoWrapper, ItemName, ItemPrice, Loader, LoaderWrapper, Minus, Plus, PriceContainer, ProductDetailSkeleton, ProductHeader, ProductHeaderTitle, Quantity, QuantityPrice, QuantityWrapper, SearchProductContainer, SkeletonBox, TitlePriceRow } from './styles'
+import { AddToCart, BackBtn, BackIcon, Backdrop, ButtonWrapper, Carousel, CarouselBack, CarouselForward, CarouselItem, Category, CopyButton, DiscountPrice, FakeContainer, Image, ImagesContainer, ImageWrapper, InfoContainer, Instruction, InstructionContainer, InstructionLabel, ItemCategory, ItemDescription, ItemInfo, ItemInfoWrapper, ItemName, ItemPrice, Loader, LoaderWrapper, MagnifyBtn, Minus, Plus, PriceContainer, ProductDetailSkeleton, ProductHeader, ProductHeaderTitle, Quantity, QuantityPrice, QuantityWrapper, SearchProductContainer, SkeletonBox, SwiperWrapper, TitlePriceRow, ZoomCloseBtn, ZoomImage, ZoomOverlay } from './styles'
+import { Swiper, SwiperSlide } from 'swiper/react'
+import { EffectCards } from 'swiper/modules'
+import 'swiper/css'
+import 'swiper/css/effect-cards'
+import { IoClose } from 'react-icons/io5'
+import { MdZoomIn } from 'react-icons/md'
 import { useGetProduct } from '../../../apis/products/getProduct';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
@@ -71,6 +77,65 @@ export default function ProductParam({ productId, setSearchParams, searchParams 
     const [formData, setFormData] = useState({});
     const [formErrors, setFormErrors] = useState({});
 
+    const [zoomOpen, setZoomOpen] = useState(false);
+    const [zoomScale, setZoomScale] = useState(1);
+    const [zoomTranslate, setZoomTranslate] = useState({ x: 0, y: 0 });
+    const [zoomDragging, setZoomDragging] = useState(false);
+    const zoomLastTouch = useRef(null);
+    const zoomLastDist = useRef(null);
+
+    const getZoomImageUrl = () => {
+        const img = images[carouselIndex];
+        if (!img) return restaurantLogoUrl || "";
+        return img?.url
+            ? `https://storage.googleapis.com/ecommerce-bucket-testing/${img.url}`
+            : restaurantLogoUrl || "";
+    };
+
+    const handleZoomTouchStart = (e) => {
+        if (e.touches.length === 2) {
+            const dx = e.touches[0].clientX - e.touches[1].clientX;
+            const dy = e.touches[0].clientY - e.touches[1].clientY;
+            zoomLastDist.current = Math.hypot(dx, dy);
+        } else if (e.touches.length === 1) {
+            setZoomDragging(true);
+            zoomLastTouch.current = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+        }
+    };
+
+    const handleZoomTouchMove = (e) => {
+        if (e.touches.length === 2 && zoomLastDist.current) {
+            const dx = e.touches[0].clientX - e.touches[1].clientX;
+            const dy = e.touches[0].clientY - e.touches[1].clientY;
+            const dist = Math.hypot(dx, dy);
+            const delta = dist / zoomLastDist.current;
+            setZoomScale((prev) => Math.min(Math.max(prev * delta, 1), 5));
+            zoomLastDist.current = dist;
+        } else if (e.touches.length === 1 && zoomDragging && zoomScale > 1) {
+            const touch = e.touches[0];
+            const dx = touch.clientX - zoomLastTouch.current.x;
+            const dy = touch.clientY - zoomLastTouch.current.y;
+            setZoomTranslate((prev) => ({ x: prev.x + dx / zoomScale, y: prev.y + dy / zoomScale }));
+            zoomLastTouch.current = { x: touch.clientX, y: touch.clientY };
+        }
+    };
+
+    const handleZoomTouchEnd = () => {
+        setZoomDragging(false);
+        zoomLastDist.current = null;
+        zoomLastTouch.current = null;
+    };
+
+    const openZoom = (e) => {
+        e.stopPropagation();
+        setZoomScale(1);
+        setZoomTranslate({ x: 0, y: 0 });
+        setZoomOpen(true);
+    };
+
+    const closeZoom = () => {
+        setZoomOpen(false);
+    };
 
     const dispatch = useDispatch();
     const [quantity, setQuantity] = useState(1);
@@ -142,6 +207,7 @@ export default function ProductParam({ productId, setSearchParams, searchParams 
         setcarouselIndex(carouselIndex - 1);
     };
     const divRef = useRef(null);
+    const swiperRef = useRef(null);
 
     const [startX, setStartX] = useState(null);
 
@@ -236,13 +302,17 @@ export default function ProductParam({ productId, setSearchParams, searchParams 
 
     let images = [...(fetchedProduct?.images ?? [])];
     // Find the index of the image that should be first
-  const index = images.findIndex((image) => image.id === fetchedProduct.new_cover_id);
+    const index = images.findIndex((image) => image.id === fetchedProduct?.new_cover_id);
 
     // If the image is found and it's not already the first element, move it to the front
     if (index > 0) {
-        const [imageToBeFirst] = images.splice(index, 1); // Remove the image from its current position
-        images.unshift(imageToBeFirst); // Add it to the beginning of the array
+        const [imageToBeFirst] = images.splice(index, 1);
+        images.unshift(imageToBeFirst);
     }
+
+    const restaurantLogoUrl = restaurant?.logoURL
+        ? `https://storage.googleapis.com/ecommerce-bucket-testing/${restaurant.logoURL}`
+        : null;
 
     const [loadedIndices, setLoadedIndices] = useState({});
 
@@ -308,60 +378,108 @@ export default function ProductParam({ productId, setSearchParams, searchParams 
                     </ProductDetailSkeleton>
                 ) : (
                     <React.Fragment>
-                        <ImagesContainer  squareDimension={fetchedProduct?.square_dimension}  CloseAnimation={CloseAnimation}>
-                        {images.length !== 1 && (
-                            <CarouselBack
-                                CloseAnimation={CloseAnimation}
-                                onClick={() => carouselIndex !== 0 && handleleft()}
-                            />
-                        )}
-                        <Carousel
-                            carouselIndex={carouselIndex}
-                            ref={divRef}
-                            onTouchStart={handleTouchStart}
-                            onTouchMove={handleTouchMove}
-                        >
-                            {images.map((image, index) => {
-                                return (
+                        <ImagesContainer squareDimension={fetchedProduct?.square_dimension} CloseAnimation={CloseAnimation}>
+                            {images.length === 1 ? (
+                                <Carousel ref={divRef} carouselIndex={0}>
                                     <CarouselItem>
                                         <ImageWrapper>
-                                            {!loadedIndices[index] && (
+                                            {!loadedIndices[0] && (
                                                 <LoaderWrapper>
                                                     <Loader />
                                                 </LoaderWrapper>
                                             )}
                                             <Image
-                                                // src={`https://storage.googleapis.com/ecommerce-bucket-testing/${image.url}`}
                                                 src={
-                                                    loadedIndices[index] || index === carouselIndex
-                                                        ? `https://storage.googleapis.com/ecommerce-bucket-testing/${image.url}`
+                                                    loadedIndices[0]
+                                                        ? (images[0]?.url
+                                                            ? `https://storage.googleapis.com/ecommerce-bucket-testing/${images[0].url}`
+                                                            : restaurantLogoUrl || "")
                                                         : ""
                                                 }
-                                                // src={
-
-                                                //      `https://storage.googleapis.com/ecommerce-bucket-testing/${image.url}`
-
-                                                // }
-                                                onLoad={() => handleImageLoad(index)}
+                                                onLoad={() => handleImageLoad(0)}
+                                                onError={(e) => {
+                                                    if (restaurantLogoUrl && e.target.src !== restaurantLogoUrl) {
+                                                        e.target.src = restaurantLogoUrl;
+                                                    }
+                                                }}
                                                 CloseAnimation={CloseAnimation}
-                                                Loaded={loadedIndices[index]}
-                                                alt={`Image ${index}`}
+                                                Loaded={loadedIndices[0]}
+                                                alt="Image 0"
                                             />
+                                            <MagnifyBtn onClick={openZoom}><MdZoomIn /></MagnifyBtn>
                                         </ImageWrapper>
                                     </CarouselItem>
-                                );
-                            })}
-                        </Carousel>
-                        {images.length !== 1 && (
-                            <CarouselForward
-                                CloseAnimation={CloseAnimation}
-                                onClick={() =>
-                                    fetchedProduct?.images.length > carouselIndex + 1 &&
-                                    handleright()
-                                }
-                            />
-                        )}
-                    </ImagesContainer>
+                                </Carousel>
+                            ) : (
+                                <>
+                                    <CarouselBack
+                                        CloseAnimation={CloseAnimation}
+                                        onClick={() => {
+                                            setCarouselSwiped(true);
+                                            swiperRef.current?.slidePrev();
+                                        }}
+                                    />
+                                    <SwiperWrapper $closeAnimation={CloseAnimation}>
+                                        <Swiper
+                                            onSwiper={(swiper) => {
+                                                swiperRef.current = swiper;
+                                            }}
+                                            onSlideChange={(swiper) => {
+                                                setcarouselIndex(swiper.realIndex);
+                                                setCarouselSwiped(true);
+                                            }}
+                                            modules={[EffectCards]}
+                                            effect="cards"
+                                            grabCursor
+                                            className="product-details-swiper"
+                                            initialSlide={0}
+                                            key={fetchedProduct?.id}
+                                        >
+                                            {images.map((image, index) => (
+                                                <SwiperSlide key={image.id || index}>
+                                                    <ImageWrapper>
+                                                        {!loadedIndices[index] && (
+                                                            <LoaderWrapper>
+                                                                <Loader />
+                                                            </LoaderWrapper>
+                                                        )}
+                                                        <Image
+                                                            $cardSlide
+                                                            src={
+                                                                loadedIndices[index] || index === carouselIndex
+                                                                    ? (image?.url
+                                                                        ? `https://storage.googleapis.com/ecommerce-bucket-testing/${image.url}`
+                                                                        : restaurantLogoUrl || "")
+                                                                    : ""
+                                                            }
+                                                            onLoad={() => handleImageLoad(index)}
+                                                            onError={(e) => {
+                                                                if (restaurantLogoUrl && e.target.src !== restaurantLogoUrl) {
+                                                                    e.target.src = restaurantLogoUrl;
+                                                                }
+                                                            }}
+                                                            CloseAnimation={CloseAnimation}
+                                                            Loaded={loadedIndices[index]}
+                                                            alt={`Image ${index}`}
+                                                        />
+                                                        {index === carouselIndex && (
+                                                            <MagnifyBtn onClick={openZoom}><MdZoomIn /></MagnifyBtn>
+                                                        )}
+                                                    </ImageWrapper>
+                                                </SwiperSlide>
+                                            ))}
+                                        </Swiper>
+                                    </SwiperWrapper>
+                                    <CarouselForward
+                                        CloseAnimation={CloseAnimation}
+                                        onClick={() => {
+                                            setCarouselSwiped(true);
+                                            swiperRef.current?.slideNext();
+                                        }}
+                                    />
+                                </>
+                            )}
+                        </ImagesContainer>
                     {images.length !== 1 && (
                         <CarouselLoader
                             images={images}
@@ -428,6 +546,33 @@ export default function ProductParam({ productId, setSearchParams, searchParams 
                     </React.Fragment>
                 )}
             </SearchProductContainer>
+            {zoomOpen && (
+                <ZoomOverlay
+                    onClick={closeZoom}
+                    onTouchStart={handleZoomTouchStart}
+                    onTouchMove={handleZoomTouchMove}
+                    onTouchEnd={handleZoomTouchEnd}
+                >
+                    <ZoomCloseBtn onClick={closeZoom}><IoClose /></ZoomCloseBtn>
+                    <ZoomImage
+                        src={getZoomImageUrl()}
+                        alt="Zoomed"
+                        $scale={zoomScale}
+                        $translateX={zoomTranslate.x}
+                        $translateY={zoomTranslate.y}
+                        $dragging={zoomDragging}
+                        onClick={(e) => e.stopPropagation()}
+                        onDoubleClick={() => {
+                            if (zoomScale > 1) {
+                                setZoomScale(1);
+                                setZoomTranslate({ x: 0, y: 0 });
+                            } else {
+                                setZoomScale(2.5);
+                            }
+                        }}
+                    />
+                </ZoomOverlay>
+            )}
         </>
     )
 }

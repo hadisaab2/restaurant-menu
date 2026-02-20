@@ -36,14 +36,21 @@ import {
   QuantityPrice,
   DiscountPrice,
   PriceContainer,
-  ThumbnailGallery,
-  ThumbnailItem,
-  ThumbnailImage,
-  ImageCounter,
   ProductHeader,
   ProductHeaderTitle,
   OutOfStockNotice,
+  SwiperWrapper,
+  MagnifyBtn,
+  ZoomOverlay,
+  ZoomCloseBtn,
+  ZoomImage,
 } from "./styles";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { EffectCards } from "swiper/modules";
+import "swiper/css";
+import "swiper/css/effect-cards";
+import { IoClose } from "react-icons/io5";
+import { MdZoomIn } from "react-icons/md";
 import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { addToCart } from "../../../../redux/cart/cartActions";
@@ -53,7 +60,7 @@ import "formiojs/dist/formio.full.css";
 import ProductForm from "./Form";
 import { FaRegCopy } from "react-icons/fa";
 import { TiTick } from "react-icons/ti";
-import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
+
 import { translateForm } from "../../../../utilities/translate";
 import { useLogProduct } from "../../../../apis/products/logProduct";
 import { convertPrice } from "../../../../utilities/convertPrice";
@@ -122,6 +129,65 @@ export default function ProductDetails({
   }, [activePlate, plates, restaurant?.id]);
 
   const [formSchema, setFormSchema] = useState({});
+  const [zoomOpen, setZoomOpen] = useState(false);
+  const [zoomScale, setZoomScale] = useState(1);
+  const [zoomTranslate, setZoomTranslate] = useState({ x: 0, y: 0 });
+  const [zoomDragging, setZoomDragging] = useState(false);
+  const zoomLastTouch = useRef(null);
+  const zoomLastDist = useRef(null);
+
+  const getZoomImageUrl = () => {
+    const img = images[carouselIndex];
+    if (!img) return restaurantLogoUrl || "";
+    return img.url
+      ? `https://storage.googleapis.com/ecommerce-bucket-testing/${img.url}`
+      : restaurantLogoUrl || "";
+  };
+
+  const handleZoomTouchStart = (e) => {
+    if (e.touches.length === 2) {
+      const dx = e.touches[0].clientX - e.touches[1].clientX;
+      const dy = e.touches[0].clientY - e.touches[1].clientY;
+      zoomLastDist.current = Math.hypot(dx, dy);
+    } else if (e.touches.length === 1) {
+      setZoomDragging(true);
+      zoomLastTouch.current = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+    }
+  };
+
+  const handleZoomTouchMove = (e) => {
+    if (e.touches.length === 2 && zoomLastDist.current) {
+      const dx = e.touches[0].clientX - e.touches[1].clientX;
+      const dy = e.touches[0].clientY - e.touches[1].clientY;
+      const dist = Math.hypot(dx, dy);
+      const delta = dist / zoomLastDist.current;
+      setZoomScale((prev) => Math.min(Math.max(prev * delta, 1), 5));
+      zoomLastDist.current = dist;
+    } else if (e.touches.length === 1 && zoomDragging && zoomScale > 1) {
+      const touch = e.touches[0];
+      const dx = touch.clientX - zoomLastTouch.current.x;
+      const dy = touch.clientY - zoomLastTouch.current.y;
+      setZoomTranslate((prev) => ({ x: prev.x + dx / zoomScale, y: prev.y + dy / zoomScale }));
+      zoomLastTouch.current = { x: touch.clientX, y: touch.clientY };
+    }
+  };
+
+  const handleZoomTouchEnd = () => {
+    setZoomDragging(false);
+    zoomLastDist.current = null;
+    zoomLastTouch.current = null;
+  };
+
+  const openZoom = (e) => {
+    e.stopPropagation();
+    setZoomScale(1);
+    setZoomTranslate({ x: 0, y: 0 });
+    setZoomOpen(true);
+  };
+
+  const closeZoom = () => {
+    setZoomOpen(false);
+  };
 
   const [formData, setFormData] = useState({});
 
@@ -236,6 +302,7 @@ export default function ProductDetails({
   };
 
   const divRef = useRef(null);
+  const swiperRef = useRef(null);
   const [startX, setStartX] = useState(null);
 
   const handleTouchStart = (event) => {
@@ -471,99 +538,105 @@ export default function ProductDetails({
         </ProductHeader>
         
         <ImagesContainer squareDimension={plates[activePlate]?.square_dimension} CloseAnimation={CloseAnimation}>
-          {images.length !== 1 && (
-            <>
-              <CarouselBack
-                CloseAnimation={CloseAnimation}
-                onClick={() => carouselIndex !== 0 && handleleft()}
-                disabled={carouselIndex === 0}
-              >
-                <IoIosArrowBack />
-              </CarouselBack>
-              <CarouselForward
-                CloseAnimation={CloseAnimation}
-                onClick={() =>
-                  images.length > carouselIndex + 1 &&
-                  handleright()
-                }
-                disabled={images.length <= carouselIndex + 1}
-              >
-                <IoIosArrowForward />
-              </CarouselForward>
-            </>
-          )}
-          <Carousel
-            carouselIndex={carouselIndex}
-            ref={divRef}
-            onTouchStart={handleTouchStart}
-            onTouchMove={handleTouchMove}
-          >
-            {images.map((image, index) => {
-              return (
-                <CarouselItem key={image.id || index}>
-                  <ImageWrapper>
-                    {!loadedIndices[index] && (
-                      <LoaderWrapper>
-                        <Loader />
-                      </LoaderWrapper>
-                    )}
-                    <Image
-                      src={
-                        loadedIndices[index] || index === carouselIndex
-                          ? (image.url 
-                              ? `https://storage.googleapis.com/ecommerce-bucket-testing/${image.url}`
-                              : restaurantLogoUrl || "")
-                          : ""
-                      }
-                      onLoad={() => handleImageLoad(index)}
-                      onError={(e) => {
-                        // If image fails to load, use restaurant logo as fallback
-                        if (restaurantLogoUrl && e.target.src !== restaurantLogoUrl) {
-                          e.target.src = restaurantLogoUrl;
-                        }
-                      }}
-                      CloseAnimation={CloseAnimation}
-                      Loaded={loadedIndices[index]}
-                      alt={`Image ${index + 1}`}
-                    />
-                    {images.length > 1 && (
-                      <ImageCounter show={CloseAnimation}>
-                        {carouselIndex + 1} / {images.length}
-                      </ImageCounter>
-                    )}
-                  </ImageWrapper>
-                </CarouselItem>
-              );
-            })}
-          </Carousel>
-          {images.length > 1 && (
-            <ThumbnailGallery>
-              {images.map((image, index) => (
-                <ThumbnailItem
-                  key={image.id || index}
-                  active={index === carouselIndex}
-                  onClick={() => {
-                    setCarouselSwiped(true);
-                    setcarouselIndex(index);
-                  }}
-                >
-                  <ThumbnailImage
+          {images.length === 1 ? (
+            <Carousel ref={divRef} carouselIndex={0}>
+              <CarouselItem>
+                <ImageWrapper>
+                  {!loadedIndices[0] && (
+                    <LoaderWrapper>
+                      <Loader />
+                    </LoaderWrapper>
+                  )}
+                  <Image
                     src={
-                      image.url
-                        ? `https://storage.googleapis.com/ecommerce-bucket-testing/${image.url}`
-                        : restaurantLogoUrl || ""
+                      loadedIndices[0]
+                        ? (images[0].url
+                            ? `https://storage.googleapis.com/ecommerce-bucket-testing/${images[0].url}`
+                            : restaurantLogoUrl || "")
+                        : ""
                     }
-                    alt={`Thumbnail ${index + 1}`}
+                    onLoad={() => handleImageLoad(0)}
                     onError={(e) => {
-                      // If thumbnail fails to load, use restaurant logo as fallback
                       if (restaurantLogoUrl && e.target.src !== restaurantLogoUrl) {
                         e.target.src = restaurantLogoUrl;
                       }
                     }}
+                    CloseAnimation={CloseAnimation}
+                    Loaded={loadedIndices[0]}
+                    alt="Image 0"
                   />
-                </ThumbnailItem>
-              ))}
-            </ThumbnailGallery>
+                  <MagnifyBtn onClick={openZoom}><MdZoomIn /></MagnifyBtn>
+                </ImageWrapper>
+              </CarouselItem>
+            </Carousel>
+          ) : (
+            <>
+              <CarouselBack
+                CloseAnimation={CloseAnimation}
+                onClick={() => {
+                  setCarouselSwiped(true);
+                  swiperRef.current?.slidePrev();
+                }}
+              />
+              <SwiperWrapper $closeAnimation={CloseAnimation}>
+                <Swiper
+                  onSwiper={(swiper) => {
+                    swiperRef.current = swiper;
+                  }}
+                  onSlideChange={(swiper) => {
+                    setcarouselIndex(swiper.realIndex);
+                    setCarouselSwiped(true);
+                  }}
+                  modules={[EffectCards]}
+                  effect="cards"
+                  grabCursor
+                  className="product-details-swiper"
+                  initialSlide={0}
+                  key={plates[activePlate]?.id}
+                >
+                  {images.map((image, index) => (
+                    <SwiperSlide key={image.id || index}>
+                      <ImageWrapper>
+                        {!loadedIndices[index] && (
+                          <LoaderWrapper>
+                            <Loader />
+                          </LoaderWrapper>
+                        )}
+                        <Image
+                          $cardSlide
+                          src={
+                            loadedIndices[index] || index === carouselIndex
+                              ? (image.url
+                                  ? `https://storage.googleapis.com/ecommerce-bucket-testing/${image.url}`
+                                  : restaurantLogoUrl || "")
+                              : ""
+                          }
+                          onLoad={() => handleImageLoad(index)}
+                          onError={(e) => {
+                            if (restaurantLogoUrl && e.target.src !== restaurantLogoUrl) {
+                              e.target.src = restaurantLogoUrl;
+                            }
+                          }}
+                          CloseAnimation={CloseAnimation}
+                          Loaded={loadedIndices[index]}
+                          alt={`Image ${index}`}
+                        />
+                        {index === carouselIndex && (
+                          <MagnifyBtn onClick={openZoom}><MdZoomIn /></MagnifyBtn>
+                        )}
+                      </ImageWrapper>
+                    </SwiperSlide>
+                  ))}
+                </Swiper>
+              </SwiperWrapper>
+              <CarouselForward
+                CloseAnimation={CloseAnimation}
+                onClick={() => {
+                  setCarouselSwiped(true);
+                  swiperRef.current?.slideNext();
+                }}
+              />
+            </>
           )}
         </ImagesContainer>
         {/* <FakeContainer squareDimension={plates[activePlate]?.square_dimension} CloseAnimation={CloseAnimation} /> */}
@@ -643,6 +716,33 @@ export default function ProductDetails({
           </ButtonWrapper>
         }
       </Wrapper>
+      {zoomOpen && (
+        <ZoomOverlay
+          onClick={closeZoom}
+          onTouchStart={handleZoomTouchStart}
+          onTouchMove={handleZoomTouchMove}
+          onTouchEnd={handleZoomTouchEnd}
+        >
+          <ZoomCloseBtn onClick={closeZoom}><IoClose /></ZoomCloseBtn>
+          <ZoomImage
+            src={getZoomImageUrl()}
+            alt="Zoomed"
+            $scale={zoomScale}
+            $translateX={zoomTranslate.x}
+            $translateY={zoomTranslate.y}
+            $dragging={zoomDragging}
+            onClick={(e) => e.stopPropagation()}
+            onDoubleClick={() => {
+              if (zoomScale > 1) {
+                setZoomScale(1);
+                setZoomTranslate({ x: 0, y: 0 });
+              } else {
+                setZoomScale(2.5);
+              }
+            }}
+          />
+        </ZoomOverlay>
+      )}
     </>
   );
 }

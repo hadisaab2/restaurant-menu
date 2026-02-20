@@ -170,6 +170,7 @@ export default function Theme3() {
   const handleCategoryClick = (categoryId) => {
     setactiveCategory(categoryId);
     setViewMode("products");
+    setSearchText("");
     // Update URL with categoryId
     const newParams = new URLSearchParams(searchParams);
     newParams.set("categoryId", categoryId);
@@ -181,6 +182,7 @@ export default function Theme3() {
     // Set viewMode first before URL change
     setViewMode("categories");
     setactiveCategory(null);
+    setSearchText("");
     // Remove categoryId from URL
     const newParams = new URLSearchParams(searchParams);
     newParams.delete("categoryId");
@@ -193,6 +195,7 @@ export default function Theme3() {
   const handleBackToHome = () => {
     setViewMode("home");
     setactiveCategory(null);
+    setSearchText("");
     // Clear all URL params
     setSearchParams({});
   };
@@ -392,6 +395,7 @@ export default function Theme3() {
       const nextViewMode = event?.state?.viewMode === "categories" ? "categories" : "home";
       setViewMode(nextViewMode);
       setactiveCategory(null);
+      setSearchText("");
     };
 
     window.addEventListener("popstate", handlePopState);

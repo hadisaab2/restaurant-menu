@@ -91,17 +91,32 @@ const ImageAnimationScreen = keyframes`
 
 export const ImagesContainer = styled.div`
   width: 100%;
-  height: ${(props)=>props.squareDimension?"45vh":"60vh"};
-  margin-top:80px;
-  transition: all 0.8s;
+  height: ${(props)=>props.squareDimension?"55vh":"70vh"};
+  margin-top: 65px;
+  padding: 10px 0;
   display: flex;
+  align-items: center;
   justify-content: center;
-  overflow: hidden;
-  @media (min-width: 1024px) {
-    /* height: ${(props) => (props.CloseAnimation ? "70vh" : "30vh")};
-    animation: ${ImageAnimationScreen} 0.8s; */
+  overflow: visible;
+  position: relative;
+`;
 
-    }
+export const SwiperWrapper = styled.div`
+  width: 85%;
+  height: 100%;
+  .swiper {
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+  }
+  .swiper-slide {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 18px;
+    overflow: hidden;
+    box-shadow: none !important;
+  }
 `;
 export const Carousel = styled.div`
   width: 100%;
@@ -159,13 +174,16 @@ height: 100%;
 export const Image = styled.img`
   height: 100%;
   object-fit: cover;
-  border-radius: ${(props) => (props.CloseAnimation ? "40px" : "10px")};
-  width: ${(props) => (props.CloseAnimation ? "90%" : "100%")};
-  display:${props => props.Loaded ? 'block' : 'none'};
+  border-radius: ${(props) =>
+    props.$cardSlide ? "0" : (props.CloseAnimation ? "40px" : "10px")};
+  width: ${(props) =>
+    props.$cardSlide ? "100%" : (props.CloseAnimation ? "90%" : "100%")};
+  display: ${(props) => (props.Loaded ? "block" : "none")};
   transition: all 0.8s;
-    @media (min-width: 1024px) {
-      width: ${(props) => (props.CloseAnimation ? "50%" : "100%")};
-    }
+  @media (min-width: 1024px) {
+    width: ${(props) =>
+      props.$cardSlide ? "100%" : (props.CloseAnimation ? "50%" : "100%")};
+  }
 `;
 const BackIconAnimation = keyframes`
  0% { 
@@ -189,34 +207,37 @@ export const BackIcon = styled(IoIosArrowBack)`
 `;
 
 export const CarouselBack = styled(IoIosArrowBack)`
-  font-size: 22px;
-  color: white;
-  position:absolute;
-  left:7%;
-  top:45%;
-  z-index:20;
+  font-size: 26px;
+  padding: 8px;
+  background-color: ${(props) => props.theme.mainColor || "#007bff"};
+  color: ${(props) => props.theme.backgroundColor || "#fff"};
+  border-radius: 50%;
+  cursor: pointer;
+  position: absolute;
+  left: 4%;
+  top: 45%;
+  z-index: 20;
   display: ${(props) => (props.CloseAnimation ? "flex" : "none")};
   @media (min-width: 1024px) {
-    left:27%;
-
-
-    }
-
+    left: 27%;
+  }
 `;
 
 export const CarouselForward = styled(IoIosArrowForward)`
-  font-size: 22px;
-  color: white;
-  position:absolute;
-  right:7%;
-  top:45%;
-  z-index:20;
+  font-size: 26px;
+  padding: 8px;
+  background-color: ${(props) => props.theme.mainColor || "#007bff"};
+  color: ${(props) => props.theme.backgroundColor || "#fff"};
+  border-radius: 50%;
+  cursor: pointer;
+  position: absolute;
+  right: 4%;
+  top: 45%;
+  z-index: 20;
   display: ${(props) => (props.CloseAnimation ? "flex" : "none")};
   @media (min-width: 1024px) {
-    right:27%;
-
-
-    }
+    right: 27%;
+  }
 `;
 export const BackBtn = styled.button`
   position: fixed;
@@ -556,4 +577,66 @@ border-radius: 10px;
 
 `;
 
+export const MagnifyBtn = styled.button`
+  position: absolute;
+  bottom: 12px;
+  right: 12px;
+  z-index: 25;
+  background: rgba(0, 0, 0, 0.45);
+  border: none;
+  border-radius: 50%;
+  width: 38px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #fff;
+  font-size: 20px;
+  backdrop-filter: blur(4px);
+  transition: background 0.2s;
+  &:active {
+    background: rgba(0, 0, 0, 0.65);
+  }
+`;
 
+export const ZoomOverlay = styled.div`
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: rgba(0, 0, 0, 0.92);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-drag: none;
+`;
+
+export const ZoomCloseBtn = styled.button`
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  z-index: 10000;
+  background: rgba(255, 255, 255, 0.15);
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 26px;
+  cursor: pointer;
+  backdrop-filter: blur(4px);
+`;
+
+export const ZoomImage = styled.img`
+  max-width: 95vw;
+  max-height: 90vh;
+  object-fit: contain;
+  border-radius: 8px;
+  pointer-events: none;
+  transition: transform 0.15s ease;
+`;

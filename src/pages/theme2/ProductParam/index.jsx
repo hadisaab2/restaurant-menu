@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { AddToCart, BackBtn, BackIcon, ButtonWrapper, Carousel, CarouselBack, CarouselForward, CarouselItem, Category, CopyButton, DiscountPrice, FakeContainer, Image, ImagesContainer, ImageWrapper, InfoContainer, Instruction, InstructionContainer, InstructionLabel, ItemCategory, ItemDescription, ItemInfo, ItemInfoWrapper, ItemName, ItemPrice, Loader, LoaderWrapper, Minus, Plus, PriceContainer, Quantity, QuantityPrice, QuantityWrapper, SearchProductContainer, OutOfStockNotice } from './styles'
+import { AddToCart, BackBtn, BackIcon, ButtonWrapper, Carousel, CarouselBack, CarouselForward, CarouselItem, Category, CopyButton, DiscountPrice, FakeContainer, Image, ImagesContainer, ImageWrapper, InfoContainer, Instruction, InstructionContainer, InstructionLabel, ItemCategory, ItemDescription, ItemInfo, ItemInfoWrapper, ItemName, ItemPrice, Loader, LoaderWrapper, Minus, Plus, PriceContainer, Quantity, QuantityPrice, QuantityWrapper, SearchProductContainer, OutOfStockNotice, SwiperWrapper, MagnifyBtn, ZoomOverlay, ZoomCloseBtn, ZoomImage } from './styles'
 import { useGetProduct } from '../../../apis/products/getProduct';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
@@ -10,8 +10,14 @@ import "formiojs/dist/formio.full.css";
 import ProductForm from "./Form";
 import { FaRegCopy } from 'react-icons/fa6';
 import { TiTick } from 'react-icons/ti';
+import { IoClose } from 'react-icons/io5';
+import { MdZoomIn } from 'react-icons/md';
 import { useLogProduct } from '../../../apis/products/logProduct';
 import { convertPrice } from '../../../utilities/convertPrice';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { EffectCards } from 'swiper/modules';
+import 'swiper/css';
+import 'swiper/css/effect-cards';
 
 export default function ProductParam({ productId, setSearchParams, searchParams }) {
     const { restaurantName: paramRestaurantName } = useParams();
@@ -75,6 +81,15 @@ export default function ProductParam({ productId, setSearchParams, searchParams 
     const dispatch = useDispatch();
     const [quantity, setQuantity] = useState(1);
     const [carouselSwiped, setCarouselSwiped] = useState(false);
+    const swiperRef = useRef(null);
+
+    const [zoomOpen, setZoomOpen] = useState(false);
+    const [zoomScale, setZoomScale] = useState(1);
+    const [zoomTranslate, setZoomTranslate] = useState({ x: 0, y: 0 });
+    const [zoomDragging, setZoomDragging] = useState(false);
+    const zoomLastTouch = useRef(null);
+    const zoomLastDist = useRef(null);
+    const zoomLastTap = useRef(0);
     // const basePrice = parseFloat(fetchedProduct?.en_price || 0);
     const [basePrice, setBasePrice] = useState(parseFloat(fetchedProduct?.en_price)); // Example base price
     const [totalPrice, setTotalPrice] = useState(parseFloat(fetchedProduct?.en_price)); // Example base price
@@ -144,16 +159,80 @@ export default function ProductParam({ productId, setSearchParams, searchParams 
         }
     };
 
+    const restaurantLogoUrl = restaurant?.logoURL
+        ? `https://storage.googleapis.com/ecommerce-bucket-testing/${restaurant.logoURL}`
+        : null;
+
+    const getZoomImageUrl = () => {
+        const img = images[carouselIndex];
+        if (!img) return "";
+        return img.url
+            ? `https://storage.googleapis.com/ecommerce-bucket-testing/${img.url}`
+            : restaurantLogoUrl || "";
+    };
+
+    const handleZoomTouchStart = (e) => {
+        if (e.touches.length === 2) {
+            const dx = e.touches[0].clientX - e.touches[1].clientX;
+            const dy = e.touches[0].clientY - e.touches[1].clientY;
+            zoomLastDist.current = Math.hypot(dx, dy);
+        } else if (e.touches.length === 1) {
+            const now = Date.now();
+            if (now - zoomLastTap.current < 300) {
+                setZoomScale((s) => (s > 1 ? 1 : 2.5));
+                setZoomTranslate({ x: 0, y: 0 });
+            }
+            zoomLastTap.current = now;
+            zoomLastTouch.current = {
+                x: e.touches[0].clientX,
+                y: e.touches[0].clientY,
+            };
+            setZoomDragging(true);
+        }
+    };
+
+    const handleZoomTouchMove = (e) => {
+        e.preventDefault();
+        if (e.touches.length === 2) {
+            const dx = e.touches[0].clientX - e.touches[1].clientX;
+            const dy = e.touches[0].clientY - e.touches[1].clientY;
+            const dist = Math.hypot(dx, dy);
+            if (zoomLastDist.current) {
+                const factor = dist / zoomLastDist.current;
+                setZoomScale((s) => Math.min(Math.max(s * factor, 1), 5));
+            }
+            zoomLastDist.current = dist;
+        } else if (e.touches.length === 1 && zoomDragging && zoomScale > 1) {
+            const dx = e.touches[0].clientX - zoomLastTouch.current.x;
+            const dy = e.touches[0].clientY - zoomLastTouch.current.y;
+            setZoomTranslate((t) => ({ x: t.x + dx, y: t.y + dy }));
+            zoomLastTouch.current = {
+                x: e.touches[0].clientX,
+                y: e.touches[0].clientY,
+            };
+        }
+    };
+
+    const handleZoomTouchEnd = () => {
+        zoomLastDist.current = null;
+        setZoomDragging(false);
+    };
+
+    const openZoom = () => {
+        setZoomScale(1);
+        setZoomTranslate({ x: 0, y: 0 });
+        setZoomOpen(true);
+    };
+
+    const closeZoom = () => setZoomOpen(false);
+
     useEffect(() => {
         const handlePopState = () => {
-            // Revert to the normal view when back is pressed
             handleBack();
         };
 
-        // Add event listener for popstate
         window.addEventListener("popstate", handlePopState);
 
-        // Cleanup event listener
         return () => window.removeEventListener("popstate", handlePopState);
     }, []);
 
@@ -274,58 +353,94 @@ export default function ProductParam({ productId, setSearchParams, searchParams 
                                 : fetchedProduct?.category?.ar_category}
                         </Category>
                     </ItemCategory>
-                    <ImagesContainer  squareDimension={fetchedProduct?.square_dimension}  CloseAnimation={CloseAnimation}>
-                        {images.length !== 1 && (
-                            <CarouselBack
-                                CloseAnimation={CloseAnimation}
-                                onClick={() => carouselIndex !== 0 && handleleft()}
-                            />
-                        )}
-                        <Carousel
-                            carouselIndex={carouselIndex}
-                            ref={divRef}
-                            onTouchStart={handleTouchStart}
-                            onTouchMove={handleTouchMove}
-                        >
-                            {images.map((image, index) => {
-                                return (
-                                    <CarouselItem>
-                                        <ImageWrapper>
-                                            {!loadedIndices[index] && (
-                                                <LoaderWrapper>
-                                                    <Loader />
-                                                </LoaderWrapper>
-                                            )}
-                                            <Image
-                                                // src={`https://storage.googleapis.com/ecommerce-bucket-testing/${image.url}`}
-                                                src={
-                                                    loadedIndices[index] || index === carouselIndex
-                                                        ? `https://storage.googleapis.com/ecommerce-bucket-testing/${image.url}`
-                                                        : ""
+                    <ImagesContainer squareDimension={fetchedProduct?.square_dimension} CloseAnimation={CloseAnimation}>
+                        {images.length === 1 ? (
+                            <Carousel carouselIndex={0}>
+                                <CarouselItem>
+                                    <ImageWrapper>
+                                        {!loadedIndices[0] && (
+                                            <LoaderWrapper>
+                                                <Loader />
+                                            </LoaderWrapper>
+                                        )}
+                                        <Image
+                                            src={
+                                                images[0].url
+                                                    ? `https://storage.googleapis.com/ecommerce-bucket-testing/${images[0].url}`
+                                                    : restaurantLogoUrl || ""
+                                            }
+                                            onLoad={() => handleImageLoad(0)}
+                                            onError={(e) => {
+                                                if (restaurantLogoUrl && e.target.src !== restaurantLogoUrl) {
+                                                    e.target.src = restaurantLogoUrl;
                                                 }
-                                                // src={
-
-                                                //      `https://storage.googleapis.com/ecommerce-bucket-testing/${image.url}`
-
-                                                // }
-                                                onLoad={() => handleImageLoad(index)}
-                                                CloseAnimation={CloseAnimation}
-                                                Loaded={loadedIndices[index]}
-                                                alt={`Image ${index}`}
-                                            />
-                                        </ImageWrapper>
-                                    </CarouselItem>
-                                );
-                            })}
-                        </Carousel>
-                        {images.length !== 1 && (
-                            <CarouselForward
-                                CloseAnimation={CloseAnimation}
-                                onClick={() =>
-                                    fetchedProduct?.images.length > carouselIndex + 1 &&
-                                    handleright()
-                                }
-                            />
+                                            }}
+                                            CloseAnimation={CloseAnimation}
+                                            Loaded={loadedIndices[0]}
+                                            alt="Image 0"
+                                        />
+                                        <MagnifyBtn onClick={openZoom}><MdZoomIn /></MagnifyBtn>
+                                    </ImageWrapper>
+                                </CarouselItem>
+                            </Carousel>
+                        ) : (
+                            <>
+                                <CarouselBack
+                                    CloseAnimation={CloseAnimation}
+                                    onClick={() => swiperRef.current && swiperRef.current.slidePrev()}
+                                />
+                                <SwiperWrapper>
+                                    <Swiper
+                                        modules={[EffectCards]}
+                                        effect="cards"
+                                        grabCursor
+                                        key={fetchedProduct?.id}
+                                        onSwiper={(sw) => { swiperRef.current = sw; }}
+                                        onSlideChange={(sw) => {
+                                            setcarouselIndex(sw.realIndex);
+                                            setCarouselSwiped(true);
+                                        }}
+                                    >
+                                        {images.map((image, index) => (
+                                            <SwiperSlide key={image.id || index}>
+                                                <ImageWrapper>
+                                                    {!loadedIndices[index] && (
+                                                        <LoaderWrapper>
+                                                            <Loader />
+                                                        </LoaderWrapper>
+                                                    )}
+                                                    <Image
+                                                        src={
+                                                            loadedIndices[index] || index === carouselIndex
+                                                                ? (image.url
+                                                                    ? `https://storage.googleapis.com/ecommerce-bucket-testing/${image.url}`
+                                                                    : restaurantLogoUrl || "")
+                                                                : ""
+                                                        }
+                                                        onLoad={() => handleImageLoad(index)}
+                                                        onError={(e) => {
+                                                            if (restaurantLogoUrl && e.target.src !== restaurantLogoUrl) {
+                                                                e.target.src = restaurantLogoUrl;
+                                                            }
+                                                        }}
+                                                        CloseAnimation={CloseAnimation}
+                                                        Loaded={loadedIndices[index]}
+                                                        $cardSlide
+                                                        alt={`Image ${index}`}
+                                                    />
+                                                    {carouselIndex === index && (
+                                                        <MagnifyBtn onClick={openZoom}><MdZoomIn /></MagnifyBtn>
+                                                    )}
+                                                </ImageWrapper>
+                                            </SwiperSlide>
+                                        ))}
+                                    </Swiper>
+                                </SwiperWrapper>
+                                <CarouselForward
+                                    CloseAnimation={CloseAnimation}
+                                    onClick={() => swiperRef.current && swiperRef.current.slideNext()}
+                                />
+                            </>
                         )}
                     </ImagesContainer>
                     {images.length !== 1 && (
@@ -409,7 +524,22 @@ export default function ProductParam({ productId, setSearchParams, searchParams 
             <CopyButton onClick={handleCopy} CloseAnimation={CloseAnimation}>
                 {!copied ? <FaRegCopy /> : <TiTick />}
             </CopyButton>
-
+            {zoomOpen && (
+                <ZoomOverlay
+                    onTouchStart={handleZoomTouchStart}
+                    onTouchMove={handleZoomTouchMove}
+                    onTouchEnd={handleZoomTouchEnd}
+                >
+                    <ZoomCloseBtn onClick={closeZoom}><IoClose /></ZoomCloseBtn>
+                    <ZoomImage
+                        src={getZoomImageUrl()}
+                        style={{
+                            transform: `scale(${zoomScale}) translate(${zoomTranslate.x / zoomScale}px, ${zoomTranslate.y / zoomScale}px)`,
+                        }}
+                        alt="Zoom"
+                    />
+                </ZoomOverlay>
+            )}
         </>
     )
 }
