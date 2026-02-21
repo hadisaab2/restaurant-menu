@@ -536,7 +536,7 @@ export default function ProductDetails({
             {!copied ? <FaRegCopy /> : <TiTick />}
           </CopyButton>
         </ProductHeader>
-        
+
         <ImagesContainer squareDimension={plates[activePlate]?.square_dimension} CloseAnimation={CloseAnimation}>
           {images.length === 1 ? (
             <Carousel ref={divRef} carouselIndex={0}>

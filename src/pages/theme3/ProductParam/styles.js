@@ -38,7 +38,7 @@ const popupExpand = keyframes`
   }
   100% {
     width: 92%;
-    height: calc(100vh - 40px);
+    height: calc(100vh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 90px);
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%) scale(1);
@@ -73,7 +73,7 @@ const popupExpand = keyframes`
 const popupCollapse = keyframes`
   0% {
     width: 92%;
-    height: calc(100vh - 40px);
+    height: calc(100vh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 90px);
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%) scale(1);
@@ -145,8 +145,8 @@ export const Backdrop = styled.div`
 export const SearchProductContainer = styled.div`
   position: fixed;
   width: 92%;
-  height: calc(100vh - 40px);
-  max-height: calc(100vh - 40px);
+  height: calc(100vh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 90px);
+  max-height: calc(100vh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 90px);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -227,7 +227,7 @@ const ImageAnimationScreen = keyframes`
 export const ImagesContainer = styled.div`
   width: 100%;
   height: ${(props) => (props.squareDimension ? "55vh" : "70vh")};
-  margin-top: 65px;
+  margin-top: 5px;
   padding: 10px 0;
   display: flex;
   align-items: center;
@@ -398,7 +398,7 @@ export const CarouselForward = styled(IoIosArrowForward)`
   }
 `;
 export const ProductHeader = styled.div`
-  position: fixed;
+  position: sticky;
   top: 0;
   left: 0;
   right: 0;
@@ -635,7 +635,6 @@ const AddToCartAnimation = keyframes`
 
 export const ButtonWrapper = styled.div`
   width: 100%;
-  position: sticky;
   bottom: 0;
   left: 0;
   right: 0;

@@ -40,7 +40,7 @@ const popupExpand = keyframes`
   }
   65% {
     width: 92%;
-    height: calc(100vh - 40px);
+    height: calc(100vh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 90px);
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%) scale(0.98);
@@ -52,7 +52,7 @@ const popupExpand = keyframes`
   }
   100% {
     width: 92%;
-    height: calc(100vh - 40px);
+    height: calc(100vh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 90px);
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%) scale(1);
@@ -65,7 +65,7 @@ const popupExpand = keyframes`
 const popupCollapse = keyframes`
   0% {
     width: 92%;
-    height: calc(100vh - 40px);
+    height: calc(100vh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 90px);
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%) scale(1);
@@ -119,8 +119,8 @@ export const Backdrop = styled.div`
 export const Wrapper = styled.div`
   position: fixed;
   width: 92%;
-  height: calc(100vh - 60px);
-  max-height: calc(100vh - 60px);
+  height: calc(100vh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 90px);
+  max-height: calc(100vh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 90px);
   align-items: center;
   justify-content: flex-start;
   top: 50%;
@@ -139,27 +139,22 @@ export const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
   
-  /* Animation based on CloseAnimation state - smoother easing */
   animation: ${props => props.CloseAnimation ? popupExpand : popupCollapse} 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   animation-fill-mode: forwards;
   
-  /* Smooth scrolling */
   scroll-behavior: smooth;
   -webkit-overflow-scrolling: touch;
   
   ::-webkit-scrollbar {
     width: 6px;
   }
-  
   ::-webkit-scrollbar-track {
     background: transparent;
     border-radius: 10px;
   }
-  
   ::-webkit-scrollbar-thumb {
     background: ${props => props.theme.mainColor || '#007bff'}40;
     border-radius: 10px;
-    
     &:hover {
       background: ${props => props.theme.mainColor || '#007bff'}60;
     }
@@ -168,6 +163,8 @@ export const Wrapper = styled.div`
   @media (min-width: 768px) {
     width: 88%;
     max-width: 900px;
+    height: calc(100vh - 60px);
+    max-height: calc(100vh - 60px);
     border-radius: 28px;
     box-shadow: ${props => props.CloseAnimation 
       ? '0 24px 80px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(0, 0, 0, 0.05)' 
@@ -182,7 +179,6 @@ export const Wrapper = styled.div`
       ? '0 32px 100px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(0, 0, 0, 0.05)' 
       : 'none'};
   }
-
 `;
 
 
@@ -359,21 +355,20 @@ export const CarouselForward = styled(IoIosArrowForward)`
   }
 `;
 export const ProductHeader = styled.div`
-  position: fixed;
+  position: sticky;
   top: 0;
-  left: 0;
-  right: 0;
   width: 100%;
+  flex-shrink: 0;
   display: ${(props) => (props.CloseAnimation ? "flex" : "none")};
   align-items: center;
   justify-content: space-between;
-  padding: 20px 30px;
+  padding: 16px 24px;
   z-index: 301;
-  background-color: ${props => props.theme.backgroundColor || "transparent"};
+  background-color: ${props => props.theme.backgroundColor || "#fff"};
   transition: opacity 0.4s ease-in-out;
   
   @media (min-width: 1024px) {
-    padding: 25px 40px;
+    padding: 20px 40px;
   }
 `;
 
@@ -615,26 +610,21 @@ const AddToCartAnimation = keyframes`
 
 export const ButtonWrapper = styled.div`
   width: 100%;
-  position: sticky;
-  bottom: 0;
-  left: 0;
   justify-content: center;
   flex-direction: column;
   align-items: center;
   animation: ${AddToCartAnimation} 0.7s ease-in-out;
   background-color: ${(props) => props.theme.backgroundColor};
-  z-index: 301;
   display: flex;
-  box-shadow: 0px -3px 5px rgba(180, 180, 180, 0.1); /* Slight shadow on the top */
-  padding-bottom: 10px;
-  padding-top: 10px;
-  margin-top: auto;
+  padding-bottom: max(10px, env(safe-area-inset-bottom));
+  padding-top: 16px;
+  margin-top: 8px;
   opacity: ${(props) => (props.CloseAnimation ? 1 : 0)};
   transition: opacity 0.3s ease;
   pointer-events: ${(props) => (props.CloseAnimation ? "auto" : "none")};
   @media (min-width: 1024px) {
-        width: 50%;
-    }
+    width: 50%;
+  }
 `;
 export const AddToCart = styled.button`
   outline: none;
