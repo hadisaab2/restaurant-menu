@@ -300,19 +300,19 @@ export default function ProductParam({ productId, setSearchParams, searchParams 
         }
     };
 
-    let images = [...(fetchedProduct?.images ?? [])];
-    // Find the index of the image that should be first
-    const index = images.findIndex((image) => image.id === fetchedProduct?.new_cover_id);
+    const restaurantLogoUrl = restaurant?.logoURL
+        ? `https://storage.googleapis.com/ecommerce-bucket-testing/${restaurant.logoURL}`
+        : null;
 
-    // If the image is found and it's not already the first element, move it to the front
+    let images = [...(fetchedProduct?.images ?? [])];
+    if (images.length === 0 && restaurantLogoUrl) {
+        images = [{ id: 'fallback-logo', url: restaurant.logoURL, isFallback: true }];
+    }
+    const index = images.findIndex((image) => image.id === fetchedProduct?.new_cover_id);
     if (index > 0) {
         const [imageToBeFirst] = images.splice(index, 1);
         images.unshift(imageToBeFirst);
     }
-
-    const restaurantLogoUrl = restaurant?.logoURL
-        ? `https://storage.googleapis.com/ecommerce-bucket-testing/${restaurant.logoURL}`
-        : null;
 
     const [loadedIndices, setLoadedIndices] = useState({});
 
@@ -390,11 +390,9 @@ export default function ProductParam({ productId, setSearchParams, searchParams 
                                             )}
                                             <Image
                                                 src={
-                                                    loadedIndices[0]
-                                                        ? (images[0]?.url
-                                                            ? `https://storage.googleapis.com/ecommerce-bucket-testing/${images[0].url}`
-                                                            : restaurantLogoUrl || "")
-                                                        : ""
+                                                    images[0]?.url
+                                                        ? `https://storage.googleapis.com/ecommerce-bucket-testing/${images[0].url}`
+                                                        : restaurantLogoUrl || ""
                                                 }
                                                 onLoad={() => handleImageLoad(0)}
                                                 onError={(e) => {

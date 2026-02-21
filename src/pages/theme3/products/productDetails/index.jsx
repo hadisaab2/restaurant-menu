@@ -549,11 +549,9 @@ export default function ProductDetails({
                   )}
                   <Image
                     src={
-                      loadedIndices[0]
-                        ? (images[0].url
-                            ? `https://storage.googleapis.com/ecommerce-bucket-testing/${images[0].url}`
-                            : restaurantLogoUrl || "")
-                        : ""
+                      images[0]?.url
+                        ? `https://storage.googleapis.com/ecommerce-bucket-testing/${images[0].url}`
+                        : restaurantLogoUrl || ""
                     }
                     onLoad={() => handleImageLoad(0)}
                     onError={(e) => {

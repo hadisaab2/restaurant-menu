@@ -226,6 +226,7 @@ const Product = React.forwardRef(
               onLoad={handleImageLoaded}
               src={imageSrc}
               imageLoaded={imageLoaded}
+              $isLogoFallback={!hasValidImage}
             />
           </ImageContainer>
           {features?.cart &&

@@ -25,12 +25,11 @@ export const Wrapper = styled.div`
 `;
 
 export const Image = styled.img`
-width:90%;
-height:100%;
-object-fit: cover;
-border-radius: 10px;
-visibility: ${props=>props.imageLoaded?"visible":"hidden"};
-/* display:${props=>props.imageLoaded?"block":"none"} */
+  width: 90%;
+  height: 100%;
+  object-fit: ${(props) => (props.$isLogoFallback ? "none" : "cover")};
+  border-radius: 10px;
+  visibility: ${(props) => (props.imageLoaded ? "visible" : "hidden")};
 `;
 export const ImageContainer = styled.div`
 width:100%;

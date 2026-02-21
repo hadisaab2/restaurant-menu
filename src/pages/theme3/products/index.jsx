@@ -404,7 +404,7 @@ console.log(filteredProducts)
                           onTouchStart={() => prefetchProduct(plate.id)}
                           style={{ cursor: "pointer" }}
                         >
-                          <AllItemsListImage>
+                          <AllItemsListImage $isLogoFallback={!imageUrl}>
                             {imageUrl ? (
                               <img 
                                 src={`https://storage.googleapis.com/ecommerce-bucket-testing/${imageUrl}`}
