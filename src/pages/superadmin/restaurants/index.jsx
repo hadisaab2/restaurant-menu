@@ -209,17 +209,18 @@ export default function Restaurants() {
 
 
   const handletemplate = (e) => {
-    //Should empty all fields except these fields
+    const newTemplateId = e.target.value;
+    setValue("template_id", newTemplateId, { shouldValidate: true });
+    // Should empty all fields except these fields (keep template_id so it saves)
+    const keepFields = ["username", "password", "language", "template_id"];
     Object.keys(getValues()).map((key) => {
-      const shouldDeleteField = ["username", "password", "language"].every(
-        (field) => field !== key
-      );
+      const shouldDeleteField = keepFields.every((field) => field !== key);
       if (shouldDeleteField) {
         unregister(key);
         setValue(key, undefined);
       }
     });
-    setTemplate(e.target.value);
+    setTemplate(newTemplateId);
   };
 
   useEffect(() => {
@@ -252,7 +253,8 @@ export default function Restaurants() {
     default_language,
     show_all_items_category,
     business_type,
-    all_items_style
+    all_items_style,
+    product_details_carousel_style,
   }) => {
     const theme = JSON.parse(themeString);
     const features = JSON.parse(featureString);
@@ -277,10 +279,12 @@ export default function Restaurants() {
       default_language,
       show_all_items_category,
       business_type,
-      all_items_style
+      all_items_style,
+      product_details_carousel_style,
     });
     setIsEditMode(true);
     setTemplate(template_id);
+    setValue("template_id", template_id);
     setValue("username", username);
     setValue("features", features);
 
@@ -301,16 +305,23 @@ export default function Restaurants() {
     setValue("show_all_items_category", !!show_all_items_category);
     setValue("business_type", business_type || "restaurant");
     setValue("all_items_style", all_items_style || "grid");
+    setValue("product_details_carousel_style", product_details_carousel_style || "normal");
     
-    // Set theme colors in form
-    Object.keys(theme).forEach((key) => {
-      setValue(`theme.[${key}]`, theme[key]);
-    });
-    
-    // Ensure homepageBackgroundColor has a default value if it doesn't exist
-    if (!theme.homepageBackgroundColor) {
-      setValue(`theme.[homepageBackgroundColor]`, "#ffffff");
+    // Set theme colors in form: for the current template, set every color from DB or default
+    const templateConfig = templates.find((t) => t.id == template_id);
+    const themeKey = (key) => theme[key] ?? theme[key?.toLowerCase?.()] ?? theme[key?.toUpperCase?.()];
+    if (templateConfig?.colors) {
+      templateConfig.colors.forEach((colorKey) => {
+        const value = themeKey(colorKey) ?? (colorKey === "homepageBackgroundColor" ? "#ffffff" : "");
+        setValue(`theme.[${colorKey}]`, value);
+      });
     }
+    // Also set any extra keys that might exist in theme (e.g. legacy keys)
+    Object.keys(theme).forEach((key) => {
+      if (!templateConfig?.colors?.includes(key)) {
+        setValue(`theme.[${key}]`, theme[key]);
+      }
+    });
     
     if (cover_url) {
       setImageUrl(
@@ -347,6 +358,7 @@ export default function Restaurants() {
         const formData = {
           ...data,
           theme: themeObject, // Replace theme with properly constructed object
+          template_id: data.template_id ?? selectedProduct?.template_id,
           has_slider: data.has_slider === true || data.has_slider === "true" || data.has_slider === 1,
           is_valid: data.is_valid === true || data.is_valid === "true" || data.is_valid === 1,
           default_language: data.default_language || "en", // Ensure default_language is always set
@@ -356,6 +368,7 @@ export default function Restaurants() {
             data.show_all_items_category === 1,
           business_type: data.business_type || "restaurant",
           all_items_style: data.all_items_style || "grid",
+          product_details_carousel_style: data.product_details_carousel_style || "normal",
         };
         console.log("Formatted form data:", formData);
         if (selectedProduct) {
@@ -718,11 +731,12 @@ export default function Restaurants() {
                   !isEmpty(formState?.errors?.[name]) && formState.errors?.[name].message
                 }
                 style={{ width: "30%" }}
+                InputLabelProps={required ? { required: true } : undefined}
               />
             ))}
             <Box sx={{ width: "30%" }}>
               <FormControl fullWidth>
-                <InputLabel>Language</InputLabel>
+                <InputLabel required>Language</InputLabel>
                 <Select
                   label="Language"
                   {...register("languages", { required: "Required" })}
@@ -737,7 +751,7 @@ export default function Restaurants() {
             </Box>
             <Box sx={{ width: "30%" }}>
               <FormControl fullWidth>
-                <InputLabel>Default Language</InputLabel>
+                <InputLabel required>Default Language</InputLabel>
                 <Select
                   label="Default Language"
                   {...register("default_language", { required: "Required" })}
@@ -751,7 +765,7 @@ export default function Restaurants() {
             </Box>
             <Box sx={{ width: "30%" }}>
               <FormControl fullWidth>
-                <InputLabel>Currency</InputLabel>
+                <InputLabel required>Currency</InputLabel>
                 <Select
                   label="Currency"
                   {...register("currency", { required: "Required" })}
@@ -825,7 +839,7 @@ export default function Restaurants() {
             </Box>
             <Box sx={{ width: "30%" }}>
               <FormControl fullWidth>
-                <InputLabel>Category Type</InputLabel>
+                <InputLabel required>Category Type</InputLabel>
                 <Select
                   label="Category Type"
                   {...register("category_type", { required: "Required" })}
@@ -840,7 +854,7 @@ export default function Restaurants() {
             </Box>
             <Box sx={{ width: "30%" }}>
               <FormControl fullWidth>
-                <InputLabel>Font</InputLabel>
+                <InputLabel required>Font</InputLabel>
                 <Select
                   label="Font"
                   {...register("font", { required: "Required" })}
@@ -863,7 +877,7 @@ export default function Restaurants() {
 
             <Box sx={{ width: "30%" }}>
               <FormControl fullWidth>
-                <InputLabel>Font Size</InputLabel>
+                <InputLabel required>Font Size</InputLabel>
                 <Select
                   label="Font Size"
                   {...register("font_size", { required: "Required" })}
@@ -910,13 +924,13 @@ export default function Restaurants() {
 
               <Box sx={{ width: "32%", marginTop: "5px" }}>
                 <FormControl fullWidth>
-                  <InputLabel>Template</InputLabel>
+                  <InputLabel required>Template</InputLabel>
                   <Select
-                    label="mediaType"
+                    label="Template"
                     {...register("template_id", { required: "Required" })}
                     error={!isEmpty(formState?.errors?.template_id)}
                     onChange={handletemplate}
-                    defaultValue={selectedProduct?.template_id}
+                    value={watch("template_id") ?? selectedProduct?.template_id ?? ""}
                   >
                     {templates.map(({ name, id }) => (
                       <MenuItem value={id}>{name}</MenuItem>
@@ -1021,6 +1035,24 @@ export default function Restaurants() {
                 </Select>
               </FormControl>
             </Box>
+            {(Number(template) === 2 || Number(template) === 3) && (
+              <Box sx={{ width: "30%" }}>
+                <FormControl fullWidth>
+                  <InputLabel>Product details carousel style</InputLabel>
+                  <Select
+                    label="Product details carousel style"
+                    value={getValues("product_details_carousel_style") || selectedProduct?.product_details_carousel_style || "normal"}
+                    onChange={(e) => {
+                      setValue("product_details_carousel_style", e.target.value, { shouldValidate: true });
+                    }}
+                  >
+                    <MenuItem value="normal">Normal (default)</MenuItem>
+                    <MenuItem value="pagination-fraction">Pagination fraction</MenuItem>
+                    <MenuItem value="effect-cards">Effect Cards</MenuItem>
+                  </Select>
+                </FormControl>
+              </Box>
+            )}
             <button onClick={() => console.log(getValues("features"))}>hadi</button>
             <LoadingButton
               onClick={handleAddRestaurant}

@@ -91,14 +91,21 @@ const ImageAnimationScreen = keyframes`
 
 export const ImagesContainer = styled.div`
   width: 100%;
-  height: ${(props)=>props.squareDimension?"55vh":"70vh"};
-  margin-top: 65px;
-  padding: 10px 0;
+  height: ${(props) => (props.isNormalCarousel ? "auto" : (props.squareDimension ? "55vh" : "70vh"))};
+  min-height: ${(props) => (props.isNormalCarousel ? (props.squareDimension ? "45vh" : "60vh") : "unset")};
+  margin-top: ${(props) => (props.isNormalCarousel ? "80px" : "65px")};
+  padding: ${(props) => (props.isNormalCarousel ? "0 5%" : "10px 0")};
+  transition: all 0.8s;
   display: flex;
-  align-items: center;
+  flex-direction: ${(props) => (props.isNormalCarousel ? "column" : "row")};
   justify-content: center;
+  align-items: center;
   overflow: visible;
   position: relative;
+  @media (min-width: 1024px) {
+    min-height: ${(props) => (props.isNormalCarousel ? (props.squareDimension ? "50vh" : "65vh") : "unset")};
+    margin-top: ${(props) => (props.isNormalCarousel ? "90px" : "65px")};
+  }
 `;
 
 export const SwiperWrapper = styled.div`

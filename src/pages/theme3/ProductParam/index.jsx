@@ -1,9 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { AddToCart, BackBtn, BackIcon, Backdrop, ButtonWrapper, Carousel, CarouselBack, CarouselForward, CarouselItem, Category, CopyButton, DiscountPrice, FakeContainer, Image, ImagesContainer, ImageWrapper, InfoContainer, Instruction, InstructionContainer, InstructionLabel, ItemCategory, ItemDescription, ItemInfo, ItemInfoWrapper, ItemName, ItemPrice, Loader, LoaderWrapper, MagnifyBtn, Minus, Plus, PriceContainer, ProductDetailSkeleton, ProductHeader, ProductHeaderTitle, Quantity, QuantityPrice, QuantityWrapper, SearchProductContainer, SkeletonBox, SwiperWrapper, TitlePriceRow, ZoomCloseBtn, ZoomImage, ZoomOverlay } from './styles'
 import { Swiper, SwiperSlide } from 'swiper/react'
-import { EffectCards } from 'swiper/modules'
+import { EffectCards, Pagination } from 'swiper/modules'
 import 'swiper/css'
 import 'swiper/css/effect-cards'
+import 'swiper/css/pagination'
 import { IoClose } from 'react-icons/io5'
 import { MdZoomIn } from 'react-icons/md'
 import { useGetProduct } from '../../../apis/products/getProduct';
@@ -223,7 +224,7 @@ export default function ProductParam({ productId, setSearchParams, searchParams 
             if (deltaX > 5) {
                 if (carouselIndex !== 0) handleleft();
             } else if (deltaX < -5) {
-                if (fetchedProduct.images.length > carouselIndex + 1)
+                if ((fetchedProduct?.images?.length ?? 0) > carouselIndex + 1)
                     handleright();
             }
 
@@ -348,6 +349,8 @@ export default function ProductParam({ productId, setSearchParams, searchParams 
 
 
 
+    const carouselStyle = restaurant?.product_details_carousel_style || "normal";
+
     return (
         <>
             <Backdrop 
@@ -408,7 +411,63 @@ export default function ProductParam({ productId, setSearchParams, searchParams 
                                         </ImageWrapper>
                                     </CarouselItem>
                                 </Carousel>
-                            ) : (
+                            ) : carouselStyle === "normal" ? (
+                                <>
+                                    <CarouselBack
+                                        CloseAnimation={CloseAnimation}
+                                        onClick={() => {
+                                            setCarouselSwiped(true);
+                                            if (carouselIndex !== 0) handleleft();
+                                        }}
+                                    />
+                                    <CarouselForward
+                                        CloseAnimation={CloseAnimation}
+                                        onClick={() => {
+                                            setCarouselSwiped(true);
+                                            if (images.length > carouselIndex + 1) handleright();
+                                        }}
+                                    />
+                                    <Carousel
+                                        carouselIndex={carouselIndex}
+                                        ref={divRef}
+                                        onTouchStart={handleTouchStart}
+                                        onTouchMove={handleTouchMove}
+                                    >
+                                        {images.map((image, index) => (
+                                            <CarouselItem key={image.id || index}>
+                                                <ImageWrapper>
+                                                    {!loadedIndices[index] && (
+                                                        <LoaderWrapper>
+                                                            <Loader />
+                                                        </LoaderWrapper>
+                                                    )}
+                                                    <Image
+                                                        src={
+                                                            loadedIndices[index] || index === carouselIndex
+                                                                ? (image?.url
+                                                                    ? `https://storage.googleapis.com/ecommerce-bucket-testing/${image.url}`
+                                                                    : restaurantLogoUrl || "")
+                                                                : ""
+                                                        }
+                                                        onLoad={() => handleImageLoad(index)}
+                                                        onError={(e) => {
+                                                            if (restaurantLogoUrl && e.target.src !== restaurantLogoUrl) {
+                                                                e.target.src = restaurantLogoUrl;
+                                                            }
+                                                        }}
+                                                        CloseAnimation={CloseAnimation}
+                                                        Loaded={loadedIndices[index]}
+                                                        alt={`Image ${index}`}
+                                                    />
+                                                    {index === carouselIndex && (
+                                                        <MagnifyBtn onClick={openZoom}><MdZoomIn /></MagnifyBtn>
+                                                    )}
+                                                </ImageWrapper>
+                                            </CarouselItem>
+                                        ))}
+                                    </Carousel>
+                                </>
+                            ) : carouselStyle === "effect-cards" ? (
                                 <>
                                     <CarouselBack
                                         CloseAnimation={CloseAnimation}
@@ -475,6 +534,59 @@ export default function ProductParam({ productId, setSearchParams, searchParams 
                                             swiperRef.current?.slideNext();
                                         }}
                                     />
+                                </>
+                            ) : (
+                                <>
+                                    <SwiperWrapper $closeAnimation={CloseAnimation} $paginationFraction>
+                                        <Swiper
+                                            onSwiper={(swiper) => {
+                                                swiperRef.current = swiper;
+                                            }}
+                                            onSlideChange={(swiper) => {
+                                                setcarouselIndex(swiper.realIndex);
+                                                setCarouselSwiped(true);
+                                            }}
+                                            modules={[Pagination]}
+                                            pagination={{ type: "fraction" }}
+                                            className="product-details-swiper product-details-swiper-fraction"
+                                            initialSlide={0}
+                                            key={fetchedProduct?.id}
+                                        >
+                                            {images.map((image, index) => (
+                                                <SwiperSlide key={image.id || index}>
+                                                    <ImageWrapper>
+                                                        {!loadedIndices[index] && (
+                                                            <LoaderWrapper>
+                                                                <Loader />
+                                                            </LoaderWrapper>
+                                                        )}
+                                                        <Image
+                                                            $cardSlide
+                                                            src={
+                                                                loadedIndices[index] || index === carouselIndex
+                                                                    ? (image?.url
+                                                                        ? `https://storage.googleapis.com/ecommerce-bucket-testing/${image.url}`
+                                                                        : restaurantLogoUrl || "")
+                                                                    : ""
+                                                            }
+                                                            onLoad={() => handleImageLoad(index)}
+                                                            onError={(e) => {
+                                                                if (restaurantLogoUrl && e.target.src !== restaurantLogoUrl) {
+                                                                    e.target.src = restaurantLogoUrl;
+                                                                }
+                                                            }}
+                                                            CloseAnimation={CloseAnimation}
+                                                            Loaded={loadedIndices[index]}
+                                                            alt={`Image ${index}`}
+                                                        />
+                                                        {index === carouselIndex && (
+                                                            <MagnifyBtn onClick={openZoom}><MdZoomIn /></MagnifyBtn>
+                                                        )}
+                                                    </ImageWrapper>
+                                                </SwiperSlide>
+                                            ))}
+                                        </Swiper>
+                                    </SwiperWrapper>
                                 </>
                             )}
                         </ImagesContainer>

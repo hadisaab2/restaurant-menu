@@ -55,9 +55,10 @@ import { translateForm } from "../../../../utilities/translate";
 import { useLogProduct } from "../../../../apis/products/logProduct";
 import { convertPrice } from "../../../../utilities/convertPrice";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { EffectCards } from "swiper/modules";
+import { EffectCards, Pagination } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/effect-cards";
+import "swiper/css/pagination";
 
 const _ = require('lodash');
 
@@ -401,9 +402,7 @@ export default function ProductDetails({
     Boolean(plates[activePlate]?.out_of_stock) ||
     Number(plates[activePlate]?.out_of_stock) === 1;
 
-
-
-
+  const carouselStyle = restaurant?.product_details_carousel_style || "normal";
 
   return (
     <>
@@ -420,7 +419,7 @@ export default function ProductDetails({
               : menu?.ar_category}
           </Category>
         </ItemCategory>
-        <ImagesContainer squareDimension={plates[activePlate]?.square_dimension} CloseAnimation={CloseAnimation}>
+        <ImagesContainer squareDimension={plates[activePlate]?.square_dimension} CloseAnimation={CloseAnimation} isNormalCarousel={carouselStyle === "normal"}>
           {images.length === 1 ? (
             <Carousel carouselIndex={0}>
               <CarouselItem>
@@ -450,7 +449,63 @@ export default function ProductDetails({
                 </ImageWrapper>
               </CarouselItem>
             </Carousel>
-          ) : (
+          ) : carouselStyle === "normal" ? (
+            <>
+              <CarouselBack
+                CloseAnimation={CloseAnimation}
+                onClick={() => {
+                  setCarouselSwiped(true);
+                  if (carouselIndex !== 0) handleleft();
+                }}
+              />
+              <CarouselForward
+                CloseAnimation={CloseAnimation}
+                onClick={() => {
+                  setCarouselSwiped(true);
+                  if (images.length > carouselIndex + 1) handleright();
+                }}
+              />
+              <Carousel
+                carouselIndex={carouselIndex}
+                ref={divRef}
+                onTouchStart={handleTouchStart}
+                onTouchMove={handleTouchMove}
+              >
+                {images.map((image, index) => (
+                  <CarouselItem key={image.id || index}>
+                    <ImageWrapper>
+                      {!loadedIndices[index] && (
+                        <LoaderWrapper>
+                          <Loader />
+                        </LoaderWrapper>
+                      )}
+                      <Image
+                        src={
+                          loadedIndices[index] || index === carouselIndex
+                            ? (image.url
+                                ? `https://storage.googleapis.com/ecommerce-bucket-testing/${image.url}`
+                                : restaurantLogoUrl || "")
+                            : ""
+                        }
+                        onLoad={() => handleImageLoad(index)}
+                        onError={(e) => {
+                          if (restaurantLogoUrl && e.target.src !== restaurantLogoUrl) {
+                            e.target.src = restaurantLogoUrl;
+                          }
+                        }}
+                        CloseAnimation={CloseAnimation}
+                        Loaded={loadedIndices[index]}
+                        alt={`Image ${index}`}
+                      />
+                      {carouselIndex === index && (
+                        <MagnifyBtn onClick={openZoom}><MdZoomIn /></MagnifyBtn>
+                      )}
+                    </ImageWrapper>
+                  </CarouselItem>
+                ))}
+              </Carousel>
+            </>
+          ) : carouselStyle === "effect-cards" ? (
             <>
               <CarouselBack
                 CloseAnimation={CloseAnimation}
@@ -507,6 +562,57 @@ export default function ProductDetails({
                 CloseAnimation={CloseAnimation}
                 onClick={() => swiperRef.current && swiperRef.current.slideNext()}
               />
+            </>
+          ) : (
+            <>
+              <SwiperWrapper>
+                <Swiper
+                  onSwiper={(sw) => { swiperRef.current = sw; }}
+                  onSlideChange={(sw) => {
+                    setcarouselIndex(sw.realIndex);
+                    setCarouselSwiped(true);
+                  }}
+                  modules={[Pagination]}
+                  pagination={{ type: "fraction" }}
+                  className="product-details-swiper product-details-swiper-fraction"
+                  initialSlide={0}
+                  key={plates[activePlate]?.id}
+                >
+                  {images.map((image, index) => (
+                    <SwiperSlide key={image.id || index}>
+                      <ImageWrapper>
+                        {!loadedIndices[index] && (
+                          <LoaderWrapper>
+                            <Loader />
+                          </LoaderWrapper>
+                        )}
+                        <Image
+                          src={
+                            loadedIndices[index] || index === carouselIndex
+                              ? (image.url
+                                  ? `https://storage.googleapis.com/ecommerce-bucket-testing/${image.url}`
+                                  : restaurantLogoUrl || "")
+                              : ""
+                          }
+                          onLoad={() => handleImageLoad(index)}
+                          onError={(e) => {
+                            if (restaurantLogoUrl && e.target.src !== restaurantLogoUrl) {
+                              e.target.src = restaurantLogoUrl;
+                            }
+                          }}
+                          CloseAnimation={CloseAnimation}
+                          Loaded={loadedIndices[index]}
+                          $cardSlide
+                          alt={`Image ${index}`}
+                        />
+                        {carouselIndex === index && (
+                          <MagnifyBtn onClick={openZoom}><MdZoomIn /></MagnifyBtn>
+                        )}
+                      </ImageWrapper>
+                    </SwiperSlide>
+                  ))}
+                </Swiper>
+              </SwiperWrapper>
             </>
           )}
         </ImagesContainer>

@@ -31,6 +31,44 @@ export const SliderContainer = styled.div`
   }
 `;
 
+/* Wrapper for Swiper (Expo-style: centered slides, scale effect) */
+export const SwiperWrap = styled.div`
+  width: 100%;
+  overflow: hidden;
+  padding: 10px 0;
+  
+  .home-expo-swiper {
+    overflow: hidden;
+    padding: 0 8px;
+  }
+  
+  .home-expo-swiper .swiper-wrapper {
+    align-items: center;
+  }
+  
+  .home-expo-swiper .swiper-slide {
+    height: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+  }
+  
+  @media (min-width: 768px) {
+    padding: 8px 0;
+    .home-expo-swiper {
+      padding: 0 12px;
+    }
+  }
+  
+  @media (min-width: 1200px) {
+    padding: 12px 0;
+    .home-expo-swiper {
+      padding: 0 16px;
+    }
+  }
+`;
+
 export const SliderTrack = styled.div`
   display: flex;
   gap: 16px;
@@ -42,7 +80,7 @@ export const SliderTrack = styled.div`
   scrollbar-width: none;
   -ms-overflow-style: none;
   cursor: grab;
-  padding: 10px calc(12.5% - 8px); /* Center cards with ~12.5% padding on each side */
+  padding: 10px calc(12.5% - 8px);
   background: transparent;
   box-shadow: none;
   
@@ -66,7 +104,9 @@ export const SliderTrack = styled.div`
 `;
 
 export const SlideCard = styled.div`
-  flex: 0 0 75%; /* Card takes 75% width, showing ~12.5% of adjacent cards */
+  width: 100%;
+  max-width: 100%;
+  flex: 0 0 75%;
   scroll-snap-align: center;
   scroll-snap-stop: always;
   position: relative;
@@ -77,7 +117,7 @@ export const SlideCard = styled.div`
   transform: ${props => props.$isActive ? "scale(1)" : "scale(0.92)"};
   opacity: ${props => props.$isActive ? 1 : 0.65};
   transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-  aspect-ratio: 16 / 8;
+  aspect-ratio: 16 / 10;
   animation: ${props => props.$isActive ? scaleIn : "none"} 0.3s ease-out;
   
   &:hover {
@@ -88,13 +128,13 @@ export const SlideCard = styled.div`
   @media (max-width: 768px) {
     flex: 0 0 80%;
     border-radius: 16px;
-    aspect-ratio: 16 / 9;
+    aspect-ratio: 16 / 11;
   }
   
   @media (min-width: 1200px) {
     flex: 0 0 70%;
     border-radius: 24px;
-    aspect-ratio: 16 / 7;
+    aspect-ratio: 16 / 6;
   }
 `;
 

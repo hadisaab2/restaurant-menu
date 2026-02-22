@@ -252,6 +252,13 @@ export const SwiperWrapper = styled.div`
     overflow: hidden;
     box-shadow: none !important;
   }
+  .swiper-pagination {
+    bottom: 8px;
+  }
+  .swiper-pagination-fraction {
+    color: ${(props) => props.theme.textColor || "#333"};
+    font-size: 14px;
+  }
 `;
 
 export const Carousel = styled.div`

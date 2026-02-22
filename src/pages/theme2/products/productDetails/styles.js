@@ -47,7 +47,8 @@ color:${props => props.theme.textColor};
 background-color:${props => props.theme.backgroundColor};
 padding-bottom:150px;
 
-  overflow: scroll;
+  overflow-x: hidden;
+  overflow-y: auto;
   transition: all 0.7s;
   animation: ${slideAnimation} 0.5s;
   z-index: 6;
@@ -92,14 +93,21 @@ const ImageAnimationScreen = keyframes`
 
 export const ImagesContainer = styled.div`
   width: 100%;
-  height: ${(props)=>props.squareDimension?"55vh":"70vh"};
-  margin-top: 65px;
-  padding: 10px 0;
+  height: ${(props) => (props.isNormalCarousel ? "auto" : (props.squareDimension ? "55vh" : "70vh"))};
+  min-height: ${(props) => (props.isNormalCarousel ? (props.squareDimension ? "45vh" : "60vh") : "unset")};
+  margin-top: ${(props) => (props.isNormalCarousel ? "80px" : "65px")};
+  padding: ${(props) => (props.isNormalCarousel ? "0 5%" : "10px 0")};
+  transition: all 0.8s;
   display: flex;
-  align-items: center;
+  flex-direction: ${(props) => (props.isNormalCarousel ? "column" : "row")};
   justify-content: center;
+  align-items: center;
   overflow: visible;
   position: relative;
+  @media (min-width: 1024px) {
+    min-height: ${(props) => (props.isNormalCarousel ? (props.squareDimension ? "50vh" : "65vh") : "unset")};
+    margin-top: ${(props) => (props.isNormalCarousel ? "90px" : "65px")};
+  }
 `;
 
 export const SwiperWrapper = styled.div`
@@ -124,25 +132,29 @@ export const Carousel = styled.div`
   width: 100%;
   height: 100%;
   white-space: nowrap;
-  position:relative;
+  position: relative;
   transform: ${(props) => `translateX(-${props.carouselIndex * 100}%)`};
   transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
 `;
 export const CarouselItem = styled.div`
   height: 100%;
   width: 100%;
-  display: inline-block;
+  min-width: 100%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   vertical-align: top;
-
+  flex-shrink: 0;
 `;
 export const ImageWrapper = styled.div`
   height: 100%;
   width: 100%;
-  display:flex;
-  align-items:center;
-  justify-content:center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   position: relative;
-
 `;
 
 const spin = keyframes`
@@ -176,12 +188,14 @@ height: 100%;
 export const Image = styled.img`
   height: 100%;
   object-fit: cover;
+  object-position: center;
   border-radius: ${(props) =>
     props.$cardSlide ? "0" : (props.CloseAnimation ? "40px" : "10px")};
   width: ${(props) =>
     props.$cardSlide ? "100%" : (props.CloseAnimation ? "90%" : "100%")};
   display: ${(props) => (props.Loaded ? "block" : "none")};
   transition: all 0.8s;
+  margin: 0 auto;
   @media (min-width: 1024px) {
     width: ${(props) =>
       props.$cardSlide ? "100%" : (props.CloseAnimation ? "50%" : "100%")};

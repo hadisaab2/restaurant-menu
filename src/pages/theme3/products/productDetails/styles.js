@@ -217,7 +217,8 @@ export const ImagesContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  overflow: visible;
+  overflow-x: hidden;
+  overflow-y: visible;
   position: relative;
 `;
 
@@ -237,28 +238,41 @@ export const SwiperWrapper = styled.div`
     overflow: hidden;
     box-shadow: none !important;
   }
+  .swiper-pagination {
+    bottom: 8px;
+  }
+  .swiper-pagination-fraction {
+    color: ${(props) => props.theme.textColor || "#333"};
+    font-size: 14px;
+  }
 `;
 
 export const Carousel = styled.div`
   width: 100%;
   height: 100%;
   white-space: nowrap;
-  position:relative;
+  position: relative;
   transform: ${(props) => `translateX(-${props.carouselIndex * 100}%)`};
   transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
 `;
 export const CarouselItem = styled.div`
   height: 100%;
   width: 100%;
-  display: inline-block;
+  min-width: 100%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   vertical-align: top;
+  flex-shrink: 0;
 `;
 export const ImageWrapper = styled.div`
   height: 100%;
   width: 100%;
-  display:flex;
-  align-items:center;
-  justify-content:center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   position: relative;
 `;
 
@@ -293,12 +307,14 @@ height: 100%;
 export const Image = styled.img`
   height: 100%;
   object-fit: cover;
+  object-position: center;
   border-radius: ${(props) =>
     props.$cardSlide ? "0" : (props.CloseAnimation ? "40px" : "10px")};
   width: ${(props) =>
     props.$cardSlide ? "100%" : (props.CloseAnimation ? "90%" : "100%")};
   display: ${(props) => (props.Loaded ? "block" : "none")};
   transition: all 0.8s;
+  margin: 0 auto;
   @media (min-width: 1024px) {
     width: ${(props) =>
       props.$cardSlide ? "100%" : (props.CloseAnimation ? "50%" : "100%")};

@@ -3,28 +3,30 @@ import { FaArrowRight } from "react-icons/fa6";
 
 
 export const Container = styled.div`
-width: 100%;
-display: flex;
-justify-content: center;
-align-items: center;
-margin-top: 20px;
-flex-direction: column;
-display: flex;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
+  flex-direction: column;
 `;
 export const Wrapper = styled.div`
-display: flex;
-flex-direction: row;
+  display: flex;
+  flex-direction: row;
+  position: relative;
 `;
 
 export const ActiveCircleWrapper = styled.div`
-width: 15px;
-height: 15px;
-display: flex;
-align-items: center;
-justify-content: center;
-position: absolute;
-transition: all 0.4s ease-in-out;
-transform: ${(props) => `translateX(${props.carouselIndex * 15}px)`};
+  width: 15px;
+  height: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  left: 0;
+  top: 0;
+  transition: transform 0.4s ease-in-out;
+  transform: ${(props) => `translateX(${props.carouselIndex * 15}px)`};
 `;
 export const ActiveCircle = styled.div`
 width: 7px;
@@ -49,14 +51,13 @@ border:1px solid ${(props) => props.theme.mainColor};
 `;
 
 export const SwipeAnimation = styled.div`
- margin-top: 20px;
- font-size: 12px;
- color:${(props) => props.theme.mainColor};
- position: relative;
- width: 60px;
- background-color: red;
- display: flex;
- align-items: center;
+  margin-top: 20px;
+  font-size: 12px;
+  color: ${(props) => props.theme.mainColor};
+  position: relative;
+  width: 60px;
+  display: flex;
+  align-items: center;
 `;
 export const SwipeText= styled.span`
 position: absolute;

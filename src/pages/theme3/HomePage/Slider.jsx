@@ -1,7 +1,10 @@
-import React, { useState, useEffect, useRef, useCallback } from "react";
+import React, { useRef, useState } from "react";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Autoplay } from "swiper/modules";
+import "swiper/css";
 import {
   SliderContainer,
-  SliderTrack,
+  SwiperWrap,
   SlideCard,
   SlideImage,
   SliderDots,
@@ -13,258 +16,85 @@ import {
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 
 export default function Slider({ images, activeLanguage }) {
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [isAutoPlaying, setIsAutoPlaying] = useState(true);
-  const trackRef = useRef(null);
-  const isDragging = useRef(false);
-  const startX = useRef(0);
-  const scrollLeftStart = useRef(0);
-  const autoPlayTimer = useRef(null);
-  const dragEndTime = useRef(0);
+  const swiperRef = useRef(null);
+  const [activeIndex, setActiveIndex] = useState(0);
 
   const totalSlides = images?.length || 0;
-
-  // Calculate scroll position for a given index
-  const getScrollPosition = useCallback((index) => {
-    if (!trackRef.current) return 0;
-    const track = trackRef.current;
-    const containerWidth = track.offsetWidth;
-    const cardWidth = containerWidth * 0.75; // 75% card width
-    const gap = window.innerWidth <= 768 ? 12 : window.innerWidth >= 1200 ? 20 : 16;
-    return index * (cardWidth + gap);
-  }, []);
-
-  // Scroll to specific slide
-  const scrollToSlide = useCallback((index, smooth = true) => {
-    if (!trackRef.current) return;
-    const scrollPosition = getScrollPosition(index);
-    trackRef.current.scrollTo({
-      left: scrollPosition,
-      behavior: smooth ? "smooth" : "auto",
-    });
-  }, [getScrollPosition]);
-
-  // Reset auto-play timer
-  const resetAutoPlay = useCallback(() => {
-    if (autoPlayTimer.current) {
-      clearTimeout(autoPlayTimer.current);
-    }
-    setIsAutoPlaying(false);
-    autoPlayTimer.current = setTimeout(() => {
-      setIsAutoPlaying(true);
-    }, 8000);
-  }, []);
-
-  // Auto-play effect
-  useEffect(() => {
-    if (!isAutoPlaying || !images || images.length <= 1) return;
-
-    const interval = setInterval(() => {
-      setCurrentIndex((prev) => {
-        const next = (prev + 1) % images.length;
-        scrollToSlide(next);
-        return next;
-      });
-    }, 5000);
-
-    return () => clearInterval(interval);
-  }, [isAutoPlaying, images, scrollToSlide]);
-
-  // Initial scroll to first slide
-  useEffect(() => {
-    if (trackRef.current && images?.length > 0) {
-      setTimeout(() => scrollToSlide(0, false), 50);
-    }
-  }, [images, scrollToSlide]);
-
-  // Calculate current index from scroll position
-  const getCurrentIndexFromScroll = useCallback(() => {
-    if (!trackRef.current) return 0;
-    const track = trackRef.current;
-    const containerWidth = track.offsetWidth;
-    const cardWidth = containerWidth * 0.75;
-    const gap = window.innerWidth <= 768 ? 12 : window.innerWidth >= 1200 ? 20 : 16;
-    const scrollLeft = track.scrollLeft;
-    const slideWidth = cardWidth + gap;
-    const newIndex = Math.round(scrollLeft / slideWidth);
-    return Math.max(0, Math.min(newIndex, totalSlides - 1));
-  }, [totalSlides]);
-
-  // Handle scroll to update current index
-  const handleScroll = useCallback(() => {
-    if (!trackRef.current || isDragging.current) return;
-    const newIndex = getCurrentIndexFromScroll();
-    setCurrentIndex((prev) => {
-      if (prev !== newIndex) {
-        return newIndex;
-      }
-      return prev;
-    });
-  }, [getCurrentIndexFromScroll]);
-
-  // Navigation functions
-  const goToSlide = (index) => {
-    setCurrentIndex(index);
-    scrollToSlide(index);
-    resetAutoPlay();
-  };
-
-  const goToPrevious = () => {
-    const newIndex = currentIndex === 0 ? totalSlides - 1 : currentIndex - 1;
-    goToSlide(newIndex);
-  };
-
-  const goToNext = () => {
-    const newIndex = (currentIndex + 1) % totalSlides;
-    goToSlide(newIndex);
-  };
-
-  // Mouse drag handlers
-  const handleMouseDown = (e) => {
-    if (!trackRef.current) return;
-    // Prevent click on card when dragging
-    if (e.target.closest('button') || e.target.closest('a')) return;
-    isDragging.current = true;
-    startX.current = e.pageX - trackRef.current.offsetLeft;
-    scrollLeftStart.current = trackRef.current.scrollLeft;
-    trackRef.current.style.cursor = "grabbing";
-    trackRef.current.style.scrollBehavior = "auto";
-    resetAutoPlay();
-  };
-
-  const handleMouseMove = (e) => {
-    if (!isDragging.current || !trackRef.current) return;
-    e.preventDefault();
-    const x = e.pageX - trackRef.current.offsetLeft;
-    const walk = (x - startX.current) * 1.5;
-    trackRef.current.scrollLeft = scrollLeftStart.current - walk;
-  };
-
-  const handleMouseUp = () => {
-    if (!trackRef.current) return;
-    dragEndTime.current = Date.now();
-    isDragging.current = false;
-    trackRef.current.style.cursor = "grab";
-    
-    // Calculate nearest slide from current scroll position
-    const nearestIndex = getCurrentIndexFromScroll();
-    setCurrentIndex(nearestIndex);
-    
-    // Snap to nearest slide
-    setTimeout(() => {
-      trackRef.current.style.scrollBehavior = "smooth";
-      scrollToSlide(nearestIndex);
-    }, 10);
-  };
-
-  const handleMouseLeave = () => {
-    if (isDragging.current) {
-      handleMouseUp();
-    }
-  };
-
-  // Touch handlers
-  const handleTouchStart = (e) => {
-    if (!trackRef.current) return;
-    isDragging.current = true;
-    startX.current = e.touches[0].pageX - trackRef.current.offsetLeft;
-    scrollLeftStart.current = trackRef.current.scrollLeft;
-    trackRef.current.style.scrollBehavior = "auto";
-    resetAutoPlay();
-  };
-
-  const handleTouchMove = (e) => {
-    if (!isDragging.current || !trackRef.current) return;
-    const x = e.touches[0].pageX - trackRef.current.offsetLeft;
-    const walk = (x - startX.current) * 1.5;
-    trackRef.current.scrollLeft = scrollLeftStart.current - walk;
-  };
-
-  const handleTouchEnd = () => {
-    if (!trackRef.current) return;
-    dragEndTime.current = Date.now();
-    isDragging.current = false;
-    
-    // Calculate nearest slide from current scroll position
-    const nearestIndex = getCurrentIndexFromScroll();
-    setCurrentIndex(nearestIndex);
-    
-    // Snap to nearest slide
-    setTimeout(() => {
-      trackRef.current.style.scrollBehavior = "smooth";
-      scrollToSlide(nearestIndex);
-    }, 10);
-  };
-
-  // Keyboard navigation
-  useEffect(() => {
-    const handleKeyDown = (e) => {
-      if (e.key === "ArrowLeft") {
-        goToPrevious();
-      } else if (e.key === "ArrowRight") {
-        goToNext();
-      }
-    };
-
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [currentIndex, totalSlides]);
 
   if (!images || images.length === 0) {
     return null;
   }
 
+  const goToSlide = (index) => {
+    if (swiperRef.current) {
+      swiperRef.current.slideToLoop(index);
+    }
+    setActiveIndex(index);
+  };
+
   return (
     <SliderContainer>
-      <SliderTrack
-        ref={trackRef}
-        onScroll={handleScroll}
-        onMouseDown={handleMouseDown}
-        onMouseMove={handleMouseMove}
-        onMouseUp={handleMouseUp}
-        onMouseLeave={handleMouseLeave}
-        onTouchStart={handleTouchStart}
-        onTouchMove={handleTouchMove}
-        onTouchEnd={handleTouchEnd}
-      >
-        {images.map((image, index) => (
-          <SlideCard
-            key={image.id || index}
-            $isActive={index === currentIndex}
-            onClick={(e) => {
-              // Prevent click if we just finished dragging (within 200ms)
-              const timeSinceDragEnd = Date.now() - dragEndTime.current;
-              if (!isDragging.current && timeSinceDragEnd > 200 && !e.defaultPrevented) {
-                goToSlide(index);
-              }
-            }}
-          >
-            <SlideImage
-              src={`https://storage.googleapis.com/ecommerce-bucket-testing/${image.url}`}
-              alt={`Slide ${index + 1}`}
-              draggable={false}
-            />
-            <SlideOverlay $isActive={index === currentIndex} />
-          </SlideCard>
-        ))}
-      </SliderTrack>
+      <SwiperWrap>
+        <Swiper
+          onSwiper={(swiper) => {
+            swiperRef.current = swiper;
+          }}
+          onSlideChange={(swiper) => {
+            setActiveIndex(swiper.realIndex);
+          }}
+          modules={[Autoplay]}
+          slidesPerView={1.5}
+          centeredSlides
+          spaceBetween={4}
+          loop={totalSlides > 1}
+          grabCursor
+          watchSlidesProgress
+          speed={500}
+          autoplay={
+            totalSlides > 1
+              ? { delay: 5000, disableOnInteraction: false }
+              : false
+          }
+          breakpoints={{
+            768: { spaceBetween: 4, slidesPerView: 1.5 },
+            1200: { spaceBetween: 6, slidesPerView: 1.5 },
+          }}
+          className="home-expo-swiper"
+        >
+          {images.map((image, index) => (
+            <SwiperSlide key={image.id || index}>
+              {({ isActive }) => (
+                <SlideCard $isActive={isActive}>
+                  <SlideImage
+                    src={`https://storage.googleapis.com/ecommerce-bucket-testing/${image.url}`}
+                    alt={`Slide ${index + 1}`}
+                    draggable={false}
+                    loading="lazy"
+                  />
+                  <SlideOverlay $isActive={isActive} />
+                </SlideCard>
+              )}
+            </SwiperSlide>
+          ))}
+        </Swiper>
+      </SwiperWrap>
 
       {totalSlides > 1 && (
         <>
           <SliderArrows>
             <ArrowButton
-              onClick={goToPrevious}
               $position="left"
               activeLanguage={activeLanguage}
               aria-label="Previous slide"
+              onClick={() => swiperRef.current?.slidePrev()}
             >
               <FaChevronLeft />
             </ArrowButton>
             <ArrowButton
-              onClick={goToNext}
               $position="right"
               activeLanguage={activeLanguage}
               aria-label="Next slide"
+              onClick={() => swiperRef.current?.slideNext()}
             >
               <FaChevronRight />
             </ArrowButton>
@@ -274,7 +104,7 @@ export default function Slider({ images, activeLanguage }) {
             {images.map((_, index) => (
               <Dot
                 key={index}
-                $active={index === currentIndex}
+                $active={index === activeIndex}
                 onClick={() => goToSlide(index)}
                 aria-label={`Go to slide ${index + 1}`}
               />
