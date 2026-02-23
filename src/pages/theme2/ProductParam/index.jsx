@@ -109,13 +109,14 @@ export default function ProductParam({ productId, setSearchParams, searchParams 
     const [CloseAnimation, setCloseAnimation] = useState(true);
     const [carouselIndex, setcarouselIndex] = useState(0);
     const handleBack = () => {
-        setTimeout(() => {
-            searchParams.delete("productId"); // Remove the parameter
-            setSearchParams(searchParams);
-        }, 800);
-
         setCloseAnimation(false);
         setcarouselIndex(0);
+        setTimeout(() => {
+            const next = new URLSearchParams(searchParams);
+            next.delete("productId");
+            setSearchParams(next);
+            document.body.style.overflow = "auto";
+        }, 800);
     };
     const [copied, setCopied] = useState(false);
 
@@ -273,8 +274,9 @@ export default function ProductParam({ productId, setSearchParams, searchParams 
 
         let discountedPrice = (totalPrice * (1 - parseFloat(finalDiscount) / 100))
         setTimeout(() => {
-            searchParams.delete("productId"); // Remove the parameter
-            setSearchParams(searchParams);
+            const next = new URLSearchParams(searchParams);
+            next.delete("productId");
+            setSearchParams(next);
             document.body.style.overflow = "auto";
         }, 800);
         dispatch(

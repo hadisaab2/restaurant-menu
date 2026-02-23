@@ -13,7 +13,7 @@ export const ProductWrapper = styled.div`
   display: flex;
   align-content: flex-start;
   width: 95%;
-  min-height: 70vh;
+  min-height: ${(props) => (props.$noMinHeight ? "0" : "70vh")};
   opacity: 1;
   transition:all 0.7s ease-in-out;
 `;

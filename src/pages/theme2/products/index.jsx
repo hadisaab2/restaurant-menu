@@ -74,6 +74,10 @@ export default function Products({
   };
 
   useEffect(() => {
+    if (searchParams.get("productId")) setactivePlate(null);
+  }, [searchParams]);
+
+  useEffect(() => {
     changepositions();
   }, [productRefs]);
 
@@ -402,7 +406,7 @@ console.log(filteredProducts)
                   })}
                 </AllStyles.AllItemsListWrapper>
               ) : (
-                <ProductWrapper>
+                <ProductWrapper $noMinHeight>
                   {section.items.map((plate, index) => (
                     <Product
                       key={plate.id}
@@ -464,7 +468,7 @@ console.log(filteredProducts)
             <div ref={loadMoreRef} style={{ height: "20px" }}>
             </div>
           </ProductWrapper>
-          {activePlate !== null && (
+          {activePlate !== null && !searchParams.get("productId") && (
             <ProductDetails
               menu={menu?.find((category) => category.id === activeCategory)}
               activePlate={activePlate}

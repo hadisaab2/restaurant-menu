@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   BlurOverlay,
   Cart,
@@ -77,6 +77,17 @@ export default function Theme2() {
     categoryId ? categoryId : theme2Categories?.[0]?.id
   );
 
+  const setactiveCategoryWithUrl = useCallback(
+    (id) => {
+      setactiveCategory(id);
+      const next = new URLSearchParams(searchParams);
+      if (id === "all-items") next.delete("categoryId");
+      else next.set("categoryId", id);
+      setSearchParams(next);
+    },
+    [searchParams, setSearchParams]
+  );
+
   const popupHandler = (type) => {
     if (type == null) {
       document.body.style.overflow = "auto";
@@ -145,7 +156,7 @@ export default function Theme2() {
         <Header
           categories={theme2Categories}
           activeCategory={activeCategory}
-          setactiveCategory={setactiveCategory}
+          setactiveCategory={setactiveCategoryWithUrl}
           setSearchText={setSearchText}
           searchText={searchText}
           setshowSidebar={setshowSidebar}
@@ -159,7 +170,7 @@ export default function Theme2() {
           activeCategory={activeCategory}
           showPopup={showPopup}
           searchText={searchText}
-          setactiveCategory={setactiveCategory}
+          setactiveCategory={setactiveCategoryWithUrl}
           setcarouselPosition={setcarouselPosition}
           carouselPosition={carouselPosition}
           categories={theme2Categories}
@@ -196,7 +207,7 @@ export default function Theme2() {
       <SideBar
         categories={theme2Categories}
         activeCategory={activeCategory}
-        setactiveCategory={setactiveCategory}
+        setactiveCategory={setactiveCategoryWithUrl}
         setshowSidebar={setshowSidebar}
         showSidebar={showSidebar}
         setcarouselPosition={setcarouselPosition}
