@@ -20,7 +20,7 @@ export const AllItemsTitle = styled.h3`
   max-width: 600px;
   font-size: 19px;
   font-weight: 700;
-  color: ${(props) => props.theme.mainColor};
+  color: ${(props) => props.theme.BoxTextColor};
   text-align: ${(props) => (props.activeLanguage === "ar" ? "right" : "left")};
   letter-spacing: 0.3px;
   padding: 10px 14px;

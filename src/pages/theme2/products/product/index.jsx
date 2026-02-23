@@ -50,7 +50,8 @@ const Product = React.forwardRef(
         }
         const newParams = new URLSearchParams(searchParams);
         newParams.set("productId", plate?.id);
-        // Push updated URL without reloading or navigating
+        if (activeCategoryId) newParams.set("categoryId", activeCategoryId);
+        setSearchParams(newParams);
         window.history.pushState({}, "", `?${newParams.toString()}`);
 
         document.body.style.overflow = "hidden";

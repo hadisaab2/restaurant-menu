@@ -47,7 +47,8 @@ color:${props => props.theme.textColor};
 background-color:${props => props.theme.backgroundColor};
 padding-bottom:150px;
 
-  overflow: scroll;
+  overflow-x: hidden;
+  overflow-y: auto;
   transition: all 1s;
   animation: ${slideAnimation} 1.1s;
   z-index: 6;
