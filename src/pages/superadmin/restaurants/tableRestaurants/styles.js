@@ -19,6 +19,10 @@ export const Td = styled.td`
   padding: 8px;
 `;
 
+export const Tr = styled.tr`
+  background: ${(props) => (props.$needRenewal ? "rgba(255, 200, 200, 0.4)" : "transparent")};
+`;
+
 export const EditDeleteIcons = styled.div`
   display: flex;
   align-items: center;

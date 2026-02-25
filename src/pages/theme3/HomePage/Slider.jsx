@@ -6,14 +6,17 @@ import {
   SliderContainer,
   SwiperWrap,
   SlideCard,
-  SlideImage,
+  CardBody,
+  CardInfo,
+  SlideTitle,
   SliderDots,
   Dot,
   SliderArrows,
   ArrowButton,
-  SlideOverlay,
 } from "./SliderStyles";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
+
+const IMAGE_BASE = "https://storage.googleapis.com/ecommerce-bucket-testing";
 
 export default function Slider({ images, activeLanguage }) {
   const swiperRef = useRef(null);
@@ -33,8 +36,8 @@ export default function Slider({ images, activeLanguage }) {
   };
 
   return (
-    <SliderContainer>
-      <SwiperWrap>
+    <SliderContainer className="m-b10" id="swiper">
+      <SwiperWrap className="swiper-btn-center-lr1">
         <Swiper
           onSwiper={(swiper) => {
             swiperRef.current = swiper;
@@ -43,63 +46,53 @@ export default function Slider({ images, activeLanguage }) {
             setActiveIndex(swiper.realIndex);
           }}
           modules={[Autoplay]}
-          slidesPerView={1.5}
-          centeredSlides
-          spaceBetween={4}
+          slidesPerView={1.2}
+          spaceBetween={10}
           loop={totalSlides > 1}
           grabCursor
-          watchSlidesProgress
-          speed={500}
+          speed={400}
           autoplay={
             totalSlides > 1
               ? { delay: 5000, disableOnInteraction: false }
               : false
           }
           breakpoints={{
-            768: { spaceBetween: 4, slidesPerView: 1.5 },
-            1200: { spaceBetween: 6, slidesPerView: 1.5 },
+            576: { slidesPerView: 1.5, spaceBetween: 10 },
+            768: { slidesPerView: 2, spaceBetween: 10 },
+            992: { slidesPerView: 2.5, spaceBetween: 10 },
+            1200: { slidesPerView: 3, spaceBetween: 10 },
           }}
-          className="home-expo-swiper"
+          className="home-banner-swiper tag-group recomand-swiper"
         >
-          {images.map((image, index) => (
-            <SwiperSlide key={image.id || index}>
-              {({ isActive }) => (
-                <SlideCard $isActive={isActive}>
-                  <SlideImage
-                    src={`https://storage.googleapis.com/ecommerce-bucket-testing/${image.url}`}
-                    alt={`Slide ${index + 1}`}
-                    draggable={false}
-                    loading="lazy"
-                  />
-                  <SlideOverlay $isActive={isActive} />
+          {images.map((image, index) => {
+            const imageUrl = image.url
+              ? `${IMAGE_BASE}/${image.url}`
+              : "";
+            const title = activeLanguage === "ar" ? image.ar_title : image.en_title;
+            return (
+              <SwiperSlide key={image.id || index}>
+                <SlideCard
+                  className="card add-banner"
+                  style={{ backgroundImage: imageUrl ? `url(${imageUrl})` : undefined }}
+                >
+                  <CardBody className="card-body">
+                    <CardInfo className="card-info w-70">
+                      <SlideTitle className="title mb-2 text-white">
+                        {title || ""}
+                      </SlideTitle>
+                    </CardInfo>
+                  </CardBody>
                 </SlideCard>
-              )}
-            </SwiperSlide>
-          ))}
+              </SwiperSlide>
+            );
+          })}
         </Swiper>
+
+        
       </SwiperWrap>
 
       {totalSlides > 1 && (
         <>
-          <SliderArrows>
-            <ArrowButton
-              $position="left"
-              activeLanguage={activeLanguage}
-              aria-label="Previous slide"
-              onClick={() => swiperRef.current?.slidePrev()}
-            >
-              <FaChevronLeft />
-            </ArrowButton>
-            <ArrowButton
-              $position="right"
-              activeLanguage={activeLanguage}
-              aria-label="Next slide"
-              onClick={() => swiperRef.current?.slideNext()}
-            >
-              <FaChevronRight />
-            </ArrowButton>
-          </SliderArrows>
-
           <SliderDots>
             {images.map((_, index) => (
               <Dot

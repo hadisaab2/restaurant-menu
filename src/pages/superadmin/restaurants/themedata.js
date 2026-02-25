@@ -44,7 +44,9 @@ export const templates = [
       "sidebarbackground",
       "sidebarsearch",
       "sidebarsearchText",
-      "popupbuttonText"
+      "popupbuttonText",
+      "bottomTabBarBackgroundColor",
+      "homepageCategoriesBackgroundColor"
     ],
     features:[
       {featureName:"cart",defaultValue:true},
@@ -83,7 +85,9 @@ export const templates = [
       "slidingButtonBackgroundColor",
       "slidingButtonTextColor",
       "hplocationBackgroundColor",
-      "hplocationTextColor"
+      "hplocationTextColor",
+      "bottomTabBarBackgroundColor",
+      "homepageCategoriesBackgroundColor"
     ],
     features:[
       {featureName:"cart",defaultValue:true},

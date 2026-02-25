@@ -59,6 +59,7 @@ export const CategoriesCarouselContainer = styled.div`
   scroll-behavior: smooth;
   -webkit-overflow-scrolling: touch;
   position: relative;
+  background: ${props => props.theme?.homepageCategoriesBackgroundColor || "transparent"};
   
   /* Hide scrollbar */
   scrollbar-width: none; /* Firefox */

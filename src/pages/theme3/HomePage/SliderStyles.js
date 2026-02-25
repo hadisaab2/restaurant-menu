@@ -31,39 +31,40 @@ export const SliderContainer = styled.div`
   }
 `;
 
-/* Wrapper for Swiper (Expo-style: centered slides, scale effect) */
+/* Wrapper: swiper-btn-center-lr1 style (centered L/R arrows) */
 export const SwiperWrap = styled.div`
   width: 100%;
   overflow: hidden;
   padding: 10px 0;
+  margin-bottom: 10px;
+  position: relative;
   
-  .home-expo-swiper {
+  .home-banner-swiper {
     overflow: hidden;
     padding: 0 8px;
   }
   
-  .home-expo-swiper .swiper-wrapper {
-    align-items: center;
+  .home-banner-swiper .swiper-wrapper {
+    align-items: stretch;
   }
   
-  .home-expo-swiper .swiper-slide {
+  .home-banner-swiper .swiper-slide {
     height: auto;
     display: flex;
-    align-items: center;
-    justify-content: center;
     box-sizing: border-box;
+    width: auto;
   }
   
   @media (min-width: 768px) {
     padding: 8px 0;
-    .home-expo-swiper {
+    .home-banner-swiper {
       padding: 0 12px;
     }
   }
   
   @media (min-width: 1200px) {
     padding: 12px 0;
-    .home-expo-swiper {
+    .home-banner-swiper {
       padding: 0 16px;
     }
   }
@@ -103,64 +104,70 @@ export const SliderTrack = styled.div`
   }
 `;
 
+/* Card add-banner style: background-image, card-body overlay */
 export const SlideCard = styled.div`
   width: 100%;
-  max-width: 100%;
-  flex: 0 0 75%;
-  scroll-snap-align: center;
-  scroll-snap-stop: always;
+  height: 100%;
+  min-height: 160px;
   position: relative;
-  border-radius: 20px;
+  border-radius: 16px;
   overflow: hidden;
-  background: ${props => props.theme.backgroundColor || "transparent"};
-  box-shadow: none;
-  transform: ${props => props.$isActive ? "scale(1)" : "scale(0.92)"};
-  opacity: ${props => props.$isActive ? 1 : 0.65};
-  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-  aspect-ratio: 16 / 10;
-  animation: ${props => props.$isActive ? scaleIn : "none"} 0.3s ease-out;
+  background-color: ${props => props.theme.categoryUnactive || "#e0e0e0"};
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
   
   &:hover {
-    transform: ${props => props.$isActive ? "scale(1.02)" : "scale(0.95)"};
-    opacity: ${props => props.$isActive ? 1 : 0.8};
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
   }
   
-  @media (max-width: 768px) {
-    flex: 0 0 80%;
-    border-radius: 16px;
-    aspect-ratio: 16 / 11;
+  @media (max-width: 767px) {
+    min-height: 140px;
+    border-radius: 12px;
+  }
+  
+  @media (min-width: 768px) {
+    min-height: 180px;
   }
   
   @media (min-width: 1200px) {
-    flex: 0 0 70%;
-    border-radius: 24px;
-    aspect-ratio: 16 / 6;
+    min-height: 200px;
+    border-radius: 20px;
   }
 `;
 
-export const SlideImage = styled.img`
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-  user-select: none;
-  pointer-events: none;
-  transition: transform 0.5s ease;
-  
-  ${SlideCard}:hover & {
-    transform: scale(1.05);
-  }
-`;
-
-export const SlideOverlay = styled.div`
+export const CardBody = styled.div`
   position: absolute;
   inset: 0;
-  background: ${props => props.$isActive 
-    ? "linear-gradient(180deg, transparent 40%, rgba(0, 0, 0, 0.3) 100%)"
-    : "linear-gradient(180deg, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.4) 100%)"
-  };
+  display: flex;
+  align-items: flex-end;
+  padding: 16px;
   pointer-events: none;
-  transition: background 0.4s ease;
+  
+  @media (min-width: 1200px) {
+    padding: 20px;
+  }
+`;
+
+export const CardInfo = styled.div`
+  width: 70%;
+  max-width: 100%;
+`;
+
+export const SlideTitle = styled.h4`
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.95);
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+  line-height: 1.3;
+  
+  @media (min-width: 768px) {
+    font-size: 16px;
+  }
 `;
 
 export const SliderArrows = styled.div`

@@ -82,8 +82,10 @@ export default function Restaurants() {
   const [excelRestaurantId, setExcelRestaurantId] = useState("");
   const [excelUploading, setExcelUploading] = useState(false);
   const [excelMessage, setExcelMessage] = useState(null);
-
-
+  const [gridSearch, setGridSearch] = useState("");
+  const [paymentDateFrom, setPaymentDateFrom] = useState("");
+  const [paymentDateTo, setPaymentDateTo] = useState("");
+  const [paymentDatePassedOnly, setPaymentDatePassedOnly] = useState(false);
 
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -102,6 +104,12 @@ export default function Restaurants() {
 
   const { response, isLoading, refetch } = useGetRestaurants({
     onSuccess: () => { },
+    filterParams: {
+      ...(gridSearch.trim() && { search: gridSearch.trim() }),
+      ...(paymentDateFrom && { paymentDateFrom }),
+      ...(paymentDateTo && { paymentDateTo }),
+      ...(paymentDatePassedOnly && { paymentDatePassed: "1" }),
+    },
   });
 
   const refetchRestaurants = () => {
@@ -224,10 +232,10 @@ export default function Restaurants() {
   };
 
   useEffect(() => {
-    if (!isLoading) {
-      setRestaurants(response?.data);
+    if (!isLoading && response?.data) {
+      setRestaurants(response.data);
     }
-  }, [isLoading]);
+  }, [isLoading, response]);
 
   const handleEdit = ({
     username,
@@ -255,6 +263,9 @@ export default function Restaurants() {
     business_type,
     all_items_style,
     product_details_carousel_style,
+    payment_date,
+    amount,
+    is_paid,
   }) => {
     const theme = JSON.parse(themeString);
     const features = JSON.parse(featureString);
@@ -281,6 +292,9 @@ export default function Restaurants() {
       business_type,
       all_items_style,
       product_details_carousel_style,
+      payment_date,
+      amount,
+      is_paid,
     });
     setIsEditMode(true);
     setTemplate(template_id);
@@ -306,6 +320,9 @@ export default function Restaurants() {
     setValue("business_type", business_type || "restaurant");
     setValue("all_items_style", all_items_style || "grid");
     setValue("product_details_carousel_style", product_details_carousel_style || "normal");
+    setValue("payment_date", payment_date ? (payment_date.split?.("T")?.[0] ?? payment_date) : "");
+    setValue("amount", amount != null && amount !== "" ? amount : "");
+    setValue("is_paid", !!is_paid);
     
     // Set theme colors in form: for the current template, set every color from DB or default
     const templateConfig = templates.find((t) => t.id == template_id);
@@ -369,6 +386,9 @@ export default function Restaurants() {
           business_type: data.business_type || "restaurant",
           all_items_style: data.all_items_style || "grid",
           product_details_carousel_style: data.product_details_carousel_style || "normal",
+          payment_date: data.payment_date || null,
+          amount: data.amount != null && data.amount !== "" ? data.amount : null,
+          is_paid: data.is_paid === true || data.is_paid === "true" || data.is_paid === 1,
         };
         console.log("Formatted form data:", formData);
         if (selectedProduct) {
@@ -434,7 +454,7 @@ export default function Restaurants() {
             selectedIdForAction={selectedIdForAction}
             setIsOpen={setIsPopupOpen}
           />
-          <div style={{ display: "flex", gap: "12px", marginBottom: "20px" }}>
+          <div style={{ display: "flex", gap: "12px", marginBottom: "20px", flexWrap: "wrap" }}>
             <AddRestaurant onClick={() => setShowAddComponent(true)}>
               Add Restaurant
             </AddRestaurant>
@@ -450,6 +470,42 @@ export default function Restaurants() {
               Add Restaurant via Excel
             </Button>
           </div>
+          <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2, alignItems: "center", mb: 2 }}>
+            <TextField
+              size="small"
+              placeholder="Search name, username, phone..."
+              value={gridSearch}
+              onChange={(e) => setGridSearch(e.target.value)}
+              sx={{ minWidth: 220 }}
+            />
+            <TextField
+              size="small"
+              label="Payment date from"
+              type="date"
+              value={paymentDateFrom}
+              onChange={(e) => setPaymentDateFrom(e.target.value)}
+              InputLabelProps={{ shrink: true }}
+              sx={{ width: 160 }}
+            />
+            <TextField
+              size="small"
+              label="Payment date to"
+              type="date"
+              value={paymentDateTo}
+              onChange={(e) => setPaymentDateTo(e.target.value)}
+              InputLabelProps={{ shrink: true }}
+              sx={{ width: 160 }}
+            />
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={paymentDatePassedOnly}
+                  onChange={(e) => setPaymentDatePassedOnly(e.target.checked)}
+                />
+              }
+              label="Need renewal (payment date passed)"
+            />
+          </Box>
           {/* <Table>
             <thead>
               <tr>
@@ -481,7 +537,12 @@ export default function Restaurants() {
               })}
             </tbody>
           </Table> */}
-          <TableRestaurants restaurants={restaurants} setSelectedIdForAction={setSelectedIdForAction} setIsPopupOpen={setIsPopupOpen} handleEdit={handleEdit} />
+          <TableRestaurants
+            restaurants={restaurants}
+            setSelectedIdForAction={setSelectedIdForAction}
+            setIsPopupOpen={setIsPopupOpen}
+            handleEdit={handleEdit}
+          />
           <Button
             style={{
               alignSelf: "flex-start",
@@ -817,6 +878,34 @@ export default function Restaurants() {
                 label="Restaurant is Valid/Active"
               />
             </FormControl>
+            <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2, alignItems: "center", mt: 1 }}>
+              <TextField
+                label="Payment Date"
+                type="date"
+                {...register("payment_date")}
+                InputLabelProps={{ shrink: true }}
+                style={{ width: "180px" }}
+              />
+              <TextField
+                label="Amount"
+                type="number"
+                inputProps={{ step: 0.01, min: 0 }}
+                {...register("amount")}
+                style={{ width: "120px" }}
+              />
+              <FormControl component="fieldset" style={{ display: "inline-flex" }}>
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      {...register("is_paid")}
+                      defaultChecked={!!selectedProduct?.is_paid}
+                      onChange={(e) => setValue("is_paid", e.target.checked)}
+                    />
+                  }
+                  label="Is Paid"
+                />
+              </FormControl>
+            </Box>
             <Box sx={{ width: "48%" }}>
               <TextField
                 label="English Slogan"
