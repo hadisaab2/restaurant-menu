@@ -106,6 +106,7 @@ export const CategoryName = styled.span`
     white-space: normal;
     word-wrap: break-word;
     font-size: 12px;
+    color: ${(props) => (props.categoryId == props.activeCategory ? (props.theme.categoryActiveText || props.theme.categoryactivetext) : (props.theme.categoryUnactiveText || props.theme.categoryunactivetext || props.theme.textColor || "#333"))};
   user-select: none !important;
   -webkit-user-select: none !important;  /* For Safari (iOS) */
   -moz-user-select: none !important;     /* For Firefox */

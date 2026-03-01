@@ -22,6 +22,7 @@ import { InstallPrompt } from "./installPrompt";
 import CategoriesGrid from "./CategoriesGrid";
 import CategoryHeader from "./CategoryHeader";
 import HomePage from "./HomePage";
+import ShopPage from "./ShopPage";
 import NavigationBar from "./NavigationBar";
 import BottomTabBar from "./BottomTabBar";
 import CartAnimation from "./CartAnimation";
@@ -66,6 +67,16 @@ export default function Theme3() {
   const theme3Categories = showAllItemsCategory
     ? [allItemsCategory, ...sortedCategories]
     : sortedCategories;
+
+  // Theme4: category display mode (classic = categories grid then products; shop = one page with pills + products)
+  const theme = restaurant?.theme
+    ? typeof restaurant.theme === "string"
+      ? JSON.parse(restaurant.theme)
+      : restaurant.theme
+    : {};
+  const categoryDisplayMode = theme.categoryDisplayMode || "classic";
+  const isShopMode = Number(restaurant?.template_id) === 4 && categoryDisplayMode === "shop";
+  const shopCategories = isShopMode ? [allItemsCategory, ...sortedCategories] : theme3Categories;
 
   const handleLanguage = (lang) => {
     dispatch(changelanuage({ name: restaurantName, activeLanguage: lang }));
@@ -144,6 +155,10 @@ export default function Theme3() {
   const prevSidebarRef = useRef(showSidebar);
   const [cartAnimationTrigger, setCartAnimationTrigger] = useState(0);
   const [cartAnimationSource, setCartAnimationSource] = useState(null);
+  const onAddToCart = (element) => {
+    setCartAnimationTrigger((t) => t + 1);
+    setCartAnimationSource(element);
+  };
 
   const itemCount = useSelector((state) => {
     const items = state.cart[restaurantName] || []; // Access cart by restaurant name, default to empty array if not found
@@ -153,16 +168,23 @@ export default function Theme3() {
     categoryId ? categoryId : null
   );
 
-  // Handle explore click - switch from home to categories view
+  // Handle explore click - switch from home to categories view (or shop page in shop mode)
   const handleExploreClick = (categoryId = null) => {
     if (categoryId) {
-      // Direct category click from home page
       handleCategoryClick(categoryId);
     } else {
-      // General explore button - go to categories
-      setViewMode("categories");
-      // Scroll to top when navigating to categories
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      if (isShopMode) {
+        setViewMode("products");
+        setactiveCategory("all-items");
+        setSearchText("");
+        const newParams = new URLSearchParams(searchParams);
+        newParams.set("categoryId", "all-items");
+        setSearchParams(newParams);
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      } else {
+        setViewMode("categories");
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
     }
   };
 
@@ -177,18 +199,19 @@ export default function Theme3() {
     setSearchParams(newParams);
   };
 
-  // Handle back button - return to categories view
+  // Handle back button - return to categories view (or home in shop mode)
   const handleBackToCategories = () => {
-    // Set viewMode first before URL change
+    if (isShopMode) {
+      handleBackToHome();
+      return;
+    }
     setViewMode("categories");
     setactiveCategory(null);
     setSearchText("");
-    // Remove categoryId from URL
     const newParams = new URLSearchParams(searchParams);
     newParams.delete("categoryId");
     setSearchParams(newParams);
-    // Scroll to top when returning to categories
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   // Handle back to home
@@ -281,6 +304,18 @@ export default function Theme3() {
     // Don't automatically change viewMode when categoryId is removed
     // Let handleBackToCategories control the viewMode change
   }, [categoryId]);
+
+  // Shop mode: "categories" view is not used; redirect to products (shop page) with all-items
+  useEffect(() => {
+    if (isShopMode && viewMode === "categories") {
+      setViewMode("products");
+      setactiveCategory("all-items");
+      setSearchText("");
+      const newParams = new URLSearchParams(searchParams);
+      newParams.set("categoryId", "all-items");
+      setSearchParams(newParams);
+    }
+  }, [isShopMode, viewMode]);
 
   // Close popups when navigating (productId or categoryId changes)
   useEffect(() => {
@@ -435,8 +470,8 @@ export default function Theme3() {
           />
         )}
 
-        {/* Show HeaderTop only (logo and menu) */}
-        {viewMode === "categories" && (
+        {/* Show HeaderTop only (logo and menu) - not in shop mode */}
+        {viewMode === "categories" && !isShopMode && (
           <Header
             categories={theme3Categories}
             activeCategory={activeCategory}
@@ -451,8 +486,8 @@ export default function Theme3() {
           />
         )}
 
-        {/* Show Category Header when viewing products, but not when viewing a product directly */}
-        {viewMode === "products" && activeCategory && !productId && (
+        {/* Show Category Header when viewing products (classic mode only), but not when viewing a product directly */}
+        {viewMode === "products" && activeCategory && !productId && !isShopMode && (
           <CategoryHeader
             categoryId={activeCategory}
             categories={theme3Categories}
@@ -465,8 +500,8 @@ export default function Theme3() {
           />
         )}
 
-        {/* Show Categories Grid initially */}
-        {viewMode === "categories" && (
+        {/* Show Categories Grid initially (classic mode only) */}
+        {viewMode === "categories" && !isShopMode && (
           <CategoriesGrid
             categories={
               searchText
@@ -481,8 +516,26 @@ export default function Theme3() {
           />
         )}
 
-        {/* Show Products when a category is selected */}
-        {viewMode === "products" && activeCategory && (
+        {/* Show Shop page (categories + products on one page) when shop mode */}
+        {viewMode === "products" && isShopMode && (
+          <ShopPage
+            categories={shopCategories}
+            activeCategory={activeCategory || "all-items"}
+            setactiveCategory={setactiveCategory}
+            searchText={searchText}
+            setSearchText={setSearchText}
+            searchParams={searchParams}
+            setSearchParams={setSearchParams}
+            menu={restaurant?.categories || []}
+            showPopup={showPopup}
+            setcarouselPosition={setcarouselPosition}
+            carouselPosition={carouselPosition}
+            onAddToCart={onAddToCart}
+          />
+        )}
+
+        {/* Show Products (classic) when a category is selected */}
+        {viewMode === "products" && activeCategory && !isShopMode && (
           <Products
             menu={restaurant?.categories || []}
             activeCategory={activeCategory}
@@ -492,6 +545,7 @@ export default function Theme3() {
             setcarouselPosition={setcarouselPosition}
             carouselPosition={carouselPosition}
             categories={theme3Categories}
+            onAddToCart={onAddToCart}
           />
         )}
       </MenuWrapper>

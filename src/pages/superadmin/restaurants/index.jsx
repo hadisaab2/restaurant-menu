@@ -1459,6 +1459,19 @@ export default function Restaurants() {
             </ColorsBlock>
             {isTemplate4 && (
               <>
+                <FormSectionHeader>Category / Shop layout (theme4)</FormSectionHeader>
+                <FormControl fullWidth sx={{ mb: 2, maxWidth: 400 }}>
+                  <InputLabel>Layout</InputLabel>
+                  <Select
+                    label="Layout"
+                    {...register("theme.[categoryDisplayMode]")}
+                    defaultValue={selectedProduct?.theme?.categoryDisplayMode ?? "classic"}
+                    onChange={(e) => setValue("theme.[categoryDisplayMode]", e.target.value)}
+                  >
+                    <MenuItem value="classic">Classic (categories on home, product list on separate page)</MenuItem>
+                    <MenuItem value="shop">Shop (categories and products on one page)</MenuItem>
+                  </Select>
+                </FormControl>
                 <FormSectionHeader>Section backgrounds (theme4)</FormSectionHeader>
                 <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1, mb: 2 }}>
                   {[
