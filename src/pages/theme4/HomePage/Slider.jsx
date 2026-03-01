@@ -1,98 +1,105 @@
-import React, { useState, useEffect } from "react";
+import React, { useRef, useState } from "react";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Autoplay } from "swiper/modules";
+import "swiper/css";
 import {
   SliderContainer,
-  SliderWrapper,
-  Slide,
-  SlideImage,
+  SwiperWrap,
+  SlideCard,
+  CardBody,
+  CardInfo,
+  SlideTitle,
   SliderDots,
   Dot,
   SliderArrows,
   ArrowButton,
-  SlideOverlay,
 } from "./SliderStyles";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 
+const IMAGE_BASE = "https://storage.googleapis.com/ecommerce-bucket-testing";
+
 export default function Slider({ images, activeLanguage }) {
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [isAutoPlaying, setIsAutoPlaying] = useState(true);
+  const swiperRef = useRef(null);
+  const [activeIndex, setActiveIndex] = useState(0);
 
-  useEffect(() => {
-    if (!isAutoPlaying || !images || images.length === 0) return;
-
-    const interval = setInterval(() => {
-      setCurrentIndex((prevIndex) => (prevIndex + 1) % images.length);
-    }, 5000); // Change slide every 5 seconds
-
-    return () => clearInterval(interval);
-  }, [isAutoPlaying, images]);
+  const totalSlides = images?.length || 0;
 
   if (!images || images.length === 0) {
     return null;
   }
 
   const goToSlide = (index) => {
-    setCurrentIndex(index);
-    setIsAutoPlaying(false);
-    setTimeout(() => setIsAutoPlaying(true), 10000); // Resume auto-play after 10 seconds
-  };
-
-  const goToPrevious = () => {
-    setCurrentIndex((prevIndex) => (prevIndex - 1 + images.length) % images.length);
-    setIsAutoPlaying(false);
-    setTimeout(() => setIsAutoPlaying(true), 10000);
-  };
-
-  const goToNext = () => {
-    setCurrentIndex((prevIndex) => (prevIndex + 1) % images.length);
-    setIsAutoPlaying(false);
-    setTimeout(() => setIsAutoPlaying(true), 10000);
+    if (swiperRef.current) {
+      swiperRef.current.slideToLoop(index);
+    }
+    setActiveIndex(index);
   };
 
   return (
-    <SliderContainer>
-      <SliderWrapper>
-        {images.map((image, index) => (
-          <Slide
-            key={image.id || index}
-            active={index === currentIndex}
-            style={{
-              transform: `translateX(-${currentIndex * 100}%)`,
-            }}
-          >
-            <SlideImage
-              src={`https://storage.googleapis.com/ecommerce-bucket-testing/${image.url}`}
-              alt={`Slider ${index + 1}`}
-            />
-            <SlideOverlay />
-          </Slide>
-        ))}
-      </SliderWrapper>
+    <SliderContainer className="m-b10" id="swiper">
+      <SwiperWrap className="swiper-btn-center-lr1">
+        <Swiper
+          onSwiper={(swiper) => {
+            swiperRef.current = swiper;
+          }}
+          onSlideChange={(swiper) => {
+            setActiveIndex(swiper.realIndex);
+          }}
+          modules={[Autoplay]}
+          slidesPerView={1.2}
+          spaceBetween={10}
+          loop={totalSlides > 1}
+          grabCursor
+          speed={400}
+          autoplay={
+            totalSlides > 1
+              ? { delay: 5000, disableOnInteraction: false }
+              : false
+          }
+          breakpoints={{
+            576: { slidesPerView: 1.5, spaceBetween: 10 },
+            768: { slidesPerView: 2, spaceBetween: 10 },
+            992: { slidesPerView: 2.5, spaceBetween: 10 },
+            1200: { slidesPerView: 3, spaceBetween: 10 },
+          }}
+          className="home-banner-swiper tag-group recomand-swiper"
+        >
+          {images.map((image, index) => {
+            const imageUrl = image.url
+              ? `${IMAGE_BASE}/${image.url}`
+              : "";
+            const title = activeLanguage === "ar" ? image.ar_title : image.en_title;
+            return (
+              <SwiperSlide key={image.id || index}>
+                <SlideCard
+                  className="card add-banner"
+                  style={{ backgroundImage: imageUrl ? `url(${imageUrl})` : undefined }}
+                >
+                  <CardBody className="card-body">
+                    <CardInfo className="card-info w-70">
+                      <SlideTitle className="title mb-2 text-white">
+                        {title || ""}
+                      </SlideTitle>
+                    </CardInfo>
+                  </CardBody>
+                </SlideCard>
+              </SwiperSlide>
+            );
+          })}
+        </Swiper>
 
-      {images.length > 1 && (
+        
+      </SwiperWrap>
+
+      {totalSlides > 1 && (
         <>
-          <SliderArrows>
-            <ArrowButton
-              onClick={goToPrevious}
-              position="left"
-              activeLanguage={activeLanguage}
-            >
-              <FaChevronLeft />
-            </ArrowButton>
-            <ArrowButton
-              onClick={goToNext}
-              position="right"
-              activeLanguage={activeLanguage}
-            >
-              <FaChevronRight />
-            </ArrowButton>
-          </SliderArrows>
-
-          <SliderDots activeLanguage={activeLanguage}>
+          <SliderDots>
             {images.map((_, index) => (
               <Dot
                 key={index}
-                active={index === currentIndex}
+                $active={index === activeIndex}
                 onClick={() => goToSlide(index)}
+                aria-label={`Go to slide ${index + 1}`}
               />
             ))}
           </SliderDots>
@@ -101,4 +108,3 @@ export default function Slider({ images, activeLanguage }) {
     </SliderContainer>
   );
 }
-

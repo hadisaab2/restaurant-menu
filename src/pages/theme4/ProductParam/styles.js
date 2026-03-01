@@ -2,64 +2,199 @@ import styled from "styled-components";
 import { keyframes } from "styled-components";
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 
-
-
-
-const slideAnimation = (x, y, width) => keyframes`
- 0% { 
-    right: -100%;
-    
-}
- 100% { 
-    right: 0;
-
-}
-`;
-
-const slideAnimationScreen = (x, y, width) => keyframes`
- 0% { 
-    left: ${x}px;
-    top:${y}px;
-    width:${width}px;
-    height:30vh;
-    border-radius: 10px;
-    
-}
- 100% { 
-    left: 0;
-    top:0;
-    width:100%;
-    height: 100vh;
-    border-radius: 0px;
-
-}
-`;
-export const SearchProductContainer = styled.div`
-
-position: fixed;
-height: 100vh;
-width: 100%;
-align-items: center;
-justify-content: center;
-top:0;
-right: ${props => props.CloseAnimation ? 0 : "-100%"};
-color:${props => props.theme.textColor};
-background-color:${props => props.theme.backgroundColor};
-padding-bottom:150px;
-
-  overflow: scroll;
-  transition: all 1s;
-  animation: ${slideAnimation} 1.1s;
-  z-index: 6;
-  ::-webkit-scrollbar {
-    display: none;
+// Backdrop fade-in animation - smoother
+const backdropFadeIn = keyframes`
+  0% {
+    opacity: 0;
+    backdrop-filter: blur(0px);
   }
-  @media (min-width: 1024px) {
-    /* animation: ${({ x, y, width }) => slideAnimationScreen(x, y, width)} 0.8s;
-    height: ${(props) => (props.CloseAnimation ? "100vh" : `30vh`)}; */
+  100% {
+    opacity: 1;
+    backdrop-filter: blur(4px);
+  }
+`;
 
+// Popup expand animation - starts as a line in the middle, then expands to floating modal
+const popupExpand = keyframes`
+  0% {
+    width: 0%;
+    height: 3px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.8);
+    border-radius: 0px;
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  40% {
+    width: 92%;
+    height: 3px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(1);
+    border-radius: 24px;
+  }
+  100% {
+    width: 92%;
+    height: calc(100vh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 90px);
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(1);
+    border-radius: 24px;
+    opacity: 1;
+  }
+
+  @media (min-width: 768px) {
+    40% {
+      width: 88%;
+      border-radius: 28px;
     }
+    100% {
+      width: 88%;
+      border-radius: 28px;
+    }
+  }
 
+  @media (min-width: 1024px) {
+    40% {
+      width: 85%;
+      border-radius: 32px;
+    }
+    100% {
+      width: 85%;
+      border-radius: 32px;
+    }
+  }
+`;
+
+// Popup close animation - collapses back to a line
+const popupCollapse = keyframes`
+  0% {
+    width: 92%;
+    height: calc(100vh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 90px);
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(1);
+    border-radius: 24px;
+    opacity: 1;
+  }
+  60% {
+    width: 92%;
+    height: 3px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(1);
+    border-radius: 24px;
+    opacity: 0.5;
+  }
+  90% {
+    opacity: 0.3;
+  }
+  100% {
+    width: 0%;
+    height: 3px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.8);
+    border-radius: 0px;
+    opacity: 0;
+  }
+
+  @media (min-width: 768px) {
+    0% {
+      width: 88%;
+      border-radius: 28px;
+    }
+    60% {
+      width: 88%;
+      border-radius: 28px;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    0% {
+      width: 85%;
+      border-radius: 32px;
+    }
+    60% {
+      width: 85%;
+      border-radius: 32px;
+    }
+  }
+`;
+
+// Backdrop component
+export const Backdrop = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  z-index: 299;
+  opacity: ${props => props.CloseAnimation ? 1 : 0};
+  animation: ${props => props.CloseAnimation ? backdropFadeIn : 'none'} 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  /* Always capture clicks while mounted so closing doesn't let taps pass through to product grid (avoids reopen on 2nd close) */
+  pointer-events: auto;
+`;
+
+export const SearchProductContainer = styled.div`
+  position: fixed;
+  width: 92%;
+  height: calc(100vh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 90px);
+  max-height: calc(100vh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 90px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: ${props => props.theme.textColor};
+  background-color: ${props => props.theme.backgroundColor};
+  padding-bottom: 0;
+  overflow-y: ${props => props.CloseAnimation ? 'auto' : 'hidden'};
+  overflow-x: hidden;
+  z-index: 300;
+  border-radius: 24px;
+  box-shadow: ${props => props.CloseAnimation 
+    ? '0 20px 60px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(0, 0, 0, 0.05)' 
+    : 'none'};
+  
+  /* Animation based on CloseAnimation state - smoother easing */
+  animation: ${props => props.CloseAnimation ? popupExpand : popupCollapse} 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  animation-fill-mode: forwards;
+  
+  /* Smooth scrolling */
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+  
+  ::-webkit-scrollbar {
+    width: 6px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    background: ${props => props.theme.mainColor || '#007bff'}40;
+    border-radius: 3px;
+  }
+  
+  @media (min-width: 768px) {
+    width: 88%;
+    border-radius: 28px;
+  }
+  
+  @media (min-width: 1024px) {
+    width: 85%;
+    border-radius: 32px;
+  }
 `;
 
 
@@ -91,18 +226,41 @@ const ImageAnimationScreen = keyframes`
 
 export const ImagesContainer = styled.div`
   width: 100%;
-  height: ${(props)=>props.squareDimension?"45vh":"60vh"};
-  margin-top:80px;
-  transition: all 0.8s;
+  height: ${(props) => (props.squareDimension ? "55vh" : "70vh")};
+  margin-top: 5px;
+  padding: 10px 0;
   display: flex;
+  align-items: center;
   justify-content: center;
-  overflow: hidden;
-  @media (min-width: 1024px) {
-    /* height: ${(props) => (props.CloseAnimation ? "70vh" : "30vh")};
-    animation: ${ImageAnimationScreen} 0.8s; */
-
-    }
+  overflow: visible;
+  position: relative;
 `;
+
+export const SwiperWrapper = styled.div`
+  width: 85%;
+  height: 100%;
+  .swiper {
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+  }
+  .swiper-slide {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 18px;
+    overflow: hidden;
+    box-shadow: none !important;
+  }
+  .swiper-pagination {
+    bottom: 8px;
+  }
+  .swiper-pagination-fraction {
+    color: ${(props) => props.theme.textColor || "#333"};
+    font-size: 14px;
+  }
+`;
+
 export const Carousel = styled.div`
   width: 100%;
   height: 100%;
@@ -116,7 +274,6 @@ export const CarouselItem = styled.div`
   width: 100%;
   display: inline-block;
   vertical-align: top;
-
 `;
 export const ImageWrapper = styled.div`
   height: 100%;
@@ -125,7 +282,6 @@ export const ImageWrapper = styled.div`
   align-items:center;
   justify-content:center;
   position: relative;
-
 `;
 
 const spin = keyframes`
@@ -156,16 +312,47 @@ export const LoaderWrapper = styled.div`
 height: 100%;
 `;
 
+const shimmer = keyframes`
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+`;
+
+export const SkeletonBox = styled.div`
+  width: ${(props) => props.width || "100%"};
+  height: ${(props) => props.height || "24px"};
+  border-radius: ${(props) => props.radius || "8px"};
+  background: linear-gradient(
+    90deg,
+    ${(props) => (props.theme.textColor ? `${props.theme.textColor}0c` : "rgba(0,0,0,0.06)")} 25%,
+    ${(props) => (props.theme.textColor ? `${props.theme.textColor}18` : "rgba(0,0,0,0.1)")} 50%,
+    ${(props) => (props.theme.textColor ? `${props.theme.textColor}0c` : "rgba(0,0,0,0.06)")} 75%
+  );
+  background-size: 200% 100%;
+  animation: ${shimmer} 1.2s ease-in-out infinite;
+`;
+
+export const ProductDetailSkeleton = styled.div`
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0 5%;
+  margin-top: 12px;
+`;
+
 export const Image = styled.img`
   height: 100%;
   object-fit: cover;
-  border-radius: ${(props) => (props.CloseAnimation ? "40px" : "10px")};
-  width: ${(props) => (props.CloseAnimation ? "90%" : "100%")};
-  display:${props => props.Loaded ? 'block' : 'none'};
+  border-radius: ${(props) =>
+    props.$cardSlide ? "0" : (props.CloseAnimation ? "40px" : "10px")};
+  width: ${(props) =>
+    props.$cardSlide ? "100%" : (props.CloseAnimation ? "90%" : "100%")};
+  display: ${(props) => (props.Loaded ? "block" : "none")};
   transition: all 0.8s;
-    @media (min-width: 1024px) {
-      width: ${(props) => (props.CloseAnimation ? "50%" : "100%")};
-    }
+  @media (min-width: 1024px) {
+    width: ${(props) =>
+      props.$cardSlide ? "100%" : (props.CloseAnimation ? "50%" : "100%")};
+  }
 `;
 const BackIconAnimation = keyframes`
  0% { 
@@ -180,54 +367,105 @@ const BackIconAnimation = keyframes`
 `;
 
 export const BackIcon = styled(IoIosArrowBack)`
-  font-size: 22px;
-  background-color: ${(props) => props.theme.mainColor};
-  color: ${(props) => props.theme.backgroundColor};
-
-  padding: 4px;
-  border-radius: 50%;
+  font-size: 14px;
+  color: ${(props) => props.theme.backgroundColor || "#ffffff"};
 `;
 
 export const CarouselBack = styled(IoIosArrowBack)`
-  font-size: 22px;
-  color: white;
+  font-size: 26px;
+  color: ${(props) => props.theme.backgroundColor || "#fff"};
+  background-color: ${(props) => props.theme.mainColor || "#007bff"};
+  border-radius: 50%;
+  padding: 8px;
   position:absolute;
-  left:7%;
+  left:4%;
   top:45%;
   z-index:20;
+  cursor: pointer;
   display: ${(props) => (props.CloseAnimation ? "flex" : "none")};
   @media (min-width: 1024px) {
     left:27%;
-
-
-    }
-
+  }
 `;
 
 export const CarouselForward = styled(IoIosArrowForward)`
-  font-size: 22px;
-  color: white;
+  font-size: 26px;
+  color: ${(props) => props.theme.backgroundColor || "#fff"};
+  background-color: ${(props) => props.theme.mainColor || "#007bff"};
+  border-radius: 50%;
+  padding: 8px;
   position:absolute;
-  right:7%;
+  right:4%;
   top:45%;
   z-index:20;
+  cursor: pointer;
   display: ${(props) => (props.CloseAnimation ? "flex" : "none")};
   @media (min-width: 1024px) {
     right:27%;
-
-
-    }
+  }
 `;
+export const ProductHeader = styled.div`
+  position: sticky;
+  top: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  display: ${(props) => (props.CloseAnimation ? "flex" : "none")};
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 30px;
+  z-index: 301;
+  background-color: ${props => props.theme.backgroundColor || "transparent"};
+  transition: opacity 0.4s ease-in-out;
+  
+  @media (min-width: 1024px) {
+    padding: 25px 40px;
+  }
+`;
+
+export const ProductHeaderTitle = styled.h2`
+  font-size: 18px;
+  font-weight: 600;
+  color: ${props => props.theme.textColor || "#1a1a1a"};
+  margin: 0;
+  text-align: center;
+  flex: 1;
+  direction: ${props => props.activeLanguage === "ar" ? "rtl" : "ltr"};
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  padding: 0 20px;
+  
+  @media (min-width: 768px) {
+    font-size: 22px;
+    font-weight: 700;
+  }
+`;
+
 export const BackBtn = styled.button`
-  position: fixed;
-  z-index: 8;
-  top: 30px;
-  left: 30px;
+  position: relative;
+  z-index: 302;
   outline: none;
   border: 0;
-  background-color: transparent;
-  display: ${(props) => (props.CloseAnimation ? "flex" : "none")};
-  animation: ${BackIconAnimation} 0.8s ease-in-out;
+  background-color: ${(props) => props.theme.mainColor || "#007bff"};
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  width: 27px;
+  height: 27px;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    transform: scale(1.1);
+    opacity: 0.9;
+  }
+  
+  &:active {
+    transform: scale(0.95);
+  }
 `;
 
 export const ItemCategory = styled.div`
@@ -312,21 +550,40 @@ export const ItemInfo = styled.div`
   flex-direction: column;
   position: relative;
   margin-top: 20px;
-  padding-bottom: 10vh;
+  padding-bottom: 100px;
   color: ${(props) => props.theme.textColor};
+  opacity: ${(props) => (props.CloseAnimation ? 1 : 0)};
+  transition: opacity 0.3s ease;
+  pointer-events: ${(props) => (props.CloseAnimation ? "auto" : "none")};
   @media (min-width: 1024px) {
-        width: 50%;
-    }
+    width: 50%;
+  }
+`;
+
+export const TitlePriceRow = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  width: 100%;
+  margin-bottom: 14px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid ${(props) => props.theme.mainColor ? `${props.theme.mainColor}18` : "rgba(0,0,0,0.06)"};
+  flex-wrap: wrap;
+  direction: ${props => props.activeLanguage === "en" ? "ltr" : "rtl"};
 `;
 
 export const ItemName = styled.span`
-  font-size: 21px;
-  font-weight: bold;
-  margin-left:${props => props.activeLanguage == "en" ? "0px" : null} ;
-  margin-right:${props => props.activeLanguage == "en" ? null : "0px"} ;
-  text-align:center;
-  opacity: 1;
-  margin-top: 5px;
+  font-size: clamp(1.3rem, 3.8vw, 1.55rem);
+  font-weight: 700;
+  letter-spacing: ${props => props.activeLanguage === "en" ? "0.02em" : "0"};
+  line-height: 1.35;
+  text-align: ${props => props.activeLanguage === "en" ? "left" : "right"};
+  color: ${(props) => props.theme.textColor};
+  flex: 1;
+  min-width: 0;
+  margin: 0;
 `;
 
 
@@ -342,30 +599,34 @@ export const ItemDescription = styled.span`
 `;
 
 export const PriceContainer = styled.div`
-display: flex;
-flex-direction: row;
-gap:8px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+  padding: 10px 18px;
+  border-radius: 12px;
+  background: ${(props) => props.theme.mainColor ? `${props.theme.mainColor}14` : "rgba(0,0,0,0.06)"};
+  border: 1px solid ${(props) => props.theme.mainColor ? `${props.theme.mainColor}28` : "rgba(0,0,0,0.08)"};
+  box-shadow: 0 1px 3px rgba(0,0,0,0.04);
 `;
 
 export const ItemPrice = styled.span`
-  font-size: 16px;
-  font-weight: 600;
-  transform: scale(1);
-  color: ${(props) => props.theme.mainColor};;
-  border-radius: 10px;
-  text-decoration: ${props=>props.discounted?"line-through":"none"};
-  word-spacing: 0px;
-
+  font-size: clamp(0.9rem, 2.2vw, 1rem);
+  font-weight: ${props => props.discounted ? "500" : "600"};
+  color: ${(props) =>
+    props.discounted
+      ? (props.theme.textColor ? `${props.theme.textColor}88` : "rgba(0,0,0,0.45)")
+      : (props.theme.mainColor || "inherit")};
+  text-decoration: ${props => props.discounted ? "line-through" : "none"};
+  letter-spacing: 0.02em;
 `;
-export const DiscountPrice = styled.span`
-  font-size: 16px;
-  font-weight: 600;
-  word-spacing: 3px;
-  transform: scale(1);
-  color: ${(props) => props.theme.mainColor};;
-  border-radius: 10px;
-  word-spacing: 0px;
 
+export const DiscountPrice = styled.span`
+  font-size: clamp(1.15rem, 3vw, 1.4rem);
+  font-weight: 700;
+  color: ${(props) => props.theme.mainColor || "inherit"};
+  letter-spacing: 0.03em;
 `;
 
 
@@ -381,21 +642,26 @@ const AddToCartAnimation = keyframes`
 
 export const ButtonWrapper = styled.div`
   width: 100%;
-  position: fixed;
   bottom: 0;
+  left: 0;
+  right: 0;
+  margin-top: auto;
   justify-content: center;
   flex-direction: column;
   align-items: center;
-  animation: ${AddToCartAnimation} 1.4s ease-in-out;
+  animation: ${AddToCartAnimation} 0.7s ease-in-out;
   background-color: ${(props) => props.theme.backgroundColor};
-
-  display: ${(props) => (props.CloseAnimation ? "flex" : "none")};
-  box-shadow: 0px -3px 5px rgba(180, 180, 180, 0.1); /* Slight shadow on the top */
+  z-index: 301;
+  display: flex;
+  box-shadow: 0px -3px 5px rgba(180, 180, 180, 0.1);
   padding-bottom: 10px;
-  margin-top: 30px;
+  padding-top: 10px;
+  opacity: ${(props) => (props.CloseAnimation ? 1 : 0)};
+  transition: opacity 0.3s ease;
+  pointer-events: ${(props) => (props.CloseAnimation ? "auto" : "none")};
   @media (min-width: 1024px) {
-        width: 50%;
-    }
+    width: 50%;
+  }
 `;
 export const AddToCart = styled.button`
   outline: none;
@@ -468,21 +734,33 @@ const CopyBtnAnimation = keyframes`
 
 export const CopyButton = styled.div`
   display: flex;
- align-items: center;
- justify-content: center;
- height: 27px;
- width: 27px;
- border-radius: 50%;
- position: fixed;
-  z-index: 8;
-  top: 30px;
+  align-items: center;
+  justify-content: center;
+  height: 27px;
+  width: 27px;
+  border-radius: 50%;
+  position: relative;
+  z-index: 302;
   background-color: ${props => props.theme.mainColor};
   color: ${props => props.theme.backgroundColor};
-  right: 30px;
-  display: ${(props) => (props.CloseAnimation ? "flex" : "none")};
-  animation: ${CopyBtnAnimation} 0.8s ease-in-out;
+  flex-shrink: 0;
   font-size: 14px;
   cursor: pointer;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    transform: scale(1.1);
+  }
+  
+  &:active {
+    transform: scale(0.95);
+  }
+  
+  @media (min-width: 1024px) {
+    height: 30px;
+    width: 30px;
+    font-size: 16px;
+  }
 `;
 
 
@@ -544,4 +822,68 @@ border-radius: 10px;
 
 `;
 
+export const MagnifyBtn = styled.button`
+  position: absolute;
+  bottom: 14px;
+  right: 14px;
+  z-index: 25;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: ${(props) => props.theme.mainColor || "#007bff"};
+  color: ${(props) => props.theme.backgroundColor || "#fff"};
+  font-size: 18px;
+  cursor: pointer;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+  transition: transform 0.2s ease;
+  &:active {
+    transform: scale(0.9);
+  }
+`;
 
+export const ZoomOverlay = styled.div`
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: rgba(0,0,0,0.92);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  touch-action: none;
+`;
+
+export const ZoomCloseBtn = styled.button`
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  z-index: 10000;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255,255,255,0.15);
+  color: #fff;
+  font-size: 22px;
+  cursor: pointer;
+  backdrop-filter: blur(4px);
+`;
+
+export const ZoomImage = styled.img`
+  max-width: none;
+  max-height: none;
+  transform-origin: center center;
+  transform: ${(props) => `scale(${props.$scale}) translate(${props.$translateX}px, ${props.$translateY}px)`};
+  transition: ${(props) => props.$dragging ? "none" : "transform 0.2s ease"};
+  user-select: none;
+  -webkit-user-drag: none;
+  width: 100vw;
+  height: auto;
+  object-fit: contain;
+`;

@@ -96,7 +96,46 @@ export const templates = [
       {featureName:"dinein_order",defaultValue:true},
       {featureName:"takeaway_order",defaultValue:true},
     ]
+  },
+  {
+    id: 4,
+    name: "template4",
+    colors: [
+      "mainColor",
+      "backgroundColor",
+      "textColor",
+      "categoryActive",
+      "categoryActiveIcon",
+      "categoryActiveText",
+      "categoryUnActive",
+      "categoryUnactiveIcon",
+      "BoxColor",
+      "languageTextColor",
+      "languagebackground",
+      "popupTextColor",
+      "popupbackgroundColor",
+      "popupbuttonText",
+      "formColor",
+      "sidebartext",
+      "sidebarbackground",
+      "sidebarsearch",
+      "sidebarsearchText",
+      "borderColor",
+      "homepageBackgroundColor",
+      "navigationBarBackgroundColor",
+      "slidingButtonBackgroundColor",
+      "slidingButtonTextColor",
+      "hplocationBackgroundColor",
+      "hplocationTextColor",
+      "bottomTabBarBackgroundColor",
+      "homepageCategoriesBackgroundColor"
+    ],
+    features:[
+      {featureName:"cart",defaultValue:true},
+      {featureName:"install_app",defaultValue:true},
+      {featureName:"delivery_order",defaultValue:true},
+      {featureName:"dinein_order",defaultValue:true},
+      {featureName:"takeaway_order",defaultValue:true},
+    ]
   }
-
-
 ]

@@ -1,4 +1,4 @@
-import React, {useRef, useEffect } from "react";
+import React, {useRef, useEffect, useState } from "react";
 import {
   Container,
   CarouselContainer,
@@ -16,6 +16,43 @@ import {
 import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import { useLogCategory } from "../../../../../apis/categories/logCategory";
+
+// Component for category item with image fallback
+const CategoryItem = ({ category, index, activeLanuguage, activeCategory, itemClick, carouselRefs, logoURL }) => {
+  const [imageError, setImageError] = useState(false);
+  const categoryImageUrl = category.image_url
+    ? `https://storage.googleapis.com/ecommerce-bucket-testing/${category.image_url}`
+    : null;
+
+  return (
+    <CarouselItem
+      activeLanuguage={activeLanuguage}
+      activeCategory={activeCategory}
+      categoryId={category.id}
+      isAllItems={category.isAllItems}
+      onClick={() => itemClick(category.id, index)}
+      ref={(el) => (carouselRefs.current[index] = el)}
+    >
+      <CategoryWrapper activeCategory={activeCategory} categoryId={category.id} isAllItems={category.isAllItems}>
+        <IconContainer>
+          <IconWrapper activeCategory={activeCategory} categoryId={category.id} isAllItems={category.isAllItems}>
+            <Icon 
+              src={imageError || !categoryImageUrl ? logoURL : categoryImageUrl}
+              onError={() => setImageError(true)}
+            />
+          </IconWrapper>
+        </IconContainer>
+        <TextContainer>
+          <CategoryName activeCategory={activeCategory} categoryId={category.id} isAllItems={category.isAllItems}>
+            {activeLanuguage == "en"
+              ? category.en_category
+              : category.ar_category}
+          </CategoryName>
+        </TextContainer>
+      </CategoryWrapper>
+    </CarouselItem>
+  );
+};
 
 export default function VerticalCategory({
   categories,
@@ -37,6 +74,15 @@ export default function VerticalCategory({
   const activeLanuguage = useSelector(
     (state) => state.restaurant?.[restaurantName].activeLanguage
   );
+
+  const restaurant = useSelector(
+    (state) => state.restaurant?.[restaurantName]
+  );
+
+  // Get restaurant logo URL for fallback
+  const logoURL = restaurant?.logoURL 
+    ? `https://storage.googleapis.com/ecommerce-bucket-testing/${restaurant.logoURL}`
+    : null;
 
   const { refetch } = useLogCategory({
     CategoryId: activeCategory,
@@ -89,32 +135,16 @@ export default function VerticalCategory({
         <Carousel carouselPosition={carouselPosition}>
           {categories?.sort((a, b) => b.priority - a.priority).map((category, index) => {
             return (
-              <CarouselItem
+              <CategoryItem
+                key={category.id}
+                category={category}
+                index={index}
                 activeLanuguage={activeLanuguage}
                 activeCategory={activeCategory}
-                categoryId={category.id}
-                onClick={() => itemClick(category.id,index)}
-                ref={(el) => (carouselRefs.current[index] = el)} // Assign ref to each category item
-
-                // onDoubleClick={() => handleDoubleClick(category.id)} // Attach double-click handler
-                >
-                <CategoryWrapper activeCategory={activeCategory} categoryId={category.id}>
-                  <IconContainer >
-                    <IconWrapper activeCategory={activeCategory} categoryId={category.id} >
-                      <Icon src={`https://storage.googleapis.com/ecommerce-bucket-testing/${category.image_url}`} 
-                      />
-
-                    </IconWrapper>
-                  </IconContainer>
-                  <TextContainer>
-                    <CategoryName activeCategory={activeCategory} categoryId={category.id}>
-                      {activeLanuguage == "en"
-                        ? category.en_category
-                        : category.ar_category}
-                    </CategoryName>
-                  </TextContainer>
-                </CategoryWrapper>
-              </CarouselItem>
+                itemClick={itemClick}
+                carouselRefs={carouselRefs}
+                logoURL={logoURL}
+              />
             );
           })}
         </Carousel>

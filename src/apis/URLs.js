@@ -82,6 +82,38 @@ export const GET_SLIDER_IMAGES_URL = (restaurantId) =>
 export const EDIT_SLIDER_IMAGE_URL = (id) => `${REACT_APP_BASE_URL}/slider-images/${id}`;
 export const DELETE_SLIDER_IMAGE_URL = (id) => `${REACT_APP_BASE_URL}/slider-images/${id}`;
 
+export const GET_BADGES_URL = (restaurantId) =>
+  `${REACT_APP_BASE_URL}/badges/${restaurantId}`;
+export const ADD_BADGE_URL = `${REACT_APP_BASE_URL}/badges`;
+export const EDIT_BADGE_URL = (id) => `${REACT_APP_BASE_URL}/badges/${id}`;
+export const DELETE_BADGE_URL = (id) => `${REACT_APP_BASE_URL}/badges/${id}`;
+
+export const GET_VALUE_CARDS_URL = (restaurantId) =>
+  `${REACT_APP_BASE_URL}/value-cards/${restaurantId}`;
+export const ADD_VALUE_CARD_URL = `${REACT_APP_BASE_URL}/value-cards`;
+export const EDIT_VALUE_CARD_URL = (id) => `${REACT_APP_BASE_URL}/value-cards/${id}`;
+export const UPDATE_VALUE_CARDS_SECTION_URL = (restaurantId) =>
+  `${REACT_APP_BASE_URL}/value-cards/section/${restaurantId}`;
+export const DELETE_VALUE_CARD_URL = (id) => `${REACT_APP_BASE_URL}/value-cards/${id}`;
+
+export const GET_WORKING_HOURS_URL = (restaurantId) =>
+  `${REACT_APP_BASE_URL}/working-hours?restaurantId=${restaurantId}`;
+export const ADD_WORKING_HOURS_URL = `${REACT_APP_BASE_URL}/working-hours`;
+export const EDIT_WORKING_HOURS_URL = (id) =>
+  `${REACT_APP_BASE_URL}/working-hours/${id}`;
+export const DELETE_WORKING_HOURS_URL = (id) =>
+  `${REACT_APP_BASE_URL}/working-hours/${id}`;
+
+export const GET_STATS_SECTION_URL = (restaurantId) =>
+  `${REACT_APP_BASE_URL}/stats-section/${restaurantId}`;
+export const UPDATE_STATS_SECTION_URL = (restaurantId) =>
+  `${REACT_APP_BASE_URL}/stats-section/${restaurantId}`;
+export const ADD_STAT_ITEM_URL = `${REACT_APP_BASE_URL}/stats-section/items`;
+export const EDIT_STAT_ITEM_URL = (id) =>
+  `${REACT_APP_BASE_URL}/stats-section/items/${id}`;
+export const DELETE_STAT_ITEM_URL = (id) =>
+  `${REACT_APP_BASE_URL}/stats-section/items/${id}`;
+
 export const THREADS_ADMIN_URL = `${REACT_APP_BASE_URL}/threads/admin`;
 export const THREADS_ADMIN_STATS_URL = `${REACT_APP_BASE_URL}/threads/admin/stats`;
 export const THREAD_ADMIN_URL = (id) => `${REACT_APP_BASE_URL}/threads/admin/${id}`;

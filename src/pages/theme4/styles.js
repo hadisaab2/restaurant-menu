@@ -6,7 +6,7 @@ export const Container = styled.div`
 min-height: 100vh;
 width: 100%;
 position: relative;
-background-color: ${props=>props.theme.backgroundColor || "#f8f9fa"};
+background-color: ${props=>props.theme.backgroundColor};
 font-family: ${(props) => `${props.theme.font || "system-ui"}, "Noto Kufi Arabic" !important`};
 overflow: visible;
 `;
@@ -17,6 +17,7 @@ display: flex;
 flex-direction: column;
 height: 100%;
 position: relative;
+padding-bottom: 70px; /* Space for bottom tab bar */
 `;
 
 
@@ -108,7 +109,7 @@ z-index: 50;
 }
 `;
 
-export const Number = styled.div`
+export const CartCount = styled.div`
 position: absolute;
 left: -6px;
 top: -6px;

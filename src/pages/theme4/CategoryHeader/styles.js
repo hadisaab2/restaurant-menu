@@ -141,9 +141,13 @@ export const SearchWrapper = styled.div`
   max-width: 600px;
   margin: 0 auto;
   height: 48px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
   
   @media (min-width: 768px) {
     height: 52px;
+    gap: 12px;
   }
 `;
 
@@ -290,3 +294,60 @@ export const CategoryTitle = styled.h2`
   }
 `;
 
+export const ShareButton = styled.button`
+  height: 100%;
+  min-width: 64px;
+  font-size: 14px;
+  padding: 0 16px;
+  border-radius: 12px;
+  font-weight: 500;
+  gap: 6px;
+  flex-direction: row;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: ${props => props.theme.searchbackground || props.theme.backgroundColor || "#ffffff"};
+  color: ${props => props.theme.searchTextColor || props.theme.textColor || "#333333"};
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
+  flex-shrink: 0;
+  
+  &:hover {
+    background-color: ${props => props.theme.mainColor || props.theme.maincolor || "#007bff"}15;
+    color: ${props => props.theme.mainColor || props.theme.maincolor || "#007bff"};
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+  }
+
+  &:active {
+    transform: translateY(0);
+    transition: all 0.15s ease;
+  }
+
+  @media (min-width: 768px) {
+    min-width: 72px;
+    padding: 0 18px;
+    font-size: 15px;
+  }
+`;
+
+export const ShareIcon = styled.div`
+  color: inherit;
+  font-size: 18px;
+  transition: transform 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  ${ShareButton}:hover & {
+    transform: scale(1.1);
+  }
+
+  @media (min-width: 768px) {
+    font-size: 20px;
+  }
+`;

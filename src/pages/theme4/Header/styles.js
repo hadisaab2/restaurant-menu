@@ -8,6 +8,7 @@ width: 100%;
 display: flex;
 flex-direction: column;
 align-items: center;
+background-color: ${props=>props.theme.backgroundColor};
 `;
 
 export const TextContainer = styled.div`
@@ -136,7 +137,7 @@ box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 cursor: pointer;
 transition: all 0.3s ease;
 border: 1px solid rgba(0, 0, 0, 0.08);
-
+margin-bottom: 20px;
 &:hover {
   background-color: ${props=>props.theme.mainColor || "#007bff"}15;
   color: ${props=>props.theme.mainColor || "#007bff"};

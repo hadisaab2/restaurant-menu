@@ -1,17 +1,31 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import {
   Container,
   Close,
+  NoItems,
 } from "./styles";
-import CartItems from "./cartitems";
-import Order from "./order";
+import Wizard from "./Wizard";
+import { useParams } from "react-router-dom";
+import { useSelector } from "react-redux";
+
 export default function CartPopup({
   restaurant,
   showPopup,
-  popupHandler = { popupHandler },
+  popupHandler = () => {},
 }) {
+  const { restaurantName: paramRestaurantName } = useParams();
+  const hostname = window.location.hostname;
+  const subdomain = hostname.split(".")[0];
+  const restaurantName =
+    subdomain !== "menugic" && subdomain !== "localhost" && subdomain !== "www"
+      ? subdomain
+      : paramRestaurantName;
 
-  const [block, setblock] = useState("cart")
+  const cart = useSelector((state) => state.cart[restaurantName] || []);
+  const activeLanguage = useSelector(
+    (state) => state.restaurant?.[restaurantName]?.activeLanguage || "en"
+  );
+  const isCartEmpty = cart.length === 0;
 
   useEffect(() => {
     const handlePopState = () => {
@@ -26,15 +40,24 @@ export default function CartPopup({
     return () => window.removeEventListener("popstate", handlePopState);
   }, []);
 
+  const handleClose = () => {
+    if (typeof popupHandler === "function") {
+      popupHandler(null);
+    }
+  };
+
   return (
     <Container showPopup={showPopup}>
-      <Close
-        onClick={() => {
-          popupHandler(null);
-        }}
-      />
-      {block == "cart" && <CartItems setblock={setblock} />}
-      {block == "order" && <Order setblock={setblock} popupHandler={popupHandler} restaurant={restaurant} />}
+      
+      {isCartEmpty ? (
+        <NoItems>
+          {activeLanguage === "en"
+            ? "Your cart is empty"
+            : "سلة المشتريات فارغة"}
+        </NoItems>
+      ) : (
+        <Wizard popupHandler={popupHandler} restaurant={restaurant} />
+      )}
     </Container>
   );
 }

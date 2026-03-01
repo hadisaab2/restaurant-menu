@@ -16,24 +16,24 @@ bottom: ${props=>props.showPopup=="location"?"0%":"-100%"};
 background-color: ${props=>props.theme.popupbackgroundColor};
 width: 100%;
 transition: all 0.8s ease-in-out;
-border-top-right-radius: 60px;
-border-top-left-radius: 60px;
+border-top-right-radius: 50px;
+border-top-left-radius: 50px;
 box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.2);
 display: flex;
 flex-direction: column;
 align-items: center;
 z-index: 5;
-padding-bottom: 10vh;
+padding-bottom: 12vh;
 `;
 export const Title = styled.span`
-font-size: 30px;
+font-size: 26px;
 font-weight:bold;
 text-align: left;
 color:${props=>props.theme.mainColor}
 
 `;
 export const ResName = styled.span`
-font-size: 30px;
+font-size: 26px;
 font-weight:bold;
 text-align: left;
 color:${props=>props.theme.mainColor}
@@ -45,7 +45,7 @@ display: flex;
 flex-direction: column;
 gap:5px;
 justify-content: flex-end;
-height: 10vh;
+height: 8vh;
 `;
 
 
@@ -53,7 +53,7 @@ height: 10vh;
 
 
 export const BranchInfo = styled.div`
-  margin-top: 30px;
+  margin-top: 24px;
 width: 90%;
   display: flex;
   flex-direction: column;
@@ -69,13 +69,13 @@ display: flex;
 `;
 
 export const Info = styled.a`
-font-size:16px;
+font-size:14px;
  font-weight: 620;
  color:${props=>props.theme.popupTextColor}
 
 `;
 export const MapLink = styled.a`
-font-size:16px;
+font-size:14px;
  font-weight: 620;
  color:${props=>props.theme.popupTextColor};
  text-decoration: none;
@@ -84,28 +84,28 @@ font-size:16px;
 `;
 
 export const LocationLogo = styled(FaLocationArrow)`
-font-size: 25px;
+font-size: 22px;
 opacity: 0.8;
 color:${props=>props.theme.popupTextColor}
 `;
 
 export const CallLogo = styled(IoIosCall)`
-font-size: 25px;
+font-size: 22px;
 opacity: 0.8;
 color:${props=>props.theme.popupTextColor}
 
 `;
 export const MapsLogo = styled(MdLocationOn)`
-font-size: 25px;
+font-size: 22px;
 opacity: 0.8;
 color:${props=>props.theme.popupTextColor}
 
 `;
 
 export const Close = styled(IoMdClose)`
-font-size: 20px;
+font-size: 18px;
 position: absolute;
-top: 30px;
+top: 22px;
 right:20px;
 cursor: pointer;
 color:${props=>props.theme.popupTextColor}
@@ -114,7 +114,7 @@ color:${props=>props.theme.popupTextColor}
 
 export const SocialMediaTitle = styled.span`
 color: ${props=>props.theme.popupTextColor};
-font-size: 15px;
+font-size: 13px;
 font-weight: bold;
 
 `;
@@ -124,12 +124,12 @@ margin-top: 10px;
 
 `;
 export const SocialMediaContainer = styled.div`
-margin-top: 10px;
+margin-top: 8px;
 display: flex;
 flex-direction: row;
 width: 90%;
 align-items: center;
-gap:10px;
+gap:8px;
 `;
 
 export const InstagramContainer = styled.a`
@@ -137,8 +137,8 @@ display: flex;
 justify-content: center;
 align-items: center;
 border: 1px solid ${props=>props.theme.popupTextColor};;
-width: 30px;
-height: 30px;
+width: 26px;
+height: 26px;
 border-radius: 50%;
 cursor: pointer;
 `;
@@ -147,8 +147,8 @@ display: flex;
 justify-content: center;
 align-items: center;
 border: 1px solid ${props=>props.theme.popupTextColor};;
-width: 30px;
-height: 30px;
+width: 26px;
+height: 26px;
 border-radius: 50%;
 cursor: pointer;
 
@@ -158,8 +158,8 @@ display: flex;
 justify-content: center;
 align-items: center;
 border: 1px solid ${props=>props.theme.popupTextColor};;
-width: 30px;
-height: 30px;
+width: 26px;
+height: 26px;
 border-radius: 50%;
 cursor: pointer;
 `;
@@ -169,37 +169,37 @@ display: flex;
 justify-content: center;
 align-items: center;
 border: 1px solid ${props=>props.theme.popupTextColor};;
-width: 30px;
-height: 30px;
+width: 26px;
+height: 26px;
 border-radius: 50%;
 cursor: pointer;
 `;
 
 
 export const FacebookLogo = styled(FaFacebookF)`
-font-size: 18px;
+font-size: 16px;
 color: ${props=>props.theme.popupTextColor};
 `;
 export const WhatsappLogo = styled(IoLogoWhatsapp)`
-font-size: 18px;
+font-size: 16px;
 color: ${props=>props.theme.popupTextColor};
 
 
 `;
 export const InstagramLogo = styled(FaInstagram)`
-font-size: 18px;
+font-size: 16px;
 color: ${props=>props.theme.popupTextColor};;
 
 `;
 export const TiktokLogo = styled(BsTiktok)`
-font-size: 18px;
+font-size: 16px;
 color: ${props=>props.theme.popupTextColor};;
 
 `;
 
 
 export const PoweredBy = styled.pre`
-  font-size: 14px;
+  font-size: 12px;
   text-align: center;
   color: ${props=>props.theme.popupTextColor};
   font-style: italic;
@@ -220,7 +220,7 @@ export const Link = styled.a`
 
 export const CopyWrite = styled(MdCopyright)`
 color: ${props=>props.theme.popupTextColor};
-font-size: 15px;
+font-size: 13px;
 margin-left: 5px;
 margin-right: 5px;
 
@@ -232,9 +232,9 @@ justify-content: center;
 align-items: center;
 flex-direction: row;
 width: 90%;
-height: 50px;
-gap:25px;
-margin-top: 30px;
+height: 44px;
+gap:18px;
+margin-top: 22px;
 `;
 
 export const ButtonFilled = styled.button`
@@ -248,8 +248,8 @@ height: 100%;
 border:0;
 color: ${props=>props.theme.popupbackgroundColor};
 border-radius: 10px;
-font-size: 18px;
-gap:15px;
+font-size: 16px;
+gap:10px;
 position: relative;
 &:focus{
   outline: none;
@@ -272,7 +272,7 @@ const borderanimation = keyframes`
 
 export const ShadeBox = styled.div`
 position: absolute;
-width:10%;
+width:9%;
 height: 50%;
 background-color:${props=>props.activeButton=="Call"?props.theme.mainColor:props.theme.popupbackgroundColor} ;
  left: 0;
@@ -326,7 +326,7 @@ position: absolute;
 
  export const Arrow = styled(IoIosArrowDown )`
 color:${props=>props.activeButton=="Call"?props.theme.popupbackgroundColor:props.theme.mainColor} ;
-font-size: 15px;
+font-size: 13px;
 position: absolute;
 right: 5%;
 animation: ${arrowanimation} 0.7s ease-in-out;
@@ -354,7 +354,7 @@ export const OptionsList = styled.ul`
   margin: 0;
   padding: 0;
   list-style: none;
-  max-height: 300px;
+  max-height: 260px;
   background-color:${props=>props.theme.mainColor} ;
   color:${(props) => props.theme.popupbackgroundColor};
   width: 100%;
@@ -366,9 +366,9 @@ export const OptionsList = styled.ul`
 export const Option = styled.li`
   cursor: pointer;
   transition: background 0.2s;
-  padding-top: 10px;
-  padding-bottom: 10px;
-  font-size: 17px;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  font-size: 15px;
 
 `;
 
@@ -386,7 +386,7 @@ height: 100%;
 border:1px solid ${props=>props.theme.mainColor} ;
 color: ${props=>props.theme.popupTextColor};
 border-radius: 10px;
-font-size: 18px;
+font-size: 16px;
 &:focus{
   outline: none;
 };
@@ -396,7 +396,7 @@ position: relative;
 
 export const BranchSpan = styled.span`
 color: ${props=>props.theme.popupTextColor};
-font-size: 18px;
+font-size: 16px;
 font-weight: bold;
 
 `;
@@ -415,12 +415,12 @@ export const BranchWrapper = styled.div`
   justify-content: center;
   align-items: center;
   position: relative;
-  height: 50px;
+  height: 44px;
 `;
 export const BranchIconWrapper = styled.div`
   display: flex;
   flex-direction: row;
-  width: 15px;
+  width: 13px;
   align-items: center;
   justify-content: center;
   position: relative;
@@ -428,15 +428,15 @@ export const BranchIconWrapper = styled.div`
 `;
 
 export const BranchIcon = styled.div`
-  width: 15px;
-  height: 15px;
+  width: 13px;
+  height: 13px;
   border-radius: 50%;
   background-color: ${props=>props.theme.mainColor};
 `;
 
 export const Iconhole = styled.div`
-  width: 5px;
-  height: 5px;
+  width: 4px;
+  height: 4px;
   position: absolute;
   border-radius: 50%;
   background-color: ${props=>props.theme.popupbackgroundColor};
@@ -444,7 +444,7 @@ export const Iconhole = styled.div`
 
 
 export const Branch = styled.a`
- font-size:15px;
+ font-size:13px;
  font-weight: 300;
  flex: 1;
  color: ${props=>props.theme.popupTextColor};
@@ -456,9 +456,9 @@ export const Branch = styled.a`
  `;
 
  export const LineContainer = styled.div`
- width: 15px;
- height: 45px;
- top: 25px;
+ width: 13px;
+ height: 40px;
+ top: 22px;
  position: absolute;
  left: 0;
  display: flex;

@@ -7,6 +7,8 @@ import { MdOutlineDelete } from "react-icons/md";
 export const Container = styled.div`
 position: fixed;
 bottom: ${props=>props.showPopup=="cart"?"0%":"-100%"};
+left: 0;
+right: 0;
 min-height: 45vh;
 background-color: ${props=>props.theme.popupbackgroundColor};
 width: 100%;
@@ -17,18 +19,35 @@ box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.2);
 display: flex;
 flex-direction: column;
 align-items: center;
-z-index: 5;
+z-index: 1500;
 padding-bottom: 20px;
 `;
 export const Close = styled(IoMdClose)`
 font-size: 20px;
-position: absolute;
-top: 30px;
-right:20px;
+position: fixed;
+top: 24px;
+right: 24px;
 cursor: pointer;
 color:${props=>props.theme.popupTextColor}
+z-index: 20000;
+pointer-events: auto;
+background: transparent;
+border: none;
+padding: 4px;
+line-height: 1;
+width: 36px;
+height: 36px;
+display: flex;
+align-items: center;
+justify-content: center;
+border-radius: 18px;
+
+&:hover {
+  background: rgba(0, 0, 0, 0.05);
+}
 
 `;
+
 
 export const Wrapper = styled.div`
 width: 90%;

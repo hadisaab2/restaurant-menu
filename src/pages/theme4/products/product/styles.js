@@ -1,13 +1,13 @@
 import styled, { keyframes } from "styled-components";
 
 export const Container = styled.div`
-    width:50%;
+    width: ${props => props.$isFeatured ? '100%' : '50%'};
     display: flex;
     align-items: center;
     justify-content: center;
     margin-top: 10px;
     @media (min-width: 1024px) {
-        width: 20%;
+        width: ${props => props.$isFeatured ? '100%' : '20%'};
     }
 `;
 export const Wrapper = styled.div`
@@ -25,12 +25,11 @@ export const Wrapper = styled.div`
 `;
 
 export const Image = styled.img`
-width:90%;
-height:100%;
-object-fit: cover;
-border-radius: 10px;
-visibility: ${props=>props.imageLoaded?"visible":"hidden"};
-/* display:${props=>props.imageLoaded?"block":"none"} */
+  width: 90%;
+  height: 100%;
+  object-fit: ${(props) => (props.$isLogoFallback ? "none" : "cover")};
+  border-radius: 10px;
+  visibility: ${(props) => (props.imageLoaded ? "visible" : "hidden")};
 `;
 export const ImageContainer = styled.div`
 width:100%;
@@ -145,4 +144,53 @@ padding-right: 5px;
  color:${props=>props.theme.popupbuttonText};
  border-radius: 4px;
 
+`;
+
+export const QuickAddButton = styled.button`
+  position: absolute;
+  bottom: 8px;
+  right: ${(props) => (props.activeLanuguage === "en" ? "8px" : "auto")};
+  left: ${(props) => (props.activeLanuguage === "en" ? "auto" : "8px")};
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 0;
+  background-color: ${(props) => props.theme.mainColor};
+  color: ${(props) => props.theme.popupbuttonText};
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  opacity: ${(props) => (props.disabled ? 0.5 : 1)};
+  pointer-events: auto;
+  z-index: 2;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  
+  &:hover {
+    transform: scale(1.1);
+  }
+  
+  &:active {
+    transform: scale(0.95);
+  }
+  
+  &:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px ${(props) => props.theme.mainColor}40;
+  }
+`;
+
+export const OutOfStockBadge = styled.div`
+  position: absolute;
+  bottom: 8px;
+  right: ${(props) => (props.activeLanuguage === "en" ? "8px" : "auto")};
+  left: ${(props) => (props.activeLanuguage === "en" ? "auto" : "8px")};
+  font-size: 11px;
+  font-weight: 600;
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: ${(props) => props.theme.backgroundColor};
+  color: ${(props) => props.theme.mainColor};
+  border: 0;
 `;

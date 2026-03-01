@@ -23,7 +23,7 @@ height: 100%;
 `;
 
 export const Container = styled.div`
-height: 100%;
+height: 100vh;
 background-color: ${props => props.theme.sidebarbackground};
 width: 80%;
 position: absolute;
@@ -32,7 +32,11 @@ top:0;
 box-shadow: 10px 0 15px -5px rgba(0, 0, 0, 0.2);
   display: flex;
   flex-direction: column;
-  align-items: center;
+  padding-top: 80px;
+  padding-left: 0;
+  padding-right: 0;
+  overflow-y: auto;
+  align-items: stretch;
   @media (min-width: 1024px) {
         width: 25%;
     }
@@ -194,5 +198,101 @@ export const HomeLinkText = styled.span`
   
   @media (min-width: 768px) {
     font-size: 15px;
+  }
+`;
+
+export const SidebarSection = styled.div`
+  width: 100%;
+  margin-bottom: 0;
+  padding: 0 10px;
+  border: none;
+  border-bottom: none;
+`;
+
+export const SectionHeader = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  cursor: ${props => props.disabled ? "not-allowed" : "pointer"};
+  transition: all 0.3s ease;
+  border-radius: 10px;
+  margin: 0;
+  opacity: ${props => props.disabled ? 0.6 : 1};
+  direction: ${props => props.activeLanguage === "ar" ? "rtl" : "ltr"};
+  background: ${props => props.theme?.sidebarsearch || "transparent"};
+
+  &:hover {
+    ${props => !props.disabled ? `
+      background: ${props.theme?.sidebarsearch || "rgba(0, 0, 0, 0.08)"};
+      transform: translateX(${props.activeLanguage === "ar" ? "-2px" : "2px"});
+    ` : ""}
+  }
+
+  &:active {
+    ${props => !props.disabled ? `
+      transform: translateX(0);
+    ` : ""}
+  }
+`;
+
+export const SectionIcon = styled.div`
+  font-size: 20px;
+  color: ${props => props.theme?.mainColor || props.theme?.maincolor || props.theme?.sidebartext || "#333333"};
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 24px;
+  flex-shrink: 0;
+`;
+
+export const SectionTitle = styled.span`
+  font-size: 16px;
+  font-weight: 500;
+  color: ${props => props.theme?.sidebartext || "#333333"};
+  flex: 1;
+  text-align: ${props => props.activeLanguage === "ar" ? "right" : "left"};
+`;
+
+export const CollapsibleIcon = styled.div`
+  font-size: 12px;
+  color: ${props => props.theme?.sidebartext || "#666666"};
+  margin-${props => props.activeLanguage === "ar" ? "right" : "left"}: auto;
+  transition: transform 0.3s ease;
+  flex-shrink: 0;
+`;
+
+export const SectionContent = styled.div`
+  width: 100%;
+  padding: 8px 0;
+  direction: ${props => props.activeLanguage === "ar" ? "rtl" : "ltr"};
+  margin-top: 4px;
+`;
+
+export const CategoryList = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 0 10px;
+`;
+
+export const CategoryItem = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background: ${props => props.active ? (props.theme?.mainColor || props.theme?.maincolor || "#007bff") + "20" : "transparent"};
+  margin: 0 10px;
+  
+  &:hover {
+    background: ${props => props.theme?.sidebarsearch || "rgba(0, 0, 0, 0.06)"};
+    transform: translateX(${props => props.activeLanguage === "ar" ? "-2px" : "2px"});
+  }
+
+  &:active {
+    transform: translateX(0);
   }
 `;

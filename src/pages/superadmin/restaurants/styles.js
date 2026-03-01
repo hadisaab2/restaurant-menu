@@ -99,6 +99,40 @@ export const ColorSection = styled.div`
   cursor: pointer;
 `;
 
+export const SloganBlock = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  width: 100%;
+  overflow: hidden;
+  max-height: ${(props) => (props.viewSloganSection ? "400px" : "0px")};
+  opacity: ${(props) => (props.viewSloganSection ? 1 : 0)};
+  position: relative;
+  transition: all 0.3s ease-in-out;
+  gap: 10px;
+`;
+
+export const SloganSection = styled.div`
+  height: 50px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding-left: 10px;
+  cursor: pointer;
+`;
+
+export const FormSectionHeader = styled.div`
+  width: 100%;
+  margin-top: 16px;
+  margin-bottom: 8px;
+  padding: 10px 14px;
+  background: #f0f0f0;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: #333;
+  border-left: 4px solid #007bff;
+`;
 
 export const Arrow = styled(IoIosArrowDown)`
 font-size: 15px;

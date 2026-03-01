@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { Container, FilterContainer, Search, SearchContainer, SearchIcon, SearchWapper, ShareIcon, ShareIconLogo, SidebarAction, Text, TextContainer } from "./styles";
 import Categories from "./categories";
-import HeaderTop from "./headertop";
 import { useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 
@@ -37,7 +36,6 @@ export default function Header({
   }
   return (
     <Container>
-      <HeaderTop setshowSidebar={setshowSidebar} showSidebar={showSidebar} />
 
       {/* Hide Categories carousel for Theme3 - we use CategoriesGrid instead */}
       {/* <Categories
@@ -53,16 +51,6 @@ export default function Header({
           <SearchIcon activeLanguage={activeLanguage} />
           <Search type="text" activeLanguage={activeLanguage} dir={activeLanguage == "en" ? "ltr" : "rtl"} placeholder={activeLanguage == "en" ? "Search Category" : "قائمة البحث"} onChange={handlesearch} value={searchText} />
         </SearchContainer>
-        <ShareIcon onClick={() => {
-          window.history.pushState({}, ""); // Add a history entry
-          popupHandler("share")
-        }}
-        >
-          {activeLanguage == "en" && <ShareIconLogo />}
-          {activeLanguage == "en" ? "Share" : "نشر"}
-          {activeLanguage !== "en" && <ShareIconLogo />}
-
-        </ShareIcon>
       </SearchWapper>
     </Container>
   );

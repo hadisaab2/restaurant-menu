@@ -1,23 +1,26 @@
 import React, { useState } from "react";
 import {
   BlurLayer,
-  Brand,
   CategoryName,
   Container,
   Icon,
   IconWrapper,
-  Search,
-  SearchContainer,
-  SearchIcon,
   Tab,
   Tabs,
   Wrapper,
-  BrandContainer,
   MenuIcon,
   HomeLink,
   HomeLinkText,
+  SidebarSection,
+  SectionHeader,
+  SectionIcon,
+  SectionTitle,
+  SectionContent,
+  CollapsibleIcon,
+  CategoryList,
+  CategoryItem,
 } from "./styles";
-import { FaHome } from "react-icons/fa";
+import { FaHome, FaList, FaShoppingBag, FaCommentAlt, FaAddressBook, FaChevronDown, FaChevronUp, FaMapMarkerAlt } from "react-icons/fa";
 import { useParams, useSearchParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 
@@ -29,7 +32,11 @@ export default function SideBar({
   setshowSidebar,
   setcarouselPosition,
   onHomeClick,
-  onCategoryClick
+  onCategoryClick,
+  onFeedbackClick,
+  onContactClick,
+  onBranchesClick,
+  branches,
 }) {
   const { restaurantName: paramRestaurantName } = useParams();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -44,18 +51,7 @@ export default function SideBar({
       : paramRestaurantName;
 
   const restaurant = useSelector((state) => state.restaurant?.[restaurantName]);
-  const [searchText, setSearchText] = useState("")
-
-  const handlesearch = (e) => {
-    setSearchText(e.target.value)
-
-  }
-
-  const filteredCategories = categories?.filter((category) =>
-    restaurant?.activeLanguage === "en"
-      ? category.en_category.toLowerCase().includes(searchText.toLowerCase())
-      : category.ar_category.toLowerCase().includes(searchText.toLowerCase())
-  );
+  const [categoriesExpanded, setCategoriesExpanded] = useState(true);
 
   const itemClick = (id, index) => {
     if (onCategoryClick) {
@@ -67,66 +63,148 @@ export default function SideBar({
     setshowSidebar(false);
   };
 
+  const handleFeedbackClick = () => {
+    if (onFeedbackClick) {
+      onFeedbackClick();
+    }
+    setshowSidebar(false);
+  };
+
+  const handleContactClick = () => {
+    if (onContactClick) {
+      onContactClick();
+    }
+    setshowSidebar(false);
+  };
+
+  const handleBranchesClick = () => {
+    if (onBranchesClick) {
+      onBranchesClick();
+    }
+    setshowSidebar(false);
+  };
+
   return (
     <Wrapper showSidebar={showSidebar}>
       <BlurLayer onClick={() => { setshowSidebar(false) }} showSidebar={showSidebar} />
-      <Container >
-
+      <Container>
         <MenuIcon />
+        
+        {/* Homepage Section */}
         {onHomeClick && (
-          <HomeLink onClick={onHomeClick} activeLanguage={restaurant?.activeLanguage}>
-            <FaHome />
-            <HomeLinkText>{restaurant?.activeLanguage === "en" ? "Home" : "الرئيسية"}</HomeLinkText>
-          </HomeLink>
+          <SidebarSection>
+            <SectionHeader onClick={onHomeClick}>
+              <SectionIcon>
+                <FaHome />
+              </SectionIcon>
+              <SectionTitle activeLanguage={restaurant?.activeLanguage}>
+                {restaurant?.activeLanguage === "en" ? "Homepage" : "الصفحة الرئيسية"}
+              </SectionTitle>
+            </SectionHeader>
+          </SidebarSection>
         )}
-        <BrandContainer>
-          <Brand
-            showSidebar={showSidebar}
-            src={
-              restaurant.logoURL &&
-              `https://storage.googleapis.com/ecommerce-bucket-testing/${restaurant.logoURL}`
-            }
-          />
-        </BrandContainer>
-        <SearchContainer showSidebar={showSidebar}>
-          <SearchIcon activeLanguage={restaurant?.activeLanguage} />
-          <Search
-            type="text"
-            activeLanguage={restaurant?.activeLanguage}
-            dir={restaurant?.activeLanguage == "en" ? "ltr" : "rtl"}
-            placeholder={restaurant?.activeLanguage == "en" ? "Search Categories" : "قائمة البحث"}
-            onChange={handlesearch}
-            value={searchText}
-          />
-        </SearchContainer>
-        <Tabs showSidebar={showSidebar}>
-          {filteredCategories
-            ?.sort((a, b) => b.priority - a.priority)
-            .map((category, index) => {
-              return (
-                <Tab key={index} onClick={() => itemClick(category.id, index)}>
-                  {restaurant.category_type != "horizantal-withoutIcon" && <IconWrapper
-                    activeCategory={activeCategory}
-                    categoryId={category.id}
-                  >
-                    <Icon
-                      src={`https://storage.googleapis.com/ecommerce-bucket-testing/${category.image_url}`}
-                    />
-                  </IconWrapper>}
 
-                  <CategoryName
-                    categoryType={restaurant.category_type=="horizantal-withoutIcon"}
-                    activeCategory={activeCategory}
-                    categoryId={category.id}
-                  >
-                    {restaurant?.activeLanguage == "en"
-                      ? category.en_category
-                      : category.ar_category}
-                  </CategoryName>
-                </Tab>
-              );
-            })}
-        </Tabs>
+        {/* Categories Section - Collapsible */}
+        <SidebarSection>
+          <SectionHeader onClick={() => setCategoriesExpanded(!categoriesExpanded)}>
+            <SectionIcon>
+              <FaList />
+            </SectionIcon>
+            <SectionTitle activeLanguage={restaurant?.activeLanguage}>
+              {restaurant?.activeLanguage === "en" ? "Categories" : "الفئات"}
+            </SectionTitle>
+            <CollapsibleIcon activeLanguage={restaurant?.activeLanguage}>
+              {categoriesExpanded ? <FaChevronUp /> : <FaChevronDown />}
+            </CollapsibleIcon>
+          </SectionHeader>
+          {categoriesExpanded && (
+            <SectionContent>
+              <CategoryList>
+                {categories
+                  ?.sort((a, b) => b.priority - a.priority)
+                  .map((category, index) => {
+                    return (
+                      <CategoryItem
+                        key={index}
+                        onClick={() => itemClick(category.id, index)}
+                        active={activeCategory === category.id}
+                      >
+                        {restaurant.category_type != "horizantal-withoutIcon" && (
+                          <IconWrapper
+                            activeCategory={activeCategory}
+                            categoryId={category.id}
+                          >
+                            <Icon
+                              src={`https://storage.googleapis.com/ecommerce-bucket-testing/${category.image_url}`}
+                            />
+                          </IconWrapper>
+                        )}
+                        <CategoryName
+                          categoryType={restaurant.category_type == "horizantal-withoutIcon"}
+                          activeCategory={activeCategory}
+                          categoryId={category.id}
+                        >
+                          {restaurant?.activeLanguage == "en"
+                            ? category.en_category
+                            : category.ar_category}
+                        </CategoryName>
+                      </CategoryItem>
+                    );
+                  })}
+              </CategoryList>
+            </SectionContent>
+          )}
+        </SidebarSection>
+
+        {/* Orders Section */}
+        <SidebarSection>
+          <SectionHeader disabled>
+            <SectionIcon>
+              <FaShoppingBag />
+            </SectionIcon>
+            <SectionTitle activeLanguage={restaurant?.activeLanguage}>
+              {restaurant?.activeLanguage === "en" ? "Orders (Coming Soon)" : "الطلبات (قريباً)"}
+            </SectionTitle>
+          </SectionHeader>
+        </SidebarSection>
+
+        {/* Feedback Section */}
+        <SidebarSection>
+          <SectionHeader onClick={handleFeedbackClick}>
+            <SectionIcon>
+              <FaCommentAlt />
+            </SectionIcon>
+            <SectionTitle activeLanguage={restaurant?.activeLanguage}>
+              {restaurant?.activeLanguage === "en" ? "Feedback" : "التعليقات"}
+            </SectionTitle>
+          </SectionHeader>
+        </SidebarSection>
+
+        {/* Branches Section */}
+        {branches && branches.length > 0 && (
+          <SidebarSection>
+            <SectionHeader onClick={handleBranchesClick}>
+              <SectionIcon>
+                <FaMapMarkerAlt />
+              </SectionIcon>
+              <SectionTitle activeLanguage={restaurant?.activeLanguage}>
+                {restaurant?.activeLanguage === "en" ? "Branches" : "الفروع"}
+              </SectionTitle>
+            </SectionHeader>
+          </SidebarSection>
+        )}
+
+        {/* Contact Us Section */}
+        <SidebarSection>
+          <SectionHeader onClick={handleContactClick}>
+            <SectionIcon>
+              <FaAddressBook />
+            </SectionIcon>
+            <SectionTitle activeLanguage={restaurant?.activeLanguage}>
+              {restaurant?.activeLanguage === "en" ? "Contact Us" : "اتصل بنا"}
+            </SectionTitle>
+          </SectionHeader>
+        </SidebarSection>
       </Container>
     </Wrapper>
   );

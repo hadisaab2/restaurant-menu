@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Container, TabContainer, Tab } from "./styles";
 import Branches from "./branches";
+import WorkingHours from "./workingHours";
 import SocialMedia from "./socialmedia";
 import Logo from "./logo";
 import QrCode from "./qrcode";
@@ -17,6 +18,13 @@ export default function Settings({ setSection,userInformation }) {
           onClick={() => setActivetab("Branches")}
         >
           Branches
+        </Tab>
+        <Tab
+          tab={"WorkingHours"}
+          activetab={activetab}
+          onClick={() => setActivetab("WorkingHours")}
+        >
+          Working Hours
         </Tab>
         <Tab
           tab={"SocialMedia"}
@@ -50,6 +58,7 @@ export default function Settings({ setSection,userInformation }) {
 
       </TabContainer>
       {activetab == "Branches" && <Branches />}
+      {activetab == "WorkingHours" && <WorkingHours />}
       {activetab == "SocialMedia" && <SocialMedia />}
       {activetab == "Logo" && <Logo setSection={setSection} />}
       {activetab == "QrCode" && <QrCode userInformation={userInformation} setSection={setSection} />}

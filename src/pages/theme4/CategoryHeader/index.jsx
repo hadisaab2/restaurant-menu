@@ -16,6 +16,8 @@ import {
   SearchContainer,
   SearchIcon,
   SearchInput,
+  ShareButton,
+  ShareIcon,
 } from "./styles";
 import { useDispatch, useSelector } from "react-redux";
 import { changelanuage } from "../../../redux/restaurant/restaurantActions";
@@ -24,6 +26,7 @@ import { IoArrowBack } from "react-icons/io5";
 import { CiSearch } from "react-icons/ci";
 import { HiMenuAlt2 } from "react-icons/hi";
 import { FaGlobe } from "react-icons/fa";
+import { IoShareSocialSharp } from "react-icons/io5";
 
 export default function CategoryHeader({ 
   categoryId, 
@@ -32,7 +35,8 @@ export default function CategoryHeader({
   searchText, 
   setSearchText,
   setshowSidebar,
-  showSidebar
+  showSidebar,
+  popupHandler
 }) {
   const { restaurantName: paramRestaurantName } = useParams();
   const dispatch = useDispatch();
@@ -79,14 +83,7 @@ export default function CategoryHeader({
           {categoryName}
         </CategoryTitle>
         <TopRightSection>
-          <MenuIcon onClick={() => setshowSidebar(!showSidebar)}>
-            <HiMenuAlt2 />
-          </MenuIcon>
-          {restaurant?.languages === "en&ar" && (
-            <LanguageButton onClick={() => handleLanguage(activeLanguage === "en" ? "ar" : "en")} activeLanguage={activeLanguage}>
-              <FaGlobe />
-            </LanguageButton>
-          )}
+          {/* Removed MenuIcon and LanguageButton */}
         </TopRightSection>
       </HeaderWrapper>
 
@@ -105,6 +102,25 @@ export default function CategoryHeader({
               value={searchText || ""}
             />
           </SearchContainer>
+          <ShareButton
+            onClick={() => {
+              window.history.pushState({}, "");
+              popupHandler("share");
+            }}
+            activeLanguage={activeLanguage}
+          >
+            {activeLanguage === "en" && (
+              <ShareIcon>
+                <IoShareSocialSharp />
+              </ShareIcon>
+            )}
+            {activeLanguage === "en" ? "Share" : "نشر"}
+            {activeLanguage !== "en" && (
+              <ShareIcon>
+                <IoShareSocialSharp />
+              </ShareIcon>
+            )}
+          </ShareButton>
         </SearchWrapper>
       </SearchSection>
     </Container>
