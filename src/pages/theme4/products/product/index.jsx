@@ -152,39 +152,21 @@ const Product = React.forwardRef(
     const handleQuickAdd = (event) => {
       event.preventDefault();
       event.stopPropagation();
-      event.nativeEvent.stopImmediatePropagation();
-      
-      console.log("QuickAddButton clicked", {
-        hasCart: features?.cart,
-        isOutOfStock,
-        hasForm,
-        plateId: plate?.id,
-        plateName: plate?.en_name
-      });
-      
-      if (!features?.cart) {
-        console.log("Cart feature is disabled");
-        return;
+      if (event.nativeEvent && event.nativeEvent.stopImmediatePropagation) {
+        event.nativeEvent.stopImmediatePropagation();
       }
       
-      if (isOutOfStock) {
-        console.log("Product is out of stock");
-        return;
-      }
-      
+      if (!features?.cart) return;
+      if (isOutOfStock) return;
       if (hasForm) {
-        console.log("Product has form, opening details");
         plateHandle();
         return;
       }
-      
-      console.log("Adding product to cart");
       const basePrice = parseFloat(plate?.en_price || "0");
       const discountedPrice = basePrice * (1 - parseFloat(finalDiscount) / 100);
       
       try {
         dispatch(addToCart(restaurantName, plate, 1, {}, discountedPrice, ""));
-        console.log("Product added to cart successfully");
         
         // Track add to cart
         if (restaurant?.id && plate?.id) {
@@ -204,7 +186,6 @@ const Product = React.forwardRef(
             : "تمت الإضافة إلى السلة"
         );
       } catch (error) {
-        console.error("Error adding to cart:", error);
         toast.error(
           restaurant?.activeLanguage === "en"
             ? "Failed to add to cart"
@@ -240,16 +221,10 @@ const Product = React.forwardRef(
               <QuickAddButton
                 type="button"
                 onClick={handleQuickAdd}
-                onMouseDown={(e) => {
-                  e.stopPropagation();
-                  e.preventDefault();
-                }}
-                onTouchStart={(e) => {
-                  e.stopPropagation();
-                }}
-                onPointerDown={(e) => {
-                  e.stopPropagation();
-                }}
+                onMouseDown={(e) => { e.stopPropagation(); e.preventDefault(); }}
+                onTouchEnd={(e) => { e.preventDefault(); e.stopPropagation(); handleQuickAdd(e); }}
+                onTouchStart={(e) => { e.stopPropagation(); }}
+                onPointerDown={(e) => { e.stopPropagation(); }}
                 activeLanuguage={restaurant?.activeLanguage}
                 title={
                   restaurant?.activeLanguage === "en"

@@ -451,6 +451,8 @@ console.log(filteredProducts)
                             <AllItemsListQuickAddButton
                               type="button"
                               onClick={handleQuickAdd}
+                              onMouseDown={(e) => { e.stopPropagation(); e.preventDefault(); }}
+                              onTouchEnd={(e) => { e.preventDefault(); e.stopPropagation(); handleQuickAdd(e); }}
                               activeLanguage={activeLanguage}
                               title={
                                 activeLanguage === "en"

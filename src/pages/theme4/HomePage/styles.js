@@ -1462,7 +1462,7 @@ export const HowItWorksStepIconWrap = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  color: ${(props) => props.theme?.howItWorksStepIconColor || props.theme?.mainColor || "#007bff"};
+  color: ${(props) => props.theme?.mainColor || "#007bff"};
 `;
 
 export const HowItWorksStepBadge = styled.span`

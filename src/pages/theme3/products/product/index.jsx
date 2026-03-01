@@ -240,16 +240,10 @@ const Product = React.forwardRef(
               <QuickAddButton
                 type="button"
                 onClick={handleQuickAdd}
-                onMouseDown={(e) => {
-                  e.stopPropagation();
-                  e.preventDefault();
-                }}
-                onTouchStart={(e) => {
-                  e.stopPropagation();
-                }}
-                onPointerDown={(e) => {
-                  e.stopPropagation();
-                }}
+                onMouseDown={(e) => { e.stopPropagation(); e.preventDefault(); }}
+                onTouchEnd={(e) => { e.preventDefault(); e.stopPropagation(); handleQuickAdd(e); }}
+                onTouchStart={(e) => { e.stopPropagation(); }}
+                onPointerDown={(e) => { e.stopPropagation(); }}
                 activeLanuguage={restaurant?.activeLanguage}
                 title={
                   restaurant?.activeLanguage === "en"
