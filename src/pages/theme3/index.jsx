@@ -15,6 +15,7 @@ import CartPopup from "./popup/cart";
 import FeedbackPopup from "./popup/feedback";
 import ContactPopup from "./popup/contact";
 import ContactFormPopup from "./popup/contactForm";
+import AboutUsPopup from "../theme4/popup/aboutUs";
 import SideBar from "./Sidebar";
 import ProductParam from "./ProductParam";
 import Share from "./popup/share";
@@ -47,6 +48,13 @@ export default function Theme3() {
     (state) => state.restaurant?.[restaurantName]?.activeLanguage || "en"
   );
   const dispatch = useDispatch();
+
+  // Set document direction for RTL when Arabic
+  useEffect(() => {
+    document.documentElement.setAttribute("dir", activeLanguage === "ar" ? "rtl" : "ltr");
+    return () => document.documentElement.removeAttribute("dir");
+  }, [activeLanguage]);
+
   const showAllItemsCategory =
     Number(restaurant?.template_id) === 3 &&
     (restaurant?.show_all_items_category === true ||
@@ -115,6 +123,11 @@ export default function Theme3() {
   const handleContactClick = () => {
     window.history.pushState({}, "");
     popupHandler("contactForm");
+  };
+
+  const handleAboutClick = () => {
+    window.history.pushState({}, "");
+    popupHandler("about");
   };
 
   const handleOrderClick = () => {
@@ -411,6 +424,7 @@ export default function Theme3() {
         onBranchesClick={handleBranchesClick}
         onContactFormClick={handleContactClick}
         onFeedbackClick={handleFeedbackClick}
+        onAboutClick={handleAboutClick}
         onOrderClick={handleOrderClick}
         onHomeClick={handleBackToHome}
         onCategoryClick={handleCategoryClick}
@@ -527,6 +541,7 @@ export default function Theme3() {
         popupHandler={popupHandler}
         isPage={false}
       />
+      <AboutUsPopup showPopup={showPopup} popupHandler={popupHandler} />
       <SideBar
         categories={theme3Categories}
         activeCategory={activeCategory}
@@ -551,6 +566,7 @@ export default function Theme3() {
       <BottomTabBar
         isProductDetailsOpen={isProductDetailsOpen}
         activeView={viewMode}
+        showPopup={showPopup}
         onHomeClick={handleBackToHome}
         onCategoriesClick={() => {
           if (viewMode === "products") {

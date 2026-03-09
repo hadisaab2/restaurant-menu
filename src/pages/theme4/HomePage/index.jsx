@@ -100,6 +100,7 @@ import { FaPhone, FaWhatsapp, FaFacebook, FaInstagram, FaTwitter, FaGlobe, FaTik
 import HeroBanner from "./HeroBanner";
 import { getBadgeIconComponent } from "../../../constants/badgeIconTypes";
 import { useGetFeaturedProducts } from "../../../apis/products/getFeaturedProducts";
+import { useGetBestSellers } from "../../../apis/products/getBestSellers";
 import Product from "../products/product";
 
 // Category pill for theme4 (new 37 style): icon + name, rounded pill
@@ -291,9 +292,14 @@ export default function HomePage({ onExploreClick, categories, setSearchParams, 
   const socialMedia = restaurant?.socialMedia || [];
   const sliderImages = restaurant?.sliderImages || [];
   const hasSlider = restaurant?.has_slider || false;
-  const restaurantId = restaurant?.id;
+  const restaurantId = restaurant?.id ?? restaurant?.restaurant_id;
   const { data: featuredProducts = [], isLoading: isLoadingFeatured } = useGetFeaturedProducts(restaurantId);
-  
+  const { data: bestsellersRaw } = useGetBestSellers(restaurantId);
+  const bestsellers = Array.isArray(bestsellersRaw) ? bestsellersRaw : [];
+  // Top Products = featured + bestsellers (dedupe by id)
+  const featuredIds = new Set((featuredProducts || []).map((p) => p.id));
+  const topProducts = [...(featuredProducts || []), ...bestsellers.filter((p) => !featuredIds.has(p.id))];
+
   // Categories will be shown in carousel, sorted by priority
   
   const [showScrollIndicator, setShowScrollIndicator] = useState(false);
@@ -506,8 +512,8 @@ export default function HomePage({ onExploreClick, categories, setSearchParams, 
         </CategoriesSectionWrap>
       )}
 
-      {/* Top Products Section (same label style as Categories) */}
-      {featuredProducts && featuredProducts.length > 0 && (
+      {/* Top Products Section (featured + bestsellers) */}
+      {topProducts.length > 0 && (
         <FeaturedProductsSection activeLanguage={activeLanguage}>
           <CategoriesSectionHeader>
             <CategoriesSectionLabel>
@@ -515,24 +521,22 @@ export default function HomePage({ onExploreClick, categories, setSearchParams, 
             </CategoriesSectionLabel>
           </CategoriesSectionHeader>
           <FeaturedProductsGrid>
-            {featuredProducts.map((product, index) => {
-              return (
-                <Product
-                  key={product.id}
-                  plate={product}
-                  index={index}
-                  activePlate={null}
-                  setactivePlate={() => {}}
-                  showPopup={null}
-                  setSearchParams={setSearchParams}
-                  searchParams={searchParams}
-                  activeCategoryId={product.category_id}
-                  categories={categories}
-                  disableDetails={false}
-                  $isFeatured={true}
-                />
-              );
-            })}
+            {topProducts.map((product, index) => (
+              <Product
+                key={product.id}
+                plate={product}
+                index={index}
+                activePlate={null}
+                setactivePlate={() => {}}
+                showPopup={null}
+                setSearchParams={setSearchParams}
+                searchParams={searchParams}
+                activeCategoryId={product.category_id}
+                categories={categories}
+                disableDetails={false}
+                $isFeatured={true}
+              />
+            ))}
           </FeaturedProductsGrid>
           <ViewAllButton
             onClick={() => onExploreClick()}

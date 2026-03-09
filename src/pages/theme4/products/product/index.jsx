@@ -7,6 +7,7 @@ import {
   Loader,
   LoaderWrapper,
   NEW,
+  BestSellerBadge,
   PlateName,
   PlatePrice,
   PriceContainer,
@@ -196,6 +197,11 @@ const Product = React.forwardRef(
     return (
       <Container ref={containerRef} data-product-container index={index} activePlate={activePlate} className="lazy-load" $isFeatured={$isFeatured}>
         <Wrapper>
+          {(plate.is_best_seller || plate.isBestSeller) && (
+            <BestSellerBadge activeLanuguage={restaurant?.activeLanguage}>
+              {restaurant?.activeLanguage === "en" ? "Bestseller" : "الأكثر مبيعاً"}
+            </BestSellerBadge>
+          )}
           {!imageLoaded && (
             <LoaderWrapper>
               <Loader />
@@ -242,7 +248,7 @@ const Product = React.forwardRef(
               {restaurant?.activeLanguage === 'en' ? plate.en_name : plate.ar_name}
             </PlateName>
             {!_.isEmpty(plate.en_price) && (
-              <PriceContainer>
+              <PriceContainer $isRtl={restaurant?.activeLanguage === "ar"}>
                 <PlatePrice discounted={finalDiscount != 0.00}>
                   {convertPrice(parseFloat(plate.en_price),currencySymbol)}
                 </PlatePrice>

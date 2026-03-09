@@ -76,9 +76,11 @@ display: -webkit-box;
 `;
 
 export const PriceContainer = styled.div`
-display: flex;
-flex-direction: row;
-gap:5px;
+  display: flex;
+  flex-direction: row;
+  gap: 5px;
+  justify-content: ${(props) => (props.$isRtl ? "flex-end" : "flex-start")};
+  text-align: ${(props) => (props.$isRtl ? "right" : "left")};
 `;
 
 export const PlatePrice = styled.span`
@@ -144,6 +146,20 @@ padding-right: 5px;
  color:${props=>props.theme.popupbuttonText};
  border-radius: 4px;
 
+`;
+
+export const BestSellerBadge = styled.div`
+  position: absolute;
+  top: 8px;
+  right: ${(props) => (props.activeLanuguage === "en" ? "8px" : "auto")};
+  left: ${(props) => (props.activeLanuguage === "en" ? "auto" : "8px")};
+  font-size: 11px;
+  padding: 4px 8px;
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+  color: #fff;
+  border-radius: 4px;
+  font-weight: 600;
+  z-index: 2;
 `;
 
 export const QuickAddButton = styled.button`

@@ -12,6 +12,7 @@ import { changelanuage } from "../../../redux/restaurant/restaurantActions";
 
 export default function BottomTabBar({
   activeView,
+  showPopup = null,
   onHomeClick,
   onCategoriesClick,
   onCartClick,
@@ -48,14 +49,14 @@ export default function BottomTabBar({
       icon: FaTh,
       label: activeLanguage === "en" ? "Categories" : "الفئات",
       onClick: onCategoriesClick,
-      active: activeView === "categories",
+      active: activeView === "categories" || activeView === "products",
     },
     {
       id: "cart",
       icon: FaShoppingCart,
       label: activeLanguage === "en" ? "Cart" : "السلة",
       onClick: onCartClick,
-      active: false,
+      active: showPopup === "cart",
       badge: itemCount > 0 ? itemCount : null,
     },
     {
@@ -63,14 +64,14 @@ export default function BottomTabBar({
       icon: FaMapMarkerAlt,
       label: activeLanguage === "en" ? "Branches" : "الفروع",
       onClick: onBranchesClick,
-      active: false,
+      active: showPopup === "location",
     },
     {
       id: "feedback",
       icon: FaCommentAlt,
       label: activeLanguage === "en" ? "Feedback" : "التعليقات",
       onClick: onFeedbackClick,
-      active: false,
+      active: showPopup === "feedback",
     },
   ].filter(tab => {
     // Only show branches tab if branches exist

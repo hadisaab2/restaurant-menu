@@ -70,6 +70,11 @@ import { useUpdateStatsSection } from "../../../apis/statsSection/updateStatsSec
 import { useAddStatItem } from "../../../apis/statsSection/addStatItem";
 import { useEditStatItem } from "../../../apis/statsSection/editStatItem";
 import { useDeleteStatItem } from "../../../apis/statsSection/deleteStatItem";
+import { useGetAboutUs } from "../../../apis/aboutUs/getAboutUs";
+import { useUpdateAboutUsSectionQuery } from "../../../apis/aboutUs/updateAboutUsSection";
+import { useAddAboutUsValueQuery } from "../../../apis/aboutUs/addAboutUsValue";
+import { useEditAboutUsValueQuery } from "../../../apis/aboutUs/editAboutUsValue";
+import { useDeleteAboutUsValueQuery } from "../../../apis/aboutUs/deleteAboutUsValue";
 
 export default function Restaurants() {
   const [isEditMode, setIsEditMode] = useState(false);
@@ -97,6 +102,14 @@ export default function Restaurants() {
   const [statItemDialogOpen, setStatItemDialogOpen] = useState(false);
   const [editingStatItem, setEditingStatItem] = useState(null);
   const [statItemForm, setStatItemForm] = useState({ value_type: "static", value: "", en_label: "", ar_label: "" });
+  const [aboutUsSectionForm, setAboutUsSectionForm] = useState({
+    en_title: "", ar_title: "", en_subtitle: "", ar_subtitle: "",
+    en_story_title: "", ar_story_title: "", en_story: "", ar_story: "",
+    en_values_title: "", ar_values_title: "", en_footer: "", ar_footer: "",
+  });
+  const [aboutUsValueDialogOpen, setAboutUsValueDialogOpen] = useState(false);
+  const [editingAboutUsValue, setEditingAboutUsValue] = useState(null);
+  const [aboutUsValueForm, setAboutUsValueForm] = useState({ en_title: "", ar_title: "", en_description: "", ar_description: "", icon_type: "heart" });
   const [squareDimension, setSquareDimension] = useState(true); // Default false
   const [showExcelModal, setShowExcelModal] = useState(false);
   const [excelTab, setExcelTab] = useState(0); // 0: Normal, 1: Duplicate, 2: Products/Categories
@@ -155,6 +168,7 @@ export default function Restaurants() {
 
   const restaurantIdForBadges = selectedProduct?.restaurant_id;
   const isTemplate4 = Number(template) === 4;
+  const isTemplate3Or4 = Number(template) === 3 || Number(template) === 4;
   const { response: badgesResponse, refetch: refetchBadges } = useGetBadges({
     restaurant_id: restaurantIdForBadges,
     enabled: !!restaurantIdForBadges && isTemplate4,
@@ -251,6 +265,30 @@ export default function Restaurants() {
     onSuccess: () => refetchStatsSection(),
   });
 
+  const { response: aboutUsResponse, refetch: refetchAboutUs } = useGetAboutUs({
+    restaurant_id: restaurantIdForBadges,
+    enabled: !!restaurantIdForBadges && isTemplate3Or4,
+  });
+  const aboutUsData = aboutUsResponse?.data ?? {};
+  const aboutUsSection = aboutUsData?.section ?? null;
+  const aboutUsValuesList = aboutUsData?.values ?? [];
+  const { mutate: updateAboutUsSectionMutate } = useUpdateAboutUsSectionQuery({
+    restaurant_id: restaurantIdForBadges,
+    onSuccess: () => refetchAboutUs(),
+  });
+  const { mutate: addAboutUsValueMutate } = useAddAboutUsValueQuery({
+    restaurant_id: restaurantIdForBadges,
+    onSuccess: () => refetchAboutUs(),
+  });
+  const { mutate: editAboutUsValueMutate } = useEditAboutUsValueQuery({
+    restaurant_id: restaurantIdForBadges,
+    onSuccess: () => refetchAboutUs(),
+  });
+  const { mutate: deleteAboutUsValueMutate } = useDeleteAboutUsValueQuery({
+    restaurant_id: restaurantIdForBadges,
+    onSuccess: () => refetchAboutUs(),
+  });
+
   useEffect(() => {
     if (valueCardsSection && isTemplate4) {
       setValueCardSectionForm({
@@ -272,6 +310,75 @@ export default function Restaurants() {
       });
     }
   }, [statsSection, isTemplate4]);
+
+  useEffect(() => {
+    if (aboutUsSection && isTemplate3Or4) {
+      setAboutUsSectionForm({
+        en_title: aboutUsSection.en_title || "",
+        ar_title: aboutUsSection.ar_title || "",
+        en_subtitle: aboutUsSection.en_subtitle || "",
+        ar_subtitle: aboutUsSection.ar_subtitle || "",
+        en_story_title: aboutUsSection.en_story_title || "",
+        ar_story_title: aboutUsSection.ar_story_title || "",
+        en_story: aboutUsSection.en_story || "",
+        ar_story: aboutUsSection.ar_story || "",
+        en_values_title: aboutUsSection.en_values_title || "",
+        ar_values_title: aboutUsSection.ar_values_title || "",
+        en_footer: aboutUsSection.en_footer || "",
+        ar_footer: aboutUsSection.ar_footer || "",
+      });
+    }
+  }, [aboutUsSection, isTemplate3Or4]);
+
+  const saveAboutUsSection = () => {
+    updateAboutUsSectionMutate({
+      restaurant_id: restaurantIdForBadges,
+      ...aboutUsSectionForm,
+    });
+  };
+  const openAddAboutUsValue = () => {
+    setEditingAboutUsValue(null);
+    setAboutUsValueForm({ en_title: "", ar_title: "", en_description: "", ar_description: "", icon_type: "heart" });
+    setAboutUsValueDialogOpen(true);
+  };
+  const openEditAboutUsValue = (v) => {
+    setEditingAboutUsValue(v);
+    setAboutUsValueForm({
+      en_title: v.en_title || "",
+      ar_title: v.ar_title || "",
+      en_description: v.en_description || "",
+      ar_description: v.ar_description || "",
+      icon_type: v.icon_type || "heart",
+    });
+    setAboutUsValueDialogOpen(true);
+  };
+  const saveAboutUsValue = () => {
+    if (editingAboutUsValue) {
+      editAboutUsValueMutate(
+        {
+          id: editingAboutUsValue.id,
+          en_title: aboutUsValueForm.en_title,
+          ar_title: aboutUsValueForm.ar_title,
+          en_description: aboutUsValueForm.en_description,
+          ar_description: aboutUsValueForm.ar_description,
+          icon_type: aboutUsValueForm.icon_type,
+        },
+        { onSettled: () => setAboutUsValueDialogOpen(false) }
+      );
+    } else {
+      addAboutUsValueMutate(
+        {
+          restaurant_id: restaurantIdForBadges,
+          en_title: aboutUsValueForm.en_title,
+          ar_title: aboutUsValueForm.ar_title,
+          en_description: aboutUsValueForm.en_description,
+          ar_description: aboutUsValueForm.ar_description,
+          icon_type: aboutUsValueForm.icon_type,
+        },
+        { onSettled: () => setAboutUsValueDialogOpen(false) }
+      );
+    }
+  };
 
   const saveStatsSection = () => {
     updateStatsSectionMutate({
@@ -1311,6 +1418,42 @@ export default function Restaurants() {
                     ))}
                   </Box>
                 </Box>
+                {isTemplate3Or4 && (
+                  <>
+                    <FormSectionHeader>About us (theme3 & 4 – popup)</FormSectionHeader>
+                    <Box sx={{ width: "100%", mt: 1, mb: 2 }}>
+                      <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+                        Title, subtitle, story, values heading, footer. Shown in About us popup from navbar.
+                      </Typography>
+                      <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2, mb: 2 }}>
+                        <TextField label="Title (EN)" size="small" value={aboutUsSectionForm.en_title} onChange={(e) => setAboutUsSectionForm((p) => ({ ...p, en_title: e.target.value }))} sx={{ width: "200px" }} />
+                        <TextField label="Title (AR)" size="small" value={aboutUsSectionForm.ar_title} onChange={(e) => setAboutUsSectionForm((p) => ({ ...p, ar_title: e.target.value }))} sx={{ width: "200px" }} />
+                        <TextField label="Subtitle (EN)" size="small" value={aboutUsSectionForm.en_subtitle} onChange={(e) => setAboutUsSectionForm((p) => ({ ...p, en_subtitle: e.target.value }))} sx={{ width: "200px" }} />
+                        <TextField label="Subtitle (AR)" size="small" value={aboutUsSectionForm.ar_subtitle} onChange={(e) => setAboutUsSectionForm((p) => ({ ...p, ar_subtitle: e.target.value }))} sx={{ width: "200px" }} />
+                        <TextField label="Story title (EN)" size="small" value={aboutUsSectionForm.en_story_title} onChange={(e) => setAboutUsSectionForm((p) => ({ ...p, en_story_title: e.target.value }))} sx={{ width: "200px" }} />
+                        <TextField label="Story title (AR)" size="small" value={aboutUsSectionForm.ar_story_title} onChange={(e) => setAboutUsSectionForm((p) => ({ ...p, ar_story_title: e.target.value }))} sx={{ width: "200px" }} />
+                        <TextField label="Values title (EN)" size="small" value={aboutUsSectionForm.en_values_title} onChange={(e) => setAboutUsSectionForm((p) => ({ ...p, en_values_title: e.target.value }))} sx={{ width: "200px" }} />
+                        <TextField label="Values title (AR)" size="small" value={aboutUsSectionForm.ar_values_title} onChange={(e) => setAboutUsSectionForm((p) => ({ ...p, ar_values_title: e.target.value }))} sx={{ width: "200px" }} />
+                        <TextField label="Footer (EN)" size="small" value={aboutUsSectionForm.en_footer} onChange={(e) => setAboutUsSectionForm((p) => ({ ...p, en_footer: e.target.value }))} sx={{ width: "200px" }} />
+                        <TextField label="Footer (AR)" size="small" value={aboutUsSectionForm.ar_footer} onChange={(e) => setAboutUsSectionForm((p) => ({ ...p, ar_footer: e.target.value }))} sx={{ width: "200px" }} />
+                        <Button variant="contained" size="small" onClick={saveAboutUsSection}>Update section</Button>
+                      </Box>
+                      <TextField label="Story (EN)" size="small" multiline rows={2} fullWidth value={aboutUsSectionForm.en_story} onChange={(e) => setAboutUsSectionForm((p) => ({ ...p, en_story: e.target.value }))} sx={{ mb: 1 }} />
+                      <TextField label="Story (AR)" size="small" multiline rows={2} fullWidth value={aboutUsSectionForm.ar_story} onChange={(e) => setAboutUsSectionForm((p) => ({ ...p, ar_story: e.target.value }))} sx={{ mb: 2 }} />
+                      <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>Value cards (icon: heart, leaf, users, award)</Typography>
+                      <Button variant="outlined" size="small" onClick={openAddAboutUsValue} sx={{ mb: 1 }}>Add value</Button>
+                      <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
+                        {aboutUsValuesList.map((v) => (
+                          <Box key={v.id} sx={{ display: "flex", alignItems: "center", gap: 1, padding: "6px 10px", border: "1px solid #ccc", borderRadius: 1, backgroundColor: "#fafafa" }}>
+                            <span>{v.en_title || v.ar_title || "(no title)"}</span>
+                            <Button size="small" onClick={() => openEditAboutUsValue(v)}>Edit</Button>
+                            <Button size="small" color="error" onClick={() => deleteAboutUsValueMutate(v.id)}>Delete</Button>
+                          </Box>
+                        ))}
+                      </Box>
+                    </Box>
+                  </>
+                )}
                 <FormSectionHeader>Stats section (theme4 – Trusted by owners)</FormSectionHeader>
                 <Box sx={{ width: "100%", mt: 1, mb: 2 }}>
                   <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
@@ -1663,6 +1806,30 @@ export default function Restaurants() {
           <Button variant="contained" onClick={saveValueCard}>
             {editingValueCard ? "Save" : "Add"}
           </Button>
+        </DialogActions>
+      </Dialog>
+      <Dialog open={aboutUsValueDialogOpen} onClose={() => setAboutUsValueDialogOpen(false)} maxWidth="sm" fullWidth>
+        <DialogTitle>{editingAboutUsValue ? "Edit About us value" : "Add About us value"}</DialogTitle>
+        <DialogContent>
+          <Box sx={{ display: "flex", flexDirection: "column", gap: 2, pt: 1 }}>
+            <TextField label="Title (EN)" value={aboutUsValueForm.en_title} onChange={(e) => setAboutUsValueForm((p) => ({ ...p, en_title: e.target.value }))} fullWidth />
+            <TextField label="Title (AR)" value={aboutUsValueForm.ar_title} onChange={(e) => setAboutUsValueForm((p) => ({ ...p, ar_title: e.target.value }))} fullWidth />
+            <TextField label="Description (EN)" value={aboutUsValueForm.en_description} onChange={(e) => setAboutUsValueForm((p) => ({ ...p, en_description: e.target.value }))} fullWidth multiline rows={2} />
+            <TextField label="Description (AR)" value={aboutUsValueForm.ar_description} onChange={(e) => setAboutUsValueForm((p) => ({ ...p, ar_description: e.target.value }))} fullWidth multiline rows={2} />
+            <FormControl fullWidth>
+              <InputLabel>Icon</InputLabel>
+              <Select value={aboutUsValueForm.icon_type} label="Icon" onChange={(e) => setAboutUsValueForm((p) => ({ ...p, icon_type: e.target.value }))}>
+                <MenuItem value="heart">Heart</MenuItem>
+                <MenuItem value="leaf">Leaf</MenuItem>
+                <MenuItem value="users">Users</MenuItem>
+                <MenuItem value="award">Award</MenuItem>
+              </Select>
+            </FormControl>
+          </Box>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setAboutUsValueDialogOpen(false)}>Cancel</Button>
+          <Button variant="contained" onClick={saveAboutUsValue}>{editingAboutUsValue ? "Save" : "Add"}</Button>
         </DialogActions>
       </Dialog>
       <Dialog open={statItemDialogOpen} onClose={() => setStatItemDialogOpen(false)} maxWidth="sm" fullWidth>

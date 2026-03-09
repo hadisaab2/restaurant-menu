@@ -37,7 +37,7 @@ import {
   MobileMenuCloseButton,
 } from "./styles";
 import { HiMenuAlt2 } from "react-icons/hi";
-import { FaTimes, FaHome, FaList, FaShoppingBag, FaCommentAlt, FaAddressBook, FaChevronDown, FaChevronUp, FaFacebook, FaInstagram, FaTwitter, FaLinkedin, FaYoutube, FaGlobe, FaTiktok, FaQuestionCircle } from "react-icons/fa";
+import { FaTimes, FaHome, FaList, FaShoppingBag, FaCommentAlt, FaAddressBook, FaChevronDown, FaChevronUp, FaFacebook, FaInstagram, FaTwitter, FaLinkedin, FaYoutube, FaGlobe, FaTiktok, FaQuestionCircle, FaInfoCircle } from "react-icons/fa";
 import { useParams } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { changelanuage } from "../../../redux/restaurant/restaurantActions";
@@ -53,6 +53,7 @@ export default function NavigationBar({
   onCategoryClick,
   onContactClick,
   onContactFormClick,
+  onAboutClick,
   categories,
   activeCategory,
   setshowSidebar,
@@ -133,6 +134,13 @@ export default function NavigationBar({
   const handleBranchesClick = () => {
     if (onBranchesClick) {
       onBranchesClick();
+    }
+    closeMobileMenu();
+  };
+
+  const handleAboutClick = () => {
+    if (onAboutClick) {
+      onAboutClick();
     }
     closeMobileMenu();
   };
@@ -227,6 +235,16 @@ export default function NavigationBar({
                 {activeLanguage === "en" ? "Feedback" : "التعليقات"}
               </NavLinkText>
             </NavLink>
+            {onAboutClick && (
+              <NavLink
+                onClick={() => handleNavClick(onAboutClick)}
+                activeLanguage={activeLanguage}
+              >
+                <NavLinkText activeLanguage={activeLanguage}>
+                  {activeLanguage === "en" ? "About us" : "من نحن"}
+                </NavLinkText>
+              </NavLink>
+            )}
             <NavLink
               onClick={() => handleNavClick(onBranchesClick)}
               activeLanguage={activeLanguage}
@@ -387,6 +405,20 @@ export default function NavigationBar({
                 </MobileMenuSectionHeader>
               </MobileMenuSection>
             </>
+
+            {/* About us Section */}
+            {onAboutClick && (
+              <MobileMenuSection>
+                <MobileMenuSectionHeader onClick={handleAboutClick}>
+                  <MobileMenuSectionIcon>
+                    <FaInfoCircle />
+                  </MobileMenuSectionIcon>
+                  <MobileMenuSectionTitle activeLanguage={activeLanguage}>
+                    {activeLanguage === "en" ? "About us" : "من نحن"}
+                  </MobileMenuSectionTitle>
+                </MobileMenuSectionHeader>
+              </MobileMenuSection>
+            )}
 
             {/* Branches Section */}
             <>

@@ -70,6 +70,7 @@ export default function AddProduct({
   const [isHidden, setIsHidden] = useState(false);
   const [isOutOfStock, setIsOutOfStock] = useState(false);
   const [isFeatured, setIsFeatured] = useState(false);
+  const [isBestSeller, setIsBestSeller] = useState(false);
 
   const [jsonString, setJsonString] = useState("{}");
   const [activeTab,setActiveTab]=useState("productinfo")
@@ -236,12 +237,14 @@ export default function AddProduct({
       setValue("hide", selectedProduct.hide);
       setValue("out_of_stock", selectedProduct.out_of_stock);
       setValue("featured", selectedProduct.featured);
+      setValue("is_best_seller", selectedProduct.is_best_seller);
 
       setIsNew(selectedProduct.new)
       setSquareDimension(selectedProduct.square_dimension)
       setIsHidden(Boolean(selectedProduct.hide));
       setIsOutOfStock(Boolean(selectedProduct.out_of_stock));
       setIsFeatured(Boolean(selectedProduct.featured));
+      setIsBestSeller(Boolean(selectedProduct.is_best_seller));
 
     }
   }, []);
@@ -268,7 +271,8 @@ export default function AddProduct({
           square_dimension:squareDimension,
           hide: isHidden,
           out_of_stock: isOutOfStock,
-          featured: isFeatured
+          featured: isFeatured,
+          is_best_seller: isBestSeller
         });
       } else {
         handleApiCall({
@@ -281,7 +285,8 @@ export default function AddProduct({
           square_dimension:squareDimension,
           hide: isHidden,
           out_of_stock: isOutOfStock,
-          featured: isFeatured
+          featured: isFeatured,
+          is_best_seller: isBestSeller
         });
       }
     })();
@@ -330,6 +335,9 @@ export default function AddProduct({
   };
   const handleFeatured = () => {
     setIsFeatured(!isFeatured);
+  };
+  const handleBestSeller = () => {
+    setIsBestSeller(!isBestSeller);
   };
 
   
@@ -592,6 +600,14 @@ export default function AddProduct({
               <FormControlLabel
                 control={<Checkbox checked={isFeatured} onChange={handleFeatured} />}
                 label="Featured product"
+              />
+          </FormControl>
+
+          <FormControl component="fieldset">
+              <FormLabel component="legend">Bestseller</FormLabel>
+              <FormControlLabel
+                control={<Checkbox checked={isBestSeller} onChange={handleBestSeller} />}
+                label="Bestseller"
               />
           </FormControl>
         <Row>

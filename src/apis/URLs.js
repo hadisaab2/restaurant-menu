@@ -30,6 +30,8 @@ export const GET_PRODUCTS_BY_RESTAURANT_URL = (restaurantId, page) =>
 
 export const GET_FEATURED_PRODUCTS_URL = (restaurantId) =>
   `${REACT_APP_BASE_URL}/products/featured?restaurantId=${restaurantId}`;
+export const GET_BEST_SELLERS_URL = (restaurantId) =>
+  `${REACT_APP_BASE_URL}/products/bestsellers?restaurantId=${restaurantId}`;
 
 
 export const ADD_CATEGORY_URL = `${REACT_APP_BASE_URL}/categories`;
@@ -95,6 +97,16 @@ export const EDIT_VALUE_CARD_URL = (id) => `${REACT_APP_BASE_URL}/value-cards/${
 export const UPDATE_VALUE_CARDS_SECTION_URL = (restaurantId) =>
   `${REACT_APP_BASE_URL}/value-cards/section/${restaurantId}`;
 export const DELETE_VALUE_CARD_URL = (id) => `${REACT_APP_BASE_URL}/value-cards/${id}`;
+
+export const GET_ABOUT_US_URL = (restaurantId) =>
+  `${REACT_APP_BASE_URL}/about-us/${restaurantId}`;
+export const UPDATE_ABOUT_US_SECTION_URL = (restaurantId) =>
+  `${REACT_APP_BASE_URL}/about-us/section/${restaurantId}`;
+export const ADD_ABOUT_US_VALUE_URL = `${REACT_APP_BASE_URL}/about-us/values`;
+export const EDIT_ABOUT_US_VALUE_URL = (id) =>
+  `${REACT_APP_BASE_URL}/about-us/values/${id}`;
+export const DELETE_ABOUT_US_VALUE_URL = (id) =>
+  `${REACT_APP_BASE_URL}/about-us/values/${id}`;
 
 export const GET_WORKING_HOURS_URL = (restaurantId) =>
   `${REACT_APP_BASE_URL}/working-hours?restaurantId=${restaurantId}`;
