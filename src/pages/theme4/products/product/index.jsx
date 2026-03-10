@@ -131,7 +131,12 @@ const Product = React.forwardRef(
       finalDiscount = parseFloat(plate.discount || 0);
     }
 
-    const features = JSON.parse(restaurant?.features || "{}");
+    let features = {};
+    try {
+      features = typeof restaurant?.features === "string" ? JSON.parse(restaurant.features || "{}") : (restaurant?.features || {});
+    } catch (_) {
+      features = {};
+    }
     const isOutOfStock =
       Boolean(plate?.out_of_stock) || Number(plate?.out_of_stock) === 1;
     const coverIndex = plate.images?.findIndex((image) => image.id === plate.new_cover_id) ?? -1;
@@ -151,13 +156,12 @@ const Product = React.forwardRef(
     const hasForm = hasProductForm || hasCategoryForm;
 
     const handleQuickAdd = (event) => {
-      event.preventDefault();
-      event.stopPropagation();
-      if (event.nativeEvent && event.nativeEvent.stopImmediatePropagation) {
-        event.nativeEvent.stopImmediatePropagation();
+      if (event) {
+        event.preventDefault();
+        event.stopPropagation();
+        if (event.nativeEvent?.stopImmediatePropagation) event.nativeEvent.stopImmediatePropagation();
       }
-      
-      if (!features?.cart) return;
+      if (features && features.cart === false) return;
       if (isOutOfStock) return;
       if (hasForm) {
         plateHandle();
@@ -216,7 +220,7 @@ const Product = React.forwardRef(
               $isLogoFallback={!hasValidImage}
             />
           </ImageContainer>
-          {features?.cart &&
+          {(features?.cart !== false) &&
             (isOutOfStock ? (
               <OutOfStockBadge activeLanuguage={restaurant?.activeLanguage}>
                 {restaurant?.activeLanguage === "en"

@@ -42,14 +42,14 @@ export default function BottomTabBar({
       icon: FaHome,
       label: activeLanguage === "en" ? "Home" : "الرئيسية",
       onClick: onHomeClick,
-      active: activeView === "home",
+      active: !showPopup && activeView === "home",
     },
     {
       id: "categories",
       icon: FaTh,
       label: activeLanguage === "en" ? "Categories" : "الفئات",
       onClick: onCategoriesClick,
-      active: activeView === "categories" || activeView === "products",
+      active: !showPopup && (activeView === "categories" || activeView === "products"),
     },
     {
       id: "cart",

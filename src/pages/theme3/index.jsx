@@ -424,7 +424,7 @@ export default function Theme3() {
         onBranchesClick={handleBranchesClick}
         onContactFormClick={handleContactClick}
         onFeedbackClick={handleFeedbackClick}
-        onAboutClick={handleAboutClick}
+        onAboutClick={restaurant?.show_about_us !== false ? handleAboutClick : undefined}
         onOrderClick={handleOrderClick}
         onHomeClick={handleBackToHome}
         onCategoryClick={handleCategoryClick}
@@ -434,7 +434,7 @@ export default function Theme3() {
         setshowSidebar={setshowSidebar}
         showSidebar={showSidebar}
         popupHandler={popupHandler}
-        isProductDetailsOpen={isProductDetailsOpen}
+        isProductDetailsOpen={isProductDetailsOpen || showPopup === "about"}
       />
       
       <MenuWrapper onClick={handleClickOutside} >
@@ -562,9 +562,9 @@ export default function Theme3() {
       {productId &&<ProductParam productId={productId} searchParams={searchParams} setSearchParams={setSearchParams} />}
       {features?.install_app && <InstallPrompt showInstallPopup={showInstallPopup} onInstall={handleInstallClick} restaurantName={restaurantName} onDismiss={() => setShowInstallPopup(false)} />}
       
-      {/* Bottom Tab Bar - Always visible except when product details are open */}
+      {/* Bottom Tab Bar - Hidden when product details or About Us popup is open */}
       <BottomTabBar
-        isProductDetailsOpen={isProductDetailsOpen}
+        isProductDetailsOpen={isProductDetailsOpen || showPopup === "about"}
         activeView={viewMode}
         showPopup={showPopup}
         onHomeClick={handleBackToHome}

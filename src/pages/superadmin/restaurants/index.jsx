@@ -622,6 +622,7 @@ export default function Restaurants() {
     payment_date,
     amount,
     is_paid,
+    show_about_us,
   }) => {
     const theme = JSON.parse(themeString);
     const features = JSON.parse(featureString);
@@ -653,6 +654,7 @@ export default function Restaurants() {
       payment_date,
       amount,
       is_paid,
+      show_about_us,
     });
     setIsEditMode(true);
     setTemplate(template_id);
@@ -677,6 +679,7 @@ export default function Restaurants() {
     setValue("ar_slogan_subtext", ar_slogan_subtext || "");
     setValue("default_language", default_language || "en");
     setValue("show_all_items_category", !!show_all_items_category);
+    setValue("show_about_us", show_about_us !== false && show_about_us !== 0);
     setValue("business_type", business_type || "restaurant");
     setValue("all_items_style", all_items_style || "grid");
     setValue("product_details_carousel_style", product_details_carousel_style || "normal");
@@ -743,6 +746,7 @@ export default function Restaurants() {
             data.show_all_items_category === true ||
             data.show_all_items_category === "true" ||
             data.show_all_items_category === 1,
+          show_about_us: (Number(data.template_id) === 3 || Number(data.template_id) === 4) ? (data.show_about_us === true || data.show_about_us === "true" || data.show_about_us === 1 || data.show_about_us === undefined) : undefined,
           business_type: data.business_type || "restaurant",
           all_items_style: data.all_items_style || "grid",
           product_details_carousel_style: data.product_details_carousel_style || "normal",
@@ -1674,6 +1678,21 @@ export default function Restaurants() {
                   );
                 })}
             </FeaturesBlock>
+            {(Number(template) === 3 || Number(template) === 4) && (
+              <FormControl component="fieldset" style={{ display: "flex", flexDirection: "row" }}>
+                <FormLabel component="legend">Theme 3 & 4</FormLabel>
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      {...register("show_about_us")}
+                      defaultChecked={getValues("show_about_us") ?? true}
+                      onChange={(e) => setValue("show_about_us", e.target.checked)}
+                    />
+                  }
+                  label="Show About Us"
+                />
+              </FormControl>
+            )}
             {(Number(template) === 3 || Number(template) === 2) && (
               <>
                 <FormControl component="fieldset" style={{ display: "flex", flexDirection: "row" }}>

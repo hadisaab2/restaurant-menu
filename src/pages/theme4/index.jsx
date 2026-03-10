@@ -451,7 +451,7 @@ export default function Theme3() {
 
   return (
     <Container id="wrapper">
-      {/* Navigation Bar - Smooth transition when viewing product details */}
+      {/* Navigation Bar - Hidden when product details or About Us popup is open */}
       <NavigationBar
         onProductsClick={handleProductsClick}
         onSocialMediaClick={handleSocialMediaClick}
@@ -467,8 +467,8 @@ export default function Theme3() {
         setshowSidebar={setshowSidebar}
         showSidebar={showSidebar}
         popupHandler={popupHandler}
-        isProductDetailsOpen={isProductDetailsOpen}
-        onAboutClick={handleAboutClick}
+        isProductDetailsOpen={isProductDetailsOpen || showPopup === "about"}
+        onAboutClick={restaurant?.show_about_us !== false ? handleAboutClick : undefined}
       />
       
       <MenuWrapper onClick={handleClickOutside} >
@@ -615,9 +615,9 @@ export default function Theme3() {
       {productId &&<ProductParam productId={productId} searchParams={searchParams} setSearchParams={setSearchParams} />}
       {features?.install_app && <InstallPrompt showInstallPopup={showInstallPopup} onInstall={handleInstallClick} restaurantName={restaurantName} onDismiss={() => setShowInstallPopup(false)} />}
       
-      {/* Bottom Tab Bar - Always visible except when product details are open */}
+      {/* Bottom Tab Bar - Hidden when product details or About Us popup is open */}
       <BottomTabBar
-        isProductDetailsOpen={isProductDetailsOpen}
+        isProductDetailsOpen={isProductDetailsOpen || showPopup === "about"}
         activeView={viewMode}
         showPopup={showPopup}
         onHomeClick={handleBackToHome}

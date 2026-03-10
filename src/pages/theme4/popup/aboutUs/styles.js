@@ -34,7 +34,7 @@ export const Backdrop = styled.div`
   background: rgba(0, 0, 0, 0.55);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
-  z-index: 299;
+  z-index: 1699;
   animation: ${backdropFadeIn} 0.35s ease-out forwards;
   pointer-events: auto;
 `;
@@ -55,7 +55,7 @@ export const Panel = styled.div`
   background: ${(p) => p.theme?.backgroundColor || "#fff"};
   border-radius: 28px;
   box-shadow: 0 24px 80px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(0, 0, 0, 0.06);
-  z-index: 300;
+  z-index: 1700;
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -78,15 +78,20 @@ export const CloseButton = styled(IoMdClose)`
   padding: 10px;
   color: ${(p) => p.theme?.textColor || "#333"};
   cursor: pointer;
-  z-index: 2;
+  z-index: 10;
   border-radius: 50%;
-  background: rgba(0, 0, 0, 0.06);
-  transition: background 0.2s, transform 0.2s;
+  background: rgba(0, 0, 0, 0.08);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
+  transition: background 0.2s, transform 0.2s, color 0.2s;
   flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
   &:hover {
-    background: rgba(0, 0, 0, 0.1);
+    background: rgba(0, 0, 0, 0.12);
     transform: scale(1.05);
+    color: ${(p) => p.theme?.textColor || "#111"};
   }
 `;
 
