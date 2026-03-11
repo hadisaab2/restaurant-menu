@@ -13,7 +13,8 @@ import {
   DecorativeLine,
   Section,
   SectionTitle,
-  SectionText,
+  SectionTextBlock,
+  SectionParagraph,
   ValuesGrid,
   ValueCard,
   ValueIcon,
@@ -138,7 +139,21 @@ export default function AboutUsPopup({ showPopup, popupHandler }) {
           </Hero>
           <Section $delay={0.25}>
             <SectionTitle>{t.storyTitle}</SectionTitle>
-            <SectionText>{t.story}</SectionText>
+            <SectionTextBlock>
+              {(() => {
+                const raw = t.story || "";
+                const paragraphs = raw
+                  .split(/\n\n+|\n/)
+                  .map((para) => para.trim())
+                  .filter(Boolean);
+                if (paragraphs.length === 0 && raw.trim()) {
+                  return <SectionParagraph>{raw.trim()}</SectionParagraph>;
+                }
+                return paragraphs.map((para, i) => (
+                  <SectionParagraph key={i}>{para}</SectionParagraph>
+                ));
+              })()}
+            </SectionTextBlock>
           </Section>
           <Section $delay={0.35}>
             <SectionTitle>{t.valuesTitle}</SectionTitle>

@@ -169,6 +169,23 @@ export const SectionText = styled.p`
   margin: 0;
 `;
 
+export const SectionTextBlock = styled.div`
+  font-size: 15px;
+  line-height: 1.65;
+  color: ${(p) => (p.theme?.textColor ? p.theme.textColor + "ee" : "#333")};
+`;
+
+export const SectionParagraph = styled.p`
+  margin: 0 0 1em;
+  font-size: inherit;
+  line-height: inherit;
+  color: inherit;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+`;
+
 export const ValuesGrid = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr;
