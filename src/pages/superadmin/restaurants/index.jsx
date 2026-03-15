@@ -171,7 +171,7 @@ export default function Restaurants() {
   const isTemplate3Or4 = Number(template) === 3 || Number(template) === 4;
   const { response: badgesResponse, refetch: refetchBadges } = useGetBadges({
     restaurant_id: restaurantIdForBadges,
-    enabled: !!restaurantIdForBadges && isTemplate4,
+    enabled: !!restaurantIdForBadges && isTemplate3Or4,
   });
   const badgesList = badgesResponse?.data ?? [];
   const { mutate: addBadgeMutate } = useAddBadgeQuery({
@@ -222,7 +222,7 @@ export default function Restaurants() {
 
   const { response: valueCardsResponse, refetch: refetchValueCards } = useGetValueCards({
     restaurant_id: restaurantIdForBadges,
-    enabled: !!restaurantIdForBadges && isTemplate4,
+    enabled: !!restaurantIdForBadges && isTemplate3Or4,
   });
   const valueCardsData = valueCardsResponse?.data ?? {};
   const valueCardsList = valueCardsData?.cards ?? [];
@@ -246,7 +246,7 @@ export default function Restaurants() {
 
   const { section: statsSection, items: statItemsList, refetch: refetchStatsSection } = useGetStatsSection({
     restaurant_id: restaurantIdForBadges,
-    enabled: !!restaurantIdForBadges && isTemplate4,
+    enabled: !!restaurantIdForBadges && isTemplate3Or4,
   });
   const { mutate: updateStatsSectionMutate } = useUpdateStatsSection({
     restaurant_id: restaurantIdForBadges,
@@ -290,7 +290,7 @@ export default function Restaurants() {
   });
 
   useEffect(() => {
-    if (valueCardsSection && isTemplate4) {
+    if (valueCardsSection && isTemplate3Or4) {
       setValueCardSectionForm({
         en_section_label: valueCardsSection.en_section_label || "",
         ar_section_label: valueCardsSection.ar_section_label || "",
@@ -298,10 +298,10 @@ export default function Restaurants() {
         ar_section_heading: valueCardsSection.ar_section_heading || "",
       });
     }
-  }, [valueCardsSection, isTemplate4]);
+  }, [valueCardsSection, isTemplate3Or4]);
 
   useEffect(() => {
-    if (statsSection && isTemplate4) {
+    if (statsSection && isTemplate3Or4) {
       setStatsSectionForm({
         en_title: statsSection.en_title || "",
         ar_title: statsSection.ar_title || "",
@@ -309,7 +309,7 @@ export default function Restaurants() {
         ar_subtitle: statsSection.ar_subtitle || "",
       });
     }
-  }, [statsSection, isTemplate4]);
+  }, [statsSection, isTemplate3Or4]);
 
   useEffect(() => {
     if (aboutUsSection && isTemplate3Or4) {
@@ -1317,9 +1317,9 @@ export default function Restaurants() {
                 />
               </Box>
             </SloganBlock>
-            {isTemplate4 && selectedProduct && (
+            {isTemplate3Or4 && selectedProduct && (
               <>
-                <FormSectionHeader>Badges (theme4 hero)</FormSectionHeader>
+                <FormSectionHeader>Badges (theme3 & 4 hero)</FormSectionHeader>
                 <Box sx={{ width: "100%", mt: 1, mb: 2 }}>
                 <Button variant="outlined" size="small" onClick={openAddBadge} sx={{ mb: 1 }}>
                   Add Badge
@@ -1353,7 +1353,7 @@ export default function Restaurants() {
                   ))}
                 </Box>
                 </Box>
-                <FormSectionHeader>Value Cards (theme4 – Why Us section)</FormSectionHeader>
+                <FormSectionHeader>Value Cards (theme3 & 4 – Why Us section)</FormSectionHeader>
                 <Box sx={{ width: "100%", mt: 1, mb: 2 }}>
                   <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
                     Section label & heading (e.g. &quot;Why Reflex&quot; / &quot;Food your pets will love&quot;)
@@ -1458,7 +1458,7 @@ export default function Restaurants() {
                     </Box>
                   </>
                 )}
-                <FormSectionHeader>Stats section (theme4 – Trusted by owners)</FormSectionHeader>
+                <FormSectionHeader>Stats section (theme3 & 4 – Trusted by owners)</FormSectionHeader>
                 <Box sx={{ width: "100%", mt: 1, mb: 2 }}>
                   <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
                     Title &amp; subtitle (e.g. &quot;Trusted by 5,000+ owners&quot; / &quot;Across the region&quot;). Add stat items below; use &quot;Products count&quot; for live product count from DB.

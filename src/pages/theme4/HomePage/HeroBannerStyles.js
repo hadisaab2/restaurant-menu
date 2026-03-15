@@ -17,6 +17,16 @@ export const HeroBgImage = styled.div`
   inset: 0;
   width: 100%;
   height: 100%;
+`;
+
+export const HeroBgImageSlide = styled.div`
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: ${(p) => (p.$active ? 1 : 0)};
+  transition: opacity 1.2s ease-in-out;
+  pointer-events: none;
 
   & img {
     position: absolute;

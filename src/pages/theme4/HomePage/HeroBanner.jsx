@@ -1,9 +1,10 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { FaChevronRight, FaChevronLeft } from "react-icons/fa";
 import { getBadgeIconComponent } from "../../../constants/badgeIconTypes";
 import {
   HeroRoot,
   HeroBgImage,
+  HeroBgImageSlide,
   HeroGradient,
   HeroContent,
   HeroInner,
@@ -16,6 +17,7 @@ import {
 } from "./HeroBannerStyles";
 
 const IMAGE_BASE = "https://storage.googleapis.com/ecommerce-bucket-testing";
+const ROTATE_INTERVAL_MS = 5000;
 
 export default function HeroBanner({
   images = [],
@@ -26,10 +28,17 @@ export default function HeroBanner({
   badges = [],
   ctaPrimaryText,
 }) {
-  const heroImageUrl =
-    images?.length > 0 && images[0]?.url
-      ? `${IMAGE_BASE}/${images[0].url}`
-      : null;
+  const validImages = (images || []).filter((img) => img?.url);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const hasMultipleImages = validImages.length > 1;
+
+  useEffect(() => {
+    if (!hasMultipleImages) return;
+    const id = setInterval(() => {
+      setCurrentImageIndex((i) => (i + 1) % validImages.length);
+    }, ROTATE_INTERVAL_MS);
+    return () => clearInterval(id);
+  }, [hasMultipleImages, validImages.length]);
 
   const head = headline ?? (activeLanguage === "en" ? "Welcome" : "مرحباً");
   const sub = subtext ?? "";
@@ -38,8 +47,16 @@ export default function HeroBanner({
   return (
     <HeroRoot>
       <HeroBgImage>
-        {heroImageUrl ? (
-          <img src={heroImageUrl} alt="" />
+        {validImages.length > 0 ? (
+          validImages.map((img, i) => (
+            <HeroBgImageSlide
+              key={img.id ?? i}
+              $active={i === currentImageIndex}
+              aria-hidden={i !== currentImageIndex}
+            >
+              <img src={`${IMAGE_BASE}/${img.url}`} alt="" />
+            </HeroBgImageSlide>
+          ))
         ) : (
           <div
             style={{
