@@ -17,6 +17,7 @@ export const HeroBgImage = styled.div`
   inset: 0;
   width: 100%;
   height: 100%;
+  cursor: ${(p) => (p.$clickable ? "pointer" : "default")};
 `;
 
 export const HeroBgImageSlide = styled.div`
@@ -35,6 +36,56 @@ export const HeroBgImageSlide = styled.div`
     height: 100%;
     object-fit: cover;
     opacity: 0.6;
+  }
+`;
+
+export const HeroImagePopupBackdrop = styled.div`
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.9);
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 24px;
+  cursor: pointer;
+`;
+
+export const HeroImagePopupContent = styled.div`
+  position: relative;
+  max-width: 100%;
+  max-height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: default;
+  & img {
+    max-width: 100%;
+    max-height: calc(100vh - 96px);
+    width: auto;
+    height: auto;
+    object-fit: contain;
+  }
+`;
+
+export const HeroImagePopupClose = styled.button`
+  position: absolute;
+  top: -44px;
+  right: 0;
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
+  font-size: 24px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+  &:hover {
+    background: rgba(255, 255, 255, 0.25);
   }
 `;
 
@@ -62,6 +113,10 @@ export const HeroContent = styled.div`
   padding-bottom: 64px;
   max-width: 1280px;
   direction: ${(props) => (props.$activeLanguage === "ar" ? "rtl" : "ltr")};
+  pointer-events: none;
+  & > * {
+    pointer-events: auto;
+  }
 
   @media (min-width: 768px) {
     min-height: 90vh;

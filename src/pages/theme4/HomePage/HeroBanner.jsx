@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { FaChevronRight, FaChevronLeft } from "react-icons/fa";
+import { IoMdClose } from "react-icons/io";
 import { getBadgeIconComponent } from "../../../constants/badgeIconTypes";
 import {
   HeroRoot,
@@ -14,6 +15,9 @@ import {
   HeroSubtext,
   CTAWrap,
   CtaPrimary,
+  HeroImagePopupBackdrop,
+  HeroImagePopupContent,
+  HeroImagePopupClose,
 } from "./HeroBannerStyles";
 
 const IMAGE_BASE = "https://storage.googleapis.com/ecommerce-bucket-testing";
@@ -30,6 +34,7 @@ export default function HeroBanner({
 }) {
   const validImages = (images || []).filter((img) => img?.url);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [showImagePopup, setShowImagePopup] = useState(false);
   const hasMultipleImages = validImages.length > 1;
 
   useEffect(() => {
@@ -44,9 +49,23 @@ export default function HeroBanner({
   const sub = subtext ?? "";
   const cta1 = ctaPrimaryText ?? (activeLanguage === "en" ? "Shop Now" : "تسوق الآن");
 
+  const openImagePopup = () => {
+    if (validImages.length > 0) setShowImagePopup(true);
+  };
+
+  const closeImagePopup = (e) => {
+    if (e) e.stopPropagation();
+    setShowImagePopup(false);
+  };
+
   return (
     <HeroRoot>
-      <HeroBgImage>
+      <HeroBgImage
+        $clickable={validImages.length > 0}
+        onClick={openImagePopup}
+        role={validImages.length > 0 ? "button" : undefined}
+        aria-label={validImages.length > 0 ? (activeLanguage === "en" ? "View hero image" : "عرض الصورة") : undefined}
+      >
         {validImages.length > 0 ? (
           validImages.map((img, i) => (
             <HeroBgImageSlide
@@ -68,6 +87,19 @@ export default function HeroBanner({
         )}
       </HeroBgImage>
       <HeroGradient />
+      {showImagePopup && validImages.length > 0 && (
+        <HeroImagePopupBackdrop onClick={closeImagePopup}>
+          <HeroImagePopupContent onClick={(e) => e.stopPropagation()}>
+            <HeroImagePopupClose type="button" onClick={closeImagePopup} aria-label={activeLanguage === "en" ? "Close" : "إغلاق"}>
+              <IoMdClose size={28} />
+            </HeroImagePopupClose>
+            <img
+              src={`${IMAGE_BASE}/${validImages[currentImageIndex].url}`}
+              alt=""
+            />
+          </HeroImagePopupContent>
+        </HeroImagePopupBackdrop>
+      )}
       <HeroContent $activeLanguage={activeLanguage}>
         <HeroInner>
           {Array.isArray(badges) && badges.length > 0 && (
