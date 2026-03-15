@@ -274,19 +274,19 @@ export default function SliderImages() {
 
           {/* Slider Images Section */}
           <div style={{ marginTop: "40px" }}>
-            <Title>Slider Images (Maximum 4 images)</Title>
+            <Title>Slider Images (Maximum 8 images)</Title>
             <AddSliderImage 
               onClick={() => {
-                if (sliderImages.length >= 4) {
-                  toast.warning("Maximum 4 slider images allowed");
+                if (sliderImages.length >= 8) {
+                  toast.warning("Maximum 8 slider images allowed");
                   return;
                 }
                 setCurrentImageType(1);
                 setShowAddComponent(true);
               }}
-              disabled={sliderImages.length >= 4}
+              disabled={sliderImages.length >= 8}
             >
-              Add Slider Image ({sliderImages.length}/4)
+              Add Slider Image ({sliderImages.length}/8)
             </AddSliderImage>
             
             <ImageGrid>
@@ -318,7 +318,7 @@ export default function SliderImages() {
             
             {sliderImages.length === 0 && (
               <p style={{ marginTop: "20px", color: "#666" }}>
-                No slider images added yet. Add up to 4 images for your homepage slider.
+                No slider images added yet. Add up to 8 images for your homepage slider.
               </p>
             )}
           </div>

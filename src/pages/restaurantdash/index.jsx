@@ -52,7 +52,7 @@ export default function RestaurantDash() {
     setUserInformation(JSON.parse(storedUserInfo));
   }, []);
 
-  const isTheme3 = Number(userInformation?.template_id) === 3;
+  const isTheme3Or4 = Number(userInformation?.template_id) === 3 || Number(userInformation?.template_id) === 4;
   const isFeedbacksSection = section === "Feedbacks";
   const isQuestionsSection = section === "QuestionsSuggestions";
   const isOrdersSection = section === "Orders";
@@ -65,9 +65,9 @@ export default function RestaurantDash() {
   }
 
   const handlesection= (section)=>{
-    // Prevent navigation to restricted sections if not Theme 3
+    // Prevent navigation to restricted sections if not Theme 3 or 4
     const restrictedSections = ["Feedbacks", "QuestionsSuggestions", "Orders", "Customers", "Analytics"];
-    if (restrictedSections.includes(section) && !isTheme3) {
+    if (restrictedSections.includes(section) && !isTheme3Or4) {
       return; // Don't navigate to restricted sections
     }
     setSection(section)
@@ -113,28 +113,28 @@ export default function RestaurantDash() {
             <CateogoryIcon />
             <TabText>Report</TabText>
           </Tab>
-          <Tab $disabled={!isTheme3} onClick={() => handlesection("Feedbacks")}>
+          <Tab $disabled={!isTheme3Or4} onClick={() => handlesection("Feedbacks")}>
             <CateogoryIcon />
-            <TabText>Feedbacks{!isTheme3 && <span style={{ fontSize: "12px", color: "#999", marginLeft: "8px" }}>(VIP package)</span>}</TabText>
+            <TabText>Feedbacks{!isTheme3Or4 && <span style={{ fontSize: "12px", color: "#999", marginLeft: "8px" }}>(VIP package)</span>}</TabText>
           </Tab>
           <Tab
-            $disabled={!isTheme3}
+            $disabled={!isTheme3Or4}
             onClick={() => handlesection("QuestionsSuggestions")}
           >
             <CateogoryIcon />
-            <TabText>Questions & Suggestions{!isTheme3 && <span style={{ fontSize: "12px", color: "#999", marginLeft: "8px" }}>(VIP package)</span>}</TabText>
+            <TabText>Questions & Suggestions{!isTheme3Or4 && <span style={{ fontSize: "12px", color: "#999", marginLeft: "8px" }}>(VIP package)</span>}</TabText>
           </Tab>
-          <Tab $disabled={!isTheme3} onClick={() => handlesection("Orders")}>
+          <Tab $disabled={!isTheme3Or4} onClick={() => handlesection("Orders")}>
             <CateogoryIcon />
-            <TabText>Orders{!isTheme3 && <span style={{ fontSize: "12px", color: "#999", marginLeft: "8px" }}>(VIP package)</span>}</TabText>
+            <TabText>Orders{!isTheme3Or4 && <span style={{ fontSize: "12px", color: "#999", marginLeft: "8px" }}>(VIP package)</span>}</TabText>
           </Tab>
-          <Tab $disabled={!isTheme3} onClick={() => handlesection("Customers")}>
+          <Tab $disabled={!isTheme3Or4} onClick={() => handlesection("Customers")}>
             <CateogoryIcon />
-            <TabText>Customers{!isTheme3 && <span style={{ fontSize: "12px", color: "#999", marginLeft: "8px" }}>(VIP package)</span>}</TabText>
+            <TabText>Customers{!isTheme3Or4 && <span style={{ fontSize: "12px", color: "#999", marginLeft: "8px" }}>(VIP package)</span>}</TabText>
           </Tab>
-          <Tab $disabled={!isTheme3} onClick={() => handlesection("Analytics")}>
+          <Tab $disabled={!isTheme3Or4} onClick={() => handlesection("Analytics")}>
             <CateogoryIcon />
-            <TabText>Analytics{!isTheme3 && <span style={{ fontSize: "12px", color: "#999", marginLeft: "8px" }}>(VIP package)</span>}</TabText>
+            <TabText>Analytics{!isTheme3Or4 && <span style={{ fontSize: "12px", color: "#999", marginLeft: "8px" }}>(VIP package)</span>}</TabText>
           </Tab>
 
         </SidebarContent>
@@ -178,28 +178,28 @@ export default function RestaurantDash() {
             <CateogoryIcon />
             <TabText>Report</TabText>
           </Tab>
-          <Tab $disabled={!isTheme3} onClick={() => !isTheme3 ? null : setSection("Feedbacks")}>
+          <Tab $disabled={!isTheme3Or4} onClick={() => !isTheme3Or4 ? null : setSection("Feedbacks")}>
             <CateogoryIcon />
-            <TabText>Feedbacks{!isTheme3 && <span style={{ fontSize: "12px", color: "#999", marginLeft: "8px" }}>(VIP package)</span>}</TabText>
+            <TabText>Feedbacks{!isTheme3Or4 && <span style={{ fontSize: "12px", color: "#999", marginLeft: "8px" }}>(VIP package)</span>}</TabText>
           </Tab>
           <Tab
-            $disabled={!isTheme3}
-            onClick={() => !isTheme3 ? null : setSection("QuestionsSuggestions")}
+            $disabled={!isTheme3Or4}
+            onClick={() => !isTheme3Or4 ? null : setSection("QuestionsSuggestions")}
           >
             <CateogoryIcon />
-            <TabText>Questions & Suggestions{!isTheme3 && <span style={{ fontSize: "12px", color: "#999", marginLeft: "8px" }}>(VIP package)</span>}</TabText>
+            <TabText>Questions & Suggestions{!isTheme3Or4 && <span style={{ fontSize: "12px", color: "#999", marginLeft: "8px" }}>(VIP package)</span>}</TabText>
           </Tab>
-          <Tab $disabled={!isTheme3} onClick={() => !isTheme3 ? null : setSection("Orders")}>
+          <Tab $disabled={!isTheme3Or4} onClick={() => !isTheme3Or4 ? null : setSection("Orders")}>
             <CateogoryIcon />
-            <TabText>Orders{!isTheme3 && <span style={{ fontSize: "12px", color: "#999", marginLeft: "8px" }}>(VIP package)</span>}</TabText>
+            <TabText>Orders{!isTheme3Or4 && <span style={{ fontSize: "12px", color: "#999", marginLeft: "8px" }}>(VIP package)</span>}</TabText>
           </Tab>
-          <Tab $disabled={!isTheme3} onClick={() => !isTheme3 ? null : setSection("Customers")}>
+          <Tab $disabled={!isTheme3Or4} onClick={() => !isTheme3Or4 ? null : setSection("Customers")}>
             <CateogoryIcon />
-            <TabText>Customers{!isTheme3 && <span style={{ fontSize: "12px", color: "#999", marginLeft: "8px" }}>(VIP package)</span>}</TabText>
+            <TabText>Customers{!isTheme3Or4 && <span style={{ fontSize: "12px", color: "#999", marginLeft: "8px" }}>(VIP package)</span>}</TabText>
           </Tab>
-          <Tab $disabled={!isTheme3} onClick={() => !isTheme3 ? null : setSection("Analytics")}>
+          <Tab $disabled={!isTheme3Or4} onClick={() => !isTheme3Or4 ? null : setSection("Analytics")}>
             <CateogoryIcon />
-            <TabText>Analytics{!isTheme3 && <span style={{ fontSize: "12px", color: "#999", marginLeft: "8px" }}>(VIP package)</span>}</TabText>
+            <TabText>Analytics{!isTheme3Or4 && <span style={{ fontSize: "12px", color: "#999", marginLeft: "8px" }}>(VIP package)</span>}</TabText>
           </Tab>
         </SidebarContent>
         <SidebarBottom>
@@ -232,11 +232,11 @@ export default function RestaurantDash() {
         {section == "Settings" && <Settings userInformation={userInformation} setSection={setSection} />}
         {section == "Categories" && <Categories setProducts={setProducts} />}
         {section == "Report" && <Report userInformation={userInformation}/>}
-        {isRestrictedSection && !isTheme3 && (
+        {isRestrictedSection && !isTheme3Or4 && (
           <AccessNotice>
             <AccessNoticeTitle>Feature unavailable</AccessNoticeTitle>
             <AccessNoticeText>
-              This section is available only for Theme 3 restaurants (VIP package). Please
+              This section is available only for Theme 3 or 4 restaurants (VIP package). Please
               upgrade your package to enable {section === "Feedbacks" && "Feedbacks"}
               {section === "QuestionsSuggestions" && "Questions & Suggestions"}
               {section === "Orders" && "Orders"}
@@ -245,13 +245,13 @@ export default function RestaurantDash() {
             </AccessNoticeText>
           </AccessNotice>
         )}
-        {section == "Feedbacks" && isTheme3 && <Feedbacks />}
-        {section == "QuestionsSuggestions" && isTheme3 && (
+        {section == "Feedbacks" && isTheme3Or4 && <Feedbacks />}
+        {section == "QuestionsSuggestions" && isTheme3Or4 && (
           <QuestionsSuggestions />
         )}
-        {section == "Orders" && isTheme3 && <Orders />}
-        {section == "Customers" && isTheme3 && <Customers />}
-        {section == "Analytics" && isTheme3 && <Analytics />}
+        {section == "Orders" && isTheme3Or4 && <Orders />}
+        {section == "Customers" && isTheme3Or4 && <Customers />}
+        {section == "Analytics" && isTheme3Or4 && <Analytics />}
 
       </Content>
     </Container>
