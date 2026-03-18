@@ -103,6 +103,9 @@ const imageSrc = hasValidImage
             </LoaderWrapper>
           )}
           <ImageContainer onClick={plateHandle}>
+            {plate.new && (
+              <NEW>{restaurant?.activeLanguage === "en" ? "NEW !" : "! جديد"}</NEW>
+            )}
             <Image
               ref={ref}
               onLoad={handleImageLoaded}
@@ -111,7 +114,6 @@ const imageSrc = hasValidImage
             />
           </ImageContainer>
           <TextContainer activeLanuguage={restaurant?.activeLanguage}>
-            {plate.new && <NEW activeLanuguage={restaurant?.activeLanguage}>{restaurant?.activeLanguage === 'en' ? "NEW !" : "! جديد"} </NEW>}
             <PlateName fontSize={restaurant?.font_size}>
               
               {restaurant?.activeLanguage === 'en' ? plate.en_name : plate.ar_name}

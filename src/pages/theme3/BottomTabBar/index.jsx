@@ -14,6 +14,7 @@ export default function BottomTabBar({
   activeView,
   showPopup = null,
   onHomeClick,
+  hideHome = false,
   onCategoriesClick,
   onCartClick,
   onContactClick,
@@ -74,6 +75,7 @@ export default function BottomTabBar({
       active: showPopup === "feedback",
     },
   ].filter(tab => {
+    if (hideHome && tab.id === "home") return false;
     // Only show branches tab if branches exist
     if (tab.id === "branches") {
       return branches && branches.length > 0;

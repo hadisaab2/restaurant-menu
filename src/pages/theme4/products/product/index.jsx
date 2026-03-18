@@ -212,6 +212,9 @@ const Product = React.forwardRef(
             </LoaderWrapper>
           )}
           <ImageContainer onClick={plateHandle} onMouseEnter={prefetchProduct} onTouchStart={prefetchProduct}>
+            {plate.new && (
+              <NEW>{restaurant?.activeLanguage === "en" ? "NEW !" : "! جديد"}</NEW>
+            )}
             <Image
               ref={ref}
               onLoad={handleImageLoaded}
@@ -246,7 +249,6 @@ const Product = React.forwardRef(
               </QuickAddButton>
             ))}
           <TextContainer activeLanuguage={restaurant?.activeLanguage}>
-            {plate.new && <NEW activeLanuguage={restaurant?.activeLanguage}>{restaurant?.activeLanguage === 'en' ? "NEW !" : "! جديد"} </NEW>}
             <PlateName fontSize={restaurant?.font_size}>
               
               {restaurant?.activeLanguage === 'en' ? plate.en_name : plate.ar_name}

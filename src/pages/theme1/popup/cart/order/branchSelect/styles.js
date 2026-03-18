@@ -5,7 +5,7 @@ import styled from "styled-components";
 // Styled components
 export const SelectWrapper = styled.div`
   position: relative;
-  width: 100%;
+  width: 90%;
   height: 40px;
   margin-top: 20px;
 

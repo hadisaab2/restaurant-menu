@@ -2,15 +2,17 @@ import React from "react";
 import {
   Container,
   Brand,
+  LanguageContainer,
+  Language,
+  Ball,
+  Wrapper,
   ButtonsContainer,
   MenuIcon,
   HeaderWrapper,
-  LanguageButton,
 } from "./styles";
 import { useDispatch, useSelector } from "react-redux";
 import { changelanuage } from "../../../../redux/restaurant/restaurantActions";
 import { useParams } from "react-router-dom";
-import { FaGlobe } from "react-icons/fa";
 export default function HeaderTop({setshowSidebar,showSidebar}) {
   const { restaurantName: paramRestaurantName } = useParams();
 
@@ -44,9 +46,24 @@ export default function HeaderTop({setshowSidebar,showSidebar}) {
 
       <ButtonsContainer>
         {restaurant?.languages == "en&ar" && (
-          <LanguageButton onClick={() => handlelanguage(restaurant.activeLanguage === "en" ? "ar" : "en")} activeLanguage={restaurant.activeLanguage}>
-            <FaGlobe />
-          </LanguageButton>
+          <LanguageContainer>
+            <Wrapper />
+            <Ball activeLanguage={restaurant.activeLanguage} />
+            <Language
+              activeLanguage={restaurant.activeLanguage}
+              language={"en"}
+              onClick={() => handlelanguage("en")}
+            >
+              En
+            </Language>
+            <Language
+              activeLanguage={restaurant.activeLanguage}
+              language={"ar"}
+              onClick={() => handlelanguage("ar")}
+            >
+              Ar
+            </Language>
+          </LanguageContainer>
         )}
         {/* <MenuIcon onClick={()=>{setshowSidebar(!showSidebar)}}/> */}
       </ButtonsContainer>

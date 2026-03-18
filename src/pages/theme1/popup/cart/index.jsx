@@ -1,15 +1,18 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Container,
   Close,
 } from "./styles";
-import Wizard from "./Wizard";
-
+import CartItems from "./cartitems";
+import Order from "./order";
 export default function CartPopup({
   restaurant,
   showPopup,
   popupHandler = { popupHandler },
 }) {
+
+  const [block, setblock] = useState("cart")
+
   useEffect(() => {
     const handlePopState = () => {
       // Revert to the normal view when back is pressed
@@ -30,7 +33,8 @@ export default function CartPopup({
           popupHandler(null);
         }}
       />
-      <Wizard popupHandler={popupHandler} restaurant={restaurant} />
+      {block == "cart" && <CartItems setblock={setblock} />}
+      {block == "order" && <Order setblock={setblock} popupHandler={popupHandler} restaurant={restaurant} />}
     </Container>
   );
 }

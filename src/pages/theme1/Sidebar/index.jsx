@@ -13,11 +13,8 @@ import {
   Tabs,
   Wrapper,
   BrandContainer,
-  MenuIcon,
-  HomeLink,
-  HomeLinkText,
+  MenuIcon
 } from "./styles";
-import { FaHome } from "react-icons/fa";
 import { useParams, useSearchParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 
@@ -27,9 +24,7 @@ export default function SideBar({
   categories,
   showSidebar,
   setshowSidebar,
-  setcarouselPosition,
-  onHomeClick,
-  onCategoryClick
+  setcarouselPosition
 }) {
   const { restaurantName: paramRestaurantName } = useParams();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -58,13 +53,10 @@ export default function SideBar({
   );
 
   const itemClick = (id, index) => {
-    if (onCategoryClick) {
-      onCategoryClick(id);
-    } else {
-      setactiveCategory(id);
-      setcarouselPosition(index);
-    }
-    setshowSidebar(false);
+    setactiveCategory(id);
+
+    setcarouselPosition(index)
+    setshowSidebar(false)
   };
 
   return (
@@ -73,12 +65,6 @@ export default function SideBar({
       <Container >
 
         <MenuIcon />
-        {onHomeClick && (
-          <HomeLink onClick={onHomeClick} activeLanguage={restaurant?.activeLanguage}>
-            <FaHome />
-            <HomeLinkText>{restaurant?.activeLanguage === "en" ? "Home" : "الرئيسية"}</HomeLinkText>
-          </HomeLink>
-        )}
         <BrandContainer>
           <Brand
             showSidebar={showSidebar}
@@ -110,7 +96,15 @@ export default function SideBar({
                     categoryId={category.id}
                   >
                     <Icon
-                      src={`https://storage.googleapis.com/ecommerce-bucket-testing/${category.image_url}`}
+                      src={
+                        category.image_url 
+                          ? `https://storage.googleapis.com/ecommerce-bucket-testing/${category.image_url}`
+                          : category.isAllItems && restaurant?.logoURL
+                          ? `https://storage.googleapis.com/ecommerce-bucket-testing/${restaurant.logoURL}`
+                          : category.isAllItems && restaurant?.cover_url
+                          ? `https://storage.googleapis.com/ecommerce-bucket-testing/${restaurant.cover_url}`
+                          : ""
+                      }
                     />
                   </IconWrapper>}
 

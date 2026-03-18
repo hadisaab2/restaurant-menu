@@ -17,7 +17,8 @@ box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.2);
 display: flex;
 flex-direction: column;
 align-items: center;
-z-index: 10000;
+z-index: 5;
+padding-bottom: 20px;
 `;
 export const Close = styled(IoMdClose)`
 font-size: 20px;

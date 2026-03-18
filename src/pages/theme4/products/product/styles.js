@@ -32,6 +32,7 @@ export const Image = styled.img`
   visibility: ${(props) => (props.imageLoaded ? "visible" : "hidden")};
 `;
 export const ImageContainer = styled.div`
+position: relative;
 width:100%;
 height: 20vh;
 overflow: hidden;
@@ -135,24 +136,26 @@ top: 10px;
 `;
 
 export const NEW = styled.div`
-position: absolute;
-right: ${props=>props.activeLanuguage=="en"?"5px":null};
-left: ${props=>props.activeLanuguage=="en"?null:"5px"};
-bottom: 15px;
-font-size: 13px;
-padding-left: 5px;
-padding-right: 5px;
- background-color:${props=>props.theme.mainColor};
- color:${props=>props.theme.popupbuttonText};
- border-radius: 4px;
-
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  left: auto;
+  bottom: auto;
+  z-index: 4;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 3px 8px;
+  background-color: ${(props) => props.theme.mainColor};
+  color: ${(props) => props.theme.popupbuttonText};
+  border-radius: 4px;
+  line-height: 1.2;
 `;
 
 export const BestSellerBadge = styled.div`
   position: absolute;
   top: 8px;
-  right: ${(props) => (props.activeLanuguage === "en" ? "8px" : "auto")};
-  left: ${(props) => (props.activeLanuguage === "en" ? "auto" : "8px")};
+  left: 8px;
+  right: auto;
   font-size: 11px;
   padding: 4px 8px;
   background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);

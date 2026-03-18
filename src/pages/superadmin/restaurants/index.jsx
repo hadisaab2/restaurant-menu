@@ -1693,10 +1693,10 @@ export default function Restaurants() {
                 />
               </FormControl>
             )}
-            {(Number(template) === 3 || Number(template) === 2) && (
+            {(Number(template) === 1 || Number(template) === 2 || Number(template) === 3) && (
               <>
                 <FormControl component="fieldset" style={{ display: "flex", flexDirection: "row" }}>
-                  <FormLabel component="legend">Theme 2 & 3 Only</FormLabel>
+                  <FormLabel component="legend">Theme 1, 2 & 3</FormLabel>
                   <FormControlLabel
                     control={
                       <Checkbox

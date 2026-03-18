@@ -6,17 +6,19 @@ export const Container = styled.div`
 min-height: 100vh;
 width: 100%;
 position: relative;
-background-color: ${props=>props.theme.backgroundColor || "#f8f9fa"};
-font-family: ${(props) => `${props.theme.font || "system-ui"}, "Noto Kufi Arabic" !important`};
-overflow: visible;
+background-color: ${props=>props.theme.backgroundColor};
+font-family: ${(props) => `${props.theme.font}, "Noto Kufi Arabic" !important`};
+/* @media (min-width: 1024px) {
+        width: 30%;
+    } */
 `;
-
 export const MenuWrapper = styled.div`
 width: 100%;
 display: flex;
 flex-direction: column;
 height: 100%;
 position: relative;
+padding-bottom: 70px;
 `;
 
 
@@ -36,95 +38,51 @@ transition: all 1s ease-in-out;
 
 export const DetailsBtn = styled.div`
 position: fixed;
-bottom: 24px;
-right: 20px;
-width: 56px;
-height: 56px;
-background: ${props=>props.theme.mainColor || "#007bff"};
-border-radius: 50%;
+bottom:20px;
+right:20px;
+width:40px;
+height:40px;
+background-color:${props=>props.theme.mainColor};
+border-radius:50%;
 display: flex;
 align-items: center;
-box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15), 0 2px 8px rgba(0, 0, 0, 0.1);
+box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
 justify-content: center;
-color: white;
-font-size: 22px;
+color:white;
+font-size: 25px;
 cursor: pointer;
-transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-z-index: 50;
-
-&:hover {
-  transform: scale(1.1);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2), 0 4px 12px rgba(0, 0, 0, 0.15);
-}
-
-&:active {
-  transform: scale(1.05);
-  transition: all 0.15s ease;
-}
-
-@media (min-width: 768px) {
-  bottom: 30px;
-  right: 30px;
-  width: 60px;
-  height: 60px;
-  font-size: 24px;
-}
 `;
-
 export const CartBtn = styled.div`
 position: fixed;
-bottom: 90px;
-right: 20px;
-width: 56px;
-height: 56px;
-background: ${props=>props.theme.mainColor || "#007bff"};
-border-radius: 50%;
+bottom:70px;
+right:20px;
+width:40px;
+height:40px;
+background-color:${props=>props.theme.mainColor};
+border-radius:50%;
 display: flex;
 align-items: center;
-box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15), 0 2px 8px rgba(0, 0, 0, 0.1);
+box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
 justify-content: center;
-color: white;
-font-size: 22px;
+color:white;
+font-size: 25px;
 cursor: pointer;
-transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-z-index: 50;
-
-&:hover {
-  transform: scale(1.1);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2), 0 4px 12px rgba(0, 0, 0, 0.15);
-}
-
-&:active {
-  transform: scale(1.05);
-  transition: all 0.15s ease;
-}
-
-@media (min-width: 768px) {
-  bottom: 100px;
-  right: 30px;
-  width: 60px;
-  height: 60px;
-  font-size: 24px;
-}
 `;
-
-export const Number = styled.div`
+export const CartCount = styled.div`
 position: absolute;
-left: -6px;
-top: -6px;
-min-width: 22px;
-height: 22px;
-border-radius: 12px;
-font-size: 11px;
-font-weight: 700;
+left: -5px;
+top:-5px;
+width:20px;
+height:20px;
+border-radius: 50%;
+font-size: 10px;
 display: flex;
 align-items: center;
 justify-content: center;
-box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-color: ${props=>props.theme.textColor || "#ffffff"};
-background: ${props=>props.theme.backgroundColor || "#ff4444"};
-padding: 0 6px;
-border: 2px solid ${props=>props.theme.mainColor || "#007bff"};
+box-shadow: 0px 0px 6px 0px rgba(0, 0, 0, 0.5);
+color:${props=>props.theme.textColor};
+background-color:${props=>props.theme.backgroundColor};
+
 `;
 export const Location = styled(FaLocationArrow)`
 transform: rotate(270deg);
@@ -147,50 +105,6 @@ align-items: center;
 justify-content: center;
 color:${props=>props.theme.textColor};
 background-color:${props=>props.theme.backgroundColor};
-`;
-
-// Language Navigator - Appears on all pages
-export const LanguageNavigator = styled.div`
-  position: fixed;
-  top: 20px;
-  ${props => props.activeLanguage === "ar" ? "left: 20px;" : "right: 20px;"}
-  z-index: 10000;
-  
-  @media (min-width: 768px) {
-    top: 30px;
-    ${props => props.activeLanguage === "ar" ? "left: 30px;" : "right: 30px;"}
-  }
-`;
-
-export const LanguageButton = styled.button`
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background: transparent;
-  border: none;
-  box-shadow: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  color: ${props => props.theme.mainColor || "#333333"};
-  font-size: 18px;
-  
-  &:hover {
-    transform: scale(1.1);
-    color: ${props => props.theme.mainColor || "#007bff"};
-  }
-  
-  &:active {
-    transform: scale(1);
-  }
-  
-  @media (min-width: 768px) {
-    width: 44px;
-    height: 44px;
-    font-size: 20px;
-  }
 `;
 
 

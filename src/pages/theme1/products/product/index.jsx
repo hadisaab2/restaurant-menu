@@ -19,7 +19,7 @@ import { convertPrice } from "../../../../utilities/convertPrice";
 const _ = require('lodash');
 
 const Product = React.forwardRef(
-  ({ plate, setactivePlate, activePlate, index, showPopup, setSearchParams, searchParams, activeCategoryId, categories }, ref) => {
+  ({ plate, setactivePlate, activePlate, index, showPopup, setSearchParams, searchParams, activeCategoryId, categories, disableDetails }, ref) => {
     const { restaurantName: paramRestaurantName } = useParams();
 
     const hostname = window.location.hostname;
@@ -45,10 +45,13 @@ const Product = React.forwardRef(
     };
     const plateHandle = () => {
       if (activePlate == null && imageLoaded && !showPopup) {
-        setactivePlate(index);
+        if (!disableDetails) {
+          setactivePlate(index);
+        }
         const newParams = new URLSearchParams(searchParams);
         newParams.set("productId", plate?.id);
-        // Push updated URL without reloading or navigating
+        if (activeCategoryId) newParams.set("categoryId", activeCategoryId);
+        setSearchParams(newParams);
         window.history.pushState({}, "", `?${newParams.toString()}`);
 
         document.body.style.overflow = "hidden";
@@ -82,8 +85,15 @@ const Product = React.forwardRef(
       finalDiscount = parseFloat(activeCategory.discount);
     }
 
-const coverIndex = plate.images.findIndex((image) => image.id === plate.new_cover_id);
-console.log(coverIndex + "coveerrrrindexx")
+const coverIndex = plate.images?.findIndex((image) => image.id === plate.new_cover_id) ?? -1;
+const hasValidImage = coverIndex >= 0 && plate.images?.[coverIndex]?.url;
+const restaurantLogoUrl = restaurant?.logoURL 
+  ? `https://storage.googleapis.com/ecommerce-bucket-testing/${restaurant.logoURL}`
+  : null;
+const imageSrc = hasValidImage 
+  ? `https://storage.googleapis.com/ecommerce-bucket-testing/${plate.images[coverIndex].url}`
+  : restaurantLogoUrl || "";
+
     return (
       <Container index={index} activePlate={activePlate} className="lazy-load">
         <Wrapper>
@@ -93,17 +103,17 @@ console.log(coverIndex + "coveerrrrindexx")
             </LoaderWrapper>
           )}
           <ImageContainer onClick={plateHandle}>
+            {plate.new && (
+              <NEW>{restaurant?.activeLanguage === "en" ? "NEW !" : "! جديد"}</NEW>
+            )}
             <Image
               ref={ref}
               onLoad={handleImageLoaded}
-              src={
-                `https://storage.googleapis.com/ecommerce-bucket-testing/${plate.images[coverIndex].url}`
-              }
+              src={imageSrc}
               imageLoaded={imageLoaded}
             />
           </ImageContainer>
           <TextContainer activeLanuguage={restaurant?.activeLanguage}>
-            {plate.new && <NEW activeLanuguage={restaurant?.activeLanguage}>{restaurant?.activeLanguage === 'en' ? "NEW !" : "! جديد"} </NEW>}
             <PlateName fontSize={restaurant?.font_size}>
               
               {restaurant?.activeLanguage === 'en' ? plate.en_name : plate.ar_name}

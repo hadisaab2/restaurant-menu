@@ -39,15 +39,16 @@ export default function Header({
     <Container>
       <HeaderTop setshowSidebar={setshowSidebar} showSidebar={showSidebar} />
 
-      {/* Hide Categories carousel for Theme3 - we use CategoriesGrid instead */}
-      {/* <Categories
+      <Categories
         categories={categories}
         activeCategory={activeCategory}
         setactiveCategory={setactiveCategory}
         carouselPosition={carouselPosition}
         setcarouselPosition={setcarouselPosition}
-      /> */}
-      
+      />
+      {/* <SidebarAction>
+        Show All Categories
+      </SidebarAction> */}
       <SearchWapper>
         <SearchContainer>
           <SearchIcon activeLanguage={activeLanguage} />

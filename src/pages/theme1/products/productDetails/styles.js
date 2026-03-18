@@ -42,16 +42,16 @@ width: 100%;
 align-items: center;
 justify-content: center;
 top:0;
-left: 0;
 right: ${props => props.CloseAnimation ? 0 : "-100%"};
 color:${props => props.theme.textColor};
 background-color:${props => props.theme.backgroundColor};
 padding-bottom:150px;
 
-  overflow: scroll;
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow-x: hidden;
+  overflow-y: auto;
+  transition: all 0.7s;
   animation: ${slideAnimation} 0.5s;
-  z-index: 300;
+  z-index: 6;
   ::-webkit-scrollbar {
     display: none;
   }
@@ -93,63 +93,68 @@ const ImageAnimationScreen = keyframes`
 
 export const ImagesContainer = styled.div`
   width: 100%;
-  min-height: ${(props)=>props.squareDimension?"45vh":"60vh"};
-  margin-top: 80px;
+  height: ${(props) => (props.isNormalCarousel ? "auto" : (props.squareDimension ? "55vh" : "70vh"))};
+  min-height: ${(props) => (props.isNormalCarousel ? (props.squareDimension ? "45vh" : "60vh") : "unset")};
+  margin-top: ${(props) => (props.isNormalCarousel ? "80px" : "65px")};
+  padding: ${(props) => (props.isNormalCarousel ? "0 5%" : "10px 0")};
   transition: all 0.8s;
   display: flex;
-  flex-direction: column;
+  flex-direction: ${(props) => (props.isNormalCarousel ? "column" : "row")};
   justify-content: center;
   align-items: center;
   overflow: visible;
   position: relative;
-  padding: 0 5%;
   @media (min-width: 1024px) {
-    min-height: ${(props)=>props.squareDimension?"50vh":"65vh"};
-    margin-top: 90px;
+    min-height: ${(props) => (props.isNormalCarousel ? (props.squareDimension ? "50vh" : "65vh") : "unset")};
+    margin-top: ${(props) => (props.isNormalCarousel ? "90px" : "65px")};
+  }
+`;
+
+export const SwiperWrapper = styled.div`
+  width: 85%;
+  height: 100%;
+  .swiper {
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+  }
+  .swiper-slide {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 18px;
+    overflow: hidden;
+    box-shadow: none !important;
   }
 `;
 
 export const Carousel = styled.div`
   width: 100%;
-  min-height: calc(100% - 80px);
+  height: 100%;
   white-space: nowrap;
   position: relative;
   transform: ${(props) => `translateX(-${props.carouselIndex * 100}%)`};
-  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.2s ease;
   display: flex;
-  overflow: visible;
-  margin-top: 60px;
-  
-  @media (min-width: 768px) {
-    margin-top: 70px;
-  }
+  align-items: center;
 `;
 export const CarouselItem = styled.div`
   height: 100%;
   width: 100%;
-  display: inline-block;
+  min-width: 100%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   vertical-align: top;
   flex-shrink: 0;
-  padding: 0 10px;
-  box-sizing: border-box;
-  
-  @media (min-width: 768px) {
-    padding: 0 20px;
-  }
 `;
 export const ImageWrapper = styled.div`
-  min-height: 100%;
+  height: 100%;
   width: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
   position: relative;
-  padding: 0;
-  margin: 0 5px;
-  
-  @media (min-width: 768px) {
-    margin: 0 10px;
-  }
 `;
 
 const spin = keyframes`
@@ -181,19 +186,19 @@ height: 100%;
 `;
 
 export const Image = styled.img`
-  max-height: 70vh;
-  height: auto;
-  width: auto;
-  max-width: 100%;
-  object-fit: contain;
-  border-radius: ${(props) => (props.CloseAnimation ? "20px" : "10px")};
-  display:${props => props.Loaded ? 'block' : 'none'};
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  background: ${props => props.theme.backgroundColor || "#f5f5f5"};
-  
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  border-radius: ${(props) =>
+    props.$cardSlide ? "0" : (props.CloseAnimation ? "40px" : "10px")};
+  width: ${(props) =>
+    props.$cardSlide ? "100%" : (props.CloseAnimation ? "90%" : "100%")};
+  display: ${(props) => (props.Loaded ? "block" : "none")};
+  transition: all 0.8s;
+  margin: 0 auto;
   @media (min-width: 1024px) {
-    max-height: 75vh;
-    border-radius: ${(props) => (props.CloseAnimation ? "24px" : "10px")};
+    width: ${(props) =>
+      props.$cardSlide ? "100%" : (props.CloseAnimation ? "50%" : "100%")};
   }
 `;
 const BackIconAnimation = keyframes`
@@ -217,142 +222,56 @@ export const BackIcon = styled(IoIosArrowBack)`
   border-radius: 50%;
 `;
 
-export const CarouselBack = styled.button`
-  font-size: 24px;
-  color: ${props => props.theme.textColor || "#ffffff"};
+export const CarouselBack = styled(IoIosArrowBack)`
+  font-size: 26px;
+  padding: 8px;
+  background-color: ${(props) => props.theme.mainColor || "#007bff"};
+  color: ${(props) => props.theme.backgroundColor || "#fff"};
+  border-radius: 50%;
+  cursor: pointer;
   position: absolute;
-  left: 10px;
-  top: 50%;
-  transform: translateY(-50%);
+  left: 4%;
+  top: 45%;
   z-index: 20;
   display: ${(props) => (props.CloseAnimation ? "flex" : "none")};
-  align-items: center;
-  justify-content: center;
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.9);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-  opacity: ${props => props.disabled ? 0.4 : 1};
-  pointer-events: ${props => props.disabled ? 'none' : 'auto'};
-  
-  &:hover {
-    background: rgba(255, 255, 255, 1);
-    transform: translateY(-50%) scale(1.1);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-  }
-  
-  &:active {
-    transform: translateY(-50%) scale(0.95);
-  }
-  
   @media (min-width: 1024px) {
-    left: 20px;
-    width: 48px;
-    height: 48px;
-    font-size: 26px;
+    left: 27%;
   }
 `;
 
-export const CarouselForward = styled.button`
-  font-size: 24px;
-  color: ${props => props.theme.textColor || "#ffffff"};
+export const CarouselForward = styled(IoIosArrowForward)`
+  font-size: 26px;
+  padding: 8px;
+  background-color: ${(props) => props.theme.mainColor || "#007bff"};
+  color: ${(props) => props.theme.backgroundColor || "#fff"};
+  border-radius: 50%;
+  cursor: pointer;
   position: absolute;
-  right: 10px;
-  top: 50%;
-  transform: translateY(-50%);
+  right: 4%;
+  top: 45%;
   z-index: 20;
   display: ${(props) => (props.CloseAnimation ? "flex" : "none")};
-  align-items: center;
-  justify-content: center;
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.9);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-  opacity: ${props => props.disabled ? 0.4 : 1};
-  pointer-events: ${props => props.disabled ? 'none' : 'auto'};
-  
-  &:hover {
-    background: rgba(255, 255, 255, 1);
-    transform: translateY(-50%) scale(1.1);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-  }
-  
-  &:active {
-    transform: translateY(-50%) scale(0.95);
-  }
-  
   @media (min-width: 1024px) {
-    right: 20px;
-    width: 48px;
-    height: 48px;
-    font-size: 26px;
+    right: 27%;
   }
 `;
-export const ProductHeader = styled.div`
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  width: 100%;
-  display: ${(props) => (props.CloseAnimation ? "flex" : "none")};
-  align-items: center;
-  justify-content: space-between;
-  padding: 20px 30px;
-  z-index: 301;
-  background-color: ${props => props.theme.backgroundColor || "transparent"};
-  transition: opacity 0.4s ease-in-out;
-  
-  @media (min-width: 1024px) {
-    padding: 25px 40px;
-  }
-`;
-
-export const ProductHeaderTitle = styled.h2`
-  font-size: 18px;
-  font-weight: 600;
-  color: ${props => props.theme.textColor || "#1a1a1a"};
-  margin: 0;
-  text-align: center;
-  flex: 1;
-  direction: ${props => props.activeLanguage === "ar" ? "rtl" : "ltr"};
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  padding: 0 20px;
-  
-  @media (min-width: 768px) {
-    font-size: 22px;
-    font-weight: 700;
-  }
-`;
-
 export const BackBtn = styled.button`
-  position: relative;
-  z-index: 302;
+  position: fixed;
+  z-index: 8;
+  top: 30px;
+  left: 30px;
   outline: none;
   border: 0;
   background-color: transparent;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  flex-shrink: 0;
+  display: ${(props) => (props.CloseAnimation ? "flex" : "none")};
+  animation: ${BackIconAnimation} 0.4s ease-in-out;
 `;
 
 export const ItemCategory = styled.div`
   width: 100%;
   height: 90px;
-  position: relative;
+  position: absolute;
+  top: 0;
   color: black;
   display: ${(props) => (props.CloseAnimation ? "flex" : "none")};
   justify-content: center;
@@ -466,6 +385,18 @@ export const ItemDescription = styled.span`
   text-align:${props => props.activeLanguage == "en" ? "left" : "right"};
   direction: ${props => props.activeLanguage == "en" ? "ltr" : "rtl"} ;
   opacity: 0.8;
+`;
+
+export const OutOfStockNotice = styled.div`
+  margin-top: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  color: ${(props) => props.theme.mainColor};
+  background: ${(props) => props.theme.backgroundColor};
+  border: 0;
+  padding: 4px 10px;
+  border-radius: 999px;
+  align-self: flex-start;
 `;
 
 export const PriceContainer = styled.div`
@@ -594,35 +525,22 @@ const CopyBtnAnimation = keyframes`
 
 export const CopyButton = styled.div`
   display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 27px;
-  width: 27px;
-  border-radius: 50%;
-  position: relative;
-  z-index: 302;
+ align-items: center;
+ justify-content: center;
+ height: 27px;
+ width: 27px;
+ border-radius: 50%;
+ position: fixed;
+  z-index: 8;
+  top: 30px;
   background-color: ${props => props.theme.mainColor};
   color: ${props => props.theme.backgroundColor};
-  flex-shrink: 0;
+  right: 30px;
+  display: ${(props) => (props.CloseAnimation ? "flex" : "none")};
+  animation: ${CopyBtnAnimation} 0.4s ease-in-out;
   font-size: 14px;
   cursor: pointer;
-  transition: all 0.3s ease;
-  
-  &:hover {
-    transform: scale(1.1);
-  }
-  
-  &:active {
-    transform: scale(0.95);
-  }
-  
-  @media (min-width: 1024px) {
-    height: 30px;
-    width: 30px;
-    font-size: 16px;
-  }
 `;
-
 
 export const InstructionContainer = styled.span`
   width: 95%;
@@ -682,99 +600,66 @@ border-radius: 10px;
 
 `;
 
-export const ThumbnailGallery = styled.div`
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 8px;
-  padding: 12px 5%;
-  overflow-x: auto;
-  overflow-y: hidden;
-  scroll-behavior: smooth;
-  -webkit-overflow-scrolling: touch;
-  
-  &::-webkit-scrollbar {
-    height: 4px;
-  }
-  
-  &::-webkit-scrollbar-track {
-    background: transparent;
-  }
-  
-  &::-webkit-scrollbar-thumb {
-    background: ${props => props.theme.mainColor || "#007bff"}40;
-    border-radius: 2px;
-  }
-  
-  @media (min-width: 768px) {
-    gap: 12px;
-    padding: 16px 5%;
-  }
-`;
-
-export const ThumbnailItem = styled.button`
-  min-width: 60px;
-  width: 60px;
-  height: 60px;
-  border-radius: 12px;
-  overflow: hidden;
-  border: 2px solid ${props => props.active 
-    ? (props.theme.mainColor || props.theme.maincolor || "#007bff")
-    : "transparent"};
-  background: ${props => props.theme.backgroundColor || "#ffffff"};
-  cursor: pointer;
-  padding: 0;
-  position: relative;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  opacity: ${props => props.active ? 1 : 0.7};
-  
-  &:hover {
-    opacity: 1;
-    transform: scale(1.05);
-    border-color: ${props => props.theme.mainColor || props.theme.maincolor || "#007bff"}80;
-  }
-  
-  &:active {
-    transform: scale(0.95);
-  }
-  
-  @media (min-width: 768px) {
-    min-width: 70px;
-    width: 70px;
-    height: 70px;
-    border-radius: 14px;
-  }
-`;
-
-export const ThumbnailImage = styled.img`
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-`;
-
-export const ImageCounter = styled.div`
+export const MagnifyBtn = styled.button`
   position: absolute;
   bottom: 12px;
   right: 12px;
-  background: rgba(0, 0, 0, 0.6);
-  backdrop-filter: blur(10px);
-  color: white;
-  padding: 4px 12px;
-  border-radius: 20px;
-  font-size: 12px;
-  font-weight: 600;
-  z-index: 10;
-  display: ${props => props.show ? "flex" : "none"};
+  z-index: 25;
+  background: rgba(0, 0, 0, 0.45);
+  border: none;
+  border-radius: 50%;
+  width: 38px;
+  height: 38px;
+  display: flex;
   align-items: center;
   justify-content: center;
-  
-  @media (min-width: 768px) {
-    bottom: 16px;
-    right: 16px;
-    padding: 6px 14px;
-    font-size: 13px;
+  cursor: pointer;
+  color: #fff;
+  font-size: 20px;
+  backdrop-filter: blur(4px);
+  transition: background 0.2s;
+  &:active {
+    background: rgba(0, 0, 0, 0.65);
   }
 `;
 
+export const ZoomOverlay = styled.div`
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: rgba(0, 0, 0, 0.92);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-drag: none;
+`;
+
+export const ZoomCloseBtn = styled.button`
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  z-index: 10000;
+  background: rgba(255, 255, 255, 0.15);
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 26px;
+  cursor: pointer;
+  backdrop-filter: blur(4px);
+`;
+
+export const ZoomImage = styled.img`
+  max-width: 95vw;
+  max-height: 90vh;
+  object-fit: contain;
+  border-radius: 8px;
+  pointer-events: none;
+  transition: transform 0.15s ease;
+`;

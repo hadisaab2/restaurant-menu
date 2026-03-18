@@ -37,6 +37,9 @@ export default function VerticalCategory({
   const activeLanuguage = useSelector(
     (state) => state.restaurant?.[restaurantName].activeLanguage
   );
+  const restaurant = useSelector(
+    (state) => state.restaurant?.[restaurantName]
+  );
 
   const { refetch } = useLogCategory({
     CategoryId: activeCategory,
@@ -101,7 +104,16 @@ export default function VerticalCategory({
                 <CategoryWrapper activeCategory={activeCategory} categoryId={category.id}>
                   <IconContainer >
                     <IconWrapper activeCategory={activeCategory} categoryId={category.id} >
-                      <Icon src={`https://storage.googleapis.com/ecommerce-bucket-testing/${category.image_url}`} 
+                      <Icon 
+                        src={
+                          category.image_url 
+                            ? `https://storage.googleapis.com/ecommerce-bucket-testing/${category.image_url}`
+                            : category.isAllItems && restaurant?.logoURL
+                            ? `https://storage.googleapis.com/ecommerce-bucket-testing/${restaurant.logoURL}`
+                            : category.isAllItems && restaurant?.cover_url
+                            ? `https://storage.googleapis.com/ecommerce-bucket-testing/${restaurant.cover_url}`
+                            : ""
+                        } 
                       />
 
                     </IconWrapper>

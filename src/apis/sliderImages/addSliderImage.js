@@ -9,12 +9,8 @@ const addSliderImage = async (payload) => {
     const formData = new FormData();
     
     formData.append("restaurant_id", payload.restaurant_id);
-    if (payload.priority !== undefined) {
-      formData.append("priority", payload.priority);
-    }
-    if (payload.type !== undefined) {
-      formData.append("type", payload.type);
-    }
+    formData.append("priority", payload.priority !== undefined ? payload.priority : 0);
+    formData.append("type", payload.type !== undefined && payload.type !== null ? payload.type : 1);
     if (payload.file) {
       formData.append("file", payload.file);
     }
