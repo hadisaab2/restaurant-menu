@@ -623,6 +623,7 @@ export default function Restaurants() {
     amount,
     is_paid,
     show_about_us,
+    show_slider_image,
   }) => {
     const theme = JSON.parse(themeString);
     const features = JSON.parse(featureString);
@@ -655,6 +656,7 @@ export default function Restaurants() {
       amount,
       is_paid,
       show_about_us,
+      show_slider_image,
     });
     setIsEditMode(true);
     setTemplate(template_id);
@@ -680,6 +682,12 @@ export default function Restaurants() {
     setValue("default_language", default_language || "en");
     setValue("show_all_items_category", !!show_all_items_category);
     setValue("show_about_us", show_about_us !== false && show_about_us !== 0);
+    setValue(
+      "show_slider_image",
+      show_slider_image === true ||
+        show_slider_image === 1 ||
+        show_slider_image === "1"
+    );
     setValue("business_type", business_type || "restaurant");
     setValue("all_items_style", all_items_style || "grid");
     setValue("product_details_carousel_style", product_details_carousel_style || "normal");
@@ -746,7 +754,13 @@ export default function Restaurants() {
             data.show_all_items_category === true ||
             data.show_all_items_category === "true" ||
             data.show_all_items_category === 1,
-          show_about_us: (Number(data.template_id) === 3 || Number(data.template_id) === 4) ? (data.show_about_us === true || data.show_about_us === "true" || data.show_about_us === 1 || data.show_about_us === undefined) : undefined,
+          show_about_us: (Number(data.template_id) === 3 || Number(data.template_id) === 4 || Number(data.template_id) === 5) ? (data.show_about_us === true || data.show_about_us === "true" || data.show_about_us === 1 || data.show_about_us === undefined) : undefined,
+          show_slider_image:
+            Number(data.template_id) === 1 || Number(data.template_id) === 2
+              ? data.show_slider_image === true ||
+                data.show_slider_image === "true" ||
+                data.show_slider_image === 1
+              : undefined,
           business_type: data.business_type || "restaurant",
           all_items_style: data.all_items_style || "grid",
           product_details_carousel_style: data.product_details_carousel_style || "normal",
@@ -1727,6 +1741,31 @@ export default function Restaurants() {
                   </Box>
                 )}
               </>
+            )}
+            {(Number(template) === 1 || Number(template) === 2) && (
+              <FormControl
+                component="fieldset"
+                style={{ display: "flex", flexDirection: "column", maxWidth: 560 }}
+              >
+                <FormLabel component="legend">Theme 1 &amp; 2 — menu slider</FormLabel>
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      {...register("show_slider_image")}
+                      defaultChecked={
+                        !!(
+                          selectedProduct?.show_slider_image === true ||
+                          selectedProduct?.show_slider_image === 1
+                        )
+                      }
+                      onChange={(e) =>
+                        setValue("show_slider_image", e.target.checked)
+                      }
+                    />
+                  }
+                  label="Show slider on menu (theme3-style carousel). Add images in Restaurant Dashboard → Slider images."
+                />
+              </FormControl>
             )}
             <Box sx={{ width: "30%" }}>
               <FormControl fullWidth>

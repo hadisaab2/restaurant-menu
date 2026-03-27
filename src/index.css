@@ -1,9 +1,15 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 body {
   margin: 0;
   font-family: "Roboto Flex","Noto Kufi Arabic";
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  height: 100vh;
+  min-height: 100vh;
+  background: #ffffff;
+  color: #1d1d1f;
 }
 
 html,body{
@@ -21,4 +27,12 @@ html,body{
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
+}
+
+.luxe-section {
+  @apply w-full max-w-7xl mx-auto px-4 md:px-8;
+}
+
+.luxe-card {
+  @apply bg-menugic-panel border border-menugic-line rounded-2xl shadow-luxe;
 }

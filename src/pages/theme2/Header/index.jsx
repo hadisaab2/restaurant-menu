@@ -4,6 +4,7 @@ import Categories from "./categories";
 import HeaderTop from "./headertop";
 import { useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
+import Theme12MenuSlider from "../../../components/Theme12MenuSlider";
 
 export default function Header({
   activeCategory,
@@ -15,7 +16,9 @@ export default function Header({
   showSidebar,
   carouselPosition,
   setcarouselPosition,
-  popupHandler
+  popupHandler,
+  showMenuSlider,
+  sliderImages
 
 }) {
   const { restaurantName: paramRestaurantName } = useParams();
@@ -38,6 +41,13 @@ export default function Header({
   return (
     <Container>
       <HeaderTop setshowSidebar={setshowSidebar} showSidebar={showSidebar} />
+      {showMenuSlider && (
+        <Theme12MenuSlider
+          images={sliderImages}
+          activeLanguage={activeLanguage || "en"}
+          variant="theme2"
+        />
+      )}
 
       <Categories
         categories={categories}

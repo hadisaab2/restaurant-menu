@@ -35,6 +35,9 @@ export default function Theme2() {
       : paramRestaurantName;
 
   const restaurant = useSelector((state) => state.restaurant?.[restaurantName]);
+  const activeLanguage = useSelector(
+    (state) => state.restaurant?.[restaurantName]?.activeLanguage || "en"
+  );
 
   const [showPopup, setshowPopup] = useState(null);
   const [searchText, setSearchText] = useState("");
@@ -148,7 +151,18 @@ export default function Theme2() {
       setShowInstallPopup(false);
     };
   
-  let features=JSON.parse(restaurant.features)
+  let features = {};
+  try {
+    features = JSON.parse(restaurant?.features || "{}");
+  } catch (_) {
+    features = {};
+  }
+  const sliderImages = restaurant?.sliderImages || [];
+  const showMenuSlider =
+    (restaurant?.show_slider_image === true ||
+      restaurant?.show_slider_image === 1 ||
+      restaurant?.show_slider_image === "1") &&
+    sliderImages.length > 0;
   return (
     <Container id="wrapper">
       <MenuWrapper onClick={handleClickOutside} >
@@ -164,6 +178,8 @@ export default function Theme2() {
           carouselPosition={carouselPosition}
           setcarouselPosition={setcarouselPosition}
           popupHandler={popupHandler}
+          showMenuSlider={showMenuSlider}
+          sliderImages={sliderImages}
         />
         <Products
           menu={restaurant.categories}

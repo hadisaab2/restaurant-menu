@@ -62,8 +62,10 @@ export default function CarouselSection() {
   return (
     <div id="clients">
         <div className='upperSection'>
-            <Title>Join many clients around the world</Title>
-            <UnderTitle>We have helped many stores and services increase their sales in record time.</UnderTitle>
+            <Title>Trusted by restaurants using QR menus</Title>
+            <UnderTitle>
+                Streamline dine-in and delivery orders with a modern QR menu and WhatsApp ordering.
+            </UnderTitle>
         </div>
         <CarouselContainer>
             <Carousel/>

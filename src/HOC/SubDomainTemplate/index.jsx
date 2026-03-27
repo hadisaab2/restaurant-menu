@@ -45,8 +45,12 @@ export default function SubDomainTemplate({ restaurantName }) {
         'responseIsValid': responseIsValid
       });
       
-      // Only redirect if explicitly false and not theme3
-      if ((responseIsValid === false || responseIsValid === 0) && response.data.template_id !== 3) {
+      // Only redirect if explicitly false and not theme3/5 (same subscription UX as theme3)
+      if (
+        (responseIsValid === false || responseIsValid === 0) &&
+        response.data.template_id != 3 &&
+        response.data.template_id != 5
+      ) {
         console.log('SubDomainTemplate - Redirecting to notsubscribed');
         navigate("/notsubscribed");
       }

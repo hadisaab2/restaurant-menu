@@ -27,6 +27,10 @@ export const NavContent = styled.div`
   gap: 24px;
   position: relative;
 
+  @media (min-width: 969px) {
+    justify-content: flex-start;
+  }
+
   @media (max-width: 768px) {
     padding: 0 16px;
     height: 70px;
@@ -34,11 +38,20 @@ export const NavContent = styled.div`
   }
 `;
 
+export const NavActions = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+  margin-inline-start: auto;
+  flex-direction: ${(p) => (p.$activeLanguage === "ar" ? "row-reverse" : "row")};
+`;
+
 export const LogoContainer = styled.div`
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
+  position: relative;
+  left: auto;
+  top: auto;
+  transform: none;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -47,7 +60,18 @@ export const LogoContainer = styled.div`
   z-index: 1;
 
   &:hover {
-    transform: translate(-50%, -50%) scale(1.05);
+    transform: scale(1.05);
+  }
+
+  @media (max-width: 968px) {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+
+    &:hover {
+      transform: translate(-50%, -50%) scale(1.05);
+    }
   }
 `;
 
@@ -69,8 +93,8 @@ export const NavLinks = styled.div`
   align-items: center;
   gap: 8px;
   flex: 1;
-  justify-content: ${(props) => (props.activeLanguage === "ar" ? "flex-end" : "flex-start")};
-  margin: ${(props) => (props.activeLanguage === "ar" ? "0 0 0 auto" : "0 auto 0 0")};
+  min-width: 0;
+  justify-content: flex-start;
 
   @media (max-width: 968px) {
     display: none;
@@ -193,6 +217,10 @@ export const MobileMenuButton = styled.button`
   &:hover {
     transform: scale(1.05);
     opacity: 0.8;
+  }
+
+  @media (min-width: 969px) {
+    display: none;
   }
 
   @media (max-width: 768px) {

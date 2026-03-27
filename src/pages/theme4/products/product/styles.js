@@ -6,6 +6,9 @@ export const Container = styled.div`
     align-items: center;
     justify-content: center;
     margin-top: 10px;
+    @media (min-width: 768px) and (max-width: 1023px) {
+        width: ${props => props.$isFeatured ? '100%' : '33.333%'};
+    }
     @media (min-width: 1024px) {
         width: ${props => props.$isFeatured ? '100%' : '20%'};
     }

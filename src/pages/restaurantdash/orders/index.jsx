@@ -35,10 +35,18 @@ import {
 } from "./styles";
 import { getCookie } from "../../../utilities/manageCookies";
 import axios from "axios";
+import { CUSTOMERS_REGISTERED_URL } from "../../../apis/URLs";
 
 const BASE_URL = process.env.REACT_APP_BASE_URL;
 
-const getOrders = async (restaurantId, startDate, endDate, status, branchId) => {
+const getOrders = async (
+  restaurantId,
+  startDate,
+  endDate,
+  status,
+  branchId,
+  customerUserId
+) => {
   try {
     const token = getCookie("accessToken");
     let url = `${BASE_URL}/orders/restaurant/${restaurantId}`;
@@ -47,6 +55,7 @@ const getOrders = async (restaurantId, startDate, endDate, status, branchId) => 
     if (endDate) params.append("end_date", endDate);
     if (status) params.append("status", status);
     if (branchId) params.append("branch_id", branchId);
+    if (customerUserId) params.append("customer_user_id", customerUserId);
     if (params.toString()) url += `?${params.toString()}`;
 
     const response = await axios.get(url, {
@@ -69,6 +78,8 @@ export default function Orders() {
   const [endDate, setEndDate] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
   const [branchFilter, setBranchFilter] = useState("");
+  const [customerFilter, setCustomerFilter] = useState("");
+  const [registeredCustomers, setRegisteredCustomers] = useState([]);
 
   const userInformation = (() => {
     const storedUserInfo = getCookie("userInfo") || "{}";
@@ -84,8 +95,23 @@ export default function Orders() {
 
   useEffect(() => {
     if (!restaurantId) return;
+    (async () => {
+      try {
+        const token = getCookie("accessToken");
+        const { data } = await axios.get(CUSTOMERS_REGISTERED_URL, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        setRegisteredCustomers(data.data || []);
+      } catch {
+        setRegisteredCustomers([]);
+      }
+    })();
+  }, [restaurantId]);
+
+  useEffect(() => {
+    if (!restaurantId) return;
     fetchOrders();
-  }, [restaurantId, startDate, endDate, statusFilter, branchFilter]);
+  }, [restaurantId, startDate, endDate, statusFilter, branchFilter, customerFilter]);
 
   const fetchOrders = async () => {
     setLoading(true);
@@ -96,7 +122,8 @@ export default function Orders() {
         startDate,
         endDate,
         statusFilter,
-        branchFilter
+        branchFilter,
+        customerFilter
       );
       setOrders(ordersData);
     } catch (err) {
@@ -241,6 +268,20 @@ export default function Orders() {
               </Select>
             </DateLabel>
           )}
+          <DateLabel>
+            Registered customer:
+            <Select
+              value={customerFilter}
+              onChange={(e) => setCustomerFilter(e.target.value)}
+            >
+              <option value="">All orders</option>
+              {registeredCustomers.map((c) => (
+                <option key={c.id} value={c.id}>
+                  {c.full_name || c.email} ({c.email})
+                </option>
+              ))}
+            </Select>
+          </DateLabel>
         </FilterRow>
       </FiltersContainer>
 
@@ -255,6 +296,7 @@ export default function Orders() {
             <TableCell>Date</TableCell>
             <TableCell>Customer</TableCell>
             <TableCell>Phone</TableCell>
+            <TableCell>Account</TableCell>
             <TableCell>Type</TableCell>
             <TableCell>Items</TableCell>
             <TableCell>Total</TableCell>
@@ -267,6 +309,9 @@ export default function Orders() {
               <TableCell>{formatDate(order.order_date)}</TableCell>
               <TableCell>{order.customer_name || "N/A"}</TableCell>
               <TableCell>{order.customer_phone || "N/A"}</TableCell>
+              <TableCell>
+                {order.customerUser?.email || "—"}
+              </TableCell>
               <TableCell>{order.delivery_type || "N/A"}</TableCell>
               <TableCell>
                 {Array.isArray(order.items) ? order.items.length : 0} item(s)
@@ -344,6 +389,15 @@ export default function Orders() {
                 <DetailLabel>Phone Number:</DetailLabel>
                 <DetailValue>{selectedOrder.customer_phone || "N/A"}</DetailValue>
               </DetailRow>
+              {selectedOrder.customerUser && (
+                <DetailRow>
+                  <DetailLabel>Registered account:</DetailLabel>
+                  <DetailValue>
+                    {selectedOrder.customerUser.full_name || selectedOrder.customerUser.email}{" "}
+                    ({selectedOrder.customerUser.email})
+                  </DetailValue>
+                </DetailRow>
+              )}
               {selectedOrder.customer_address && (
                 <DetailRow>
                   <DetailLabel>Address:</DetailLabel>

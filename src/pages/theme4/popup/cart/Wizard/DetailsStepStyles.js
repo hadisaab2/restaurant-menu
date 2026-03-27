@@ -143,3 +143,11 @@ export const Error = styled.span`
   display: block;
 `;
 
+export const HintText = styled.p`
+  margin: 4px 0 0;
+  font-size: 11px;
+  line-height: 1.4;
+  color: ${(props) => props.theme.popupTextColor || "#666"};
+  opacity: 0.85;
+`;
+

@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
+import axios from "axios";
 import { clearCart } from "../../../../../redux/cart/cartActions";
 import { useAddOrderQuery } from "../../../../../apis/restaurants/addOrder";
+import { CUSTOMER_ME_URL } from "../../../../../apis/URLs";
+import { getCustomerAccessToken } from "../../../../../utilities/customerAuthStorage";
 import { convertPrice } from "../../../../../utilities/convertPrice";
 import { trackCheckoutStart, trackOrderPlaced } from "../../../../../utilities/analyticsTracking";
 import CartStep from "./CartStep";
@@ -54,6 +57,7 @@ export default function Wizard({ popupHandler, restaurant }) {
     fullName: "",
     phoneNumber: "",
     fullAddress: "",
+    selectedAddressId: null,
     selectedLocation: null,
     tableNumber: "",
     note: "",
@@ -67,6 +71,26 @@ export default function Wizard({ popupHandler, restaurant }) {
   });
 
   // Auto-set delivery type if only one option available
+  useEffect(() => {
+    const loadCustomerProfile = async () => {
+      const tok = getCustomerAccessToken(restaurantName);
+      if (!tok) return;
+      try {
+        const { data } = await axios.get(CUSTOMER_ME_URL, {
+          headers: { Authorization: `Bearer ${tok}` },
+        });
+        setFormData((prev) => ({
+          ...prev,
+          fullName: data.full_name || prev.fullName,
+          phoneNumber: data.phone_number || prev.phoneNumber,
+        }));
+      } catch {
+        /* ignore */
+      }
+    };
+    loadCustomerProfile();
+  }, [restaurantName]);
+
   useEffect(() => {
     if (restaurant?.features) {
       const features = JSON.parse(restaurant.features);
@@ -297,7 +321,8 @@ export default function Wizard({ popupHandler, restaurant }) {
       },
     }));
 
-    handleAddOrder({
+    handleAddOrder(
+      {
       products: simplifiedCart, // For analytics (existing)
       restaurant_id: restaurant.id,
       branch_id: formData.selectedBranch?.id,
@@ -312,7 +337,9 @@ export default function Wizard({ popupHandler, restaurant }) {
       subtotal: totalPrice,
       total: totalPrice,
       currency: restaurant.currency,
-    });
+      },
+      restaurantName
+    );
 
     // Track order placed (order ID will be available in onSuccess callback if needed)
     if (restaurant?.id) {
@@ -363,7 +390,8 @@ export default function Wizard({ popupHandler, restaurant }) {
             updateFormData={updateFormData}
             restaurant={restaurant}
             errors={errors}
-            setErrors={setErrors}
+            restaurantName={restaurantName}
+            activeLanguage={activeLanguage}
           />
         );
       case 3:

@@ -33,13 +33,15 @@ import Report from "./report";
 import Feedbacks from "./feedbacks";
 import QuestionsSuggestions from "./questions";
 import Orders from "./orders";
+import RegisteredCustomers from "./registeredCustomers";
 import Customers from "./customers";
 import Analytics from "./analytics";
+import Dashboard from "./dashboard";
 
 
 
 export default function RestaurantDash() {
-  const [section, setSection] = useState("Products");
+  const [section, setSection] = useState("Dashboard");
   const [products, setProducts] = useState([]);
   const [showMobileSidebar, setShowMobileSidebar] = useState(false);
   const [userInformation, setUserInformation] = useState({});
@@ -57,8 +59,15 @@ export default function RestaurantDash() {
   const isQuestionsSection = section === "QuestionsSuggestions";
   const isOrdersSection = section === "Orders";
   const isCustomersSection = section === "Customers";
+  const isRegisteredCustomersSection = section === "RegisteredCustomers";
   const isAnalyticsSection = section === "Analytics";
-  const isRestrictedSection = isFeedbacksSection || isQuestionsSection || isOrdersSection || isCustomersSection || isAnalyticsSection;
+  const isRestrictedSection =
+    isFeedbacksSection ||
+    isQuestionsSection ||
+    isOrdersSection ||
+    isCustomersSection ||
+    isRegisteredCustomersSection ||
+    isAnalyticsSection;
 
   const onClickBurger=()=>{
     setShowMobileSidebar(!showMobileSidebar)
@@ -78,6 +87,7 @@ export default function RestaurantDash() {
 
 
   const sectionLabelMap = {
+    Dashboard: "Dashboard",
     Categories: "Categories",
     Products: "Products",
     Settings: "Settings",
@@ -86,6 +96,7 @@ export default function RestaurantDash() {
     QuestionsSuggestions: "Questions & Suggestions",
     Orders: "Orders",
     Customers: "Customers",
+    RegisteredCustomers: "Registered customers",
     Analytics: "Analytics",
   };
 
@@ -97,6 +108,10 @@ export default function RestaurantDash() {
           <CloseIcon onClick={onClickBurger}/>
         </SidebarTop>
         <SidebarContent>
+          <Tab onClick={() =>handlesection("Dashboard")}>
+            <CateogoryIcon />
+            <TabText>Dashboard</TabText>
+          </Tab>
           <Tab onClick={() =>handlesection("Categories")}>
             <CateogoryIcon />
             <TabText>Categories</TabText>
@@ -132,6 +147,10 @@ export default function RestaurantDash() {
             <CateogoryIcon />
             <TabText>Customers{!isTheme3Or4 && <span style={{ fontSize: "12px", color: "#999", marginLeft: "8px" }}>(VIP package)</span>}</TabText>
           </Tab>
+          <Tab $disabled={!isTheme3Or4} onClick={() => handlesection("RegisteredCustomers")}>
+            <CateogoryIcon />
+            <TabText>Registered customers{!isTheme3Or4 && <span style={{ fontSize: "12px", color: "#999", marginLeft: "8px" }}>(VIP package)</span>}</TabText>
+          </Tab>
           <Tab $disabled={!isTheme3Or4} onClick={() => handlesection("Analytics")}>
             <CateogoryIcon />
             <TabText>Analytics{!isTheme3Or4 && <span style={{ fontSize: "12px", color: "#999", marginLeft: "8px" }}>(VIP package)</span>}</TabText>
@@ -162,6 +181,10 @@ export default function RestaurantDash() {
           <Title>Menugic</Title>
         </SidebarTop>
         <SidebarContent>
+          <Tab onClick={() => setSection("Dashboard")}>
+            <CateogoryIcon />
+            <TabText>Dashboard</TabText>
+          </Tab>
           <Tab onClick={() => setSection("Categories")}>
             <CateogoryIcon />
             <TabText>Categories</TabText>
@@ -197,6 +220,10 @@ export default function RestaurantDash() {
             <CateogoryIcon />
             <TabText>Customers{!isTheme3Or4 && <span style={{ fontSize: "12px", color: "#999", marginLeft: "8px" }}>(VIP package)</span>}</TabText>
           </Tab>
+          <Tab $disabled={!isTheme3Or4} onClick={() => !isTheme3Or4 ? null : setSection("RegisteredCustomers")}>
+            <CateogoryIcon />
+            <TabText>Registered customers{!isTheme3Or4 && <span style={{ fontSize: "12px", color: "#999", marginLeft: "8px" }}>(VIP package)</span>}</TabText>
+          </Tab>
           <Tab $disabled={!isTheme3Or4} onClick={() => !isTheme3Or4 ? null : setSection("Analytics")}>
             <CateogoryIcon />
             <TabText>Analytics{!isTheme3Or4 && <span style={{ fontSize: "12px", color: "#999", marginLeft: "8px" }}>(VIP package)</span>}</TabText>
@@ -226,6 +253,9 @@ export default function RestaurantDash() {
 
           <BurgerIcon onClick={onClickBurger}/>
         </Header>
+        {section == "Dashboard" && (
+          <Dashboard userInformation={userInformation} setSection={setSection} />
+        )}
         {section == "Products" && (
           <Products setProducts={setProducts} products={products} />
         )}
@@ -241,6 +271,7 @@ export default function RestaurantDash() {
               {section === "QuestionsSuggestions" && "Questions & Suggestions"}
               {section === "Orders" && "Orders"}
               {section === "Customers" && "Customers"}
+              {section === "RegisteredCustomers" && "Registered customers"}
               {section === "Analytics" && "Analytics"}.
             </AccessNoticeText>
           </AccessNotice>
@@ -251,6 +282,7 @@ export default function RestaurantDash() {
         )}
         {section == "Orders" && isTheme3Or4 && <Orders />}
         {section == "Customers" && isTheme3Or4 && <Customers />}
+        {section == "RegisteredCustomers" && isTheme3Or4 && <RegisteredCustomers />}
         {section == "Analytics" && isTheme3Or4 && <Analytics />}
 
       </Content>

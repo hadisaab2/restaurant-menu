@@ -1,11 +1,15 @@
 import styled, { keyframes } from "styled-components";
 
 export const Container = styled.div`
-    width:50%;
+    width: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     margin-top: 10px;
+    /* Tablet / small laptop: 3 per row; ≥1024px keeps dense 5-column layout */
+    @media (min-width: 768px) and (max-width: 1023px) {
+        width: 33.333%;
+    }
     @media (min-width: 1024px) {
         width: 20%;
     }

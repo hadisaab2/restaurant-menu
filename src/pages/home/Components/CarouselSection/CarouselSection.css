@@ -4,16 +4,22 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    padding-top: 120px;
+    padding-top: 100px;
     gap: 12px;
-    margin-bottom: 80px;
-    background: linear-gradient(to bottom, rgba(255, 255, 255, 0.02), transparent);
+    margin-bottom: 70px;
+    background: transparent;
     padding-bottom: 40px;
     
     @media (max-width: 768px) {
-        padding-top: 80px;
-        margin-bottom: 60px;
+        padding-top: 70px;
+        margin-bottom: 55px;
         gap: 10px;
     }
 }
+
+#clients{
+    background: #ffffff;
+    width: 100%;
+}
+
 

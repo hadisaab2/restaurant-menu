@@ -1827,9 +1827,16 @@ export const FeaturedProductsGrid = styled.div`
   margin-bottom:50px;
   
   @media (min-width: 768px) {
-    grid-template-columns: repeat(2, 1fr);
     gap: 24px;
     margin-top: 0;
+  }
+
+  @media (min-width: 992px) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  @media (min-width: 1024px) {
+    grid-template-columns: repeat(4, 1fr);
   }
 `;
 

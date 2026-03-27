@@ -94,8 +94,8 @@ export const OrdersTable = styled.div`
 
 export const TableHeader = styled.div`
   display: grid;
-  grid-template-columns: 80px 150px 120px 120px 100px 80px 100px 100px 80px;
-  gap: 12px;
+  grid-template-columns: 72px 130px 100px 100px 100px 90px 70px 80px 90px 72px;
+  gap: 10px;
   padding: 12px 16px;
   background: #f8fafc;
   border-bottom: 2px solid #e2e8f0;
@@ -104,7 +104,7 @@ export const TableHeader = styled.div`
   color: #475569;
   
   @media (max-width: ${breakingPoints.lg}px) {
-    grid-template-columns: 60px 120px 100px 100px 80px 60px 80px 80px 60px;
+    grid-template-columns: 60px 100px 90px 90px 90px 80px 60px 70px 80px 72px;
     font-size: 12px;
     padding: 10px 12px;
   }
@@ -116,8 +116,8 @@ export const TableHeader = styled.div`
 
 export const TableRow = styled.div`
   display: grid;
-  grid-template-columns: 80px 150px 120px 120px 100px 80px 100px 100px 80px;
-  gap: 12px;
+  grid-template-columns: 72px 130px 100px 100px 100px 90px 70px 80px 90px 72px;
+  gap: 10px;
   padding: 12px 16px;
   border-bottom: 1px solid #e2e8f0;
   align-items: center;
@@ -132,7 +132,7 @@ export const TableRow = styled.div`
   }
   
   @media (max-width: ${breakingPoints.lg}px) {
-    grid-template-columns: 60px 120px 100px 100px 80px 60px 80px 80px 60px;
+    grid-template-columns: 60px 100px 90px 90px 90px 80px 60px 70px 80px 72px;
     font-size: 12px;
     padding: 10px 12px;
   }

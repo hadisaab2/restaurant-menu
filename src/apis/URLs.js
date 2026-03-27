@@ -11,6 +11,18 @@ if (!REACT_APP_BASE_URL) {
 export const SIGNIN_URL = `${REACT_APP_BASE_URL}/auth/signin`;
 export const VALIDATE_TOKEN_URL = `${REACT_APP_BASE_URL}/auth/validateToken`;
 
+export const CUSTOMER_REGISTER_URL = `${REACT_APP_BASE_URL}/auth/customer/register`;
+export const CUSTOMER_SIGNIN_URL = `${REACT_APP_BASE_URL}/auth/customer/signin`;
+export const CUSTOMER_ME_URL = `${REACT_APP_BASE_URL}/auth/customer/me`;
+export const CUSTOMER_ORDERS_URL = `${REACT_APP_BASE_URL}/auth/customer/orders`;
+export const CUSTOMER_ADDRESSES_URL = `${REACT_APP_BASE_URL}/auth/customer/addresses`;
+export const CUSTOMER_ADDRESS_URL = (id) =>
+  `${REACT_APP_BASE_URL}/auth/customer/addresses/${id}`;
+
+export const CUSTOMERS_REGISTERED_URL = `${REACT_APP_BASE_URL}/customers/registered`;
+export const CUSTOMERS_REGISTERED_ORDERS_URL = (customerUserId) =>
+  `${REACT_APP_BASE_URL}/customers/registered/${customerUserId}/orders`;
+
 export const ADD_PRODUCT_URL = `${REACT_APP_BASE_URL}/products`;
 export const GET_PRODUCT_URL = (id) =>
   `${REACT_APP_BASE_URL}/products?restaurantId=${id}`;

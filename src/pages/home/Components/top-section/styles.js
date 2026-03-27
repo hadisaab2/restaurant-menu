@@ -1,34 +1,149 @@
 import styled from "styled-components";
 
 export const Container = styled.div`
-  min-height: 100vh;
-  display: flex;
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1.05fr 0.95fr;
   align-items: center;
-  justify-content: center;
+  gap: 40px;
   overflow: hidden;
   position: relative;
-  flex-direction: column;
-  padding: 40px 20px;
-  
-  @media (max-width: 768px) {
-    padding: 20px 15px;
+  padding: 60px 20px 40px;
+  max-width: 1200px;
+  margin: 0 auto;
+
+  @media (max-width: 900px) {
+    grid-template-columns: 1fr;
+    padding: 40px 16px 20px;
+    gap: 25px;
   }
 `;
 
+export const HeroLeft = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 16px;
+  padding-top: 10px;
+
+  @media (max-width: 900px) {
+    align-items: flex-start;
+    padding-top: 0;
+  }
+`;
+
+export const Kicker = styled.div`
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.85);
+`;
+
+export const HeroTitle = styled.h1`
+  margin: 0;
+  font-size: 52px;
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: -0.8px;
+  color: #ffffff;
+
+  @media (max-width: 900px) {
+    font-size: 40px;
+  }
+
+  @media (max-width: 600px) {
+    font-size: 32px;
+  }
+`;
+
+export const HeroSubtitle = styled.p`
+  margin: 0;
+  max-width: 520px;
+  font-size: 16px;
+  line-height: 1.7;
+  color: rgba(255, 255, 255, 0.78);
+`;
+
+export const HeroActions = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: 10px;
+  flex-wrap: wrap;
+`;
+
+export const PrimaryButton = styled.button`
+  border: none;
+  cursor: pointer;
+  padding: 14px 26px;
+  border-radius: 999px;
+  background: #ff3745;
+  color: white;
+  font-weight: 600;
+  font-size: 15px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+  box-shadow: 0 12px 34px rgba(255, 55, 69, 0.25);
+
+  &:hover {
+    background: #d8121f;
+    transform: translateY(-1px);
+  }
+
+  &:active {
+    transform: translateY(0px);
+  }
+`;
+
+export const SecondaryButton = styled.button`
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  cursor: pointer;
+  padding: 14px 22px;
+  border-radius: 999px;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.92);
+  font-weight: 600;
+  font-size: 15px;
+  transition: border-color 0.2s ease, background 0.2s ease, transform 0.2s ease;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 55, 69, 0.6);
+    transform: translateY(-1px);
+  }
+
+  &:active {
+    transform: translateY(0px);
+  }
+`;
+
+export const HeroRight = styled.div`
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+
 export const PhoneWrapper = styled.div`
-  height: 60vh;
+  height: min(560px, 60vh);
   width: 100%;
-  max-width: 600px;
+  max-width: 500px;
   display: flex;
   align-items: center;
   justify-content: center;
   position: relative;
-  margin-top: 40px;
+  padding: 26px 20px 20px;
+  border-radius: 28px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  box-shadow: 0 30px 90px rgba(0, 0, 0, 0.28);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
 
   @media (max-width: 768px) {
-    height: 50vh;
+    height: min(480px, 52vh);
     max-width: 100%;
-    margin-top: 20px;
+    padding: 18px 14px 14px;
   }
 `;
 export const TitleContainer = styled.div`
@@ -62,7 +177,7 @@ export const Title = styled.span`
 
 export const PhoneImage = styled.img`
   width: 100%;
-  max-width: 500px;
+  max-width: 420px;
   height: auto;
   z-index: 10;
   filter: drop-shadow(0 20px 40px rgba(0, 0, 0, 0.3));
@@ -116,7 +231,7 @@ export const LogoMenugic = styled.img`
   width: 220px;
   height: auto;
   position: absolute;
-  top: 40px;
+  top: 10px;
   left: 50%;
   transform: translateX(-50%);
   filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
@@ -128,6 +243,6 @@ export const LogoMenugic = styled.img`
   
   @media (max-width: 768px) {
     width: 160px;
-    top: 20px;
+    top: 0px;
   }
 `;

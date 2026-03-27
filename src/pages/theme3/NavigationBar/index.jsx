@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import {
   NavBarContainer,
   NavContent,
+  NavActions,
   LogoContainer,
   Logo,
   NavLinks,
@@ -37,11 +38,12 @@ import {
   MobileMenuCloseButton,
 } from "./styles";
 import { HiMenuAlt2 } from "react-icons/hi";
-import { FaTimes, FaHome, FaList, FaShoppingBag, FaCommentAlt, FaAddressBook, FaChevronDown, FaChevronUp, FaFacebook, FaInstagram, FaTwitter, FaLinkedin, FaYoutube, FaGlobe, FaTiktok, FaQuestionCircle, FaInfoCircle } from "react-icons/fa";
+import { FaTimes, FaHome, FaList, FaCommentAlt, FaAddressBook, FaChevronDown, FaChevronUp, FaFacebook, FaInstagram, FaTwitter, FaLinkedin, FaYoutube, FaGlobe, FaTiktok, FaQuestionCircle, FaInfoCircle, FaClipboardList } from "react-icons/fa";
 import { useParams } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { changelanuage } from "../../../redux/restaurant/restaurantActions";
 import { FaWhatsapp } from "react-icons/fa6";
+import CustomerAccountNav from "../../../components/CustomerAccountNav";
 
 export default function NavigationBar({
   onProductsClick,
@@ -79,6 +81,7 @@ export default function NavigationBar({
   const dispatch = useDispatch();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [categoriesExpanded, setCategoriesExpanded] = useState(false);
+  const customerAccountNavRef = useRef(null);
 
   const handleLanguage = (lang) => {
     dispatch(changelanuage({ name: restaurantName, activeLanguage: lang }));
@@ -145,6 +148,14 @@ export default function NavigationBar({
     closeMobileMenu();
   };
 
+  const handleMobileOrdersClick = () => {
+    if (popupHandler) {
+      popupHandler(null);
+    }
+    customerAccountNavRef.current?.openOrders?.();
+    closeMobileMenu();
+  };
+
   // Get social media data
   const branches = restaurant?.branches || [];
   let socialMedia = {};
@@ -176,20 +187,15 @@ export default function NavigationBar({
   return (
     <>
       <NavBarContainer activeLanguage={activeLanguage} $isProductDetailsOpen={isProductDetailsOpen}>
-        <NavContent>
-          {/* Menu Button (3 dashes) - Left */}
-          <MobileMenuButton onClick={toggleMobileMenu} activeLanguage={activeLanguage} style={{ order: activeLanguage === "ar" ? 3 : 1 }}>
-            {mobileMenuOpen ? <FaTimes /> : <HiMenuAlt2 />}
-          </MobileMenuButton>
-
-          {/* Logo - Center */}
-          <LogoContainer 
+        <NavContent dir={activeLanguage === "ar" ? "rtl" : "ltr"}>
+          {/* Desktop: logo + links in row; mobile: logo centered, burger + actions at edges */}
+          <LogoContainer
             onClick={() => {
               if (onHomeClick) {
                 onHomeClick();
               }
-            }} 
-            style={{ cursor: onHomeClick ? "pointer" : "default", order: 2 }}
+            }}
+            style={{ cursor: onHomeClick ? "pointer" : "default" }}
           >
             {restaurant?.logoURL && (
               <Logo
@@ -199,7 +205,6 @@ export default function NavigationBar({
             )}
           </LogoContainer>
 
-          {/* Desktop Navigation Links */}
           <NavLinks activeLanguage={activeLanguage}>
             {onHomeClick && (
               <NavLink
@@ -212,19 +217,11 @@ export default function NavigationBar({
               </NavLink>
             )}
             <NavLink
-              onClick={toggleMobileMenu}
+              onClick={() => handleNavClick(onProductsClick)}
               activeLanguage={activeLanguage}
             >
               <NavLinkText activeLanguage={activeLanguage}>
                 {activeLanguage === "en" ? "Categories" : "الفئات"}
-              </NavLinkText>
-            </NavLink>
-            <NavLink
-              activeLanguage={activeLanguage}
-              disabled
-            >
-              <NavLinkText activeLanguage={activeLanguage}>
-                {activeLanguage === "en" ? "Orders (Coming Soon)" : "الطلبات (قريباً)"}
               </NavLinkText>
             </NavLink>
             <NavLink
@@ -263,29 +260,41 @@ export default function NavigationBar({
             </NavLink>
           </NavLinks>
 
-          {/* Language Switcher - Right */}
-          <LanguageContainer activeLanguage={activeLanguage} style={{ order: activeLanguage === "ar" ? 1 : 3 }}>
-            {restaurant?.languages === "en&ar" && (
-              <>
-                <Wrapper />
-                <Ball activeLanguage={activeLanguage} />
-                <Language
-                  activeLanguage={activeLanguage}
-                  language={"en"}
-                  onClick={() => handleLanguage("en")}
-                >
-                  En
-                </Language>
-                <Language
-                  activeLanguage={activeLanguage}
-                  language={"ar"}
-                  onClick={() => handleLanguage("ar")}
-                >
-                  Ar
-                </Language>
-              </>
-            )}
-          </LanguageContainer>
+          <MobileMenuButton onClick={toggleMobileMenu} activeLanguage={activeLanguage}>
+            {mobileMenuOpen ? <FaTimes /> : <HiMenuAlt2 />}
+          </MobileMenuButton>
+
+          <NavActions $activeLanguage={activeLanguage}>
+            <CustomerAccountNav
+              ref={customerAccountNavRef}
+              restaurant={restaurant}
+              restaurantName={restaurantName}
+              activeLanguage={activeLanguage}
+              popupHandler={popupHandler}
+            />
+            <LanguageContainer activeLanguage={activeLanguage}>
+              {restaurant?.languages === "en&ar" && (
+                <>
+                  <Wrapper />
+                  <Ball activeLanguage={activeLanguage} />
+                  <Language
+                    activeLanguage={activeLanguage}
+                    language={"en"}
+                    onClick={() => handleLanguage("en")}
+                  >
+                    En
+                  </Language>
+                  <Language
+                    activeLanguage={activeLanguage}
+                    language={"ar"}
+                    onClick={() => handleLanguage("ar")}
+                  >
+                    Ar
+                  </Language>
+                </>
+              )}
+            </LanguageContainer>
+          </NavActions>
         </NavContent>
       </NavBarContainer>
 
@@ -378,20 +387,6 @@ export default function NavigationBar({
               </MobileMenuSection>
             </>
 
-            {/* Orders Section */}
-            <>
-              <MobileMenuSection>
-                <MobileMenuSectionHeader disabled>
-                  <MobileMenuSectionIcon>
-                    <FaShoppingBag />
-                  </MobileMenuSectionIcon>
-                  <MobileMenuSectionTitle activeLanguage={activeLanguage}>
-                    {activeLanguage === "en" ? "Orders (Coming Soon)" : "الطلبات (قريباً)"}
-                  </MobileMenuSectionTitle>
-                </MobileMenuSectionHeader>
-              </MobileMenuSection>
-            </>
-
             {/* Feedback Section */}
             <>
               <MobileMenuSection>
@@ -405,6 +400,18 @@ export default function NavigationBar({
                 </MobileMenuSectionHeader>
               </MobileMenuSection>
             </>
+
+            {/* Orders — under Feedback */}
+            <MobileMenuSection>
+              <MobileMenuSectionHeader onClick={handleMobileOrdersClick}>
+                <MobileMenuSectionIcon>
+                  <FaClipboardList />
+                </MobileMenuSectionIcon>
+                <MobileMenuSectionTitle activeLanguage={activeLanguage}>
+                  {activeLanguage === "en" ? "Orders" : "الطلبات"}
+                </MobileMenuSectionTitle>
+              </MobileMenuSectionHeader>
+            </MobileMenuSection>
 
             {/* About us Section */}
             {onAboutClick && (

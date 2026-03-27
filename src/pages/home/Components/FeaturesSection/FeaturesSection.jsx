@@ -161,14 +161,14 @@ const SectionHeader = styled.div`
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding-top: 100px;
+    padding-top: 80px;
     gap: 16px;
     margin-bottom: 60px;
     background: linear-gradient(to bottom, rgba(255, 255, 255, 0.02), transparent);
     padding-bottom: 30px;
     
     @media (max-width: 768px) {
-        padding-top: 80px;
+        padding-top: 70px;
         gap: 12px;
         margin-bottom: 50px;
     }
@@ -229,8 +229,10 @@ export default function FeaturesSection() {
   return (
     <div id="features">
     <SectionHeader>
-        <Title>Easier order management for you and your clients.</Title>
-        <UnderTitle>The easiest and fastest way to create a digital menu for your business, whether for products or services. We provide all the solutions your project needs to go global.</UnderTitle>
+        <Title>Everything you need for QR ordering.</Title>
+        <UnderTitle>
+            Menugic delivers a digital menu experience with WhatsApp ordering, easy customization, and admin control—so you can spend less time managing and more time serving.
+        </UnderTitle>
     </SectionHeader>
     <CardHolder>
             {Items.map((item, index) => (

@@ -20,6 +20,7 @@ import NavigationBar from "../theme3/NavigationBar";
 import BottomTabBar from "../theme3/BottomTabBar";
 import CartAnimation from "../theme3/CartAnimation";
 import MenuSplitView from "./MenuSplitView";
+import Theme12MenuSlider from "../../components/Theme12MenuSlider";
 import { trackVisit, trackPageView } from "../../utilities/analyticsTracking";
 
 export default function Theme1() {
@@ -324,6 +325,13 @@ export default function Theme1() {
 
   if (!restaurant) return null;
 
+  const sliderImages = restaurant?.sliderImages || [];
+  const showMenuSlider =
+    (restaurant?.show_slider_image === true ||
+      restaurant?.show_slider_image === 1 ||
+      restaurant?.show_slider_image === "1") &&
+    sliderImages.length > 0;
+
   return (
     <Container id="wrapper">
       <NavigationBar
@@ -348,10 +356,16 @@ export default function Theme1() {
         popupHandler={popupHandler}
         isProductDetailsOpen={isProductDetailsOpen || showPopup === "about"}
       />
+      {showMenuSlider && (
+        <Theme12MenuSlider
+          images={sliderImages}
+          activeLanguage={activeLanguage}
+          variant="theme1"
+        />
+      )}
 
       <MenuWrapper onClick={handleClickOutside}>
         <BlurOverlay showPopup={showPopup} />
-
         {activeCategory && theme1Categories.length > 0 && (
           <MenuSplitView
             categories={theme1Categories}

@@ -163,8 +163,8 @@ export default function Footer() {
     <div>
     <Footerwrapper>
         <img src="images/logo.png" alt="" />
-        <Title>Order List Site</Title>
-        <UnderTitle>The easiest and fastest way to create an electronic menu for your business, whether products or services.</UnderTitle>
+        <Title>Menugic - QR Digital Ordering</Title>
+        <UnderTitle>Scan the QR, order on WhatsApp, and manage your menu from one admin panel.</UnderTitle>
         <Sections >
         {menuItems.map((item, index) => (
             <SectionsWrapper  onClick={() => handleScroll(item.sectionId)} >
