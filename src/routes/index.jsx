@@ -3,6 +3,7 @@ import {
   Route,
   BrowserRouter,
   Routes as RoutesWrapper,
+  Navigate,
 } from "react-router-dom";
 import { ADMINSIGNIN, HOME, HOME_V2, NOTFOUND, RESTAURANT, RESTAURANTDASH, SUPERADMIN, NOTSUBSCRIBED } from "./URLs";
 // import Theme1 from "../pages/theme1";
@@ -10,7 +11,6 @@ import AdminLayout from "../HOC/AdminLayout";
 import AdminSignin from "../pages/adminauth";
 import RestaurantDash from "../pages/restaurantdash";
 import Home from "../pages/home";
-import HomeV2 from "../pages/home-v2";
 
 import { withRedirection } from "../HOC/sign-in";
 import SuperAdmin from "../pages/superadmin";
@@ -32,7 +32,7 @@ export default function ApplicationRoutes() {
           <>
             {/* Existing routes */}
             <Route path={HOME} element={<Home />} />
-            <Route path={HOME_V2} element={<HomeV2 />} />
+            <Route path={HOME_V2} element={<Navigate to={HOME} replace />} />
 
             <Route path={RESTAURANT} element={<Template />} />
             <Route path={NOTFOUND} element={<NotFound />} />
