@@ -266,10 +266,6 @@ export default function NavigationBar({
             </NavLink>
           </NavLinks>
 
-          <MobileMenuButton onClick={toggleMobileMenu} activeLanguage={activeLanguage}>
-            {mobileMenuOpen ? <FaTimes /> : <HiMenuAlt2 />}
-          </MobileMenuButton>
-
           <NavActions $activeLanguage={activeLanguage}>
             <CustomerAccountNav
               ref={customerAccountNavRef}
