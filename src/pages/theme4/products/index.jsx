@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState, useCallback } from "react";
+import axios from "axios";
 import { AllItemsLoader, AllItemsLoaderWrap, AllItemsSection, AllItemsTitle, AllItemsWrapper, Container, LoaderDot, ProductWrapper, AllItemsListWrapper, AllItemsListItem, AllItemsListImage, AllItemsListDetails, AllItemsListName, AllItemsListPrice, AllItemsListDiscountPrice, AllItemsListQuickAddButton, AllItemsListOutOfStockBadge, AllItemsListItemWrapper } from "./styles";
 import Product from "./product";
 import ProductDetails from "./productDetails";
@@ -10,6 +11,8 @@ import { useGetProductsByRestaurant } from "../../../apis/products/getProductsBy
 import { getProduct, PRODUCT_QUERY_KEY } from "../../../apis/products/getProduct";
 import { convertPrice } from "../../../utilities/convertPrice";
 import { addToCart } from "../../../redux/cart/cartActions";
+import { CUSTOMER_WISHLIST_URL } from "../../../apis/URLs";
+import { getCustomerAccessToken } from "../../../utilities/customerAuthStorage";
 import { FaCartPlus } from "react-icons/fa";
 import { toast } from "react-toastify";
 const _ = require('lodash');
@@ -43,6 +46,42 @@ export default function Products({
     (state) => state.restaurant?.[restaurantName]
   );
   const dispatch = useDispatch();
+
+  const [wishlistIds, setWishlistIds] = useState(() => new Set());
+
+  const refreshWishlist = useCallback(async () => {
+    const tok = getCustomerAccessToken(restaurantName);
+    if (!tok) {
+      setWishlistIds(new Set());
+      return;
+    }
+    try {
+      const { data } = await axios.get(CUSTOMER_WISHLIST_URL, {
+        headers: { Authorization: `Bearer ${tok}` },
+      });
+      const ids = (Array.isArray(data) ? data : []).map((p) => p.id);
+      setWishlistIds(new Set(ids));
+    } catch {
+      setWishlistIds(new Set());
+    }
+  }, [restaurantName]);
+
+  useEffect(() => {
+    refreshWishlist();
+  }, [refreshWishlist]);
+
+  useEffect(() => {
+    const onAuth = (e) => {
+      if (
+        !e?.detail?.restaurantName ||
+        e.detail.restaurantName === restaurantName
+      ) {
+        refreshWishlist();
+      }
+    };
+    window.addEventListener("menugic-customer-auth", onAuth);
+    return () => window.removeEventListener("menugic-customer-auth", onAuth);
+  }, [restaurantName, refreshWishlist]);
 
   const [productPositions, setProductPositions] = useState([]); // x y and width of product
   const [productRefs, setProductRefs] = useState([]);
@@ -483,6 +522,8 @@ console.log(filteredProducts)
                       categories={categories}
                       disableDetails={false}
                       onAddToCart={onAddToCart}
+                      wishlistIds={wishlistIds}
+                      onWishlistChange={refreshWishlist}
                     />
                   ))}
                 </ProductWrapper>
@@ -522,6 +563,8 @@ console.log(filteredProducts)
                           activeCategoryId={activeCategory}
                           categories={categories}
                           onAddToCart={onAddToCart}
+                          wishlistIds={wishlistIds}
+                          onWishlistChange={refreshWishlist}
                         />
                       );
                     })}

@@ -35,13 +35,20 @@ export const AccountIconWrap = styled.div`
   flex-shrink: 0;
 `;
 
+export const AccountIconsCluster = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0;
+  flex-shrink: 0;
+`;
+
 /** Ghost icon — no filled background (navbar account / orders) */
 export const AccountIconButton = styled.button`
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 44px;
-  height: 44px;
+  width: 34px;
+  height: 34px;
   padding: 0;
   border: none;
   border-radius: 12px;
@@ -67,9 +74,17 @@ export const AccountIconButton = styled.button`
   }
 
   svg {
-    width: 24px;
-    height: 24px;
+    width: 20px;
+    height: 20px;
     opacity: 0.95;
+  }
+`;
+
+/** Navbar wishlist: Ionic outline heart (hollow center); keep separate from FA-filled icons */
+export const WishlistAccountIconButton = styled(AccountIconButton)`
+  svg {
+    fill: none;
+    stroke: currentColor;
   }
 `;
 
@@ -141,6 +156,11 @@ export const UserMenuItem = styled.button`
     height: 16px;
     color: #64748b;
     flex-shrink: 0;
+  }
+
+  &[data-outline-wishlist-heart="true"] svg {
+    fill: none;
+    stroke: currentColor;
   }
 
   &:hover {

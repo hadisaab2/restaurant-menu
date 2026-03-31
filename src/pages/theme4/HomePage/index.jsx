@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
+import axios from "axios";
 import {
   Container,
   HeroSection,
@@ -102,6 +103,8 @@ import { getBadgeIconComponent } from "../../../constants/badgeIconTypes";
 import { useGetFeaturedProducts } from "../../../apis/products/getFeaturedProducts";
 import { useGetBestSellers } from "../../../apis/products/getBestSellers";
 import Product from "../products/product";
+import { CUSTOMER_WISHLIST_URL } from "../../../apis/URLs";
+import { getCustomerAccessToken } from "../../../utilities/customerAuthStorage";
 
 // Category pill for theme4 (new 37 style): icon + name, rounded pill
 const CategoryPillItem = ({ category, activeLanguage, onExploreClick, logoURL }) => {
@@ -287,6 +290,41 @@ export default function HomePage({ onExploreClick, categories, setSearchParams, 
   const activeLanguage = useSelector(
     (state) => state.restaurant?.[restaurantName]?.activeLanguage || "en"
   );
+
+  const [wishlistIds, setWishlistIds] = useState(() => new Set());
+  const refreshWishlist = useCallback(async () => {
+    const tok = getCustomerAccessToken(restaurantName);
+    if (!tok) {
+      setWishlistIds(new Set());
+      return;
+    }
+    try {
+      const { data } = await axios.get(CUSTOMER_WISHLIST_URL, {
+        headers: { Authorization: `Bearer ${tok}` },
+      });
+      const ids = (Array.isArray(data) ? data : []).map((p) => p.id);
+      setWishlistIds(new Set(ids));
+    } catch {
+      setWishlistIds(new Set());
+    }
+  }, [restaurantName]);
+
+  useEffect(() => {
+    refreshWishlist();
+  }, [refreshWishlist]);
+
+  useEffect(() => {
+    const onAuth = (e) => {
+      if (
+        !e?.detail?.restaurantName ||
+        e.detail.restaurantName === restaurantName
+      ) {
+        refreshWishlist();
+      }
+    };
+    window.addEventListener("menugic-customer-auth", onAuth);
+    return () => window.removeEventListener("menugic-customer-auth", onAuth);
+  }, [restaurantName, refreshWishlist]);
 
   const branches = restaurant?.branches || [];
   const socialMedia = restaurant?.socialMedia || [];
@@ -535,6 +573,8 @@ export default function HomePage({ onExploreClick, categories, setSearchParams, 
                 categories={categories}
                 disableDetails={false}
                 $isFeatured={true}
+                wishlistIds={wishlistIds}
+                onWishlistChange={refreshWishlist}
               />
             ))}
           </FeaturedProductsGrid>

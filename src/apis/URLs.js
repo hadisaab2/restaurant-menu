@@ -18,6 +18,9 @@ export const CUSTOMER_ORDERS_URL = `${REACT_APP_BASE_URL}/auth/customer/orders`;
 export const CUSTOMER_ADDRESSES_URL = `${REACT_APP_BASE_URL}/auth/customer/addresses`;
 export const CUSTOMER_ADDRESS_URL = (id) =>
   `${REACT_APP_BASE_URL}/auth/customer/addresses/${id}`;
+export const CUSTOMER_WISHLIST_URL = `${REACT_APP_BASE_URL}/auth/customer/wishlist`;
+export const CUSTOMER_WISHLIST_PRODUCT_URL = (productId) =>
+  `${REACT_APP_BASE_URL}/auth/customer/wishlist/${productId}`;
 
 export const CUSTOMERS_REGISTERED_URL = `${REACT_APP_BASE_URL}/customers/registered`;
 export const CUSTOMERS_REGISTERED_ORDERS_URL = (customerUserId) =>

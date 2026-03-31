@@ -41,10 +41,20 @@ export const NavContent = styled.div`
 export const NavActions = styled.div`
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 0;
   flex-shrink: 0;
   margin-inline-start: auto;
-  flex-direction: ${(p) => (p.$activeLanguage === "ar" ? "row-reverse" : "row")};
+  /* Use dir=rtl/ltr on NavContent only — row-reverse here undoes RTL and keeps icons LTR */
+
+  @media (max-width: 968px) {
+    margin-inline-start: 0;
+    /* Same order for EN/AR; NavContent dir handles mirroring (burger / actions swap sides). */
+    order: 1;
+  }
+
+  @media (min-width: 969px) {
+    order: unset;
+  }
 `;
 
 export const LogoContainer = styled.div`
@@ -200,8 +210,8 @@ export const Language = styled.div`
 
 export const MobileMenuButton = styled.button`
   display: flex;
-  width: 42px;
-  height: 42px;
+  width: 34px;
+  height: 34px;
   border-radius: 8px;
   border: none;
   background: transparent;
@@ -210,7 +220,7 @@ export const MobileMenuButton = styled.button`
   justify-content: center;
   cursor: pointer;
   transition: all 0.3s ease;
-  font-size: 27px;
+  font-size: 22px;
   flex-shrink: 0;
   z-index: 2;
 
@@ -221,12 +231,17 @@ export const MobileMenuButton = styled.button`
 
   @media (min-width: 969px) {
     display: none;
+    order: unset;
+  }
+
+  @media (max-width: 968px) {
+    order: 0;
   }
 
   @media (max-width: 768px) {
-    width: 38px;
-    height: 38px;
-    font-size: 27px;
+    width: 34px;
+    height: 34px;
+    font-size: 22px;
   }
 `;
 
@@ -563,5 +578,77 @@ export const MobileMenuCopyright = styled.div`
   
   @media (min-width: 768px) {
     font-size: 13px;
+  }
+`;
+
+export const GlobeLanguageWrap = styled.div`
+  position: relative;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+`;
+
+export const GlobeLanguageButton = styled.button`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  margin: 0;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  background: transparent;
+  color: ${(p) => p.theme?.textColor || "#1e293b"};
+  transition: color 0.2s ease, transform 0.15s ease;
+
+  &:hover {
+    color: ${(p) => p.theme?.mainColor || "#0f172a"};
+  }
+
+  &:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2px ${(p) => p.theme?.mainColor || "#3b82f6"}55;
+  }
+
+  svg {
+    width: 22px;
+    height: 22px;
+    flex-shrink: 0;
+  }
+`;
+
+export const GlobeLanguageMenu = styled.div`
+  position: absolute;
+  top: calc(100% + 8px);
+  ${(p) => (p.$rtl ? "left: 0;" : "right: 0;")}
+  min-width: 168px;
+  padding: 6px;
+  background: #ffffff;
+  border-radius: 12px;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  box-shadow: 0 12px 40px -12px rgba(15, 23, 42, 0.25);
+  z-index: 10060;
+`;
+
+export const GlobeLanguageMenuBtn = styled.button`
+  display: block;
+  width: 100%;
+  text-align: ${(p) => (p.$rtl ? "right" : "left")};
+  padding: 10px 14px;
+  margin: 0;
+  border: none;
+  border-radius: 8px;
+  background: ${(p) =>
+    p.$active ? `${p.theme?.mainColor || "#3b82f6"}22` : "transparent"};
+  color: ${(p) => p.theme?.textColor || "#0f172a"};
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  font-family: ${(p) => `${p.theme?.font || "system-ui"}, "Noto Kufi Arabic"`};
+
+  &:hover {
+    background: rgba(15, 23, 42, 0.06);
   }
 `;

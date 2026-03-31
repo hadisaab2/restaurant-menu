@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import {
   NavBarContainer,
   NavContent,
@@ -8,10 +8,10 @@ import {
   NavLinks,
   NavLink,
   NavLinkText,
-  LanguageContainer,
-  Language,
-  Ball,
-  Wrapper,
+  GlobeLanguageWrap,
+  GlobeLanguageButton,
+  GlobeLanguageMenu,
+  GlobeLanguageMenuBtn,
   MobileMenuButton,
   MobileMenuIcon,
   MobileMenu,
@@ -38,12 +38,15 @@ import {
   MobileMenuCloseButton,
 } from "./styles";
 import { HiMenuAlt2 } from "react-icons/hi";
+import { IoGlobeOutline, IoHeartOutline } from "react-icons/io5";
 import { FaTimes, FaHome, FaList, FaCommentAlt, FaAddressBook, FaChevronDown, FaChevronUp, FaFacebook, FaInstagram, FaTwitter, FaLinkedin, FaYoutube, FaGlobe, FaTiktok, FaQuestionCircle, FaInfoCircle, FaClipboardList } from "react-icons/fa";
 import { useParams } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { changelanuage } from "../../../redux/restaurant/restaurantActions";
 import { FaWhatsapp } from "react-icons/fa6";
 import CustomerAccountNav from "../../../components/CustomerAccountNav";
+
+const WishlistHeartIcon = IoHeartOutline;
 
 export default function NavigationBar({
   onProductsClick,
@@ -81,11 +84,28 @@ export default function NavigationBar({
   const dispatch = useDispatch();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [categoriesExpanded, setCategoriesExpanded] = useState(false);
+  const [langMenuOpen, setLangMenuOpen] = useState(false);
   const customerAccountNavRef = useRef(null);
+  const globeLangRef = useRef(null);
 
   const handleLanguage = (lang) => {
     dispatch(changelanuage({ name: restaurantName, activeLanguage: lang }));
   };
+
+  useEffect(() => {
+    if (!langMenuOpen) return undefined;
+    const close = (e) => {
+      if (globeLangRef.current && !globeLangRef.current.contains(e.target)) {
+        setLangMenuOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", close);
+    document.addEventListener("touchstart", close);
+    return () => {
+      document.removeEventListener("mousedown", close);
+      document.removeEventListener("touchstart", close);
+    };
+  }, [langMenuOpen]);
 
   const toggleMobileMenu = () => {
     // Close any opened popup when opening mobile menu
@@ -153,6 +173,14 @@ export default function NavigationBar({
       popupHandler(null);
     }
     customerAccountNavRef.current?.openOrders?.();
+    closeMobileMenu();
+  };
+
+  const handleMobileWishlistClick = () => {
+    if (popupHandler) {
+      popupHandler(null);
+    }
+    customerAccountNavRef.current?.openWishlist?.();
     closeMobileMenu();
   };
 
@@ -260,11 +288,15 @@ export default function NavigationBar({
             </NavLink>
           </NavLinks>
 
-          <MobileMenuButton onClick={toggleMobileMenu} activeLanguage={activeLanguage}>
+          <MobileMenuButton
+            onClick={toggleMobileMenu}
+            activeLanguage={activeLanguage}
+            $lang={activeLanguage}
+          >
             {mobileMenuOpen ? <FaTimes /> : <HiMenuAlt2 />}
           </MobileMenuButton>
 
-          <NavActions $activeLanguage={activeLanguage}>
+          <NavActions>
             <CustomerAccountNav
               ref={customerAccountNavRef}
               restaurant={restaurant}
@@ -272,28 +304,47 @@ export default function NavigationBar({
               activeLanguage={activeLanguage}
               popupHandler={popupHandler}
             />
-            <LanguageContainer activeLanguage={activeLanguage}>
-              {restaurant?.languages === "en&ar" && (
-                <>
-                  <Wrapper />
-                  <Ball activeLanguage={activeLanguage} />
-                  <Language
-                    activeLanguage={activeLanguage}
-                    language={"en"}
-                    onClick={() => handleLanguage("en")}
+            {restaurant?.languages === "en&ar" && (
+              <GlobeLanguageWrap ref={globeLangRef}>
+                <GlobeLanguageButton
+                  type="button"
+                  aria-label={activeLanguage === "en" ? "Language" : "اللغة"}
+                  aria-expanded={langMenuOpen}
+                  onClick={() => setLangMenuOpen((o) => !o)}
+                >
+                  <IoGlobeOutline aria-hidden />
+                </GlobeLanguageButton>
+                {langMenuOpen && (
+                  <GlobeLanguageMenu
+                    $rtl={activeLanguage === "ar"}
+                    dir={activeLanguage === "ar" ? "rtl" : "ltr"}
                   >
-                    En
-                  </Language>
-                  <Language
-                    activeLanguage={activeLanguage}
-                    language={"ar"}
-                    onClick={() => handleLanguage("ar")}
-                  >
-                    Ar
-                  </Language>
-                </>
-              )}
-            </LanguageContainer>
+                    <GlobeLanguageMenuBtn
+                      type="button"
+                      $active={activeLanguage === "en"}
+                      $rtl={activeLanguage === "ar"}
+                      onClick={() => {
+                        handleLanguage("en");
+                        setLangMenuOpen(false);
+                      }}
+                    >
+                      English
+                    </GlobeLanguageMenuBtn>
+                    <GlobeLanguageMenuBtn
+                      type="button"
+                      $active={activeLanguage === "ar"}
+                      $rtl={activeLanguage === "ar"}
+                      onClick={() => {
+                        handleLanguage("ar");
+                        setLangMenuOpen(false);
+                      }}
+                    >
+                      العربية
+                    </GlobeLanguageMenuBtn>
+                  </GlobeLanguageMenu>
+                )}
+              </GlobeLanguageWrap>
+            )}
           </NavActions>
         </NavContent>
       </NavBarContainer>
@@ -409,6 +460,17 @@ export default function NavigationBar({
                 </MobileMenuSectionIcon>
                 <MobileMenuSectionTitle activeLanguage={activeLanguage}>
                   {activeLanguage === "en" ? "Orders" : "الطلبات"}
+                </MobileMenuSectionTitle>
+              </MobileMenuSectionHeader>
+            </MobileMenuSection>
+
+            <MobileMenuSection>
+              <MobileMenuSectionHeader onClick={handleMobileWishlistClick}>
+                <MobileMenuSectionIcon>
+                  <WishlistHeartIcon style={{ fill: "none", stroke: "currentColor" }} />
+                </MobileMenuSectionIcon>
+                <MobileMenuSectionTitle activeLanguage={activeLanguage}>
+                  {activeLanguage === "en" ? "Wishlist" : "المفضلة"}
                 </MobileMenuSectionTitle>
               </MobileMenuSectionHeader>
             </MobileMenuSection>

@@ -1,4 +1,5 @@
 import React, { useState, useRef, useCallback } from "react";
+import axios from "axios";
 import {
   Container,
   DiscountPrice,
@@ -14,6 +15,7 @@ import {
   TextContainer,
   Wrapper,
   QuickAddButton,
+  WishlistHeartBtn,
   OutOfStockBadge,
 } from "./styles";
 import { useParams } from "react-router-dom";
@@ -22,13 +24,18 @@ import { useQueryClient } from "@tanstack/react-query";
 import { getProduct, PRODUCT_QUERY_KEY } from "../../../../apis/products/getProduct";
 import { convertPrice } from "../../../../utilities/convertPrice";
 import { addToCart } from "../../../../redux/cart/cartActions";
+import { CUSTOMER_WISHLIST_URL, CUSTOMER_WISHLIST_PRODUCT_URL } from "../../../../apis/URLs";
+import { getCustomerAccessToken } from "../../../../utilities/customerAuthStorage";
+import { IoHeartOutline } from "react-icons/io5";
 import { FaCartPlus } from "react-icons/fa";
 import { toast } from "react-toastify";
 import { trackItemView, trackAddToCart } from "../../../../utilities/analyticsTracking";
 const _ = require('lodash');
 
+const WishlistHeartIcon = IoHeartOutline;
+
 const Product = React.forwardRef(
-  ({ plate, setactivePlate, activePlate, index, showPopup, setSearchParams, searchParams, activeCategoryId, categories, disableDetails, $isFeatured, onAddToCart }, ref) => {
+  ({ plate, setactivePlate, activePlate, index, showPopup, setSearchParams, searchParams, activeCategoryId, categories, disableDetails, $isFeatured, onAddToCart, wishlistIds, onWishlistChange }, ref) => {
     const { restaurantName: paramRestaurantName } = useParams();
 
     const hostname = window.location.hostname;
@@ -101,6 +108,9 @@ const Product = React.forwardRef(
       }
     };
     const dispatch = useDispatch();
+    const customerToken = getCustomerAccessToken(restaurantName);
+    const inWishlist =
+      wishlistIds && typeof wishlistIds.has === "function" && wishlistIds.has(plate.id);
     let currencySymbol;
     switch (restaurant?.currency) {
       case "dollar":
@@ -197,6 +207,49 @@ const Product = React.forwardRef(
         );
       }
     };
+
+    const handleWishlistClick = (event) => {
+      if (event) {
+        event.preventDefault();
+        event.stopPropagation();
+        if (event.nativeEvent?.stopImmediatePropagation) {
+          event.nativeEvent.stopImmediatePropagation();
+        }
+      }
+      if (!customerToken || !plate?.id) return;
+      (async () => {
+        try {
+          if (inWishlist) {
+            await axios.delete(CUSTOMER_WISHLIST_PRODUCT_URL(plate.id), {
+              headers: { Authorization: `Bearer ${customerToken}` },
+            });
+          } else {
+            await axios.post(
+              CUSTOMER_WISHLIST_URL,
+              { product_id: plate.id },
+              { headers: { Authorization: `Bearer ${customerToken}` } }
+            );
+          }
+          onWishlistChange?.();
+          toast.success(
+            restaurant?.activeLanguage === "en"
+              ? inWishlist
+                ? "Removed from wishlist"
+                : "Saved to wishlist"
+              : inWishlist
+                ? "أُزيلت من المفضلة"
+                : "أُضيفت إلى المفضلة"
+          );
+        } catch {
+          toast.error(
+            restaurant?.activeLanguage === "en"
+              ? "Could not update wishlist"
+              : "تعذر تحديث المفضلة"
+          );
+        }
+      })();
+    };
+
     return (
       <Container ref={containerRef} data-product-container index={index} activePlate={activePlate} className="lazy-load" $isFeatured={$isFeatured}>
         <Wrapper>
@@ -221,6 +274,31 @@ const Product = React.forwardRef(
               imageLoaded={imageLoaded}
               $isLogoFallback={!hasValidImage}
             />
+            {customerToken && (
+              <WishlistHeartBtn
+                type="button"
+                activeLanuguage={restaurant?.activeLanguage}
+                $filled={inWishlist}
+                title={
+                  restaurant?.activeLanguage === "en"
+                    ? inWishlist
+                      ? "Remove from wishlist"
+                      : "Add to wishlist"
+                    : inWishlist
+                      ? "إزالة من المفضلة"
+                      : "أضف للمفضلة"
+                }
+                onClick={handleWishlistClick}
+                onMouseDown={(e) => {
+                  e.stopPropagation();
+                  e.preventDefault();
+                }}
+                onTouchStart={(e) => e.stopPropagation()}
+                onPointerDown={(e) => e.stopPropagation()}
+              >
+                <WishlistHeartIcon size={18} />
+              </WishlistHeartBtn>
+            )}
           </ImageContainer>
           {(features?.cart !== false) &&
             (isOutOfStock ? (

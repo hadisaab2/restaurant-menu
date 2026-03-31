@@ -1,6 +1,20 @@
 const keyFor = (restaurantName) =>
   `menugic_customer_token_${restaurantName || "default"}`;
 
+const notifyCustomerAuthChanged = (restaurantName) => {
+  try {
+    if (typeof window !== "undefined") {
+      window.dispatchEvent(
+        new CustomEvent("menugic-customer-auth", {
+          detail: { restaurantName: restaurantName || "" },
+        })
+      );
+    }
+  } catch {
+    /* ignore */
+  }
+};
+
 export const getCustomerAccessToken = (restaurantName) => {
   try {
     return localStorage.getItem(keyFor(restaurantName)) || "";
@@ -19,6 +33,7 @@ export const setCustomerAccessToken = (restaurantName, token) => {
   } catch {
     /* ignore */
   }
+  notifyCustomerAuthChanged(restaurantName);
 };
 
 export const clearCustomerAccessToken = (restaurantName) => {

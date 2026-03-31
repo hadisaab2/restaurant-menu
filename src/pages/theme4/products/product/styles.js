@@ -168,6 +168,45 @@ export const BestSellerBadge = styled.div`
   z-index: 2;
 `;
 
+export const WishlistHeartBtn = styled.button`
+  position: absolute;
+  bottom: 8px;
+  left: ${(props) => (props.activeLanuguage === "en" ? "8px" : "auto")};
+  right: ${(props) => (props.activeLanuguage === "en" ? "auto" : "8px")};
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 0;
+  background-color: rgba(255, 255, 255, 0.95);
+  color: ${(props) => (props.$filled ? "#e11d48" : props.theme.BoxTextColor)};
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 2;
+  transition: transform 0.2s ease, color 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12);
+
+  &:hover {
+    transform: scale(1.08);
+    color: ${(props) => (props.$filled ? "#be123c" : "#e11d48")};
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+
+  &:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(225, 29, 72, 0.35);
+  }
+
+  svg {
+    fill: none;
+    stroke: currentColor;
+  }
+`;
+
 export const QuickAddButton = styled.button`
   position: absolute;
   bottom: 8px;

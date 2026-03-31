@@ -6,7 +6,15 @@ import {
 } from "../cart/cartActions";
 
 import { deepEqual } from "./utils";
+
+const CART_META_KEY = "__cartMeta";
+
 const initialState = {};
+
+const stampCart = (nextState) => ({
+  ...nextState,
+  [CART_META_KEY]: { updatedAt: Date.now() },
+});
 
 // Helper function to check if two formData objects are equal
 
@@ -36,10 +44,13 @@ const cartReducer = (state = initialState, action) => {
           }
           return cartItem;
         });
-        return { ...state, [restaurantName]: newCart };
+        return stampCart({ ...state, [restaurantName]: newCart });
       } else {
         // Item not in the cart or formData differs, add new item
-        return { ...state, [restaurantName]: [...restaurantCart, item] };
+        return stampCart({
+          ...state,
+          [restaurantName]: [...restaurantCart, item],
+        });
       }
     }
 
@@ -47,24 +58,24 @@ const cartReducer = (state = initialState, action) => {
       const { restaurantName, uniqueId } = action.payload;
       const restaurantCart = state[restaurantName] || [];
       const newCart = restaurantCart.filter(cartItem => cartItem.uniqueId !== uniqueId);
-      return { ...state, [restaurantName]: newCart };
+      return stampCart({ ...state, [restaurantName]: newCart });
     }
 
     case ADJUST_QUANTITY: {
       const { restaurantName, uniqueId, quantity } = action.payload;
       const restaurantCart = state[restaurantName] || [];
       
-      return {
+      return stampCart({
         ...state,
         [restaurantName]: restaurantCart.map(item => 
           item.uniqueId === uniqueId ? { ...item, quantity: quantity } : item
         )
-      };
+      });
     }
 
     case CLEAR_CART: {
       const { restaurantName } = action.payload;
-      return { ...state, [restaurantName]: [] };
+      return stampCart({ ...state, [restaurantName]: [] });
     }
 
     default:

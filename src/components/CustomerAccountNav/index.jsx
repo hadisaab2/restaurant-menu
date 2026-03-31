@@ -9,7 +9,7 @@ import React, {
 import { createPortal } from "react-dom";
 import axios from "axios";
 import { useDispatch } from "react-redux";
-import { IoPersonOutline } from "react-icons/io5";
+import { IoPersonOutline, IoHeartOutline } from "react-icons/io5";
 import {
   FaTimes,
   FaClipboardList,
@@ -28,6 +28,8 @@ import {
   CUSTOMER_ADDRESS_URL,
   CUSTOMER_REGISTER_URL,
   CUSTOMER_SIGNIN_URL,
+  CUSTOMER_WISHLIST_URL,
+  CUSTOMER_WISHLIST_PRODUCT_URL,
   GET_ONEPRODUCT_URL,
 } from "../../apis/URLs";
 import { addToCart } from "../../redux/cart/cartActions";
@@ -40,7 +42,9 @@ import {
   PrimaryButton,
   TextLinkButton,
   AccountIconWrap,
+  AccountIconsCluster,
   AccountIconButton,
+  WishlistAccountIconButton,
   UserMenuDropdown,
   UserMenuHeader,
   UserMenuName,
@@ -134,6 +138,15 @@ function lineDisplayName(line, activeLanguage) {
   return activeLanguage === "ar" ? `منتج #${line.product_id}` : `Item #${line.product_id}`;
 }
 
+function productWishlistName(product, activeLanguage) {
+  if (!product) return "";
+  const n =
+    activeLanguage === "ar"
+      ? product.ar_name || product.en_name
+      : product.en_name || product.ar_name;
+  return n || `#${product.id}`;
+}
+
 function statusBadgeProps(status) {
   const s = String(status || "").toLowerCase();
   if (s === "completed") return { $bg: "#dcfce7", $fg: "#166534" };
@@ -180,6 +193,11 @@ const CustomerAccountNav = forwardRef(function CustomerAccountNav(
     is_default: false,
   });
   const [editingAddressId, setEditingAddressId] = useState(null);
+  const [wishlistOpen, setWishlistOpen] = useState(false);
+  const [wishlistItems, setWishlistItems] = useState([]);
+  const [wishlistLoading, setWishlistLoading] = useState(false);
+  const [wishlistError, setWishlistError] = useState("");
+  const [wishlistCartBusyId, setWishlistCartBusyId] = useState(null);
 
   const dispatch = useDispatch();
   const iconWrapRef = useRef(null);
@@ -216,7 +234,7 @@ const CustomerAccountNav = forwardRef(function CustomerAccountNav(
   }, [loadProfile]);
 
   useEffect(() => {
-    if (!authOpen && !ordersOpen) return undefined;
+    if (!authOpen && !ordersOpen && !wishlistOpen) return undefined;
     const prevOverflow = document.body.style.overflow;
     const prevTouchAction = document.body.style.touchAction;
     document.body.style.overflow = "hidden";
@@ -225,7 +243,7 @@ const CustomerAccountNav = forwardRef(function CustomerAccountNav(
       document.body.style.overflow = prevOverflow;
       document.body.style.touchAction = prevTouchAction;
     };
-  }, [authOpen, ordersOpen]);
+  }, [authOpen, ordersOpen, wishlistOpen]);
 
   useEffect(() => {
     const handlePointerDown = (e) => {
@@ -272,6 +290,33 @@ const CustomerAccountNav = forwardRef(function CustomerAccountNav(
     }
   }, [token]);
 
+  const loadWishlist = useCallback(async () => {
+    if (!token) return;
+    setWishlistLoading(true);
+    try {
+      const { data } = await axios.get(CUSTOMER_WISHLIST_URL, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setWishlistItems(Array.isArray(data) ? data : []);
+    } catch {
+      setWishlistItems([]);
+      setWishlistError(
+        activeLanguage === "ar"
+          ? "تعذر تحميل المفضلة."
+          : "Could not load wishlist."
+      );
+    } finally {
+      setWishlistLoading(false);
+    }
+  }, [token, activeLanguage]);
+
+  const openWishlistPanel = useCallback(() => {
+    closePopups();
+    setWishlistError("");
+    setWishlistOpen(true);
+    loadWishlist();
+  }, [closePopups, loadWishlist]);
+
   const openOrders = useCallback(() => {
     closePopups();
     setOrdersError("");
@@ -304,12 +349,26 @@ const CustomerAccountNav = forwardRef(function CustomerAccountNav(
     setAuthOpen(true);
   }, [closePopups, loading, profile, openOrders]);
 
+  const handleNavbarWishlistClick = useCallback(() => {
+    closePopups();
+    if (loading) return;
+    setUserMenuOpen(false);
+    if (profile) {
+      openWishlistPanel();
+      return;
+    }
+    setAuthTab("signin");
+    setFormError("");
+    setAuthOpen(true);
+  }, [closePopups, loading, profile, openWishlistPanel]);
+
   useImperativeHandle(
     ref,
     () => ({
       openOrders: () => handleNavbarOrdersClick(),
+      openWishlist: () => handleNavbarWishlistClick(),
     }),
-    [handleNavbarOrdersClick]
+    [handleNavbarOrdersClick, handleNavbarWishlistClick]
   );
 
   const handleReorder = async (orderRow) => {
@@ -351,6 +410,47 @@ const CustomerAccountNav = forwardRef(function CustomerAccountNav(
       );
     } finally {
       setReorderBusyId(null);
+    }
+  };
+
+  const removeWishlistItem = async (productId) => {
+    if (!token || !productId) return;
+    setWishlistError("");
+    try {
+      await axios.delete(CUSTOMER_WISHLIST_PRODUCT_URL(productId), {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      await loadWishlist();
+    } catch {
+      setWishlistError(
+        t(
+          "Could not remove from wishlist.",
+          "تعذر الإزالة من المفضلة."
+        )
+      );
+    }
+  };
+
+  const addWishlistProductToCart = async (row) => {
+    if (!row?.id) return;
+    setWishlistError("");
+    setWishlistCartBusyId(row.id);
+    try {
+      const { data: product } = await axios.get(GET_ONEPRODUCT_URL(row.id));
+      const price = getDiscountedUnitPrice(product);
+      dispatch(
+        addToCart(restaurantName, product, 1, {}, price, "")
+      );
+      if (popupHandler) popupHandler("cart");
+    } catch {
+      setWishlistError(
+        t(
+          "Could not add item. It may no longer be available.",
+          "تعذر إضافة الصنف. قد لا يكون متوفراً."
+        )
+      );
+    } finally {
+      setWishlistCartBusyId(null);
     }
   };
 
@@ -552,6 +652,8 @@ const CustomerAccountNav = forwardRef(function CustomerAccountNav(
     clearCustomerAccessToken(restaurantName);
     setProfile(null);
     setOrders([]);
+    setWishlistItems([]);
+    setWishlistOpen(false);
     setUserMenuOpen(false);
   };
 
@@ -575,38 +677,65 @@ const CustomerAccountNav = forwardRef(function CustomerAccountNav(
 
   return (
     <>
-      <AccountIconWrap ref={iconWrapRef}>
-        <AccountIconButton
-          type="button"
-          onClick={handleIconClick}
-          aria-label={t("Account", "الحساب")}
-          aria-expanded={userMenuOpen}
-        >
-          <IoPersonOutline />
-        </AccountIconButton>
-        {userMenuOpen && profile && (
-          <UserMenuDropdown $rtl={isRtl} dir={isRtl ? "rtl" : "ltr"}>
-            <UserMenuHeader>
-              <UserMenuName>{displayName}</UserMenuName>
-              {displayEmail && <UserMenuEmail>{displayEmail}</UserMenuEmail>}
-            </UserMenuHeader>
-            <UserMenuBody>
-              <UserMenuItem type="button" $rtl={isRtl} onClick={handleOrdersFromMenu}>
-                <FaClipboardList aria-hidden />
-                {t("My orders", "طلباتي")}
-              </UserMenuItem>
-              <UserMenuItem type="button" $rtl={isRtl} onClick={handleAddressesFromMenu}>
-                <FaMapMarkerAlt aria-hidden />
-                {t("Addresses", "العناوين")}
-              </UserMenuItem>
-              <UserMenuItem type="button" $rtl={isRtl} $danger onClick={handleLogout}>
-                <FaSignOutAlt aria-hidden />
-                {t("Log out", "خروج")}
-              </UserMenuItem>
-            </UserMenuBody>
-          </UserMenuDropdown>
+      <AccountIconsCluster dir={isRtl ? "rtl" : "ltr"}>
+        <AccountIconWrap ref={iconWrapRef}>
+          <AccountIconButton
+            type="button"
+            onClick={handleIconClick}
+            aria-label={t("Account", "الحساب")}
+            aria-expanded={userMenuOpen}
+          >
+            <IoPersonOutline />
+          </AccountIconButton>
+          {userMenuOpen && profile && (
+            <UserMenuDropdown $rtl={isRtl} dir={isRtl ? "rtl" : "ltr"}>
+              <UserMenuHeader>
+                <UserMenuName>{displayName}</UserMenuName>
+                {displayEmail && <UserMenuEmail>{displayEmail}</UserMenuEmail>}
+              </UserMenuHeader>
+              <UserMenuBody>
+                <UserMenuItem type="button" $rtl={isRtl} onClick={handleOrdersFromMenu}>
+                  <FaClipboardList aria-hidden />
+                  {t("My orders", "طلباتي")}
+                </UserMenuItem>
+                <UserMenuItem
+                  type="button"
+                  $rtl={isRtl}
+                  data-outline-wishlist-heart="true"
+                  onClick={() => {
+                    setUserMenuOpen(false);
+                    openWishlistPanel();
+                  }}
+                >
+                  <IoHeartOutline aria-hidden />
+                  {t("Wishlist", "المفضلة")}
+                </UserMenuItem>
+                <UserMenuItem type="button" $rtl={isRtl} onClick={handleAddressesFromMenu}>
+                  <FaMapMarkerAlt aria-hidden />
+                  {t("Addresses", "العناوين")}
+                </UserMenuItem>
+                <UserMenuItem type="button" $rtl={isRtl} $danger onClick={handleLogout}>
+                  <FaSignOutAlt aria-hidden />
+                  {t("Log out", "خروج")}
+                </UserMenuItem>
+              </UserMenuBody>
+            </UserMenuDropdown>
+          )}
+        </AccountIconWrap>
+        {profile && (
+          <WishlistAccountIconButton
+            type="button"
+            onClick={() => {
+              if (loading) return;
+              setUserMenuOpen(false);
+              openWishlistPanel();
+            }}
+            aria-label={t("Wishlist", "المفضلة")}
+          >
+            <IoHeartOutline />
+          </WishlistAccountIconButton>
         )}
-      </AccountIconWrap>
+      </AccountIconsCluster>
 
       {authOpen &&
         portalEl &&
@@ -1039,6 +1168,109 @@ const CustomerAccountNav = forwardRef(function CustomerAccountNav(
               </OrderList>
             )}
           </DrawerCard>
+          </>,
+          portalEl
+        )}
+
+      {wishlistOpen &&
+        portalEl &&
+        createPortal(
+          <>
+            <Overlay
+              onClick={() => {
+                setWishlistError("");
+                setWishlistOpen(false);
+              }}
+            />
+            <DrawerCard $rtl={isRtl} dir={isRtl ? "rtl" : "ltr"}>
+              <DrawerHeader>
+                <DrawerTitleBlock>
+                  <DrawerTitle>{t("Wishlist", "المفضلة")}</DrawerTitle>
+                  <DrawerSubtitle>
+                    {t(
+                      "Items you saved for this restaurant.",
+                      "الأصناف التي حفظتها لهذا المطعم."
+                    )}
+                  </DrawerSubtitle>
+                </DrawerTitleBlock>
+                <CloseBtn
+                  type="button"
+                  onClick={() => {
+                    setWishlistError("");
+                    setWishlistOpen(false);
+                  }}
+                  aria-label={t("Close", "إغلاق")}
+                >
+                  <FaTimes />
+                </CloseBtn>
+              </DrawerHeader>
+              {wishlistError && (
+                <div style={{ padding: "0 20px 12px" }}>
+                  <ErrorText>{wishlistError}</ErrorText>
+                </div>
+              )}
+              <OrderList>
+                {wishlistLoading ? (
+                  <LoadingOrders>{t("Loading…", "جاري التحميل…")}</LoadingOrders>
+                ) : wishlistItems.length === 0 ? (
+                  <EmptyOrders>
+                    {t(
+                      "No saved items yet. Use the heart on products to add them here.",
+                      "لا توجد أصناف محفوظة بعد. استخدم القلب على المنتجات لإضافتها."
+                    )}
+                  </EmptyOrders>
+                ) : (
+                  wishlistItems.map((p) => {
+                    const unit = getDiscountedUnitPrice(p);
+                    return (
+                      <OrderCard key={p.id}>
+                        <OrderMeta style={{ alignItems: "center", gap: 12 }}>
+                          {p.logoURL ? (
+                            <img
+                              src={`https://storage.googleapis.com/ecommerce-bucket-testing/${p.logoURL}`}
+                              alt=""
+                              style={{
+                                width: 52,
+                                height: 52,
+                                objectFit: "cover",
+                                borderRadius: 10,
+                                flexShrink: 0,
+                              }}
+                            />
+                          ) : null}
+                          <div style={{ flex: 1, minWidth: 0 }}>
+                            <OrderLineName style={{ fontSize: 15 }}>
+                              {productWishlistName(p, activeLanguage)}
+                            </OrderLineName>
+                            <OrderDate style={{ marginTop: 4 }}>
+                              {unit.toFixed(2)}
+                            </OrderDate>
+                          </div>
+                        </OrderMeta>
+                        <OrderActions>
+                          <ReorderButton
+                            type="button"
+                            disabled={wishlistCartBusyId != null}
+                            onClick={() => addWishlistProductToCart(p)}
+                          >
+                            {wishlistCartBusyId === p.id
+                              ? t("Adding…", "جاري الإضافة…")
+                              : t("Add to cart", "أضف للسلة")}
+                          </ReorderButton>
+                          <DangerMiniBtn
+                            type="button"
+                            onClick={() => removeWishlistItem(p.id)}
+                          >
+                            <FaTrash aria-hidden />
+                            {t("Remove", "إزالة")}
+                          </DangerMiniBtn>
+                        </OrderActions>
+                      </OrderCard>
+                    );
+                  })
+                )}
+              </OrderList>
+            </DrawerCard>
           </>,
           portalEl
         )}
