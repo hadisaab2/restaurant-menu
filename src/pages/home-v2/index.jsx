@@ -124,7 +124,6 @@ const STATS = [
   { target: 100, suffix: "+",  label: "Businesses" },
   { target: 500, suffix: "K+", label: "Menu views" },
   { target: 4,   suffix: "",   label: "Premium templates" },
-  { target: 3,   suffix: "",   label: "Order methods" },
 ];
 
 const FEATURES = [
@@ -179,19 +178,26 @@ const HOW_IT_WORKS = [
   { step: "04", title: "Publish and receive orders", text: "Go live instantly. Share your link, QR, or website address." },
 ];
 
+/** VIP-only bullets (shown as ✓ on VIP, as ✗ on Premium for comparison). */
+const VIP_EXCLUSIVE_FEATURES = [
+  "Full admin dashboard & operations",
+  "Order management workspace",
+  "Analytics & reporting",
+  "Registered customer management",
+  "Customer threads & admin chat",
+  "Advanced customization & branding",
+];
+
 const PLANS = [
   {
     name: "Premium",
     tagline: "For businesses starting professionally",
     price: 100,
     features: [
-      "Digital menu or catalog",
-      "Website creation",
+      "Digital menu or website",
       "QR menu support",
       "Category & item management",
       "WhatsApp ordering",
-      "Product images & prices",
-      "Standard customization",
       "One template",
     ],
   },
@@ -202,16 +208,7 @@ const PLANS = [
     recommended: true,
     supportingLine:
       "VIP unlocks the full operations stack: orders, users, analytics, and customer conversations from one admin.",
-    features: [
-      "Everything in Premium",
-      "Full admin dashboard & operations",
-      "Order management workspace",
-      "Analytics & reporting",
-      "Registered customer management",
-      "Customer threads & admin chat",
-      "Advanced customization & branding",
-      "Multi-branch ready",
-    ],
+    features: ["Everything in Premium", ...VIP_EXCLUSIVE_FEATURES],
   },
 ];
 
@@ -1230,10 +1227,7 @@ function Templates() {
 
             {/* Right: active template content */}
             <div className="space-y-3.5 rounded-3xl p-6 border border-white/70 shadow-[0_10px_32px_rgba(30,12,64,0.08)] bg-white/75 backdrop-blur-md">
-              <div
-                className="inline-block w-2 h-2 rounded-full"
-                style={{ backgroundColor: currentTemplate.accent }}
-              />
+              
               <h3 className="text-3xl font-semibold text-apple-text">{currentTemplate.name}</h3>
               <p className="text-apple-muted leading-relaxed">{currentTemplate.desc}</p>
               <p className="text-sm text-apple-muted">
@@ -1827,6 +1821,13 @@ function Packages({ onGetStarted }) {
                       <span className={plan.recommended ? "text-white/88" : "text-apple-text"}>{f}</span>
                     </li>
                   ))}
+                  {plan.name === "Premium" &&
+                    VIP_EXCLUSIVE_FEATURES.map((f) => (
+                      <li key={`no-${f}`} className="flex items-start gap-3 text-sm">
+                        <FiX size={15} className="mt-0.5 shrink-0 text-red-500" aria-hidden />
+                        <span className="text-apple-muted">{f}</span>
+                      </li>
+                    ))}
                 </ul>
 
                 {plan.supportingLine && (
