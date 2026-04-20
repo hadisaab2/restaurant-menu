@@ -11,6 +11,7 @@ import {
   AddCategoryForm,
   Tabs,
   Tab,
+  categoryFormFieldSx,
 } from "./styles";
 import { TextField, Button } from "@mui/material";
 import { getCookie } from "../../../utilities/manageCookies";
@@ -36,7 +37,10 @@ import {
   UploadedImage,
 } from "../products/addproduct/styles";
 import { toast } from "react-toastify";
-import FormBuilder from "./formbuilder";
+import ProductOptionsEditor, {
+  optionsFromFormJsonString,
+} from "../../../product-options/ProductOptionsEditor";
+import { emptyOptions, serializeOptions } from "../../../product-options/schema";
 
 export default function Categories({ setProducts }) {
   const [showAddComponent, setShowAddComponent] = useState(false);
@@ -49,7 +53,7 @@ export default function Categories({ setProducts }) {
   const [file, setFile] = useState(null);
   const [fileErrMsg, setFileErrMsg] = useState("Please upload image");
   const [activeTab, setActiveTab] = useState("categoryinfo")
-  const [jsonString, setJsonString] = useState("{}");
+  const [categoryOptions, setCategoryOptions] = useState(() => emptyOptions());
   const [imageUrl, setImageUrl] = useState(null);
   const fileInputRef = useRef(null);
   const { refetch: refetchProducts } = useGetProducts({
@@ -116,7 +120,7 @@ export default function Categories({ setProducts }) {
         ...data,
         restaurant_id: userInformation.restaurant_id,
         image: file,
-        form_json: jsonString
+        form_json: serializeOptions(categoryOptions)
       };
 
       !selectedIdForAction
@@ -145,8 +149,9 @@ export default function Categories({ setProducts }) {
       default:
         break;
     }
-    category?.form_json && setValue("form_json", category?.form_json);
-    category?.form_json && setJsonString(category?.form_json)
+    const opts = optionsFromFormJsonString(category?.form_json);
+    setValue("form_json", serializeOptions(opts));
+    setCategoryOptions(opts);
 
     setSelectedIdForAction(category.id);
     setShowAddComponent(true);
@@ -171,6 +176,12 @@ export default function Categories({ setProducts }) {
       setCategories(response?.data);
     }
   }, [isLoading]);
+
+  useEffect(() => {
+    if (showAddComponent && selectedIdForAction == null) {
+      setCategoryOptions(emptyOptions());
+    }
+  }, [showAddComponent, selectedIdForAction]);
 
   const categoryText = (category) => {
     switch (userInformation.Lang) {
@@ -233,7 +244,7 @@ export default function Categories({ setProducts }) {
           />
           <Tabs>
             <Tab activeTab={activeTab} tab={"categoryinfo"} onClick={() => { setActiveTab("categoryinfo") }}>Category Details</Tab>
-            <Tab activeTab={activeTab} tab={"formbuilder"} onClick={() => { setActiveTab("formbuilder") }}>Form Builder</Tab>
+            <Tab activeTab={activeTab} tab={"formbuilder"} onClick={() => { setActiveTab("formbuilder") }}>Category options</Tab>
           </Tabs>
           {activeTab == "categoryinfo" ?
             <>
@@ -243,6 +254,8 @@ export default function Categories({ setProducts }) {
                   name="en_category"
                   variant="outlined"
                   {...register("en_category")}
+                  fullWidth
+                  sx={categoryFormFieldSx}
                   error={!isEmpty(formState?.errors?.en_category)}
                   helperText={
                     !isEmpty(formState?.errors?.en_category) &&
@@ -256,6 +269,8 @@ export default function Categories({ setProducts }) {
                   name="ar_category"
                   variant="outlined"
                   {...register("ar_category")}
+                  fullWidth
+                  sx={categoryFormFieldSx}
                   error={!isEmpty(formState?.errors?.ar_category)}
                   helperText={
                     !isEmpty(formState?.errors?.ar_category) &&
@@ -268,6 +283,8 @@ export default function Categories({ setProducts }) {
                 name="priority"
                 variant="outlined"
                 {...register("priority")}
+                fullWidth
+                sx={categoryFormFieldSx}
                 error={!isEmpty(formState?.errors?.priority)}
                 helperText={
                   !isEmpty(formState?.errors?.priority) && "Required Field"
@@ -281,6 +298,8 @@ export default function Categories({ setProducts }) {
                 name={"discount"}
                 variant="outlined"
                 {...register("discount")}
+                fullWidth
+                sx={categoryFormFieldSx}
                 type="number"
               />
               <UploadPhoto
@@ -312,7 +331,13 @@ export default function Categories({ setProducts }) {
               >
                 {!isNull(selectedIdForAction) ? "Edit Category" : "Add Category"}
               </LoadingButton>
-            </> : <FormBuilder jsonString={jsonString} setJsonString={setJsonString} />}
+            </> : (
+              <ProductOptionsEditor
+                value={categoryOptions}
+                onChange={setCategoryOptions}
+                languageHint={userInformation.Lang === AR ? "ar" : "en"}
+              />
+            )}
         </AddCategoryForm>
       ) : (
         <>

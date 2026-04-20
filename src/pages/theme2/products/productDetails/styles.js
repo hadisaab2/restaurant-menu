@@ -306,7 +306,7 @@ export const FakeContainer = styled.div`
   height: ${(props)=>props.squareDimension?"45vh":"60vh"};
 
   border-radius:40px;
-  margin-top: 80px;
+  margin-top: 0px;
   display:flex;
   overflow: hidden;
   transition: all 1s;

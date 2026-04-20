@@ -1,12 +1,19 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { AddToCart, BackBtn, BackIcon, ButtonWrapper, Carousel, CarouselBack, CarouselForward, CarouselItem, Category, CopyButton, DiscountPrice, FakeContainer, Image, ImagesContainer, ImageWrapper, InfoContainer, Instruction, InstructionContainer, InstructionLabel, ItemCategory, ItemDescription, ItemInfo, ItemInfoWrapper, ItemName, ItemPrice, Loader, LoaderWrapper, Minus, Plus, PriceContainer, Quantity, QuantityPrice, QuantityWrapper, SearchProductContainer, OutOfStockNotice, SwiperWrapper, MagnifyBtn, ZoomOverlay, ZoomCloseBtn, ZoomImage } from './styles'
+import { Backdrop, SearchProductContainer } from '../../../product-detail/floatingProductShell.styles'
+import {
+    BackBtn,
+    BackIcon,
+    CopyButton,
+    ProductHeader,
+    ProductHeaderTitle,
+} from '../../theme3/ProductParam/styles'
+import { AddToCart, ButtonWrapper, Carousel, CarouselBack, CarouselForward, CarouselItem, DiscountPrice, FakeContainer, Image, ImagesContainer, ImageWrapper, InfoContainer, Instruction, InstructionContainer, InstructionLabel, ItemDescription, ItemInfo, ItemInfoWrapper, ItemName, ItemPrice, Loader, LoaderWrapper, Minus, Plus, PriceContainer, Quantity, QuantityPrice, QuantityWrapper, OutOfStockNotice, SwiperWrapper, MagnifyBtn, ZoomOverlay, ZoomCloseBtn, ZoomImage } from './styles'
 import { useGetProduct } from '../../../apis/products/getProduct';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import _ from 'lodash';
 import { addToCart } from '../../../redux/cart/cartActions';
 import CarouselLoader from "./carouselLoader";
-import "formiojs/dist/formio.full.css";
 import ProductForm from "./Form";
 import { FaRegCopy } from 'react-icons/fa6';
 import { TiTick } from 'react-icons/ti';
@@ -341,21 +348,25 @@ export default function ProductParam({ productId, setSearchParams, searchParams 
 
     return (
         <>
-
+            <Backdrop CloseAnimation={CloseAnimation} onClick={handleBack} />
             <SearchProductContainer
-                // x={productPositions[activePlate]?.x}
-                // y={productPositions[activePlate]?.y}
-                // width={productPositions[activePlate]?.width}
                 CloseAnimation={CloseAnimation}
+                $premiumMobile={!productLoading}
             >
                 {!productLoading && <>
-                    <ItemCategory CloseAnimation={CloseAnimation}>
-                        <Category>
+                    <ProductHeader CloseAnimation={CloseAnimation}>
+                        <BackBtn onClick={handleBack} CloseAnimation={CloseAnimation} type="button">
+                            <BackIcon />
+                        </BackBtn>
+                        <ProductHeaderTitle activeLanguage={restaurant?.activeLanguage}>
                             {restaurant.activeLanguage == "en"
                                 ? fetchedProduct?.category?.en_category
                                 : fetchedProduct?.category?.ar_category}
-                        </Category>
-                    </ItemCategory>
+                        </ProductHeaderTitle>
+                        <CopyButton onClick={handleCopy} CloseAnimation={CloseAnimation}>
+                            {!copied ? <FaRegCopy /> : <TiTick />}
+                        </CopyButton>
+                    </ProductHeader>
                     <ImagesContainer squareDimension={fetchedProduct?.square_dimension} CloseAnimation={CloseAnimation} isNormalCarousel={carouselStyle === "normal"}>
                         {images.length === 1 ? (
                             <Carousel carouselIndex={0}>
@@ -627,13 +638,6 @@ export default function ProductParam({ productId, setSearchParams, searchParams 
                 </>
                 }
             </SearchProductContainer>
-
-            <BackBtn onClick={handleBack} CloseAnimation={CloseAnimation}>
-                <BackIcon />
-            </BackBtn>
-            <CopyButton onClick={handleCopy} CloseAnimation={CloseAnimation}>
-                {!copied ? <FaRegCopy /> : <TiTick />}
-            </CopyButton>
             {zoomOpen && (
                 <ZoomOverlay
                     onTouchStart={handleZoomTouchStart}

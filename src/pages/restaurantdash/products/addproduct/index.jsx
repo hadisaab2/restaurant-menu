@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import {
   BackIcon,
   ProductInfo,
@@ -7,6 +7,7 @@ import {
   UploadedImage,
   Row,
   fieldStyle,
+  productRichTextWrapperSx,
   UploadedImageContainer,
   UploadedImageWrapper,
   ImagesContainer,
@@ -20,6 +21,7 @@ import {
 import {
   TextField,
   Box,
+  Grid,
   InputLabel,
   MenuItem,
   FormControl,
@@ -45,13 +47,15 @@ import { useEditProductQuery } from "../../../../apis/products/editProduct";
 import { useDeleteProductQuery } from "../../../../apis/products/deleteProduct";
 import { toast } from "react-toastify";
 import { useQueryClient } from "@tanstack/react-query";
-import ReactQuill from "react-quill";
-import "react-quill/dist/quill.snow.css"; // Import Quill's CSS
 import { v4 as uuidv4 } from "uuid";
+import ProductRichTextEditor from "./ProductRichTextEditor";
 import { FaPlus } from "react-icons/fa6";
 import imageCompression from "browser-image-compression";
 
-import FormBuilder from "./formbuilder";
+import ProductOptionsEditor, {
+  optionsFromFormJsonString,
+} from "../../../../product-options/ProductOptionsEditor";
+import { emptyOptions, serializeOptions } from "../../../../product-options/schema";
 import { dashboardColors } from "../../../../styles/theme";
 
 export default function AddProduct({
@@ -72,7 +76,7 @@ export default function AddProduct({
   const [isFeatured, setIsFeatured] = useState(false);
   const [isBestSeller, setIsBestSeller] = useState(false);
 
-  const [jsonString, setJsonString] = useState("{}");
+  const [productOptions, setProductOptions] = useState(() => emptyOptions());
   const [activeTab,setActiveTab]=useState("productinfo")
   const [categories, setCategories] = useState([]);
   const fileInputRef = useRef(null);
@@ -85,10 +89,32 @@ export default function AddProduct({
       ? enProductSchema
       : EnArProductSchema;
 
-      console.log(schema)
-  const { register, handleSubmit, formState, setValue, getValues } = useForm({
-    resolver: yupResolver(schema),
-  });
+  const { register, handleSubmit, formState, setValue, getValues, watch } =
+    useForm({
+      resolver: yupResolver(schema),
+      defaultValues: {
+        discount: 0,
+        priority: 1,
+        product_code: 0,
+      },
+    });
+
+  useLayoutEffect(() => {
+    if (!images || !Array.isArray(images) || images.length === 0) return;
+    const visible = images.filter((img) => !img.isDeleted);
+    if (visible.length !== 1 || !visible[0]?.id) return;
+    const onlyId = visible[0].id;
+    setCoverId((prev) => {
+      if (prev != null && prev !== "") {
+        const matchById = visible.some((img) => img.id === prev);
+        const matchByUrl =
+          typeof prev === "string" &&
+          visible.some((img) => String(img.url).includes(String(prev)));
+        if (matchById || matchByUrl) return prev;
+      }
+      return onlyId;
+    });
+  }, [images]);
 
   const { handleApiCall, isPending } = useAddProductQuery({
     onSuccess: () => {
@@ -226,12 +252,13 @@ export default function AddProduct({
       setValue("category_id", selectedProduct.category_id);
       setValue("priority", selectedProduct.priority);
       setValue("product_code", selectedProduct.product_code);
-      setValue("discount", selectedProduct.discount);
+      setValue("discount", selectedProduct.discount ?? 0);
 
       setValue("cover_id", selectedProduct.cover_id);
-      selectedProduct.form_json && setValue("form_json", selectedProduct.form_json);
+      const opts = optionsFromFormJsonString(selectedProduct.form_json);
+      setValue("form_json", serializeOptions(opts));
       setCoverId(selectedProduct.cover_id);
-      selectedProduct.form_json && setJsonString(selectedProduct.form_json)
+      setProductOptions(opts);
       setValue("new", selectedProduct.new);
       setValue("square_dimension", selectedProduct.square_dimension);
       setValue("hide", selectedProduct.hide);
@@ -246,8 +273,13 @@ export default function AddProduct({
       setIsFeatured(Boolean(selectedProduct.featured));
       setIsBestSeller(Boolean(selectedProduct.is_best_seller));
 
+    } else {
+      setProductOptions(emptyOptions());
+      setImages([]);
+      setCoverId(null);
+      setValue("discount", 0);
     }
-  }, []);
+  }, [selectedProduct]);
 
 
   const handleButtonClick = () => {
@@ -266,7 +298,7 @@ export default function AddProduct({
           images,
           restaurant_id: userInformation.restaurant_id,
           cover_id: coverId,
-          form_json:jsonString,
+          form_json: serializeOptions(productOptions),
           new:isNew,
           square_dimension:squareDimension,
           hide: isHidden,
@@ -280,7 +312,7 @@ export default function AddProduct({
           images,
           restaurant_id: userInformation.restaurant_id,
           cover_id: coverId,
-          form_json:jsonString,
+          form_json: serializeOptions(productOptions),
           new:isNew,
           square_dimension:squareDimension,
           hide: isHidden,
@@ -414,7 +446,7 @@ export default function AddProduct({
         />
         <Tabs>
           <Tab activeTab={activeTab} tab={"productinfo"} onClick={()=>{setActiveTab("productinfo")}}>Product Details</Tab>
-          <Tab activeTab={activeTab} tab={"formbuilder"} onClick={()=>{setActiveTab("formbuilder")}}>Form Builder</Tab>
+          <Tab activeTab={activeTab} tab={"formbuilder"} onClick={()=>{setActiveTab("formbuilder")}}>Product options</Tab>
         </Tabs>
         {activeTab=="productinfo" ?
         <>
@@ -465,105 +497,114 @@ export default function AddProduct({
           <UploadImageText>{fileErrMsg}</UploadImageText>
         </Row>
 
-        {fieldsToDisplay.map(({ name, label, type, mui_type }) =>
-          mui_type === "textfield" ? (
+        <Grid container spacing={2} sx={{ width: "100%", mb: 2 }}>
+          {fieldsToDisplay.map(({ name, label, type, mui_type }) =>
+            mui_type === "textfield" ? (
+              <Grid
+                item
+                xs={12}
+                md={6}
+                key={`${selectedProduct?.id ?? "new"}-${name}`}
+              >
+                <TextField
+                  label={label}
+                  name={name}
+                  variant="outlined"
+                  {...register(name)}
+                  fullWidth
+                  sx={fieldStyle}
+                  type={type}
+                  error={!isEmpty(formState?.errors?.[name])}
+                  helperText={
+                    !isEmpty(formState?.errors?.[name]) &&
+                    formState.errors?.[name].message
+                  }
+                />
+              </Grid>
+            ) : (
+              <Grid
+                item
+                xs={12}
+                md={6}
+                key={`${selectedProduct?.id ?? "new"}-${name}`}
+              >
+                <ProductRichTextEditor
+                  value={watch(name) ?? ""}
+                  onChange={handleTextChange(name)}
+                  placeholder={label}
+                  documentDir={name.includes("ar_") ? "rtl" : "ltr"}
+                  sx={productRichTextWrapperSx}
+                />
+              </Grid>
+            )
+          )}
+
+          <Grid item xs={12} md={6}>
             <TextField
-              key={name}
-              label={label}
-              name={name}
+              label={"Priority"}
+              name={"priority"}
               variant="outlined"
-              {...register(name)}
-              style={fieldStyle}
-              type={type}
-              error={!isEmpty(formState?.errors?.[name])}
+              {...register("priority")}
+              fullWidth
+              sx={fieldStyle}
+              error={!isEmpty(formState?.errors?.priority)}
               helperText={
-                !isEmpty(formState?.errors?.[name]) &&
-                formState.errors?.[name].message
+                !isEmpty(formState?.errors?.priority) && "Required Field"
               }
+              type="number"
+              inputProps={{ min: 1 }}
             />
-          ) : (
-            <ReactQuill
-              value={getValues(name)} // Use the value from your form state
-              onChange={handleTextChange(name)}
-              placeholder={name}
-              modules={{
-                toolbar: [
-                  [{ header: "1" }, { header: "2" }, { font: [] }],
-                  [{ list: "ordered" }, { list: "bullet" }],
-                  ["bold", "italic", "underline"],
-                  ["link"],
-                  ["clean"],
-                ],
-              }}
-              formats={[
-                "header",
-                "font",
-                "size",
-                "list",
-                "bullet",
-                "bold",
-                "italic",
-                "underline",
-                "link",
-              ]}
+          </Grid>
+          <Grid item xs={12} md={6}>
+            <TextField
+              label={"Product_code"}
+              name={"product_code"}
+              variant="outlined"
+              {...register("product_code")}
+              fullWidth
+              sx={fieldStyle}
+              type="number"
             />
-          )
-        )}
-
-        <TextField
-          label={"Priority"}
-          name={"priority"}
-          variant="outlined"
-          {...register("priority")}
-          style={fieldStyle}
-          error={!isEmpty(formState?.errors?.priority)}
-          helperText={!isEmpty(formState?.errors?.priority) && "Required Field"}
-          type="number"
-          defaultValue={1}
-          inputProps={{ min: 1 }}
-        />
-        <TextField
-          label={"Product_code"}
-          name={"product_code"}
-          variant="outlined"
-          {...register("product_code")}
-          style={fieldStyle}
-          type="number"
-          defaultValue={0}
-
-        />
-        <TextField
-          label={"Discount"}
-          name={"discount"}
-          variant="outlined"
-          {...register("discount")}
-          style={fieldStyle}
-          type="number"
-        />
-        <Box style={fieldStyle}>
-          <FormControl fullWidth>
-            <InputLabel>Category</InputLabel>
-            <Select
-              label="Category"
-              {...register("category_id")}
-              error={!isEmpty(formState?.errors?.category_id)}
-              defaultValue={selectedProduct?.category_id}
-            >
-              <MenuItem value={0}>Offer</MenuItem>
-              {categories.map(({ id, en_category, ar_category }) => (
-                <MenuItem value={id} key={id}>
-                  { userInformation.Lang === LANGUAGES.AR ?ar_category:en_category }
-                </MenuItem>
-              ))}
-            </Select>
-            {!isEmpty(formState?.errors?.category_id) && (
-              <FormHelperText style={{ color: "#d64241" }}>
-                Required field
-              </FormHelperText>
-            )}
-          </FormControl>
-        
-        </Box>
+          </Grid>
+          <Grid item xs={12} md={6}>
+            <TextField
+              label={"Discount"}
+              name={"discount"}
+              variant="outlined"
+              {...register("discount")}
+              fullWidth
+              sx={fieldStyle}
+              type="number"
+            />
+          </Grid>
+          <Grid item xs={12} md={6}>
+            <Box sx={fieldStyle}>
+              <FormControl fullWidth>
+                <InputLabel>Category</InputLabel>
+                <Select
+                  label="Category"
+                  {...register("category_id")}
+                  error={!isEmpty(formState?.errors?.category_id)}
+                  defaultValue={selectedProduct?.category_id}
+                >
+                  <MenuItem value={0}>Offer</MenuItem>
+                  {categories.map(({ id, en_category, ar_category }) => (
+                    <MenuItem value={id} key={id}>
+                      {userInformation.Lang === LANGUAGES.AR
+                        ? ar_category
+                        : en_category}
+                    </MenuItem>
+                  ))}
+                </Select>
+                {!isEmpty(formState?.errors?.category_id) && (
+                  <FormHelperText style={{ color: "#d64241" }}>
+                    Required field
+                  </FormHelperText>
+                )}
+              </FormControl>
+            </Box>
+          </Grid>
+        </Grid>
         <FormControl component="fieldset">
               <FormLabel component="legend">New Item</FormLabel>
               <FormControlLabel
@@ -620,7 +661,11 @@ export default function AddProduct({
             {selectedProduct ? "Edit Product" : "Add Product"}
           </LoadingButton>
         </Row>
-        </>:<FormBuilder jsonString={jsonString} setJsonString={setJsonString}/>
+        </>:<ProductOptionsEditor
+            value={productOptions}
+            onChange={setProductOptions}
+            languageHint={userInformation.Lang === LANGUAGES.AR ? "ar" : "en"}
+          />
 }
 
       </ProductInfo>

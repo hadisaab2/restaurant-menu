@@ -66,8 +66,11 @@ export default function ReviewStep({ formData, restaurant, activeLanguage }) {
                   src={`https://storage.googleapis.com/ecommerce-bucket-testing/${item.images?.[0]?.url || ""}`}
                   alt={activeLanguage === "en" ? item.en_name : item.ar_name}
                 />
-                <ReviewValue style={{ fontWeight: "600", flex: 2 }}>
-                  {item.quantity}x {activeLanguage === "en" ? item.en_name : item.ar_name}
+                <ReviewValue style={{ flex: 2 }}>
+                  {item.quantity}x{" "}
+                  <strong>
+                    {activeLanguage === "en" ? item.en_name : item.ar_name}
+                  </strong>
                 </ReviewValue>
                 <ReviewValue>
                   {convertPrice(item.price * item.quantity, currencySymbol)}

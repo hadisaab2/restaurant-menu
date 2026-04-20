@@ -341,7 +341,7 @@ export const ItemInfo = styled.div`
   flex-direction: column;
   position: relative;
   margin-top: 20px;
-  padding-bottom: 10vh;
+  padding-bottom: 24px;
   color: ${(props) => props.theme.textColor};
   @media (min-width: 1024px) {
         width: 50%;
@@ -422,21 +422,26 @@ const AddToCartAnimation = keyframes`
 
 export const ButtonWrapper = styled.div`
   width: 100%;
-  position: fixed;
   bottom: 0;
+  left: 0;
+  right: 0;
+  margin-top: auto;
   justify-content: center;
   flex-direction: column;
   align-items: center;
-  animation: ${AddToCartAnimation} 1.4s ease-in-out;
+  animation: ${AddToCartAnimation} 0.7s ease-in-out;
   background-color: ${(props) => props.theme.backgroundColor};
-
+  z-index: 301;
   display: ${(props) => (props.CloseAnimation ? "flex" : "none")};
-  box-shadow: 0px -3px 5px rgba(180, 180, 180, 0.1); /* Slight shadow on the top */
+  box-shadow: 0px -3px 5px rgba(180, 180, 180, 0.1);
   padding-bottom: 10px;
-  margin-top: 30px;
+  padding-top: 10px;
+  opacity: ${(props) => (props.CloseAnimation ? 1 : 0)};
+  transition: opacity 0.3s ease;
+  pointer-events: ${(props) => (props.CloseAnimation ? "auto" : "none")};
   @media (min-width: 1024px) {
-        width: 50%;
-    }
+    width: 50%;
+  }
 `;
 export const AddToCart = styled.button`
   outline: none;

@@ -7,6 +7,7 @@ import { useAddOrderQuery } from "../../../../../apis/restaurants/addOrder";
 import { CUSTOMER_ME_URL } from "../../../../../apis/URLs";
 import { getCustomerAccessToken } from "../../../../../utilities/customerAuthStorage";
 import { convertPrice } from "../../../../../utilities/convertPrice";
+import { formatCartItemOptionsForOrderMessage } from "../../../../../product-options/cartLabels";
 import { trackCheckoutStart, trackOrderPlaced } from "../../../../../utilities/analyticsTracking";
 import CartStep from "./CartStep";
 import OrderTypeStep from "./OrderTypeStep";
@@ -208,16 +209,10 @@ export default function Wizard({ popupHandler, restaurant }) {
       })\n`;
 
       if (item.formData) {
-        Object.keys(item.formData).forEach((key) => {
-          const value = item.formData[key];
-          if (Array.isArray(value)) {
-            message += `  - ${key}: ${value.join(", ")}\n`;
-          } else if (typeof value === "object" && value !== null) {
-            message += `  - ${key}: ${value.label}\n`;
-          } else {
-            message += `  - ${key}: ${value}\n`;
-          }
-        });
+        message += formatCartItemOptionsForOrderMessage(
+          item,
+          activeLanguage === "ar" ? "ar" : "en"
+        );
       }
       if (item.instruction) {
         message += `  - Special Instruction: ${item.instruction}\n`;

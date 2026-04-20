@@ -13,7 +13,7 @@ import ContactPopup from "../theme3/popup/contact";
 import ContactFormPopup from "../theme3/popup/contactForm";
 import AboutUsPopup from "../theme4/popup/aboutUs";
 import SideBar from "../theme3/Sidebar";
-import ProductParam from "../theme3/ProductParam";
+import ProductParam from "../theme2/ProductParam";
 import Share from "../theme3/popup/share";
 import { InstallPrompt } from "./installPrompt";
 import NavigationBar from "../theme3/NavigationBar";

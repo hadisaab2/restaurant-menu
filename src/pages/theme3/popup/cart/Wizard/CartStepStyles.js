@@ -106,7 +106,7 @@ export const ItemInfo = styled.div`
 
 export const ItemName = styled.div`
   font-size: 12px;
-  font-weight: 600;
+  font-weight: 700;
   color: ${(props) => props.theme.popupTextColor || "#00112b"};
   line-height: 1.3;
   margin-right: 40px;

@@ -7,7 +7,10 @@ export const ProductInfo = styled.div`
   display: flex;
   flex-wrap: wrap;
   flex-direction: row;
-  gap: 20px;
+  align-items: flex-start;
+  align-content: flex-start;
+  gap: 0;
+  row-gap: 0;
   position: relative;
   padding-top: 40px;
   margin-top: 20px;
@@ -106,8 +109,51 @@ export const UploadBtn = styled.div`
 
 
 
-export const fieldStyle = {
-  width: "40%",
+/** MUI `sx` for product details tab fields (use inside a grid: full width of cell). */
+export const productFormFieldSx = {
+  width: "100%",
+  mb: 0,
+  alignSelf: "stretch",
+};
+
+export const fieldStyle = productFormFieldSx;
+
+/** TipTap / ProseMirror: match MUI outlined field, tall editing area */
+export const productRichTextWrapperSx = {
+  ...productFormFieldSx,
+  display: "flex",
+  flexDirection: "column",
+  border: "1px solid rgba(0, 0, 0, 0.23)",
+  borderRadius: 1,
+  overflow: "hidden",
+  minHeight: 260,
+  "&:focus-within": {
+    borderColor: "primary.main",
+  },
+  "& .product-rich-text-content": {
+    flex: 1,
+    display: "flex",
+    flexDirection: "column",
+    minHeight: 200,
+  },
+  "& .ProseMirror": {
+    flex: 1,
+    minHeight: 200,
+    padding: "12px 14px",
+    outline: "none",
+    fontSize: "1rem",
+    lineHeight: 1.5,
+    "&:focus": {
+      outline: "none",
+    },
+    "& p.is-editor-empty:first-child::before": {
+      content: "attr(data-placeholder)",
+      float: "left",
+      color: "rgba(0, 0, 0, 0.38)",
+      pointerEvents: "none",
+      height: 0,
+    },
+  },
 };
 
 export const UploadImageText = styled.p`

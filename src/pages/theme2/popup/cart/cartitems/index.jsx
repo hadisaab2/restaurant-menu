@@ -24,6 +24,7 @@ import {
   TotalPrice,
 } from "./styles";
 import { convertPrice } from '../../../../../utilities/convertPrice';
+import { cartItemFormDataToLines } from '../../../../../product-options/cartLabels';
 
 export default function CartItems({ setblock }) {
   const dispatch = useDispatch();
@@ -70,21 +71,22 @@ export default function CartItems({ setblock }) {
 
 
   const generateitemdata = (item) => {
-    let message = '';
-    if (item.formData) {
-      Object.keys(item.formData).forEach((key) => {
-        const value = item.formData[key];
-        if (Array.isArray(value)) {
-          message += `  - ${key}: ${value.join(", ")}\n`;
-        } else if (typeof value === "object" && value !== null) {
-          message += `  - ${key}: ${value.label}\n`;
-        } else {
-          message += `  - ${key}: ${value}\n`;
-        }
-      });
-    }
-    // Replace newline characters with <br /> tags
-    return message.split("\n").map((line, index) => <Price key={index}>{line}<br /></Price>);
+    const lang = activeLanuguage === "en" ? "en" : "ar";
+    const blocks = cartItemFormDataToLines(item, lang);
+    if (!blocks.length) return null;
+    return blocks.map((b, index) =>
+      b.type === "heading" ? (
+        <Price key={`h-${index}`}>
+          <strong>{b.text}</strong>
+          <br />
+        </Price>
+      ) : (
+        <Price key={`${b.key}-${index}`}>
+          {`  - ${b.text}`}
+          <br />
+        </Price>
+      )
+    );
   };
 
   let currencySymbol;

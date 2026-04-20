@@ -97,12 +97,19 @@ export const Actions = styled.div`
   gap: 5px;
 `;
 
+export const categoryFormFieldSx = {
+  width: "100%",
+  maxWidth: 560,
+  mb: 2,
+  alignSelf: "stretch",
+};
+
 export const AddCategoryForm = styled.div`
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  align-items: stretch;
   justify-content: center;
-  gap: 20px;
+  gap: 8px;
   margin-top: 30px;
   margin-left: 20px;
   position: relative;

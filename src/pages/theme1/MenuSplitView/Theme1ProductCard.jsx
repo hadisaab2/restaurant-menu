@@ -31,6 +31,7 @@ import { addToCart, adjustQuantity, removeFromCart } from "../../../redux/cart/c
 import { getProduct, PRODUCT_QUERY_KEY } from "../../../apis/products/getProduct";
 import { useQueryClient } from "@tanstack/react-query";
 import { trackItemView, trackAddToCart } from "../../../utilities/analyticsTracking";
+import { productNeedsOptionsDialog } from "../../../product-options/resolveOptions";
 
 const BUCKET = "https://storage.googleapis.com/ecommerce-bucket-testing/";
 
@@ -94,13 +95,7 @@ function Theme1ProductCard({
     : "";
   const imageSrc = hasImg ? `${BUCKET}${plate.images[coverIndex].url}` : logoFallback;
 
-  const hasProductForm =
-    !_.isEmpty(plate?.form_json) &&
-    !_.isEmpty(JSON.parse(plate?.form_json || "{}"));
-  const hasCategoryForm =
-    !_.isEmpty(activeCat?.form_json) &&
-    !_.isEmpty(JSON.parse(activeCat?.form_json || "{}"));
-  const hasForm = hasProductForm || hasCategoryForm;
+  const hasForm = productNeedsOptionsDialog(plate?.form_json, activeCat?.form_json);
 
   const basePrice = parseFloat(plate?.en_price || "0");
   const discounted = basePrice * (1 - finalDiscount / 100);

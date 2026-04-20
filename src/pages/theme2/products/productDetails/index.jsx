@@ -45,7 +45,6 @@ import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { addToCart } from "../../../../redux/cart/cartActions";
 import CarouselLoader from "./carouselLoader";
-import "formiojs/dist/formio.full.css";
 import ProductForm from "./Form";
 import { FaRegCopy } from "react-icons/fa";
 import { TiTick } from "react-icons/ti";

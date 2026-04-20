@@ -118,7 +118,7 @@ font-size: 11px;
 `;
 export const Name = styled.span`
 font-size: 13px;
-font-weight: 500;
+font-weight: 700;
 color:${props=>props.theme.popupTextColor};
 
 `;

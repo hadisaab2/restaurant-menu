@@ -1,3 +1,5 @@
+import { isV2Selection, normalizeV2Selection } from "../../product-options/schema";
+
 // Action Types
 export const ADD_TO_CART = 'ADD_TO_CART';
 export const REMOVE_FROM_CART = 'REMOVE_FROM_CART';
@@ -15,7 +17,8 @@ const hashFormData = (formData) => {
 };
 // Action Creators
 export const addToCart = (restaurantName, itemDetails, quantity, formData,price,instruction) => {
-  const uniqueId = `${itemDetails.id}_${hashFormData(formData)}`;
+  const normalizedForm = isV2Selection(formData) ? normalizeV2Selection(formData) : formData;
+  const uniqueId = `${itemDetails.id}_${hashFormData(normalizedForm)}`;
   console.log(itemDetails)
   return {
     type: ADD_TO_CART,
@@ -24,7 +27,7 @@ export const addToCart = (restaurantName, itemDetails, quantity, formData,price,
       item: {
         ...itemDetails,
         quantity,
-        formData,
+        formData: normalizedForm,
         uniqueId,// Include unique identifier in the payload
         price,
         instruction

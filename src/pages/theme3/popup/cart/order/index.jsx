@@ -16,6 +16,7 @@ import BranchSelect from "./branchSelect";
 import RegionSelect from "./regionSelect";
 import { useAddOrderQuery } from "../../../../../apis/restaurants/addOrder";
 import { convertPrice } from "../../../../../utilities/convertPrice";
+import { formatCartItemOptionsForOrderMessage } from "../../../../../product-options/cartLabels";
 
 export default function Order({ setblock, popupHandler, restaurant }) {
   const { restaurantName: paramRestaurantName } = useParams();
@@ -147,16 +148,10 @@ export default function Order({ setblock, popupHandler, restaurant }) {
       message += `(${restaurant.languages=="ar"?item.category.ar_category:item.category.en_category})\n`;
 
       if (item.formData) {
-        Object.keys(item.formData).forEach((key) => {
-          const value = item.formData[key];
-          if (Array.isArray(value)) {
-            message += `  - ${key}: ${value.join(", ")}\n`;
-          } else if (typeof value === "object" && value !== null) {
-            message += `  - ${key}: ${value.label}\n`;
-          } else {
-            message += `  - ${key}: ${value}\n`;
-          }
-        });
+        message += formatCartItemOptionsForOrderMessage(
+          item,
+          restaurant.languages == "ar" ? "ar" : "en"
+        );
       }
       if (item.instruction) {
         message += `  - Special Insruction: ${item.instruction}\n`;

@@ -22,6 +22,7 @@ import {
   EmptyCart,
 } from "./CartStepStyles";
 import { FaTrash } from "react-icons/fa";
+import { cartItemFormDataToLines } from "../../../../../product-options/cartLabels";
 
 export default function CartStep({ restaurant, activeLanguage }) {
   const dispatch = useDispatch();
@@ -54,23 +55,20 @@ export default function CartStep({ restaurant, activeLanguage }) {
   };
 
   const generateItemData = (item) => {
-    if (!item.formData) return null;
-    return Object.keys(item.formData).map((key, index) => {
-      const value = item.formData[key];
-      let displayValue = "";
-      if (Array.isArray(value)) {
-        displayValue = value.join(", ");
-      } else if (typeof value === "object" && value !== null) {
-        displayValue = value.label;
-      } else {
-        displayValue = value;
-      }
-      return (
-        <ItemDetails key={index}>
-          {key}: {displayValue}
+    const blocks = cartItemFormDataToLines(
+      item,
+      activeLanguage === "ar" ? "ar" : "en"
+    );
+    if (!blocks.length) return null;
+    return blocks.map((b, index) =>
+      b.type === "heading" ? (
+        <ItemDetails key={`h-${index}`}>
+          <strong>{b.text}</strong>
         </ItemDetails>
-      );
-    });
+      ) : (
+        <ItemDetails key={`${b.key}-${index}`}>{`  - ${b.text}`}</ItemDetails>
+      )
+    );
   };
 
   let currencySymbol = "";
