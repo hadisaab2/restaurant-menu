@@ -162,12 +162,14 @@ export default function ProductOptionsEditor({ value, onChange, languageHint = "
                                 ? "سعر إضافي"
                                 : "Extra price"
                           }
-                          value={row.priceModifier ?? 0}
+                          value={row.priceModifier ?? ""}
                           onChange={(e) => {
+                            const rawValue = e.target.value;
                             const next = [...list];
                             next[rowIndex] = {
                               ...row,
-                              priceModifier: parseFloat(e.target.value) || 0,
+                              priceModifier:
+                                rawValue === "" ? "" : parseFloat(rawValue) || 0,
                             };
                             updateList(sec.key, next);
                           }}
@@ -219,7 +221,7 @@ export default function ProductOptionsEditor({ value, onChange, languageHint = "
                   size="small"
                   onClick={() => {
                     const base = sec.priceField
-                      ? { labelEn: "", labelAr: "", priceModifier: 0 }
+                      ? { labelEn: "", labelAr: "", priceModifier: "" }
                       : { labelEn: "", labelAr: "" };
                     updateList(sec.key, [...list, { ...base, id: undefined }]);
                   }}

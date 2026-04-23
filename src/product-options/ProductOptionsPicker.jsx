@@ -7,6 +7,7 @@ import {
   FormControlLabel,
   FormGroup,
 } from "@mui/material";
+import { useTheme } from "styled-components";
 import { computeUnitPrice } from "./pricing";
 import { emptySelection, isV2Selection } from "./schema";
 
@@ -31,8 +32,12 @@ export default function ProductOptionsPicker({
   basePrice,
   onPriceChange,
 }) {
+  const theme = useTheme();
   const sel = isV2Selection(formData) ? formData : emptySelection();
   const isAr = activeLanguage === "ar";
+  const mainColor = theme?.mainColor || theme?.maincolor || "#a6ce39";
+  const selectedTextColor = theme?.popupbackgroundColor || "#ffffff";
+  const defaultTextColor = theme?.formColor || "inherit";
 
   const addonKey = (sel.addonIds || []).slice().sort().join(",");
   const removalKey = (sel.removalIds || []).slice().sort().join(",");
@@ -52,10 +57,14 @@ export default function ProductOptionsPicker({
         width: "100%",
         mt: 2,
         mb: 1,
+        color: "inherit",
         "& .MuiFormControlLabel-root": {
           alignItems: "flex-start",
           ml: 0,
           mr: 0,
+        },
+        "& .MuiTypography-root": {
+          color: "inherit",
         },
       }}
     >
@@ -67,7 +76,6 @@ export default function ProductOptionsPicker({
               fontWeight: 700,
               letterSpacing: 0.3,
               mb: 1,
-              color: "text.primary",
               opacity: 0.9,
             }}
           >
@@ -78,9 +86,6 @@ export default function ProductOptionsPicker({
               display: "flex",
               flexWrap: "wrap",
               gap: 1,
-              overflowX: "auto",
-              pb: 0.5,
-              WebkitOverflowScrolling: "touch",
             }}
           >
             {options.sizes.map((s) => {
@@ -95,15 +100,18 @@ export default function ProductOptionsPicker({
                       return { ...base, sizeId: s.id };
                     })
                   }
-                  color={selected ? "primary" : "default"}
-                  variant={selected ? "filled" : "outlined"}
+                  variant="outlined"
                   sx={{
-                    borderRadius: 2,
-                    py: 2.5,
+                    borderRadius: "999px",
                     px: 0.5,
-                    fontWeight: 600,
-                    borderWidth: selected ? 0 : 2,
-                    "& .MuiChip-label": { px: 1.5 },
+                    height: 34,
+                    fontWeight: 700,
+                    color: selected ? selectedTextColor : defaultTextColor,
+                    bgcolor: selected ? mainColor : "transparent",
+                    borderColor: mainColor,
+                    "& .MuiChip-label": {
+                      px: 1.5,
+                    },
                   }}
                 />
               );
@@ -142,6 +150,10 @@ export default function ProductOptionsPicker({
                       <Checkbox
                         checked={checked}
                         size="medium"
+                        sx={{
+                          color: defaultTextColor,
+                          "&.Mui-checked": { color: mainColor },
+                        }}
                         onChange={() => {
                           setFormData((prev) => {
                             const p = isV2Selection(prev) ? prev : emptySelection();
@@ -169,16 +181,7 @@ export default function ProductOptionsPicker({
       )}
 
       {options?.removals?.length > 0 && (
-        <Box
-          sx={{
-            mb: 1,
-            p: 1.5,
-            borderRadius: 2,
-            bgcolor: "action.hover",
-            border: "1px solid",
-            borderColor: "divider",
-          }}
-        >
+        <Box sx={{ mb: 1 }}>
           <Typography
             variant="subtitle2"
             sx={{ fontWeight: 700, mb: 1, opacity: 0.75 }}
@@ -195,6 +198,10 @@ export default function ProductOptionsPicker({
                     <Checkbox
                       checked={checked}
                       size="small"
+                      sx={{
+                        color: defaultTextColor,
+                        "&.Mui-checked": { color: mainColor },
+                      }}
                       onChange={() => {
                         setFormData((prev) => {
                           const p = isV2Selection(prev) ? prev : emptySelection();
@@ -208,7 +215,7 @@ export default function ProductOptionsPicker({
                   }
                   label={
                     <Box sx={{ pt: "10px" }}>
-                      <Typography variant="body2" color="text.secondary">
+                      <Typography variant="body2">
                         {labelFor(r)}
                       </Typography>
                     </Box>

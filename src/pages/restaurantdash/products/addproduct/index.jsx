@@ -651,6 +651,12 @@ export default function AddProduct({
                 label="Bestseller"
               />
           </FormControl>
+        </>:<ProductOptionsEditor
+            value={productOptions}
+            onChange={setProductOptions}
+            languageHint={userInformation.Lang === LANGUAGES.AR ? "ar" : "en"}
+          />
+}
         <Row>
           <LoadingButton
             loading={isPending || isEditing}
@@ -658,15 +664,9 @@ export default function AddProduct({
             style={{ backgroundColor: dashboardColors.mainColor }}
             onClick={handleAddProduct}
           >
-            {selectedProduct ? "Edit Product" : "Add Product"}
+            Save Product
           </LoadingButton>
         </Row>
-        </>:<ProductOptionsEditor
-            value={productOptions}
-            onChange={setProductOptions}
-            languageHint={userInformation.Lang === LANGUAGES.AR ? "ar" : "en"}
-          />
-}
 
       </ProductInfo>
       

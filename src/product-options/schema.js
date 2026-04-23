@@ -2,8 +2,8 @@ import { v4 as uuidv4 } from "uuid";
 
 export const PRODUCT_OPTIONS_VERSION = 2;
 
-/** @typedef {{ id: string, labelEn: string, labelAr: string, priceModifier: number }} SizeOption (priceModifier = unit price; 0 uses product list price) */
-/** @typedef {{ id: string, labelEn: string, labelAr: string, priceModifier: number }} AddonOption */
+/** @typedef {{ id: string, labelEn: string, labelAr: string, priceModifier: number|string }} SizeOption (priceModifier = unit price; 0/empty uses product list price) */
+/** @typedef {{ id: string, labelEn: string, labelAr: string, priceModifier: number|string }} AddonOption */
 /** @typedef {{ id: string, labelEn: string, labelAr: string }} RemovalOption */
 
 /**
@@ -25,6 +25,11 @@ export function emptyOptions() {
 }
 
 export function ensureOptionIds(options) {
+  const normalizePriceModifier = (value) => {
+    if (value === "") return "";
+    return Number(value) || 0;
+  };
+
   const next = {
     version: PRODUCT_OPTIONS_VERSION,
     sizes: (options.sizes || []).map((s) => ({
@@ -32,14 +37,14 @@ export function ensureOptionIds(options) {
       id: s.id || uuidv4(),
       labelEn: String(s.labelEn ?? ""),
       labelAr: String(s.labelAr ?? ""),
-      priceModifier: Number(s.priceModifier) || 0,
+      priceModifier: normalizePriceModifier(s.priceModifier),
     })),
     addons: (options.addons || []).map((a) => ({
       ...a,
       id: a.id || uuidv4(),
       labelEn: String(a.labelEn ?? ""),
       labelAr: String(a.labelAr ?? ""),
-      priceModifier: Number(a.priceModifier) || 0,
+      priceModifier: normalizePriceModifier(a.priceModifier),
     })),
     removals: (options.removals || []).map((r) => ({
       ...r,

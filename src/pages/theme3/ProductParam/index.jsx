@@ -14,6 +14,7 @@ import _ from 'lodash';
 import { addToCart } from '../../../redux/cart/cartActions';
 import CarouselLoader from "./carouselLoader";
 import ProductForm from "./Form";
+import ProductOptionsPicker from "../../../product-options/ProductOptionsPicker";
 import { FaRegCopy } from 'react-icons/fa6';
 import { TiTick } from 'react-icons/ti';
 import { useLogProduct } from '../../../apis/products/logProduct';
@@ -244,6 +245,8 @@ export default function ProductParam({ productId, setSearchParams, searchParams 
         return () => window.removeEventListener("popstate", handlePopState);
     }, []);
 
+    const isV2Options = formSchema?.version === 2 && Array.isArray(formSchema?.sizes);
+
     function getRequiredKeys(formSchema) {
         return formSchema.components
             .filter(component => component.validate?.required)
@@ -268,15 +271,23 @@ export default function ProductParam({ productId, setSearchParams, searchParams 
     }
 
     const handleAddToCart = () => {
-        if (JSON.stringify(formSchema) !== "{}") {
+        if (isV2Options) {
+            const errors = {};
+            if (formSchema.sizes?.length > 0 && !formData?.sizeId) {
+                errors.size = 'Please select a size.';
+            }
+            if (Object.keys(errors).length > 0) {
+                setFormErrors(errors);
+                return;
+            }
+        } else if (JSON.stringify(formSchema) !== "{}") {
+            const errors = validateFormData(formSchema, formData);
 
-        const errors = validateFormData(formSchema, formData);
-
-        if (Object.keys(errors).length > 0) {
-            setFormErrors(errors); // update state with errors
-            return; // block add to cart
+            if (Object.keys(errors).length > 0) {
+                setFormErrors(errors); // update state with errors
+                return; // block add to cart
+            }
         }
-    }
 
         let discountedPrice = (totalPrice * (1 - parseFloat(finalDiscount) / 100))
         setTimeout(() => {
@@ -623,7 +634,18 @@ export default function ProductParam({ productId, setSearchParams, searchParams 
                                 <ItemDescription activeLanguage={restaurant.activeLanguage}
                                     dangerouslySetInnerHTML={{ __html: description }}
                                 />
-                                {formSchema?.components && <ProductForm formSchema={formSchema} onPriceChange={handlePriceChange} formData={formData} setFormData={setFormData} basePrice={fetchedProduct?.en_price} formErrors={formErrors} />}
+                                {isV2Options && (
+                                    <ProductOptionsPicker
+                                        options={formSchema}
+                                        formData={formData}
+                                        setFormData={setFormData}
+                                        formErrors={formErrors}
+                                        activeLanguage={restaurant.activeLanguage}
+                                        basePrice={fetchedProduct?.en_price}
+                                        onPriceChange={handlePriceChange}
+                                    />
+                                )}
+                                {!isV2Options && formSchema?.components && <ProductForm formSchema={formSchema} onPriceChange={handlePriceChange} formData={formData} setFormData={setFormData} basePrice={fetchedProduct?.en_price} formErrors={formErrors} />}
                                 <InstructionContainer activeLanguage={restaurant.activeLanguage}>
                                     <InstructionLabel>{restaurant.activeLanguage == "en"
                                         ? "Any Special Instuction ?"

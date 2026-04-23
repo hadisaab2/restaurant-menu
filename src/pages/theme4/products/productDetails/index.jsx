@@ -58,6 +58,7 @@ import { addToCart } from "../../../../redux/cart/cartActions";
 import { trackAddToCart, trackItemView } from "../../../../utilities/analyticsTracking";
 import CarouselLoader from "./carouselLoader";
 import ProductForm from "./Form";
+import ProductOptionsPicker from "../../../../product-options/ProductOptionsPicker";
 import { FaRegCopy } from "react-icons/fa";
 import { TiTick } from "react-icons/ti";
 
@@ -356,6 +357,8 @@ export default function ProductDetails({
     return () => window.removeEventListener("popstate", handlePopState);
   }, [activeCategoryId, searchParams, setSearchParams, setactivePlate, CLOSE_ANIMATION_MS]);
 
+  const isV2Options = formSchema?.version === 2 && Array.isArray(formSchema?.sizes);
+
   function getRequiredKeys(formSchema) {
     return formSchema.components
       .filter(component => component.validate?.required)
@@ -380,8 +383,17 @@ export default function ProductDetails({
   }
 
 
-  const handleAddToCart = () => {    
-    if (JSON.stringify(formSchema) !== "{}") {
+  const handleAddToCart = () => {
+    if (isV2Options) {
+      const errors = {};
+      if (formSchema.sizes?.length > 0 && !formData?.sizeId) {
+        errors.size = 'Please select a size.';
+      }
+      if (Object.keys(errors).length > 0) {
+        setFormErrors(errors);
+        return;
+      }
+    } else if (JSON.stringify(formSchema) !== "{}") {
       const errors = validateFormData(formSchema, formData);
 
       if (Object.keys(errors).length > 0) {
@@ -795,7 +807,18 @@ export default function ProductDetails({
                 </OutOfStockNotice>
               )}
 
-              {formSchema?.components && <ProductForm formSchema={formSchema} onPriceChange={handlePriceChange} formData={formData} setFormData={setFormData} basePrice={basePrice} formErrors={formErrors} />}
+              {isV2Options && (
+                <ProductOptionsPicker
+                  options={formSchema}
+                  formData={formData}
+                  setFormData={setFormData}
+                  formErrors={formErrors}
+                  activeLanguage={restaurant.activeLanguage}
+                  basePrice={basePrice}
+                  onPriceChange={handlePriceChange}
+                />
+              )}
+              {!isV2Options && formSchema?.components && <ProductForm formSchema={formSchema} onPriceChange={handlePriceChange} formData={formData} setFormData={setFormData} basePrice={basePrice} formErrors={formErrors} />}
               <InstructionContainer activeLanguage={restaurant.activeLanguage}>
                 <InstructionLabel>{restaurant.activeLanguage == "en"
                   ? "Any Special Instuction ?"
