@@ -7,22 +7,63 @@ import {
   CartStepContainer,
   ItemsList,
   CartItem,
+  ItemTopRow,
   ItemImage,
   ItemInfo,
   ItemName,
+  ItemActions,
   ItemPrice,
   ItemDetails,
+  CustomizationsRow,
+  SizePill,
+  AddonChip,
+  RemovalChip,
+  NoteText,
   QuantityControls,
   QuantityButton,
   QuantityValue,
   DeleteButton,
   TotalContainer,
+  TotalRow,
   TotalLabel,
   TotalPrice,
   EmptyCart,
 } from "./CartStepStyles";
 import { FaTrash } from "react-icons/fa";
 import { cartItemFormDataToLines } from "../../../../../product-options/cartLabels";
+
+/* ─── helpers ─── */
+
+const SIZE_HEADINGS   = ["Size:", "الحجم:"];
+const ADDON_HEADINGS  = ["Add ons:", "الإضافات:"];
+const REMOVE_HEADINGS = ["Remove:", "بدون:"];
+
+function groupCartBlocks(blocks) {
+  const result = {
+    sizeLabel: null,
+    addonLabels: [],
+    removalLabels: [],
+    legacyLines: [],
+  };
+  let section = null;
+
+  for (const b of blocks) {
+    if (b.type === "heading") {
+      if (SIZE_HEADINGS.includes(b.text))        section = "size";
+      else if (ADDON_HEADINGS.includes(b.text))  section = "addons";
+      else if (REMOVE_HEADINGS.includes(b.text)) section = "removals";
+      else                                        section = "legacy";
+    } else {
+      if (section === "size")       result.sizeLabel = b.text;
+      else if (section === "addons")   result.addonLabels.push(b.text);
+      else if (section === "removals") result.removalLabels.push(b.text);
+      else                             result.legacyLines.push(b.text);
+    }
+  }
+  return result;
+}
+
+/* ─── component ─── */
 
 export default function CartStep({ restaurant, activeLanguage }) {
   const dispatch = useDispatch();
@@ -36,112 +77,134 @@ export default function CartStep({ restaurant, activeLanguage }) {
 
   const cart = useSelector((state) => state.cart[restaurantName] || []);
 
-  const totalPrice = cart.reduce((total, item) => {
-    return total + item.price * item.quantity;
-  }, 0);
+  const totalPrice = cart.reduce((total, item) => total + item.price * item.quantity, 0);
 
-  const handleRemove = (uniqueId) => {
-    dispatch(removeFromCart(restaurantName, uniqueId));
+  const handleRemove    = (uid) => dispatch(removeFromCart(restaurantName, uid));
+  const handleIncrement = (uid, qty) => dispatch(adjustQuantity(restaurantName, uid, qty + 1));
+  const handleDecrement = (uid, qty) => {
+    if (qty > 1) dispatch(adjustQuantity(restaurantName, uid, qty - 1));
   };
 
-  const handleIncrement = (uniqueId, quantity) => {
-    dispatch(adjustQuantity(restaurantName, uniqueId, quantity + 1));
-  };
+  const lang = activeLanguage === "ar" ? "ar" : "en";
 
-  const handleDecrement = (uniqueId, quantity) => {
-    if (quantity > 1) {
-      dispatch(adjustQuantity(restaurantName, uniqueId, quantity - 1));
-    }
-  };
-
-  const generateItemData = (item) => {
-    const blocks = cartItemFormDataToLines(
-      item,
-      activeLanguage === "ar" ? "ar" : "en"
-    );
+  const renderCustomizations = (item) => {
+    const blocks = cartItemFormDataToLines(item, lang);
     if (!blocks.length) return null;
-    return blocks.map((b, index) =>
-      b.type === "heading" ? (
-        <ItemDetails key={`h-${index}`}>
-          <strong>{b.text}</strong>
-        </ItemDetails>
-      ) : (
-        <ItemDetails key={`${b.key}-${index}`}>{`  - ${b.text}`}</ItemDetails>
-      )
+
+    const { sizeLabel, addonLabels, removalLabels, legacyLines } = groupCartBlocks(blocks);
+
+    const hasVisual = sizeLabel || addonLabels.length || removalLabels.length;
+
+    return (
+      <>
+        {hasVisual && (
+          <CustomizationsRow>
+            {sizeLabel && (
+              <SizePill>
+                {lang === "ar" ? `الحجم: ${sizeLabel}` : `Size: ${sizeLabel}`}
+              </SizePill>
+            )}
+            {addonLabels.map((label) => (
+              <AddonChip key={label}>+ {label}</AddonChip>
+            ))}
+            {removalLabels.map((label) => (
+              <RemovalChip key={label}>{label}</RemovalChip>
+            ))}
+          </CustomizationsRow>
+        )}
+        {legacyLines.map((line, i) => (
+          <ItemDetails key={i}>{line}</ItemDetails>
+        ))}
+      </>
     );
   };
 
   let currencySymbol = "";
   switch (restaurant?.currency) {
-    case "dollar":
-      currencySymbol = "$";
-      break;
-    case "lb":
-      currencySymbol = "L.L.";
-      break;
-    case "gram":
-      currencySymbol = "g";
-      break;
-    case "kilogram":
-      currencySymbol = "kg";
-      break;
-    default:
-      currencySymbol = "";
+    case "dollar":    currencySymbol = "$";    break;
+    case "lb":        currencySymbol = "L.L."; break;
+    case "gram":      currencySymbol = "g";    break;
+    case "kilogram":  currencySymbol = "kg";   break;
+    default:          currencySymbol = "";
   }
 
   if (cart.length === 0) {
     return (
       <CartStepContainer>
-        <EmptyCart>Your cart is empty</EmptyCart>
+        <EmptyCart>
+          {lang === "ar" ? "السلة فارغة" : "Your cart is empty"}
+        </EmptyCart>
       </CartStepContainer>
     );
   }
 
+  const imageUrl = (item) => {
+    const img = item.images?.[0];
+    if (!img) return "";
+    return img.url
+      ? `https://storage.googleapis.com/ecommerce-bucket-testing/${img.url}`
+      : "";
+  };
+
   return (
     <CartStepContainer>
       <ItemsList>
-        {cart.map((item) => (
-          <CartItem key={item.uniqueId}>
-            <DeleteButton onClick={() => handleRemove(item.uniqueId)}>
-              <FaTrash />
-            </DeleteButton>
-            <ItemImage
-              src={`https://storage.googleapis.com/ecommerce-bucket-testing/${item.images[0].url}`}
-              alt={activeLanguage === "en" ? item.en_name : item.ar_name}
-            />
-            <ItemInfo>
-              <ItemName>
-                {activeLanguage === "en" ? item.en_name : item.ar_name}
-              </ItemName>
-              <ItemPrice>
-                {convertPrice(item.price * item.quantity, currencySymbol)}
-                <QuantityControls>
-                  <QuantityButton
-                    onClick={() => handleDecrement(item.uniqueId, item.quantity)}
+        {cart.map((item) => {
+          const name = lang === "ar" ? item.ar_name : item.en_name;
+          const linePrice = convertPrice(item.price * item.quantity, currencySymbol);
+
+          return (
+            <CartItem key={item.uniqueId}>
+              <ItemTopRow>
+                <ItemImage src={imageUrl(item)} alt={name} />
+
+                <ItemInfo>
+                  <ItemName title={name}>{name}</ItemName>
+                  {renderCustomizations(item)}
+                  {item.instruction && (
+                    <NoteText>📝 {item.instruction}</NoteText>
+                  )}
+                </ItemInfo>
+
+                <ItemActions>
+                  <ItemPrice>{linePrice}</ItemPrice>
+                  <QuantityControls>
+                    <QuantityButton
+                      onClick={() => handleDecrement(item.uniqueId, item.quantity)}
+                      disabled={item.quantity <= 1}
+                      aria-label="decrease quantity"
+                    >
+                      −
+                    </QuantityButton>
+                    <QuantityValue>{item.quantity}</QuantityValue>
+                    <QuantityButton
+                      onClick={() => handleIncrement(item.uniqueId, item.quantity)}
+                      aria-label="increase quantity"
+                    >
+                      +
+                    </QuantityButton>
+                  </QuantityControls>
+                  <DeleteButton
+                    onClick={() => handleRemove(item.uniqueId)}
+                    aria-label="remove item"
                   >
-                    -
-                  </QuantityButton>
-                  <QuantityValue>{item.quantity}</QuantityValue>
-                  <QuantityButton
-                    onClick={() => handleIncrement(item.uniqueId, item.quantity)}
-                  >
-                    +
-                  </QuantityButton>
-                </QuantityControls>
-              </ItemPrice>
-              {generateItemData(item)}
-              {item.instruction && (
-                <ItemDetails>Note: {item.instruction}</ItemDetails>
-              )}
-            </ItemInfo>
-          </CartItem>
-        ))}
+                    <FaTrash />
+                  </DeleteButton>
+                </ItemActions>
+              </ItemTopRow>
+            </CartItem>
+          );
+        })}
+
         <TotalContainer>
-          <TotalLabel>Total:</TotalLabel>
-          <TotalPrice>{convertPrice(totalPrice, currencySymbol)}</TotalPrice>
+          <TotalRow>
+            <TotalLabel>
+              {lang === "ar" ? "الإجمالي" : "Total"}
+            </TotalLabel>
+            <TotalPrice>{convertPrice(totalPrice, currencySymbol)}</TotalPrice>
+          </TotalRow>
         </TotalContainer>
       </ItemsList>
     </CartStepContainer>
   );
 }
-

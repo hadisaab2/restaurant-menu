@@ -1,177 +1,199 @@
-import React from 'react'
+import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
-import { adjustQuantity, clearCart, removeFromCart } from '../../../../../redux/cart/cartActions';
+import { MdOutlineDelete } from 'react-icons/md';
+import { adjustQuantity, removeFromCart } from '../../../../../redux/cart/cartActions';
 import {
   Wrapper,
   Title,
   Border,
   ItemsWrap,
   ItemsContainer,
+  ItemTopRow,
   ImageContainer,
   Image,
   PriceContainer,
-  QuantityContainer,
   Name,
   Price,
-  Purchase,
-  DeleteIcon,
-  NoItems,
+  QuantityContainer,
   QuantityWrapper,
   Plus,
   Quantity,
   Minus,
+  DeleteIcon,
+  CustomizationsRow,
+  SizePill,
+  AddonChip,
+  RemovalChip,
+  NoteText,
+  LegacyLine,
   TotalPrice,
-} from "./styles";
+  TotalLabel,
+  TotalValue,
+  Purchase,
+  NoItems,
+} from './styles';
 import { convertPrice } from '../../../../../utilities/convertPrice';
 import { cartItemFormDataToLines } from '../../../../../product-options/cartLabels';
 
+/* ─── helpers ─── */
+const SIZE_HEADINGS   = ["Size:", "الحجم:"];
+const ADDON_HEADINGS  = ["Add ons:", "الإضافات:"];
+const REMOVE_HEADINGS = ["Remove:", "بدون:"];
+
+function groupCartBlocks(blocks) {
+  const result = { sizeLabel: null, addonLabels: [], removalLabels: [], legacyLines: [] };
+  let section = null;
+
+  for (const b of blocks) {
+    if (b.type === "heading") {
+      if (SIZE_HEADINGS.includes(b.text))        section = "size";
+      else if (ADDON_HEADINGS.includes(b.text))  section = "addons";
+      else if (REMOVE_HEADINGS.includes(b.text)) section = "removals";
+      else                                        section = "legacy";
+    } else {
+      if (section === "size")          result.sizeLabel = b.text;
+      else if (section === "addons")   result.addonLabels.push(b.text);
+      else if (section === "removals") result.removalLabels.push(b.text);
+      else                             result.legacyLines.push(b.text);
+    }
+  }
+  return result;
+}
+
+/* ─── component ─── */
 export default function CartItems({ setblock }) {
   const dispatch = useDispatch();
   const { restaurantName: paramRestaurantName } = useParams();
 
   const hostname = window.location.hostname;
   const subdomain = hostname.split('.')[0];
+  const restaurantName =
+    subdomain !== "menugic" && subdomain !== "localhost" && subdomain !== "www"
+      ? subdomain
+      : paramRestaurantName;
 
-  // Determine the restaurant name to use
-  const restaurantName = (subdomain !== "menugic" && subdomain !== "localhost" && subdomain !== "www")
-    ? subdomain
-    : paramRestaurantName;
-
-  const cart = useSelector((state) => state.cart[restaurantName] || []); // Fetch the cart for the specific restaurant
-  const restaurant = useSelector(
-    (state) => state.restaurant?.[restaurantName]
-  );
-  // Calculate total price for the specific restaurant's cart
-  const totalPrice = cart.reduce((total, item) => {
-    return total + item.price * item.quantity;
-  }, 0);
-
+  const cart       = useSelector((state) => state.cart[restaurantName] || []);
+  const restaurant = useSelector((state) => state.restaurant?.[restaurantName]);
   const activeLanuguage = useSelector(
-    (state) => state.restaurant?.[restaurantName].activeLanguage
+    (state) => state.restaurant?.[restaurantName]?.activeLanguage
   );
-  const handleRemove = (uniqueId) => {
-    dispatch(removeFromCart(restaurantName, uniqueId));
+  const lang = activeLanuguage === "ar" ? "ar" : "en";
+
+  const totalPrice = cart.reduce((total, item) => total + item.price * item.quantity, 0);
+
+  const handleRemove    = (uid) => dispatch(removeFromCart(restaurantName, uid));
+  const handleIncrement = (uid, qty) => dispatch(adjustQuantity(restaurantName, uid, qty + 1));
+  const handleDecrement = (uid, qty) => {
+    if (qty > 1) dispatch(adjustQuantity(restaurantName, uid, qty - 1));
   };
 
-  const handlePurchase = () => {
-    setblock("order")
-  };
+  let currencySymbol = "";
+  switch (restaurant?.currency) {
+    case "dollar":   currencySymbol = "$";    break;
+    case "lb":       currencySymbol = "L.L."; break;
+    case "gram":     currencySymbol = "g";    break;
+    case "kilogram": currencySymbol = "kg";   break;
+    default:         currencySymbol = "";
+  }
 
-  const handleIncrement = (uniqueId, quantity) => {
-    dispatch(adjustQuantity(restaurantName, uniqueId, quantity + 1));
-  };
-
-  const handleDecrement = (uniqueId, quantity) => {
-    if (quantity > 1) {
-      dispatch(adjustQuantity(restaurantName, uniqueId, quantity - 1));
-    }
-  };
-
-
-
-  const generateitemdata = (item) => {
-    const lang = activeLanuguage === "en" ? "en" : "ar";
+  const renderCustomizations = (item) => {
     const blocks = cartItemFormDataToLines(item, lang);
     if (!blocks.length) return null;
-    return blocks.map((b, index) =>
-      b.type === "heading" ? (
-        <Price key={`h-${index}`}>
-          <strong>{b.text}</strong>
-          <br />
-        </Price>
-      ) : (
-        <Price key={`${b.key}-${index}`}>
-          {`  - ${b.text}`}
-          <br />
-        </Price>
-      )
+
+    const { sizeLabel, addonLabels, removalLabels, legacyLines } = groupCartBlocks(blocks);
+    const hasVisual = sizeLabel || addonLabels.length || removalLabels.length;
+
+    return (
+      <>
+        {hasVisual && (
+          <CustomizationsRow>
+            {sizeLabel && (
+              <SizePill>
+                {lang === "ar" ? `الحجم: ${sizeLabel}` : `Size: ${sizeLabel}`}
+              </SizePill>
+            )}
+            {addonLabels.map((label) => (
+              <AddonChip key={label}>+ {label}</AddonChip>
+            ))}
+            {removalLabels.map((label) => (
+              <RemovalChip key={label}>{label}</RemovalChip>
+            ))}
+          </CustomizationsRow>
+        )}
+        {legacyLines.map((line, i) => (
+          <LegacyLine key={i}>{line}</LegacyLine>
+        ))}
+      </>
     );
   };
 
-  let currencySymbol;
-  switch (restaurant?.currency) {
-    case "dollar":
-      currencySymbol = "$";
-      break;
-    case "lb":
-      currencySymbol = "L.L.";
-      break;
-    case "gram":
-      currencySymbol = "g";
-      break;
-    case "kilogram":
-      currencySymbol = "kg";
-      break;
-    default:
-      currencySymbol = ""; // No currency or unsupported currency
-  }
+  const imageUrl = (item) => {
+    const img = item.images?.[0];
+    if (!img) return "";
+    return img.url
+      ? `https://storage.googleapis.com/ecommerce-bucket-testing/${img.url}`
+      : "";
+  };
+
   return (
     <Wrapper>
-      <Title>My Cart</Title>
+      <Title>{lang === "ar" ? "سلة التسوق" : "My Cart"}</Title>
       <Border />
+
       {cart.length > 0 ? (
         <>
           <ItemsWrap>
             {cart.map((item) => {
+              const name      = lang === "ar" ? item.ar_name : item.en_name;
+              const linePrice = convertPrice(item.price * item.quantity, currencySymbol);
+
               return (
-                <>
-                  <ItemsContainer>
-                    <DeleteIcon
-                      onClick={() => {
-                        handleRemove(item.uniqueId);
-                      }}
-                    />
+                <ItemsContainer key={item.uniqueId}>
+                  <ItemTopRow>
                     <ImageContainer>
-                      <Image
-                        src={`https://storage.googleapis.com/ecommerce-bucket-testing/${item.images[0].url}`}
-                      />
+                      <Image src={imageUrl(item)} alt={name} />
                     </ImageContainer>
+
                     <PriceContainer>
-                      <Name>
-                        {activeLanuguage === "en"
-                          ? item.en_name
-                          : item.ar_name}
-                      </Name>
-                      <Price>
-                        {convertPrice(item.price * item.quantity,currencySymbol)}
-                      </Price>
-                      {generateitemdata(item)}
-                      {/* <Price>{generateitemdata(item)}</Price> */}
+                      <Name title={name}>{name}</Name>
+                      <Price>{linePrice}</Price>
+                      {renderCustomizations(item)}
+                      {item.instruction && (
+                        <NoteText>📝 {item.instruction}</NoteText>
+                      )}
                     </PriceContainer>
+
                     <QuantityContainer>
                       <QuantityWrapper>
-                        <Plus
-                          onClick={() => {
-                            handleIncrement(item.uniqueId, item.quantity);
-                          }}
-                        >
-                          +
-                        </Plus>
+                        <Plus onClick={() => handleIncrement(item.uniqueId, item.quantity)}>+</Plus>
                         <Quantity>{item.quantity}</Quantity>
-                        <Minus
-                          onClick={() => {
-                            handleDecrement(item.uniqueId, item.quantity);
-                          }}
-                        >
-                          -
-                        </Minus>
+                        <Minus onClick={() => handleDecrement(item.uniqueId, item.quantity)}>−</Minus>
                       </QuantityWrapper>
+                      <DeleteIcon onClick={() => handleRemove(item.uniqueId)}>
+                        <MdOutlineDelete size={16} />
+                      </DeleteIcon>
                     </QuantityContainer>
-                  </ItemsContainer>
-                  <Border />
-                </>
+                  </ItemTopRow>
+                </ItemsContainer>
               );
             })}
           </ItemsWrap>
-          <TotalPrice>Total Price : { convertPrice(totalPrice, currencySymbol)}
+
+          <TotalPrice>
+            <TotalLabel>{lang === "ar" ? "الإجمالي" : "Total"}</TotalLabel>
+            <TotalValue>{convertPrice(totalPrice, currencySymbol)}</TotalValue>
           </TotalPrice>
 
-          <Purchase onClick={handlePurchase}>Continue</Purchase>
+          <Purchase onClick={() => setblock("order")}>
+            {lang === "ar" ? "متابعة" : "Continue"}
+          </Purchase>
         </>
       ) : (
-        <NoItems>No Items In Cart</NoItems>
+        <NoItems>
+          {lang === "ar" ? "السلة فارغة" : "No Items In Cart"}
+        </NoItems>
       )}
     </Wrapper>
-  )
+  );
 }
