@@ -6,23 +6,24 @@ import { CiSearch } from "react-icons/ci";
 // Styled components
 export const SelectWrapper = styled.div`
   position: relative;
-  width: 90%;
-  height: 40px;
-  margin-top: 20px;
+  width: 100%;
+  height: 50px;
+  margin-top: 0;
 
 `;
 
 export const SelectedValue = styled.div`
-  padding: 10px;
-  background-color: transparent;
-  border: 1px solid #ccc;
-  border-radius: 4px;
+  padding: 14px 16px;
+  background-color: ${(props) => props.theme.categoryUnActive || "#ffffff"};
+  border: 2px solid ${(props) => props.theme.mainColor || props.theme.maincolor || "#007bff"};
+  border-radius: 10px;
   cursor: pointer;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  color: ${(props) => props.theme.backgroundColor};
-  background-color: ${(props) => props.theme.mainColor};
+  color: ${(props) => props.theme.popupTextColor || "#00112b"};
+  font-size: 16px;
+  transition: all 0.2s ease;
 
 `;
 
@@ -33,14 +34,15 @@ export const OptionsList = styled.ul`
   width: 100%;
   max-height: ${props=>props.isOpen?"220px":"0px"};
   overflow-y: auto;
-  border-radius: 4px;
+  border-radius: 10px;
+  border: none;
   margin: 0;
   padding: 0;
   list-style: none;
   transition: all  0.2s ease-in-out ;
   z-index: 10;
   box-shadow: 0px 4px 9px rgba(0, 0, 0, 0.2);
-  background-color:${(props) => props.theme.mainColor}; 
+  background-color:${(props) => props.theme.categoryUnActive || "#ffffff"}; 
 
 `;
 
@@ -51,10 +53,16 @@ export const OptionItem = styled.li`
   align-items: center;
   justify-content: center;
   transition: background-color 0.2s;
-  background-color: ${props=>props.regionName==props.selectedRegion?props.theme.popupbackgroundColor:"transparent"};
-  color: ${props=>props.regionName==props.selectedRegion?props.theme.mainColor:props.theme.popupbackgroundColor};
+  background-color: ${props =>
+    props.regionName == props.selectedRegion
+      ? props.theme.categoryUnActive || "#ffffff"
+      : "transparent"};
+  color: ${props =>
+    props.regionName == props.selectedRegion
+      ? props.theme.popupTextColor || "#00112b"
+      : props.theme.popupTextColor || "#00112b"};
   &:hover {
-    background-color: ${(props) => props.theme.popupbackgroundColor};
+    background-color: ${(props) => props.theme.popupbackgroundColor || "#ffffff"};
   }
 `;
 
@@ -64,7 +72,7 @@ width: 90%;
 
 
 export const Caret = styled.span`
-  border: solid ${(props) => props.theme.backgroundColor};
+  border: solid ${(props) => props.theme.popupTextColor || "#00112b"};
   border-width: 0 2px 2px 0;
   display: inline-block;
   padding: 3px;
