@@ -1,7 +1,14 @@
 import React, { useEffect, useRef, useState } from "react";
 import {
   Container,
-  Category,
+  CategoryRow,
+  CategoryThumb,
+  CategoryThumbPlaceholder,
+  CategoryMeta,
+  CategoryName,
+  CategoryBadges,
+  PriorityBadge,
+  DiscountBadge,
   CategoriesContainer,
   AddCategory,
   Edit,
@@ -12,12 +19,17 @@ import {
   Tabs,
   Tab,
   categoryFormFieldSx,
+  SectionHeader,
+  SectionTitle,
+  SectionSubtitle,
+  EmptyState,
 } from "./styles";
+import { IoMdAdd } from "react-icons/io";
 import { TextField, Button } from "@mui/material";
 import { getCookie } from "../../../utilities/manageCookies";
 import { LANGUAGES } from "../../../global";
 import { LoadingButton } from "@mui/lab";
-import { isEmpty, isNull, min } from "lodash";
+import { isEmpty, isNull } from "lodash";
 import {
   EnArCategorySchema,
   arCategorySchema,
@@ -41,6 +53,9 @@ import ProductOptionsEditor, {
   optionsFromFormJsonString,
 } from "../../../product-options/ProductOptionsEditor";
 import { emptyOptions, serializeOptions } from "../../../product-options/schema";
+
+const CATEGORY_IMAGE_BASE =
+  "https://storage.googleapis.com/ecommerce-bucket-testing/";
 
 export default function Categories({ setProducts }) {
   const [showAddComponent, setShowAddComponent] = useState(false);
@@ -155,9 +170,7 @@ export default function Categories({ setProducts }) {
 
     setSelectedIdForAction(category.id);
     setShowAddComponent(true);
-    setImageUrl(
-      `https://storage.googleapis.com/ecommerce-bucket-testing/${category?.image_url}`
-    );
+    setImageUrl(`${CATEGORY_IMAGE_BASE}${category?.image_url}`);
   };
 
   const refetchCategories = () => {
@@ -192,7 +205,7 @@ export default function Categories({ setProducts }) {
       case ENAR:
         return `${category.en_category}-${category.ar_category}`;
       default:
-        break;
+        return category?.en_category || category?.ar_category || "";
     }
   };
 
@@ -243,10 +256,26 @@ export default function Categories({ setProducts }) {
             }}
           />
           <Tabs>
-            <Tab activeTab={activeTab} tab={"categoryinfo"} onClick={() => { setActiveTab("categoryinfo") }}>Category Details</Tab>
-            <Tab activeTab={activeTab} tab={"formbuilder"} onClick={() => { setActiveTab("formbuilder") }}>Category options</Tab>
+            <Tab
+              activeTab={activeTab}
+              tab={"categoryinfo"}
+              onClick={() => {
+                setActiveTab("categoryinfo");
+              }}
+            >
+              Category Details
+            </Tab>
+            <Tab
+              activeTab={activeTab}
+              tab={"formbuilder"}
+              onClick={() => {
+                setActiveTab("formbuilder");
+              }}
+            >
+              Category options
+            </Tab>
           </Tabs>
-          {activeTab == "categoryinfo" ?
+          {activeTab === "categoryinfo" ? (
             <>
               {displayEnglish && (
                 <TextField
@@ -331,7 +360,8 @@ export default function Categories({ setProducts }) {
               >
                 {!isNull(selectedIdForAction) ? "Edit Category" : "Add Category"}
               </LoadingButton>
-            </> : (
+            </>
+          ) : (
               <ProductOptionsEditor
                 value={categoryOptions}
                 onChange={setCategoryOptions}
@@ -343,28 +373,73 @@ export default function Categories({ setProducts }) {
         <>
           {!isLoading && (
             <>
+              <SectionHeader>
+                <SectionTitle>Categories</SectionTitle>
+                <SectionSubtitle>
+                  Organize your menu into sections. Set priority, discounts, and
+                  optional images—customers see categories on your public menu.
+                </SectionSubtitle>
+              </SectionHeader>
               <AddCategory onClick={() => setShowAddComponent(true)}>
+                <IoMdAdd size={20} />
                 Add Category
               </AddCategory>
               <CategoriesContainer>
-                <Category>Offer</Category>
-                {categories?.map((category) => {
-                  return (
-                    <Category>
-                      {categoryText(category)}
-
-                      <Actions>
-                        <Edit onClick={() => handleOnEdit(category)} />
-                        <Delete
-                          onClick={() => {
-                            setSelectedIdForAction(category.id);
-                            setIsDeletePopupOpen(true);
-                          }}
-                        />
-                      </Actions>
-                    </Category>
-                  );
-                })}
+                {categories?.length ? (
+                  categories.map((category) => {
+                    const label = categoryText(category) || "—";
+                    const initial = (label || "?").trim().charAt(0);
+                    const hasImage = Boolean(category?.image_url);
+                    const discountNum = Number(category?.discount);
+                    return (
+                      <CategoryRow key={category.id}>
+                        <CategoryThumb>
+                          {hasImage ? (
+                            <img
+                              src={`${CATEGORY_IMAGE_BASE}${category.image_url}`}
+                              alt=""
+                            />
+                          ) : (
+                            <CategoryThumbPlaceholder>
+                              {initial}
+                            </CategoryThumbPlaceholder>
+                          )}
+                        </CategoryThumb>
+                        <CategoryMeta>
+                          <CategoryName title={label}>{label}</CategoryName>
+                          <CategoryBadges>
+                            <PriorityBadge>
+                              Priority {category?.priority ?? "—"}
+                            </PriorityBadge>
+                            {discountNum > 0 && (
+                              <DiscountBadge>
+                                {discountNum}% off
+                              </DiscountBadge>
+                            )}
+                          </CategoryBadges>
+                        </CategoryMeta>
+                        <Actions>
+                          <Edit
+                            aria-label="Edit category"
+                            onClick={() => handleOnEdit(category)}
+                          />
+                          <Delete
+                            aria-label="Delete category"
+                            onClick={() => {
+                              setSelectedIdForAction(category.id);
+                              setIsDeletePopupOpen(true);
+                            }}
+                          />
+                        </Actions>
+                      </CategoryRow>
+                    );
+                  })
+                ) : (
+                  <EmptyState>
+                    No categories yet. Add your first category to start building
+                    your menu.
+                  </EmptyState>
+                )}
               </CategoriesContainer>
             </>
           )}

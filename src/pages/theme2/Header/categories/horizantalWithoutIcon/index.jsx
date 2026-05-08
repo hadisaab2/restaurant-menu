@@ -11,6 +11,7 @@ import {
 } from "./styles";
 import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
+import { sendCategoryVisitLog } from "../../../../../apis/categories/logCategory";
 
 export default function HorizantalWithoutIcon({
   categories,
@@ -39,9 +40,10 @@ export default function HorizantalWithoutIcon({
     }
   };
 
-  const itemClick = (id,index) => {
+  const itemClick = (id, index) => {
+    sendCategoryVisitLog(id);
     setactiveCategory(id);
-    setcarouselPosition(index)
+    setcarouselPosition(index);
   };
 
   const carouselRefs = useRef([]); // Array to hold refs for each carousel item
@@ -53,8 +55,6 @@ export default function HorizantalWithoutIcon({
 
   // Scroll to the current item when the carouselPosition changes
   useEffect(() => {
-    console.log(carouselPosition)
-
     if (carouselRefs.current[carouselPosition]) {
       carouselRefs.current[carouselPosition].scrollIntoView({
         behavior: "smooth",

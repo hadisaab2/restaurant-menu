@@ -1,4 +1,4 @@
-import React, { useEffect, useState,useRef } from "react";
+import React, { useEffect, useState } from "react";
 import {
   CateogoryIcon,
   Container,
@@ -17,6 +17,7 @@ import {
   Logout,
   BurgerIcon,
   MobileSidebar,
+  MobileSidebarBackdrop,
   CloseIcon,
   LogoutMobile,
   AccessNotice,
@@ -73,15 +74,33 @@ export default function RestaurantDash() {
     setShowMobileSidebar(!showMobileSidebar)
   }
 
-  const handlesection= (section)=>{
-    // Prevent navigation to restricted sections if not Theme 3 or 4
-    const restrictedSections = ["Feedbacks", "QuestionsSuggestions", "Orders", "Customers", "Analytics"];
+  const handlesection = (section) => {
+    const restrictedSections = [
+      "Feedbacks",
+      "QuestionsSuggestions",
+      "Orders",
+      "Customers",
+      "RegisteredCustomers",
+      "Analytics",
+    ];
     if (restrictedSections.includes(section) && !isTheme3Or4) {
-      return; // Don't navigate to restricted sections
+      setShowMobileSidebar(false);
+      return;
     }
-    setSection(section)
-    setShowMobileSidebar(!showMobileSidebar)
-  }
+    setSection(section);
+    setShowMobileSidebar(false);
+  };
+
+  useEffect(() => {
+    if (showMobileSidebar) {
+      const prev = document.body.style.overflow;
+      document.body.style.overflow = "hidden";
+      return () => {
+        document.body.style.overflow = prev;
+      };
+    }
+    return undefined;
+  }, [showMobileSidebar]);
 
   
 
@@ -102,56 +121,62 @@ export default function RestaurantDash() {
 
   return (
     <Container>
-      <MobileSidebar $showMobileSidebar={showMobileSidebar}>
+      <MobileSidebarBackdrop
+        $open={showMobileSidebar}
+        onClick={() => setShowMobileSidebar(false)}
+        aria-hidden="true"
+      />
+      <MobileSidebar $showMobileSidebar={showMobileSidebar} role="dialog" aria-modal="true" aria-label="Navigation menu">
       <SidebarTop>
           <Title>Menugic</Title>
-          <CloseIcon onClick={onClickBurger}/>
+          <CloseIcon onClick={onClickBurger} aria-label="Close menu" />
         </SidebarTop>
         <SidebarContent>
-          <Tab onClick={() =>handlesection("Dashboard")}>
+          <Tab $active={section === "Dashboard"} onClick={() => handlesection("Dashboard")}>
             <CateogoryIcon />
             <TabText>Dashboard</TabText>
           </Tab>
-          <Tab onClick={() =>handlesection("Categories")}>
+          <Tab $active={section === "Categories"} onClick={() => handlesection("Categories")}>
             <CateogoryIcon />
             <TabText>Categories</TabText>
           </Tab>
-          <Tab  onClick={() =>handlesection("Products")}>
+          <Tab $active={section === "Products"} onClick={() => handlesection("Products")}>
             <CateogoryIcon />
             <TabText>Products</TabText>
           </Tab>
-          <Tab  onClick={() =>handlesection("Settings")}>
+          <Tab $active={section === "Settings"} onClick={() => handlesection("Settings")}>
             <CateogoryIcon />
             <TabText>Settings</TabText>
           </Tab>
-          <Tab  onClick={() =>handlesection("Report")}>
+          <Tab $active={section === "Report"} onClick={() => handlesection("Report")}>
             <CateogoryIcon />
             <TabText>Report</TabText>
           </Tab>
-          <Tab $disabled={!isTheme3Or4} onClick={() => handlesection("Feedbacks")}>
+          <Tab $active={section === "Feedbacks"} $disabled={!isTheme3Or4} onClick={() => handlesection("Feedbacks")}>
             <CateogoryIcon />
             <TabText>Feedbacks{!isTheme3Or4 && <span style={{ fontSize: "12px", color: "#999", marginLeft: "8px" }}>(VIP package)</span>}</TabText>
           </Tab>
           <Tab
+            $active={section === "QuestionsSuggestions"}
             $disabled={!isTheme3Or4}
             onClick={() => handlesection("QuestionsSuggestions")}
           >
             <CateogoryIcon />
             <TabText>Questions & Suggestions{!isTheme3Or4 && <span style={{ fontSize: "12px", color: "#999", marginLeft: "8px" }}>(VIP package)</span>}</TabText>
           </Tab>
-          <Tab $disabled={!isTheme3Or4} onClick={() => handlesection("Orders")}>
+          <Tab $active={section === "Orders"} $disabled={!isTheme3Or4} onClick={() => handlesection("Orders")}>
             <CateogoryIcon />
             <TabText>Orders{!isTheme3Or4 && <span style={{ fontSize: "12px", color: "#999", marginLeft: "8px" }}>(VIP package)</span>}</TabText>
           </Tab>
-          <Tab $disabled={!isTheme3Or4} onClick={() => handlesection("Customers")}>
+          <Tab $active={section === "Customers"} $disabled={!isTheme3Or4} onClick={() => handlesection("Customers")}>
             <CateogoryIcon />
             <TabText>Customers{!isTheme3Or4 && <span style={{ fontSize: "12px", color: "#999", marginLeft: "8px" }}>(VIP package)</span>}</TabText>
           </Tab>
-          <Tab $disabled={!isTheme3Or4} onClick={() => handlesection("RegisteredCustomers")}>
+          <Tab $active={section === "RegisteredCustomers"} $disabled={!isTheme3Or4} onClick={() => handlesection("RegisteredCustomers")}>
             <CateogoryIcon />
             <TabText>Registered customers{!isTheme3Or4 && <span style={{ fontSize: "12px", color: "#999", marginLeft: "8px" }}>(VIP package)</span>}</TabText>
           </Tab>
-          <Tab $disabled={!isTheme3Or4} onClick={() => handlesection("Analytics")}>
+          <Tab $active={section === "Analytics"} $disabled={!isTheme3Or4} onClick={() => handlesection("Analytics")}>
             <CateogoryIcon />
             <TabText>Analytics{!isTheme3Or4 && <span style={{ fontSize: "12px", color: "#999", marginLeft: "8px" }}>(VIP package)</span>}</TabText>
           </Tab>
@@ -181,50 +206,51 @@ export default function RestaurantDash() {
           <Title>Menugic</Title>
         </SidebarTop>
         <SidebarContent>
-          <Tab onClick={() => setSection("Dashboard")}>
+          <Tab $active={section === "Dashboard"} onClick={() => setSection("Dashboard")}>
             <CateogoryIcon />
             <TabText>Dashboard</TabText>
           </Tab>
-          <Tab onClick={() => setSection("Categories")}>
+          <Tab $active={section === "Categories"} onClick={() => setSection("Categories")}>
             <CateogoryIcon />
             <TabText>Categories</TabText>
           </Tab>
-          <Tab onClick={() => setSection("Products")}>
+          <Tab $active={section === "Products"} onClick={() => setSection("Products")}>
             <CateogoryIcon />
             <TabText>Products</TabText>
           </Tab>
-          <Tab onClick={() => setSection("Settings")}>
+          <Tab $active={section === "Settings"} onClick={() => setSection("Settings")}>
             <CateogoryIcon />
             <TabText>Settings</TabText>
           </Tab>
-          <Tab onClick={() => setSection("Report")}>
+          <Tab $active={section === "Report"} onClick={() => setSection("Report")}>
             <CateogoryIcon />
             <TabText>Report</TabText>
           </Tab>
-          <Tab $disabled={!isTheme3Or4} onClick={() => !isTheme3Or4 ? null : setSection("Feedbacks")}>
+          <Tab $active={section === "Feedbacks"} $disabled={!isTheme3Or4} onClick={() => !isTheme3Or4 ? null : setSection("Feedbacks")}>
             <CateogoryIcon />
             <TabText>Feedbacks{!isTheme3Or4 && <span style={{ fontSize: "12px", color: "#999", marginLeft: "8px" }}>(VIP package)</span>}</TabText>
           </Tab>
           <Tab
+            $active={section === "QuestionsSuggestions"}
             $disabled={!isTheme3Or4}
             onClick={() => !isTheme3Or4 ? null : setSection("QuestionsSuggestions")}
           >
             <CateogoryIcon />
             <TabText>Questions & Suggestions{!isTheme3Or4 && <span style={{ fontSize: "12px", color: "#999", marginLeft: "8px" }}>(VIP package)</span>}</TabText>
           </Tab>
-          <Tab $disabled={!isTheme3Or4} onClick={() => !isTheme3Or4 ? null : setSection("Orders")}>
+          <Tab $active={section === "Orders"} $disabled={!isTheme3Or4} onClick={() => !isTheme3Or4 ? null : setSection("Orders")}>
             <CateogoryIcon />
             <TabText>Orders{!isTheme3Or4 && <span style={{ fontSize: "12px", color: "#999", marginLeft: "8px" }}>(VIP package)</span>}</TabText>
           </Tab>
-          <Tab $disabled={!isTheme3Or4} onClick={() => !isTheme3Or4 ? null : setSection("Customers")}>
+          <Tab $active={section === "Customers"} $disabled={!isTheme3Or4} onClick={() => !isTheme3Or4 ? null : setSection("Customers")}>
             <CateogoryIcon />
             <TabText>Customers{!isTheme3Or4 && <span style={{ fontSize: "12px", color: "#999", marginLeft: "8px" }}>(VIP package)</span>}</TabText>
           </Tab>
-          <Tab $disabled={!isTheme3Or4} onClick={() => !isTheme3Or4 ? null : setSection("RegisteredCustomers")}>
+          <Tab $active={section === "RegisteredCustomers"} $disabled={!isTheme3Or4} onClick={() => !isTheme3Or4 ? null : setSection("RegisteredCustomers")}>
             <CateogoryIcon />
             <TabText>Registered customers{!isTheme3Or4 && <span style={{ fontSize: "12px", color: "#999", marginLeft: "8px" }}>(VIP package)</span>}</TabText>
           </Tab>
-          <Tab $disabled={!isTheme3Or4} onClick={() => !isTheme3Or4 ? null : setSection("Analytics")}>
+          <Tab $active={section === "Analytics"} $disabled={!isTheme3Or4} onClick={() => !isTheme3Or4 ? null : setSection("Analytics")}>
             <CateogoryIcon />
             <TabText>Analytics{!isTheme3Or4 && <span style={{ fontSize: "12px", color: "#999", marginLeft: "8px" }}>(VIP package)</span>}</TabText>
           </Tab>
@@ -251,7 +277,9 @@ export default function RestaurantDash() {
           </Logout>
 
 
-          <BurgerIcon onClick={onClickBurger}/>
+          <BurgerIcon onClick={onClickBurger} aria-label="Open menu" aria-expanded={showMobileSidebar}>
+            <span />
+          </BurgerIcon>
         </Header>
         {section == "Dashboard" && (
           <Dashboard userInformation={userInformation} setSection={setSection} />

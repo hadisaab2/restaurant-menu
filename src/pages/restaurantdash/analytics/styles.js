@@ -8,6 +8,12 @@ export const Container = styled.div`
   gap: 20px;
   margin-top: 20px;
   padding-bottom: 40px;
+  box-sizing: border-box;
+
+  @media (max-width: ${breakingPoints.sm}px) {
+    width: 100%;
+    max-width: 100%;
+  }
 `;
 
 export const Header = styled.div`
@@ -137,6 +143,11 @@ export const KPICards = styled.div`
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 16px;
+
+  @media (max-width: ${breakingPoints.sm}px) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
 `;
 
 export const KPICard = styled.div`
@@ -306,9 +317,16 @@ export const FunnelStep = styled.div`
 `;
 
 export const FunnelStepLabel = styled.div`
-  min-width: 150px;
+  min-width: 110px;
+  max-width: 150px;
   font-weight: 600;
   color: #0f172a;
+  font-size: 13px;
+
+  @media (max-width: ${breakingPoints.sm}px) {
+    min-width: 80px;
+    font-size: 12px;
+  }
 `;
 
 export const FunnelStepBar = styled.div`

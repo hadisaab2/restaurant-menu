@@ -10,4 +10,11 @@ export const Container = styled.div`
   margin-top: 20px;
   min-height: 100vh;
   padding-left: 20px;
+  box-sizing: border-box;
+
+  @media (max-width: ${breakingPoints.sm}px) {
+    width: 100%;
+    max-width: 100%;
+    padding-left: 0;
+  }
 `;

@@ -152,3 +152,34 @@ export const THREADS_PUBLIC_URL = `${REACT_APP_BASE_URL}/threads`;
 
 export const GET_FEEDBACKS_URL = (restaurantId) =>
   `${REACT_APP_BASE_URL}/feedback/${restaurantId}`;
+
+/** All-time visit range for dashboard totals (restaurant menu loads). */
+export const GET_RESTAURANT_VISIT_COUNT_URL = (restaurantId, startDate, toDate) =>
+  `${REACT_APP_BASE_URL}/restaurants/logs/get-visit-count?restaurant_id=${encodeURIComponent(
+    restaurantId
+  )}&startDate=${encodeURIComponent(startDate)}&toDate=${encodeURIComponent(toDate)}`;
+
+export const GET_RESTAURANT_TOP_PRODUCT_VISITS_URL = (restaurantId, startDate, toDate, limit = 12) =>
+  `${REACT_APP_BASE_URL}/restaurants/logs/top-product-visits?restaurant_id=${encodeURIComponent(
+    restaurantId
+  )}&startDate=${encodeURIComponent(startDate)}&toDate=${encodeURIComponent(
+    toDate
+  )}&limit=${encodeURIComponent(limit)}`;
+
+export const GET_RESTAURANT_TOP_CATEGORY_VISITS_URL = (restaurantId, startDate, toDate, limit = 12) =>
+  `${REACT_APP_BASE_URL}/restaurants/logs/top-category-visits?restaurant_id=${encodeURIComponent(
+    restaurantId
+  )}&startDate=${encodeURIComponent(startDate)}&toDate=${encodeURIComponent(
+    toDate
+  )}&limit=${encodeURIComponent(limit)}`;
+
+export const GET_RESTAURANT_VISIT_DAILY_SERIES_URL = (restaurantId, startDate, toDate) =>
+  `${REACT_APP_BASE_URL}/restaurants/logs/visit-daily?restaurant_id=${encodeURIComponent(
+    restaurantId
+  )}&startDate=${encodeURIComponent(startDate)}&toDate=${encodeURIComponent(toDate)}`;
+
+export const GET_ORDERS_BY_RESTAURANT_URL = (restaurantId) =>
+  `${REACT_APP_BASE_URL}/orders/restaurant/${restaurantId}`;
+
+export const GET_THREADS_ADMIN_PAGE_URL = (page = 1, pageSize = 1) =>
+  `${REACT_APP_BASE_URL}/threads/admin?page=${page}&pageSize=${pageSize}`;

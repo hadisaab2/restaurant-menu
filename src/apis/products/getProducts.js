@@ -24,6 +24,7 @@ export const useGetProducts = ({ onSuccess, restaurantId }) => {
     queryFn: () => getProducts(restaurantId),
     retry: false,
     queryKey: [`products-${restaurantId}`],
+    enabled: Boolean(restaurantId),
     onSuccess,
     refetchOnWindowFocus: false,
   });

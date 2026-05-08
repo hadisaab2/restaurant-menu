@@ -1,90 +1,109 @@
 import styled from "styled-components";
-import { breakingPoints } from "../../../../styles/theme";
+import { breakingPoints, dashboardColors } from "../../../../styles/theme";
 import { MdModeEditOutline } from "react-icons/md";
-  import { MdDelete } from "react-icons/md";
+import { MdDelete } from "react-icons/md";
+
+const C = dashboardColors.mainColor;
 
 export const Container = styled.div`
   display: flex;
   align-items: flex-start;
-  width: 90%;
+  width: 100%;
   flex-direction: column;
-  background-color: white;
-  margin-top:20px;
-  min-height:60vh;
+  background-color: #ffffff;
+  border-radius: 14px;
+  margin-top: 16px;
+  min-height: 60vh;
+  padding: 20px;
+  box-shadow: 0 2px 12px rgba(15, 23, 42, 0.06);
+  box-sizing: border-box;
 `;
 
 export const Title = styled.span`
-  font-size: 20px;
-  font-weight: 500;
-  margin-top: 30px;
-  margin-left: 20px;
-
+  font-size: 18px;
+  font-weight: 600;
+  color: #0f172a;
+  margin-bottom: 4px;
 `;
 
-
+export const TableWrap = styled.div`
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  margin-top: 20px;
+`;
 
 export const Table = styled.table`
-  width: 80%;
+  width: 100%;
   border-collapse: collapse;
-  margin-top:30px;
-  margin-left: 20px;
-  @media (max-width: ${breakingPoints.sm}px) {
-    margin-left: 0px;
-    width: 50%;
-
-  }
+  min-width: 500px;
 `;
 
 export const Th = styled.th`
-  border: 1px solid #ddd;
-  padding: 8px;
+  border-bottom: 2px solid #e2e8f0;
+  padding: 10px 12px;
   text-align: left;
+  font-size: 13px;
+  font-weight: 600;
+  color: #475569;
+  background: #f8fafc;
+  white-space: nowrap;
 `;
 
 export const Td = styled.td`
-  border: 1px solid #ddd;
-  padding: 8px;
+  border-bottom: 1px solid #f1f5f9;
+  padding: 10px 12px;
+  font-size: 14px;
+  color: #334155;
 `;
 
 export const EditDeleteIcons = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  gap:10px
+  gap: 10px;
 `;
-
 
 export const Delete = styled(MdDelete)`
-cursor: pointer;
-&:hover{
-    color:turquoise;
-}
-
+  cursor: pointer;
+  font-size: 18px;
+  color: #94a3b8;
+  transition: color 0.15s;
+  &:hover { color: #ef4444; }
 `;
-export const Edit = styled(MdModeEditOutline)`
-cursor: pointer;
-&:hover{
-    color:turquoise;
-}
 
+export const Edit = styled(MdModeEditOutline)`
+  cursor: pointer;
+  font-size: 18px;
+  color: #94a3b8;
+  transition: color 0.15s;
+  &:hover { color: ${C}; }
 `;
 
 export const AddBranch = styled.button`
-width: 150px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 20px;
   height: 40px;
   outline: none;
-  border: 0;
+  border: none;
   color: white;
   cursor: pointer;
-  border-radius: 5px;
-  background-color: turquoise;
+  border-radius: 8px;
+  background-color: ${C};
   margin-top: 20px;
-  font-weight: 500;
+  font-weight: 600;
   font-size: 14px;
-  margin-left: 20px;
+  transition: filter 0.15s, transform 0.15s;
+  box-shadow: 0 3px 10px ${C}40;
+
+  &:hover  { filter: brightness(1.1); transform: translateY(-1px); }
+  &:active { transform: scale(0.97); }
+
   @media (max-width: ${breakingPoints.sm}px) {
-  font-size: 11px;
-  width: 100px;
-  height: 30px;
+    width: 100%;
+    justify-content: center;
+    font-size: 13px;
   }
 `;

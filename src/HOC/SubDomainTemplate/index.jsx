@@ -12,6 +12,8 @@ import Loading from "./loading";
 import Theme2 from "../../pages/theme2";
 import Theme3 from "../../pages/theme3";
 import Theme4 from "../../pages/theme4";
+import Theme5 from "../../pages/theme5";
+import Theme6 from "../../pages/theme6";
 import Theme3NotSubscribed from "../../pages/theme3/NotSubscribed";
 
 export default function SubDomainTemplate({ restaurantName }) {
@@ -137,6 +139,8 @@ export default function SubDomainTemplate({ restaurantName }) {
         {restaurant?.template_id == 2 && <Theme2 />}
         {restaurant?.template_id == 3 && <Theme3 />}
         {restaurant?.template_id == 4 && <Theme4 />}
+        {restaurant?.template_id == 5 && <Theme5 />}
+        {restaurant?.template_id == 6 && <Theme6 />}
       </ThemeProvider>
       }
       <Loading restaurantName={restaurantName} viewLoading={restaurant?.categories && !isLoading && !isTrue} />

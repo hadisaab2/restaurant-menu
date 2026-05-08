@@ -2,6 +2,20 @@ import axios from "axios";
 import { GET_PRODUCTS_URL } from "../URLs";
 // import { useQuery } from "@tanstack/react-query";
 import { useInfiniteQuery } from "@tanstack/react-query";
+import { sendCategoryVisitLog } from "../categories/logCategory";
+
+/**
+ * Records each unique (category, session) view at most once per page lifetime,
+ * to avoid double-counting when react-query refetches or pagination loads.
+ */
+const _loggedCategoryVisits = new Set();
+function logCategoryOnce(categoryId) {
+  if (!categoryId || categoryId === "all-items") return;
+  const key = String(categoryId);
+  if (_loggedCategoryVisits.has(key)) return;
+  _loggedCategoryVisits.add(key);
+  sendCategoryVisitLog(categoryId);
+}
 
 // const getProducts = async (categoryId, page) => {
 //   try {
@@ -30,9 +44,12 @@ import { useInfiniteQuery } from "@tanstack/react-query";
 
 const getProducts = async (categoryId, page = 0) => {
   try {
+    if (page === 0) {
+      logCategoryOnce(categoryId);
+    }
     const url = GET_PRODUCTS_URL(categoryId, page);
     const response = await axios.get(url);
-    return response.data; // Make sure to return just the data if that's what's being used.
+    return response.data;
   } catch (error) {
     throw error;
   }

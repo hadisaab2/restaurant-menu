@@ -1,26 +1,53 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useSelector } from "react-redux";
 import {
+  MdOutlineQuestionAnswer,
+  MdOutlineLightbulb,
+  MdOutlineCheckCircle,
+  MdOutlineTimelapse,
+  MdOutlineLabel,
+  MdOutlineSend,
+  MdOutlineWhatsapp,
+  MdSearch,
+  MdOutlineKeyboardArrowDown,
+  MdOutlineChat,
+  MdOutlineInbox,
+  MdOutlineAutoAwesome,
+  MdOutlineFilterList,
+} from "react-icons/md";
+import {
   Container,
-  Header,
-  HeaderTitle,
-  HeaderSubtitle,
-  CardsGrid,
-  StatCard,
-  StatLabel,
-  StatValue,
-  StatMeta,
+  PageHeader,
+  PageHeaderInner,
+  PageHeaderLeft,
+  PageHeaderRight,
+  PageTitle,
+  PageSubtitle,
+  HeaderMetaRow,
+  MetaPill,
+  HeaderBtn,
+  KpiGrid,
+  KpiCard,
+  KpiIconBox,
+  KpiValue,
+  KpiLabel,
+  KpiMeta,
   SectionTitle,
   PageGrid,
   FiltersRow,
   SearchInput,
   SelectInput,
   ThreadListPanel,
+  ThreadListHeader,
+  CountBadge,
   ThreadDetailsPanel,
   ThreadList,
   ThreadListItem,
   ThreadListMain,
+  ThreadAvatarBox,
+  ThreadTitleRow,
   ThreadTitle,
+  ThreadTime,
   ThreadSubtitle,
   ThreadMetaRow,
   ThreadMetaText,
@@ -35,10 +62,15 @@ import {
   DetailsBadges,
   ChatContainer,
   MessageRow,
+  MessageSenderLabel,
   MessageBubble,
   MessageTime,
   ReplyArea,
+  TemplatesBar,
+  TemplateChip,
+  TemplatesLabel,
   ReplyInput,
+  CharCount,
   SendButton,
   ReplyActions,
   WhatsappButton,
@@ -57,7 +89,12 @@ import {
   StatusLabel,
   LoadMoreButton,
   SkeletonText,
+  SkeletonCard,
   ErrorText,
+  EmptyStateBox,
+  EmptyStateIcon,
+  EmptyStateTitle,
+  EmptyStateDesc,
 } from "./styles";
 import { getThreadStatsAdmin } from "../../../apis/threads/getThreadStatsAdmin";
 import { getThreadsAdmin } from "../../../apis/threads/getThreadsAdmin";
@@ -66,6 +103,9 @@ import { replyThreadAdmin } from "../../../apis/threads/replyThreadAdmin";
 import { updateThreadAdmin } from "../../../apis/threads/updateThreadAdmin";
 import { getCookie } from "../../../utilities/manageCookies";
 
+/* ─────────────────────────────────────────────
+   CONSTANTS
+───────────────────────────────────────────── */
 const STATUS_OPTIONS = [
   { value: "", labelKey: "allStatuses" },
   { value: "new", labelKey: "statusNew" },
@@ -80,6 +120,23 @@ const TYPE_OPTIONS = [
   { value: "suggestion", labelKey: "typeSuggestion" },
 ];
 
+const QUICK_REPLIES_EN = [
+  "Thank you for your suggestion, we will review it carefully.",
+  "Thank you for contacting us, we will get back to you shortly.",
+  "This item is currently unavailable, but we are working on updating the menu.",
+  "Please contact us on WhatsApp for more details.",
+];
+
+const QUICK_REPLIES_AR = [
+  "شكراً على اقتراحك، سنراجعه بعناية.",
+  "شكراً لتواصلك معنا، سنرد عليك في أقرب وقت.",
+  "هذا الصنف غير متوفر حالياً، ونعمل على تحديث القائمة.",
+  "يرجى التواصل معنا عبر واتساب لمزيد من التفاصيل.",
+];
+
+/* ─────────────────────────────────────────────
+   HELPERS
+───────────────────────────────────────────── */
 const getMessageText = (message) =>
   message?.message || message?.text || message?.body || "";
 
@@ -87,6 +144,42 @@ const getMessageTime = (message) =>
   message?.created_at || message?.createdAt || message?.timestamp;
 
 const isArabicText = (text) => /[\u0600-\u06FF]/.test(text || "");
+
+const timeAgo = (dateStr) => {
+  if (!dateStr) return "";
+  try {
+    const diff = Date.now() - new Date(dateStr).getTime();
+    const min = Math.floor(diff / 60000);
+    if (min < 1) return "just now";
+    if (min < 60) return `${min}m`;
+    const hr = Math.floor(min / 60);
+    if (hr < 24) return `${hr}h`;
+    const day = Math.floor(hr / 24);
+    if (day < 30) return `${day}d`;
+    return new Date(dateStr).toLocaleDateString(undefined, { month: "short", day: "numeric" });
+  } catch {
+    return "";
+  }
+};
+
+const formatDateTime = (dateStr) => {
+  if (!dateStr) return "";
+  try {
+    return new Date(dateStr).toLocaleString(undefined, {
+      month: "short",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  } catch {
+    return "";
+  }
+};
+
+const threadInitial = (thread) => {
+  const name = thread?.customer_name || thread?.subject || "?";
+  return String(name).trim().charAt(0).toUpperCase() || "?";
+};
 
 const buildWhatsappMessage = ({
   thread,
@@ -165,7 +258,41 @@ const isOwnerMessage = (message) => {
   return ["owner", "restaurant", "admin"].includes(normalized);
 };
 
+/* ─────────────────────────────────────────────
+   KPI ICON CONFIG
+───────────────────────────────────────────── */
+const KPI_ICONS = [
+  {
+    icon: <MdOutlineInbox size={18} />,
+    bg: "rgba(94,171,177,0.12)",
+    color: "#5eabb1",
+    accent: "#5eabb1",
+  },
+  {
+    icon: <MdOutlineCheckCircle size={18} />,
+    bg: "rgba(16,185,129,0.12)",
+    color: "#10b981",
+    accent: "#10b981",
+  },
+  {
+    icon: <MdOutlineTimelapse size={18} />,
+    bg: "rgba(245,158,11,0.12)",
+    color: "#f59e0b",
+    accent: "#f59e0b",
+  },
+  {
+    icon: <MdOutlineLabel size={18} />,
+    bg: "rgba(99,102,241,0.12)",
+    color: "#6366f1",
+    accent: "#6366f1",
+  },
+];
+
+/* ─────────────────────────────────────────────
+   COMPONENT
+───────────────────────────────────────────── */
 export default function QuestionsSuggestions() {
+  // ── STATE (identical to original) ──
   const [stats, setStats] = useState({
     openThreads: null,
     resolvedThisMonth: null,
@@ -194,11 +321,12 @@ export default function QuestionsSuggestions() {
   const [lastSentPreview, setLastSentPreview] = useState("");
   const [showWhatsappPreview, setShowWhatsappPreview] = useState(false);
 
+  // ── USER / LANGUAGE ──
   const userInformation = (() => {
     const storedUserInfo = getCookie("userInfo") || "{}";
     try {
       return JSON.parse(storedUserInfo);
-    } catch (error) {
+    } catch {
       return {};
     }
   })();
@@ -215,6 +343,7 @@ export default function QuestionsSuggestions() {
   const resolvedLanguage =
     activeLanguage || localStorage.getItem("activeLanguage") || "en";
 
+  // ── LABELS (identical to original) ──
   const labels = useMemo(() => {
     if (resolvedLanguage === "ar") {
       return {
@@ -237,11 +366,12 @@ export default function QuestionsSuggestions() {
         allTypes: "كل الأنواع",
         typeQuestion: "سؤال",
         typeSuggestion: "اقتراح",
-        threadListTitle: "قائمة المحادثات",
+        threadListTitle: "المحادثات",
         detailsTitle: "تفاصيل المحادثة",
         noSubject: "بدون عنوان",
         noThreads: "لا توجد أسئلة بعد",
         selectThread: "اختر محادثة لعرض التفاصيل",
+        selectThreadDesc: "انقر على أي محادثة في القائمة لعرض تفاصيلها والرد عليها.",
         failedToLoad: "فشل التحميل",
         replyPlaceholder: "اكتب الرد هنا...",
         send: "إرسال",
@@ -266,11 +396,14 @@ export default function QuestionsSuggestions() {
         whatsappPreviewSubtitle: "سيتم فتح واتساب وإرسال الرسالة التالية.",
         whatsappOpenConfirm: "فتح واتساب",
         whatsappConfirm: "هل تريد فتح واتساب لإرسال هذه الرسالة؟",
+        quickReplies: "ردود سريعة",
+        youLabel: "أنت",
+        customerMsgLabel: "العميل",
       };
     }
     return {
       title: "Questions & Suggestions",
-      subtitle: "Track customer questions and improve ideas.",
+      subtitle: "Manage customer conversations, answer questions, and track improvement ideas.",
       openThreads: "Open Threads",
       resolved: "Resolved",
       avgReply: "Avg. Reply Time",
@@ -288,13 +421,14 @@ export default function QuestionsSuggestions() {
       allTypes: "All types",
       typeQuestion: "Question",
       typeSuggestion: "Suggestion",
-      threadListTitle: "Thread list",
-      detailsTitle: "Thread details",
+      threadListTitle: "Conversations",
+      detailsTitle: "Thread Details",
       noSubject: "No subject",
-      noThreads: "No questions yet",
-      selectThread: "Select a thread to view",
+      noThreads: "No conversations yet",
+      selectThread: "Select a conversation",
+      selectThreadDesc: "Click any thread to view the full conversation and reply.",
       failedToLoad: "Failed to load",
-      replyPlaceholder: "Write your reply...",
+      replyPlaceholder: "Write your reply here...",
       send: "Send",
       updating: "Sending...",
       statusLabel: "Status",
@@ -302,26 +436,33 @@ export default function QuestionsSuggestions() {
       customerLabel: "Customer",
       channelLabel: "Channel",
       typeLabel: "Type",
-      messagesLabel: "Messages",
+      messagesLabel: "messages",
       noMessages: "No messages yet",
       phoneLabel: "Phone",
       whatsappLabel: "WhatsApp",
       whatsappSend: "Send via WhatsApp",
       whatsappHint: "Send message via WhatsApp",
-      previewTitle: "Message preview for customer",
-      previewSubtitle: "This exact message will be sent to the customer.",
-      previewConfirm: "Confirm send",
+      previewTitle: "Message preview",
+      previewSubtitle: "This message will be sent to the customer.",
+      previewConfirm: "Confirm & Send",
       previewCancel: "Cancel",
       sentMessageTitle: "Message sent",
-      whatsappPreviewTitle: "WhatsApp message preview",
-      whatsappPreviewSubtitle: "WhatsApp will open with this message.",
+      whatsappPreviewTitle: "WhatsApp preview",
+      whatsappPreviewSubtitle: "WhatsApp will open with this message pre-filled.",
       whatsappOpenConfirm: "Open WhatsApp",
       whatsappConfirm: "Open WhatsApp to send this message?",
+      quickReplies: "Quick replies",
+      youLabel: "You",
+      customerMsgLabel: "Customer",
     };
   }, [resolvedLanguage]);
 
+  const quickReplies =
+    resolvedLanguage === "ar" ? QUICK_REPLIES_AR : QUICK_REPLIES_EN;
+
+  // ── HANDLERS (identical to original) ──
   const handleOpenPreview = () => {
-      if (!replyMessage.trim()) return;
+    if (!replyMessage.trim()) return;
     setShowPreview(true);
   };
 
@@ -399,6 +540,7 @@ export default function QuestionsSuggestions() {
     [labels, stats]
   );
 
+  // ── EFFECTS (identical to original) ──
   useEffect(() => {
     setLoadingStats(true);
     getThreadStatsAdmin()
@@ -466,7 +608,7 @@ export default function QuestionsSuggestions() {
           setSelectedThreadId(list[0]?.id || null);
         }
       }
-    } catch (error) {
+    } catch {
       setErrorList(labels.failedToLoad);
       if (!append) {
         setThreads([]);
@@ -481,6 +623,7 @@ export default function QuestionsSuggestions() {
   useEffect(() => {
     setPagination((prev) => ({ ...prev, page: 1, total: null }));
     fetchThreads({ page: 1, append: false });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filters.status, filters.type, filters.q]);
 
   useEffect(() => {
@@ -524,7 +667,7 @@ export default function QuestionsSuggestions() {
         const messages = payload?.messages || payload?.data?.messages || [];
         setSelectedThreadDetails({ thread, messages });
       });
-    } catch (error) {
+    } catch {
       setErrorDetails(labels.failedToLoad);
     } finally {
       setSendingReply(false);
@@ -543,11 +686,12 @@ export default function QuestionsSuggestions() {
         const messages = payload?.messages || payload?.data?.messages || [];
         setSelectedThreadDetails({ thread, messages });
       });
-    } catch (error) {
+    } catch {
       setErrorDetails(labels.failedToLoad);
     }
   };
 
+  // ── DERIVED DATA ──
   const selectedThread = selectedThreadDetails?.thread;
   const selectedMessages = selectedThreadDetails?.messages || [];
   const firstCustomerMessage = selectedMessages.find(
@@ -569,33 +713,108 @@ export default function QuestionsSuggestions() {
       })
     : "";
 
+  const questionsCount = threads.filter((t) => t.type === "question").length;
+  const suggestionsCount = threads.filter((t) => t.type === "suggestion").length;
+  const newCount = threads.filter((t) => t.status === "new").length;
+
+  /* ─────────────────────────────────────────────
+     RENDER
+  ───────────────────────────────────────────── */
   return (
-    <Container dir={resolvedLanguage === "ar" ? "rtl" : "ltr"} $activeLanguage={resolvedLanguage}>
-      <Header>
-        <HeaderTitle>{labels.title}</HeaderTitle>
-        <HeaderSubtitle>{labels.subtitle}</HeaderSubtitle>
-      </Header>
+    <Container
+      dir={resolvedLanguage === "ar" ? "rtl" : "ltr"}
+      $activeLanguage={resolvedLanguage}
+    >
+      {/* ═══════════════════════════════════════
+          PREMIUM PAGE HEADER
+      ═══════════════════════════════════════ */}
+      <PageHeader>
+        <PageHeaderInner>
+          <PageHeaderLeft>
+            <PageTitle>{labels.title}</PageTitle>
+            <PageSubtitle>{labels.subtitle}</PageSubtitle>
+            <HeaderMetaRow>
+              {!loadingStats && stats.openThreads !== null && (
+                <MetaPill>
+                  <MdOutlineInbox size={12} />
+                  {stats.openThreads} open
+                </MetaPill>
+              )}
+              {!loadingStats && newCount > 0 && (
+                <MetaPill>
+                  <MdOutlineAutoAwesome size={12} />
+                  {newCount} new
+                </MetaPill>
+              )}
+              {questionsCount > 0 && (
+                <MetaPill>
+                  <MdOutlineQuestionAnswer size={12} />
+                  {questionsCount} {labels.typeQuestion.toLowerCase()}
+                </MetaPill>
+              )}
+              {suggestionsCount > 0 && (
+                <MetaPill>
+                  <MdOutlineLightbulb size={12} />
+                  {suggestionsCount} {labels.typeSuggestion.toLowerCase()}
+                </MetaPill>
+              )}
+            </HeaderMetaRow>
+          </PageHeaderLeft>
+        </PageHeaderInner>
+      </PageHeader>
 
-      <CardsGrid>
-        {normalizedStats.map((item) => (
-          <StatCard key={item.label}>
-            <StatLabel>{item.label}</StatLabel>
-            <StatValue>{loadingStats ? "--" : item.value}</StatValue>
-            <StatMeta>{item.meta}</StatMeta>
-          </StatCard>
+      {/* ═══════════════════════════════════════
+          KPI CARDS
+      ═══════════════════════════════════════ */}
+      <KpiGrid>
+        {normalizedStats.map((item, i) => (
+          <KpiCard key={item.label} $accent={KPI_ICONS[i]?.accent}>
+            <KpiIconBox $bg={KPI_ICONS[i]?.bg} $color={KPI_ICONS[i]?.color}>
+              {KPI_ICONS[i]?.icon}
+            </KpiIconBox>
+            <KpiValue>
+              {loadingStats ? "--" : item.value}
+            </KpiValue>
+            <KpiLabel>{item.label}</KpiLabel>
+            <KpiMeta>{item.meta}</KpiMeta>
+          </KpiCard>
         ))}
-      </CardsGrid>
+      </KpiGrid>
 
+      {/* ═══════════════════════════════════════
+          MAIN GRID
+      ═══════════════════════════════════════ */}
       <PageGrid>
+        {/* ─────────────────────────────────────
+            LEFT: Thread list
+        ───────────────────────────────────── */}
         <ThreadListPanel>
-          <SectionTitle>{labels.threadListTitle}</SectionTitle>
+          <ThreadListHeader>
+            <SectionTitle>{labels.threadListTitle}</SectionTitle>
+            {threads.length > 0 && (
+              <CountBadge>{threads.length}</CountBadge>
+            )}
+          </ThreadListHeader>
+
+          {/* Filters */}
           <FiltersRow>
-            <SearchInput
-              type="text"
-              value={searchInput}
-              onChange={(event) => setSearchInput(event.target.value)}
-              placeholder={labels.filterSearch}
-            />
+            <div style={{ position: "relative", flex: 1, minWidth: 140, display: "flex", alignItems: "center" }}>
+              <MdSearch
+                size={15}
+                style={{
+                  position: "absolute",
+                  left: 9,
+                  color: "#94a3b8",
+                  pointerEvents: "none",
+                }}
+              />
+              <SearchInput
+                type="text"
+                value={searchInput}
+                onChange={(event) => setSearchInput(event.target.value)}
+                placeholder={labels.filterSearch}
+              />
+            </div>
             <SelectInput
               value={filters.status}
               onChange={(event) =>
@@ -622,18 +841,34 @@ export default function QuestionsSuggestions() {
             </SelectInput>
           </FiltersRow>
 
-          {errorList && <ErrorText>{errorList}</ErrorText>}
+          {/* Error */}
+          {errorList && <ErrorText style={{ margin: "8px 14px" }}>{errorList}</ErrorText>}
+
+          {/* Loading skeletons */}
           {loadingList && (
-            <>
-              <SkeletonText />
-              <SkeletonText />
-              <SkeletonText />
-            </>
-          )}
-          {!loadingList && threads.length === 0 && !errorList && (
-            <ListEmpty>{labels.noThreads}</ListEmpty>
+            <div style={{ padding: "12px 14px" }}>
+              <SkeletonCard $h="62px" />
+              <SkeletonCard $h="62px" />
+              <SkeletonCard $h="62px" />
+            </div>
           )}
 
+          {/* Empty */}
+          {!loadingList && threads.length === 0 && !errorList && (
+            <EmptyStateBox>
+              <EmptyStateIcon>
+                <MdOutlineChat size={36} />
+              </EmptyStateIcon>
+              <EmptyStateTitle>{labels.noThreads}</EmptyStateTitle>
+              <EmptyStateDesc>
+                {resolvedLanguage === "ar"
+                  ? "عندما يرسل العملاء أسئلة أو اقتراحات، ستظهر هنا."
+                  : "When customers send questions or suggestions, they will appear here."}
+              </EmptyStateDesc>
+            </EmptyStateBox>
+          )}
+
+          {/* Thread list */}
           <ThreadList>
             {threads.map((thread) => (
               <ThreadListItem
@@ -641,28 +876,58 @@ export default function QuestionsSuggestions() {
                 selected={thread.id === selectedThreadId}
                 onClick={() => setSelectedThreadId(thread.id)}
               >
+                <ThreadAvatarBox $type={thread.type}>
+                  {threadInitial(thread)}
+                </ThreadAvatarBox>
+
                 <ThreadListMain>
-                  <ThreadTitle>{thread.subject || labels.noSubject}</ThreadTitle>
+                  <ThreadTitleRow>
+                    <ThreadTitle>
+                      {thread.subject || labels.noSubject}
+                    </ThreadTitle>
+                    <ThreadTime>
+                      {timeAgo(
+                        thread.last_message_at ||
+                          thread.lastMessageAt ||
+                          thread.updated_at ||
+                          thread.updatedAt ||
+                          thread.created_at ||
+                          thread.createdAt
+                      )}
+                    </ThreadTime>
+                  </ThreadTitleRow>
+
                   <ThreadSubtitle>
                     {thread.lastMessageSnippet || thread.preview || ""}
                   </ThreadSubtitle>
+
                   <ThreadMetaRow>
-                    <ThreadMetaText>
-                      {labels.customerLabel}: {thread.customer_name || "--"}
-                    </ThreadMetaText>
-                    {thread.customer_phone && (
+                    {thread.customer_name && (
                       <ThreadMetaText>
-                        {labels.phoneLabel}: {thread.customer_phone}
+                        {thread.customer_name}
                       </ThreadMetaText>
                     )}
-                    <ThreadMetaText>
-                      {thread.messageCount || 0} {labels.messagesLabel}
-                    </ThreadMetaText>
+                    {thread.customer_phone && (
+                      <ThreadMetaText style={{ color: "#94a3b8" }}>
+                        ·
+                      </ThreadMetaText>
+                    )}
+                    {thread.customer_phone && (
+                      <ThreadMetaText>{thread.customer_phone}</ThreadMetaText>
+                    )}
+                    {(thread.messageCount || 0) > 0 && (
+                      <ThreadMetaText style={{ color: "#94a3b8" }}>
+                        · {thread.messageCount} {labels.messagesLabel}
+                      </ThreadMetaText>
+                    )}
+                    <Badge variant={`type-${thread.type}`}>
+                      {typeLabels[thread.type] || thread.type || "—"}
+                    </Badge>
+                    <Badge variant={`status-${thread.status}`}>
+                      {statusLabels[thread.status] || thread.status || "—"}
+                    </Badge>
                   </ThreadMetaRow>
                 </ThreadListMain>
-                <Badge variant={`status-${thread.status}`}>
-                  {statusLabels[thread.status] || thread.status || "--"}
-                </Badge>
               </ThreadListItem>
             ))}
           </ThreadList>
@@ -674,32 +939,51 @@ export default function QuestionsSuggestions() {
           )}
         </ThreadListPanel>
 
+        {/* ─────────────────────────────────────
+            RIGHT: Thread details
+        ───────────────────────────────────── */}
         <ThreadDetailsPanel>
-          <SectionTitle>{labels.detailsTitle}</SectionTitle>
-          {errorDetails && <ErrorText>{errorDetails}</ErrorText>}
+          {/* Error */}
+          {errorDetails && (
+            <ErrorText style={{ margin: "16px" }}>{errorDetails}</ErrorText>
+          )}
+
+          {/* Loading */}
           {loadingDetails && (
-            <>
+            <div style={{ padding: "16px" }}>
               <SkeletonText />
-              <SkeletonText />
-              <SkeletonText />
-            </>
+              <SkeletonText style={{ width: "70%" }} />
+              <SkeletonCard $h="80px" />
+              <SkeletonCard $h="200px" />
+            </div>
           )}
+
+          {/* No thread selected */}
           {!loadingDetails && !selectedThread && !errorDetails && (
-            <ListEmpty>{labels.selectThread}</ListEmpty>
+            <EmptyStateBox>
+              <EmptyStateIcon>
+                <MdOutlineQuestionAnswer size={40} />
+              </EmptyStateIcon>
+              <EmptyStateTitle>{labels.selectThread}</EmptyStateTitle>
+              <EmptyStateDesc>{labels.selectThreadDesc}</EmptyStateDesc>
+            </EmptyStateBox>
           )}
-          {selectedThread && (
+
+          {/* Thread details content */}
+          {selectedThread && !loadingDetails && (
             <>
+              {/* Header */}
               <DetailsHeader>
-                <div>
+                <div style={{ flex: 1, minWidth: 0 }}>
                   <DetailsTitle>
                     {selectedThread.subject || labels.noSubject}
                   </DetailsTitle>
                   <DetailsSubtitle>
-                    {labels.customerLabel}: {selectedThread.customer_name || "--"}
+                    {labels.customerLabel}: {selectedThread.customer_name || "—"}
                   </DetailsSubtitle>
                   {selectedThread.customer_phone && (
                     <PhoneRow>
-                      {labels.phoneLabel}:
+                      <span>{labels.phoneLabel}:</span>
                       <PhoneValue>{selectedThread.customer_phone}</PhoneValue>
                       {getWhatsappLink(selectedThread.customer_phone) && (
                         <PhoneLink
@@ -707,6 +991,7 @@ export default function QuestionsSuggestions() {
                           target="_blank"
                           rel="noopener noreferrer"
                         >
+                          <MdOutlineWhatsapp size={13} />
                           {labels.whatsappLabel}
                         </PhoneLink>
                       )}
@@ -724,29 +1009,42 @@ export default function QuestionsSuggestions() {
                       selectedThread.status ||
                       labels.statusLabel}
                   </Badge>
-                  <Badge variant={`channel-${selectedThread.channel}`}>
-                    {selectedThread.channel || labels.channelLabel}
-                  </Badge>
+                  {selectedThread.channel && (
+                    <Badge variant={`channel-${selectedThread.channel}`}>
+                      {selectedThread.channel}
+                    </Badge>
+                  )}
                 </DetailsBadges>
               </DetailsHeader>
 
+              {/* Status change */}
               <StatusRow>
-                <StatusLabel>{labels.statusLabel}</StatusLabel>
+                <StatusLabel>{labels.statusLabel}:</StatusLabel>
                 <SelectInput
                   value={selectedThread.status || ""}
                   onChange={handleStatusChange}
+                  style={{ minWidth: 130 }}
                 >
-                  {STATUS_OPTIONS.filter((option) => option.value).map(
-                    (option) => (
-                      <option key={option.value} value={option.value}>
-                        {labels[option.labelKey]}
-                      </option>
-                    )
-                  )}
+                  {STATUS_OPTIONS.filter((opt) => opt.value).map((option) => (
+                    <option key={option.value} value={option.value}>
+                      {labels[option.labelKey]}
+                    </option>
+                  ))}
                 </SelectInput>
               </StatusRow>
 
+              {/* Chat timeline */}
               <ChatContainer>
+                {selectedMessages.length === 0 && (
+                  <EmptyStateBox style={{ padding: "24px 16px" }}>
+                    <EmptyStateIcon>
+                      <MdOutlineChat size={28} />
+                    </EmptyStateIcon>
+                    <EmptyStateTitle style={{ fontSize: "0.875rem" }}>
+                      {labels.noMessages}
+                    </EmptyStateTitle>
+                  </EmptyStateBox>
+                )}
                 {selectedMessages.map((message, index) => {
                   const ownerMessage = isOwnerMessage(message);
                   const timestamp = getMessageTime(message);
@@ -756,39 +1054,83 @@ export default function QuestionsSuggestions() {
                       isOwner={ownerMessage}
                       $activeLanguage={resolvedLanguage}
                     >
+                      <MessageSenderLabel>
+                        {ownerMessage ? labels.youLabel : labels.customerMsgLabel}
+                      </MessageSenderLabel>
                       <MessageBubble isOwner={ownerMessage}>
                         {getMessageText(message)}
                         {timestamp && (
-                          <MessageTime>
-                            {new Date(timestamp).toLocaleString()}
+                          <MessageTime isOwner={ownerMessage}>
+                            {formatDateTime(timestamp)}
                           </MessageTime>
                         )}
                       </MessageBubble>
                     </MessageRow>
                   );
                 })}
-                {selectedMessages.length === 0 && (
-                  <ListEmpty>{labels.noMessages}</ListEmpty>
-                )}
               </ChatContainer>
 
+              {/* Sent preview */}
+              {lastSentPreview && (
+                <div style={{ padding: "0 16px" }}>
+                  <SentMessageBox>
+                    <SentMessageTitle>
+                      <MdOutlineCheckCircle size={13} />
+                      {labels.sentMessageTitle}
+                    </SentMessageTitle>
+                    <SentMessageBody>{lastSentPreview}</SentMessageBody>
+                  </SentMessageBox>
+                </div>
+              )}
+
+              {/* Reply composer */}
               <ReplyArea>
-                <ReplyInput
-                  rows={3}
-                  value={replyMessage}
-                  onChange={(event) => setReplyMessage(event.target.value)}
-                  placeholder={labels.replyPlaceholder}
-                />
+                {/* Quick reply templates */}
+                <div>
+                  <TemplatesLabel style={{ marginBottom: 7 }}>
+                    <MdOutlineAutoAwesome size={13} />
+                    {labels.quickReplies}
+                  </TemplatesLabel>
+                  <TemplatesBar>
+                    {quickReplies.map((tpl) => (
+                      <TemplateChip
+                        key={tpl}
+                        type="button"
+                        onClick={() => setReplyMessage(tpl)}
+                        title={tpl}
+                      >
+                        {tpl}
+                      </TemplateChip>
+                    ))}
+                  </TemplatesBar>
+                </div>
+
+                {/* Textarea */}
+                <div>
+                  <ReplyInput
+                    rows={3}
+                    value={replyMessage}
+                    onChange={(event) => setReplyMessage(event.target.value)}
+                    placeholder={labels.replyPlaceholder}
+                  />
+                  <CharCount>{replyMessage.length} chars</CharCount>
+                </div>
+
+                {/* Actions */}
                 <ReplyActions>
                   {selectedThread.customer_phone && (
                     <WhatsappButton
-                      href={getWhatsappLink(selectedThread.customer_phone, previewMessage)}
+                      href={getWhatsappLink(
+                        selectedThread.customer_phone,
+                        previewMessage
+                      )}
                       target="_blank"
                       rel="noopener noreferrer"
                       title={labels.whatsappHint}
                       onClick={handleOpenWhatsappPreview}
                       $disabled={!replyMessage.trim()}
                     >
+                      <MdOutlineWhatsapp size={16} />
                       {labels.whatsappSend}
                     </WhatsappButton>
                   )}
@@ -797,6 +1139,7 @@ export default function QuestionsSuggestions() {
                     onClick={handleOpenPreview}
                     disabled={sendingReply || !replyMessage.trim()}
                   >
+                    <MdOutlineSend size={15} />
                     {sendingReply ? labels.updating : labels.send}
                   </SendButton>
                 </ReplyActions>
@@ -805,6 +1148,10 @@ export default function QuestionsSuggestions() {
           )}
         </ThreadDetailsPanel>
       </PageGrid>
+
+      {/* ═══════════════════════════════════════
+          MODALS (identical logic, improved styling)
+      ═══════════════════════════════════════ */}
       {showPreview && selectedThread && (
         <ModalOverlay onClick={() => setShowPreview(false)}>
           <ModalCard onClick={(event) => event.stopPropagation()}>
@@ -822,10 +1169,16 @@ export default function QuestionsSuggestions() {
           </ModalCard>
         </ModalOverlay>
       )}
+
       {showWhatsappPreview && selectedThread && (
         <ModalOverlay onClick={() => setShowWhatsappPreview(false)}>
           <ModalCard onClick={(event) => event.stopPropagation()}>
-            <ModalTitle>{labels.whatsappPreviewTitle}</ModalTitle>
+            <ModalTitle>
+              <span style={{ display: "inline-flex", alignItems: "center", gap: 8 }}>
+                <MdOutlineWhatsapp size={18} style={{ color: "#22c55e" }} />
+                {labels.whatsappPreviewTitle}
+              </span>
+            </ModalTitle>
             <ModalSubtitle>{labels.whatsappPreviewSubtitle}</ModalSubtitle>
             <ModalText>{previewMessage}</ModalText>
             <ModalActions>
@@ -835,7 +1188,16 @@ export default function QuestionsSuggestions() {
               >
                 {labels.previewCancel}
               </ModalButton>
-              <ModalPrimaryButton type="button" onClick={handleConfirmWhatsappOpen}>
+              <ModalPrimaryButton
+                type="button"
+                onClick={handleConfirmWhatsappOpen}
+                style={{
+                  background:
+                    "linear-gradient(135deg, #22c55e 0%, #16a34a 100%)",
+                  boxShadow: "0 4px 14px rgba(34,197,94,0.35)",
+                }}
+              >
+                <MdOutlineWhatsapp size={15} />
                 {labels.whatsappOpenConfirm}
               </ModalPrimaryButton>
             </ModalActions>

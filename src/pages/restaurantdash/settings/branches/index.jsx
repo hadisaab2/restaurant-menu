@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import {
   Table,
+  TableWrap,
   Th,
   Td,
   EditDeleteIcons,
@@ -72,44 +73,44 @@ export default function Branches() {
           <AddBranch onClick={() => setShowAddComponent(true)}>
             Add Branch
           </AddBranch>
-          <Table>
-            <thead>
-              <tr>
-                <Th>Name</Th>
-                <Th>Locations</Th>
-                <Th>PhoneNumber</Th>
-                <Th>Maps Link</Th>
-                <Th>Actions</Th>
-              </tr>
-            </thead>
-            <tbody>
-              {branches?.map((branch) => {
-                return (
-                  <tr>
-                    <Td>{branch.name}</Td>
-                    <Td>{branch.location}</Td>
-                    <Td>{branch.phone_number}</Td>
-
-                    <Td>
-                      <a href="#">{branch.mapLink}</a>
-                    </Td>
-
-                    <Td>
-                      <EditDeleteIcons>
-                        <Edit onClick={() => handleEdit(branch)} />
-                        <Delete
-                          onClick={() => {
-                            setSelectedIdForAction(branch.id);
-                            setIsPopUpOpen(true);
-                          }}
-                        />
-                      </EditDeleteIcons>
-                    </Td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </Table>
+          <TableWrap>
+            <Table>
+              <thead>
+                <tr>
+                  <Th>Name</Th>
+                  <Th>Locations</Th>
+                  <Th>PhoneNumber</Th>
+                  <Th>Maps Link</Th>
+                  <Th>Actions</Th>
+                </tr>
+              </thead>
+              <tbody>
+                {branches?.map((branch) => {
+                  return (
+                    <tr key={branch.id}>
+                      <Td>{branch.name}</Td>
+                      <Td>{branch.location}</Td>
+                      <Td>{branch.phone_number}</Td>
+                      <Td>
+                        <a href="#">{branch.mapLink}</a>
+                      </Td>
+                      <Td>
+                        <EditDeleteIcons>
+                          <Edit onClick={() => handleEdit(branch)} />
+                          <Delete
+                            onClick={() => {
+                              setSelectedIdForAction(branch.id);
+                              setIsPopUpOpen(true);
+                            }}
+                          />
+                        </EditDeleteIcons>
+                      </Td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </Table>
+          </TableWrap>
         </>
       )}
     </>

@@ -24,6 +24,7 @@ export const useGetCategories = ({ onSuccess, restaurantId }) => {
     queryFn: () => getCategories(restaurantId),
     retry: false,
     queryKey: [`categories-${restaurantId}`],
+    enabled: Boolean(restaurantId),
     onSuccess,
   });
 

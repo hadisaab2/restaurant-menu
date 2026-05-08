@@ -7,6 +7,12 @@ export const Container = styled.div`
   flex-direction: column;
   gap: 16px;
   margin-top: 20px;
+  box-sizing: border-box;
+
+  @media (max-width: ${breakingPoints.sm}px) {
+    width: 100%;
+    max-width: 100%;
+  }
 `;
 
 export const Header = styled.div`

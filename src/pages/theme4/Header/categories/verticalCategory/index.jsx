@@ -15,7 +15,7 @@ import {
 } from "./styles";
 import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
-import { useLogCategory } from "../../../../../apis/categories/logCategory";
+import { sendCategoryVisitLog } from "../../../../../apis/categories/logCategory";
 
 // Component for category item with image fallback
 const CategoryItem = ({ category, index, activeLanuguage, activeCategory, itemClick, carouselRefs, logoURL }) => {
@@ -84,11 +84,6 @@ export default function VerticalCategory({
     ? `https://storage.googleapis.com/ecommerce-bucket-testing/${restaurant.logoURL}`
     : null;
 
-  const { refetch } = useLogCategory({
-    CategoryId: activeCategory,
-  });
-
-
   const handleArrow = () => {
     if (carouselPosition < categories.length - 4) {
       setcarouselPosition(carouselPosition + 1);
@@ -101,10 +96,10 @@ export default function VerticalCategory({
     }
   }
 
-  const itemClick = (id,index) => {
+  const itemClick = (id, index) => {
+    sendCategoryVisitLog(id);
     setactiveCategory(id);
-    setcarouselPosition(index)
-
+    setcarouselPosition(index);
   };
 
   const carouselRefs = useRef([]); // Array to hold refs for each carousel item

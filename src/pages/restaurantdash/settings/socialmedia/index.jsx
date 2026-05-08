@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import {
   AddMediaForm,
   Table,
+  TableWrap,
   Th,
   Td,
   EditDeleteIcons,
@@ -75,38 +76,40 @@ export default function SocialMedia() {
           <AddMedia onClick={() => setShowAddComponent(true)}>
             Add Media
           </AddMedia>
-          <Table>
-            <thead>
-              <tr>
-                <Th>Name</Th>
-                <Th>Link</Th>
-                <Th>Actions</Th>
-              </tr>
-            </thead>
-            <tbody>
-              {media?.map((media) => {
-                return (
-                  <tr>
-                    <Td>{media.platform}</Td>
-                    <Td>
-                      <a href="#">{media.link}</a>
-                    </Td>
-                    <Td>
-                      <EditDeleteIcons>
-                        <Edit onClick={() => handleEdit(media)} />
-                        <Delete
-                          onClick={() => {
-                            setSelectedIdFoRAction(media.id);
-                            setIsPopupOpen(true);
-                          }}
-                        />
-                      </EditDeleteIcons>
-                    </Td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </Table>
+          <TableWrap>
+            <Table>
+              <thead>
+                <tr>
+                  <Th>Name</Th>
+                  <Th>Link</Th>
+                  <Th>Actions</Th>
+                </tr>
+              </thead>
+              <tbody>
+                {media?.map((media) => {
+                  return (
+                    <tr key={media.id}>
+                      <Td>{media.platform}</Td>
+                      <Td>
+                        <a href="#">{media.link}</a>
+                      </Td>
+                      <Td>
+                        <EditDeleteIcons>
+                          <Edit onClick={() => handleEdit(media)} />
+                          <Delete
+                            onClick={() => {
+                              setSelectedIdFoRAction(media.id);
+                              setIsPopupOpen(true);
+                            }}
+                          />
+                        </EditDeleteIcons>
+                      </Td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </Table>
+          </TableWrap>
         </>
       )}
     </>

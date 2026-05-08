@@ -15,7 +15,7 @@ import {
 } from "./styles";
 import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
-import { useLogCategory } from "../../../../../apis/categories/logCategory";
+import { sendCategoryVisitLog } from "../../../../../apis/categories/logCategory";
 
 export default function VerticalCategory({
   categories,
@@ -41,11 +41,6 @@ export default function VerticalCategory({
     (state) => state.restaurant?.[restaurantName]
   );
 
-  const { refetch } = useLogCategory({
-    CategoryId: activeCategory,
-  });
-
-
   const handleArrow = () => {
     if (carouselPosition < categories.length - 4) {
       setcarouselPosition(carouselPosition + 1);
@@ -58,10 +53,10 @@ export default function VerticalCategory({
     }
   }
 
-  const itemClick = (id,index) => {
+  const itemClick = (id, index) => {
+    sendCategoryVisitLog(id);
     setactiveCategory(id);
-    setcarouselPosition(index)
-
+    setcarouselPosition(index);
   };
 
   const carouselRefs = useRef([]); // Array to hold refs for each carousel item

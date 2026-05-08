@@ -1,29 +1,15 @@
 import axios from "axios";
 import { LOG_CATEGORY_URL } from "../URLs";
-import { useQuery } from "@tanstack/react-query";
-import { getCookie } from "../../utilities/manageCookies";
 
-const logCategory = async (id) => {
-  try {
-    const url = LOG_CATEGORY_URL(id);
-
-    const response = await axios.put(url);
-
-    return response;
-  } catch (error) {
-    throw error;
-  }
-};
-
-export const useLogCategory = ({ onSuccess, CategoryId }) => {
-  const { error, isLoading, status, data, refetch } = useQuery({
-    queryFn: () => logCategory(CategoryId),
-    retry: false,
-    queryKey: [`logcategories-${CategoryId}`],
-    onSuccess,
-    refetchOnWindowFocus: false,
-    enabled: !!CategoryId && CategoryId !== "all-items",
-  });
-
-  return { error, isLoading, status, response: data?.data, refetch };
-};
+/**
+ * Records a category view for dashboard “top categories by visits”.
+ * Calls PUT /categories/logs/:id (public route on the API).
+ * Safe to invoke on every user tap; ignores “all items” and invalid ids.
+ */
+export function sendCategoryVisitLog(categoryId) {
+  if (categoryId == null || categoryId === "") return;
+  if (categoryId === "all-items") return;
+  const id = typeof categoryId === "string" ? categoryId.trim() : String(categoryId);
+  if (!id || id === "all-items") return;
+  axios.put(LOG_CATEGORY_URL(id)).catch(() => {});
+}

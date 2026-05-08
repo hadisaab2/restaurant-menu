@@ -4,6 +4,7 @@ import {
   Container,
   Title,
   Table,
+  TableWrap,
   Th,
   Td,
   EditDeleteIcons,
@@ -112,46 +113,48 @@ export default function WorkingHours() {
   return (
     <Container>
       <Title>Working Hours</Title>
-      <p style={{ marginLeft: 20, marginTop: 8, color: "#666", fontSize: 14 }}>
+      <p style={{ marginTop: 8, color: "#64748b", fontSize: 13, lineHeight: 1.5 }}>
         Add schedules with multiple weekdays sharing the same hours (e.g. Mon–Fri 9AM–6PM).
       </p>
       <AddButton onClick={openAdd}>Add schedule</AddButton>
       {isLoading ? (
-        <p style={{ marginLeft: 20, marginTop: 16 }}>Loading…</p>
+        <p style={{ marginTop: 16, color: "#64748b", fontSize: 14 }}>Loading…</p>
       ) : (
-        <Table>
-          <thead>
-            <tr>
-              <Th>Days</Th>
-              <Th>Start</Th>
-              <Th>End</Th>
-              <Th>Actions</Th>
-            </tr>
-          </thead>
-          <tbody>
-            {rows.length === 0 ? (
+        <TableWrap>
+          <Table>
+            <thead>
               <tr>
-                <Td colSpan={4} style={{ color: "#999" }}>
-                  No working hours set. Add a schedule above.
-                </Td>
+                <Th>Days</Th>
+                <Th>Start</Th>
+                <Th>End</Th>
+                <Th>Actions</Th>
               </tr>
-            ) : (
-              rows.map((row) => (
-                <tr key={row.id}>
-                  <Td>{formatDays(row.days)}</Td>
-                  <Td>{formatTime(row.start_time)}</Td>
-                  <Td>{formatTime(row.end_time)}</Td>
-                  <Td>
-                    <EditDeleteIcons>
-                      <Edit onClick={() => openEdit(row)} />
-                      <Delete onClick={() => handleDelete(row.id)} />
-                    </EditDeleteIcons>
+            </thead>
+            <tbody>
+              {rows.length === 0 ? (
+                <tr>
+                  <Td colSpan={4} style={{ color: "#94a3b8" }}>
+                    No working hours set. Add a schedule above.
                   </Td>
                 </tr>
-              ))
-            )}
-          </tbody>
-        </Table>
+              ) : (
+                rows.map((row) => (
+                  <tr key={row.id}>
+                    <Td>{formatDays(row.days)}</Td>
+                    <Td>{formatTime(row.start_time)}</Td>
+                    <Td>{formatTime(row.end_time)}</Td>
+                    <Td>
+                      <EditDeleteIcons>
+                        <Edit onClick={() => openEdit(row)} />
+                        <Delete onClick={() => handleDelete(row.id)} />
+                      </EditDeleteIcons>
+                    </Td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </Table>
+        </TableWrap>
       )}
 
       {showForm && (
