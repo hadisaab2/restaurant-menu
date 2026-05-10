@@ -26,6 +26,7 @@ import {
   TabsContainer,
   Tabs,
   Tab,
+  TableWrapper,
   Table,
   TableHeader,
   TableHeaderCell,
@@ -1277,7 +1278,7 @@ export default function Analytics() {
         <TrendsSection>
           <SectionTitle>Source / Channel Analytics</SectionTitle>
           {sources && sources.length > 0 ? (
-            <div style={{ background: "white", borderRadius: "12px", overflow: "hidden" }}>
+            <TableWrapper>
               <Table>
                 <TableHeader>
                   <tr>
@@ -1304,7 +1305,7 @@ export default function Analytics() {
                   ))}
                 </tbody>
               </Table>
-            </div>
+            </TableWrapper>
           ) : (
             <EmptyState>No source data available</EmptyState>
           )}
@@ -1386,7 +1387,7 @@ export default function Analytics() {
                   <h4 style={{ margin: "0 0 16px 0", fontSize: "16px", fontWeight: 600 }}>
                     Opportunities: High Views, Low Add-to-Cart Rate
                   </h4>
-                  <Table>
+                  <TableWrapper><Table>
                     <TableHeader>
                       <tr>
                         <TableHeaderCell>Product Name</TableHeaderCell>
@@ -1412,7 +1413,7 @@ export default function Analytics() {
                         </TableRow>
                       ))}
                     </tbody>
-                  </Table>
+                  </Table></TableWrapper>
                 </div>
               )}
 
@@ -1421,7 +1422,7 @@ export default function Analytics() {
                   <h4 style={{ margin: "0 0 16px 0", fontSize: "16px", fontWeight: 600 }}>
                     Opportunities: High Add-to-Cart, Low Order Rate
                   </h4>
-                  <Table>
+                  <TableWrapper><Table>
                     <TableHeader>
                       <tr>
                         <TableHeaderCell>Product Name</TableHeaderCell>
@@ -1447,7 +1448,7 @@ export default function Analytics() {
                         </TableRow>
                       ))}
                     </tbody>
-                  </Table>
+                  </Table></TableWrapper>
                 </div>
               )}
             </div>
@@ -1461,7 +1462,7 @@ export default function Analytics() {
         <TrendsSection>
           <SectionTitle>Branch Analytics</SectionTitle>
           {branches && branches.length > 0 ? (
-            <div style={{ background: "white", borderRadius: "12px", overflow: "hidden" }}>
+            <TableWrapper>
               <Table>
                 <TableHeader>
                   <tr>
@@ -1486,7 +1487,7 @@ export default function Analytics() {
                   ))}
                 </tbody>
               </Table>
-            </div>
+            </TableWrapper>
           ) : (
             <EmptyState>No branch data available</EmptyState>
           )}

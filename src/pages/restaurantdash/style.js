@@ -190,9 +190,10 @@ export const Content = styled.main`
   box-sizing: border-box;
 
   @media (max-width: ${breakingPoints.sm}px) {
-    padding-left: max(16px, env(safe-area-inset-left, 0px));
-    padding-right: max(16px, env(safe-area-inset-right, 0px));
+    padding-left: max(12px, env(safe-area-inset-left, 0px));
+    padding-right: max(12px, env(safe-area-inset-right, 0px));
     padding-bottom: calc(60px + env(safe-area-inset-bottom, 0px));
+    overflow-x: hidden;
   }
 `;
 
@@ -219,10 +220,11 @@ export const Header = styled.header`
   @media (max-width: ${breakingPoints.sm}px) {
     width: 100%;
     max-width: 100%;
-    margin-top: 14px;
-    min-height: 52px;
+    margin-top: 10px;
+    min-height: 50px;
     border-radius: 10px;
-    padding-right: 4px;
+    padding: 0 4px 0 0;
+    gap: 4px;
   }
 `;
 
@@ -337,22 +339,23 @@ export const Username = styled.span`
 
 export const Logout = styled.button`
   outline: none;
-  border: 1px solid rgba(255,255,255,0.12);
+  border: 1px solid rgba(148,163,184,0.3);
   border-radius: 8px;
   padding: 7px 14px;
   font-size: 13px;
   font-weight: 500;
-  color: ${T.sidebarText};
+  color: #64748b;
   background: transparent;
   cursor: pointer;
   transition: all 0.15s;
   white-space: nowrap;
   flex-shrink: 0;
+  margin-right: 16px;
 
   &:hover {
-    background: rgba(255,255,255,0.08);
-    color: #fff;
-    border-color: rgba(255,255,255,0.22);
+    background: #fef2f2;
+    color: #ef4444;
+    border-color: #fca5a5;
   }
 
   @media (max-width: ${breakingPoints.sm}px) {

@@ -274,6 +274,104 @@ Legend: **●** = implemented in that theme’s **`index.jsx` / obvious wiring; 
 
 ---
 
+## Customer-facing feature list (reference)
+
+Capabilities exist **per theme** (see sections above). This list is the **union** of what the product supports across templates.
+
+| Area | Features |
+|------|-----------|
+| **Browse** | Categories (priority order), optional **All Items** pseudo-category, in-list **search**, optional **hero / menu slider** (`sliderImages` + flags). |
+| **Product** | Grid or list layouts, **EN/AR** labels, **RTL**, image **carousel** on product detail, **form options** / legacy `form_json`, specials & **discounts**, **out-of-stock**, notes, **product view logging** where wired. |
+| **Deep links** | **`?categoryId=`**, **`?productId=`** (and sometimes **`?page=`**) for shareable URLs. |
+| **Cart** | Add/update/remove lines, distinct line per option set, Redux + **24h persist**, optional **customer** profile / wishlist entry points on themes 3–4. |
+| **Checkout** | Multi-step **wizard** (cart → order type → details → review), **delivery / dine-in / takeaway** (via `features` + backend), **branch** & **region** when configured, **table** / address fields, **logged-in customer** prefill (`CUSTOMER_ME_URL`), order submit & **analytics** (`trackCheckoutStart`, `trackOrderPlaced`). |
+| **Restaurant** | **Location / branches** popup, **share menu** link, **PWA install** prompt, **feedback** & **contact** flows on supported themes. |
+| **Marketing home** (themes 3–4, 5) | **Badges**, **value cards** (“Why us”), **stats** block, **about us** story (API-driven sections; home layout varies). |
+| **Theme 4 only** | **`categoryDisplayMode`**: **classic** vs **shop** one-page browsing; extra **section background** colors in JSON `theme`. |
+| **Theme 5 only** | **Welcome screen**, **CSS variable** theming from admin palette, **Elegant** chrome (header / hero / tabs / more sheet). |
+| **Ops** | **`is_valid` / subscription** UX, visit **analytics** (`trackVisit` / `trackPageView`) on some themes. |
+
+---
+
+## Super Admin — restaurant & template settings
+
+Super Admin manages restaurants under **`/superadmin`** → **Restaurants** UI: **`src/pages/superadmin/restaurants/index.jsx`**.
+
+Template **definitions** (which templates exist in the **Template** dropdown, default **feature** toggles, and **theme color keys**) live in **`src/pages/superadmin/restaurants/themedata.js`** (`export const templates`).
+
+### Templates available in the Super Admin UI
+
+The dropdown is built from **`themedata.js`**. It includes **`template1`–`template4`** and **`template6`**. There is **no `template5` entry** in that file, so **template 5 cannot be chosen from this screen** even though the customer app supports **`Theme5`** when **`template_id === 5`** is set (e.g. via API/database). Treat **template 5** as **outside** the current Super Admin picker unless `themedata.js` is updated.
+
+| `template_id` | Name in dropdown | `themedata` colors | Same 5 `features.*` toggles | Template-only Super Admin UI (see table below) |
+|---------------|------------------|-------------------|-----------------------------|-----------------------------------------------|
+| **1** | template1 | “short” list (shared with 2 & 6) | yes | All Items + style; menu slider; _(no separate About/stats blocks)_ |
+| **2** | template2 | short list | yes | All Items + style; menu slider; product carousel style |
+| **3** | template3 | extended (home/nav/hero keys) | yes | All Items + style; Show About Us; badges, value cards, about content, stats; product carousel style |
+| **4** | template4 | extended | yes | Same content blocks as 3 + **categoryDisplayMode** + **section background** color fields; Show About Us |
+| **5** | — | _not in file_ | _n/a_ | **Not configurable** in this UI—use API/DB to set `template_id` and theme JSON |
+| **6** | template6 | short list (same keys as 1 & 2) | yes | **Only** global fields + shared toggles; **no** “All Items” checkbox in SA (see Gaps) |
+
+### Feature toggles (stored in `restaurant.features` JSON)
+
+For **every template in `themedata.js`**, the same five keys are exposed as checkboxes (defaults **true** in config):
+
+| Feature key | Purpose (customer app) |
+|-------------|-------------------------|
+| **`cart`** | Enable cart UI and ordering flows. |
+| **`install_app`** | Show PWA / install prompt where the theme implements it. |
+| **`delivery_order`** | Allow delivery order type in checkout (with backend rules). |
+| **`dinein_order`** | Dine-in order type. |
+| **`takeaway_order`** | Takeaway / pickup order type. |
+
+Submit handlers normalize **`features`** into booleans on save (see `formatted form data` / `show_all_items_category` logic in `index.jsx`).
+
+### Global restaurant fields (all templates)
+
+These appear on the add/edit restaurant form regardless of template (non-exhaustive):
+
+- **Credentials & profile:** username, password (on create), phone, email, restaurant **name**, upload image, **default_language**.
+- **Commercial / status:** **`is_valid`**, **`has_slider`**, **payment** fields (`payment_date`, `amount`, `is_paid`).
+- **Presentation:** **Font**, **font size**, **category type** (`vertical-category` \| `horizantal-withoutIcon`) — drives header category controls on customer themes.
+- **Slogan** fields (EN/AR, subtext) — used where the **HomePage** / hero consumes them.
+- **`business_type`:** `restaurant` vs `business` (product-style wording in places).
+- **Theme colors:** For the **selected** template, one **required** **hex** field per key listed in **`themedata.js`** `colors[]` for that id (labels match JSON keys on the restaurant record: `theme.mainColor`, etc.).
+
+### Super Admin — settings shown only for certain templates
+
+| Setting | Shown when `template_id` is | What it controls |
+|---------|------------------------------|------------------|
+| **Badges** (CRUD list) | **3 or 4** | Hero / marketing badges (API `badges`). |
+| **Value cards — section labels + cards** | **3 or 4** | “Why us” / value section (`value-cards` APIs). |
+| **About us — section + value rows** | **3 or 4** (detailed editor inside the same block) | About popup content (`about-us` APIs). |
+| **Stats section** | **3 or 4** | “Trusted by…” stats (`stats-section` APIs). |
+| **`categoryDisplayMode`** | **4 only** | **`classic`** vs **`shop`** (stored in `theme.categoryDisplayMode`). |
+| **Section backgrounds** (hero, welcome, value cards, categories, featured, locations, social, how-it-works, footer, …) | **4 only** | Optional **`theme.<section>…` hex** overrides (see form labels in `index.jsx`). |
+| **Show About Us** (checkbox) | **3 or 4** | **`show_about_us`** — navbar / about entry where implemented. **Note:** save payload also allows **`show_about_us`** for **template 5** in code, but there is **no** template-5 checkbox in the UI. |
+| **Show All Items Category** + **All Items Style** (`grid` \| `list`) | **1, 2, or 3** | **`show_all_items_category`**, **`all_items_style`**. Customer themes **4–6** may still read these fields from the API if set elsewhere — **template 6** is **not** included in this Super Admin condition. |
+| **Show slider on menu** (label references theme3-style carousel; images from Restaurant Dashboard → Slider) | **1 or 2** | **`show_slider_image`**. **Submit** only sends this field for templates **1 and 2** (`show_slider_image: undefined` for others in the formatter). |
+| **Product details carousel style** (`normal` \| `pagination-fraction` \| `effect-cards`) | **2 or 3** | **`product_details_carousel_style`**. |
+
+### Per-template theme color keys (`themedata.js`)
+
+Use this when extending the form or debugging `theme` JSON.
+
+- **Template 1 & 2 & 6** (same list in `themedata`):  
+  `mainColor`, `backgroundColor`, `textColor`, `categoryActive`, `categoryActiveText`, `categoryActiveIcon`, `categoryUnActive`, `categoryUnactiveIcon`, `BoxColor`, `BoxTextColor`, `BoxPriceColor`, `languageTextColor`, `popupTextColor`, `popupbackgroundColor`, `searchbackground`, `searchTextColor`, `languagebackground`, `formColor`, `sidebartext`, `sidebarbackground`, `sidebarsearch`, `sidebarsearchText`, `popupbuttonText`, `bottomTabBarBackgroundColor`, `homepageCategoriesBackgroundColor`.
+
+- **Template 3 & 4** (extended set):  
+  Same-style keys as above, plus: `borderColor`, `homepageBackgroundColor`, `navigationBarBackgroundColor`, `slidingButtonBackgroundColor`, `slidingButtonTextColor`, `hplocationBackgroundColor`, `hplocationTextColor`, `bottomTabBarBackgroundColor`, `homepageCategoriesBackgroundColor` (overlap with shorter list; **3/4** block in code is the superset for home/nav/hero tuning).
+
+**Template 5:** No row in **`themedata.js`** — Super Admin does not render a color grid for it. **Theme 5** maps many optional **`theme.*`** keys to **CSS variables** in code (`theme5/index.jsx` / `colorUtils.js`); alignment with Super Admin would require adding template **5** to **`themedata.js`** and the form.
+
+### Gaps / inconsistencies to know
+
+- **Template 5:** Not in **`templates`** array → not selectable; **theme** colors not editable in SA unless added.
+- **Template 6:** Selectable as **`template6`**, shares **themedata** with **1/2** for colors and features; **“Show All Items”** checkbox is **not** shown for template **6** in SA, while **`theme6/index.jsx`** enables all-items when **`template_id` is 2 or 6**.
+- **`show_slider_image`:** Submitted only for **1 & 2**; themes **3+** use sliders from other flags/data paths in the customer app—keep API and UI in sync when changing.
+
+---
+
 ## Redux
 
 **`src/redux/store.js`:**
@@ -303,7 +401,9 @@ Add new backend routes by extending **`URLs.js`** and mirroring the existing hoo
 
 ## Super admin
 
-**`src/pages/superadmin/`** — platform-level management (restaurants, themes, etc. — explore under that folder for screens).
+**`src/pages/superadmin/`** — platform-level management (restaurants list, add/edit restaurant, Excel import, delete).
+
+Detailed **template picker, theme colors, feature flags, and template-conditional fields** are documented in [**Super Admin — restaurant & template settings**](#super-admin--restaurant--template-settings) above (`src/pages/superadmin/restaurants/`).
 
 ---
 

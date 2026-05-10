@@ -832,29 +832,49 @@ export default function Restaurants() {
             selectedIdForAction={selectedIdForAction}
             setIsOpen={setIsPopupOpen}
           />
-          <div style={{ display: "flex", gap: "12px", marginBottom: "20px", flexWrap: "wrap" }}>
+          <div style={{ display: "flex", gap: "12px", marginBottom: "20px", flexWrap: "wrap", alignItems: "center" }}>
             <AddRestaurant onClick={() => setShowAddComponent(true)}>
               Add Restaurant
             </AddRestaurant>
             <Button
               variant="contained"
-              style={{
-                backgroundColor: "#4caf50",
+              sx={{
+                background: "linear-gradient(135deg, #10b981 0%, #059669 100%)",
                 color: "white",
                 textTransform: "capitalize",
+                borderRadius: "10px",
+                fontWeight: 600,
+                fontSize: "14px",
+                padding: "8px 20px",
+                boxShadow: "0 4px 14px rgba(16,185,129,0.3)",
+                "&:hover": {
+                  boxShadow: "0 6px 20px rgba(16,185,129,0.4)",
+                  transform: "translateY(-1px)",
+                },
               }}
               onClick={() => setShowExcelModal(true)}
             >
-              Add Restaurant via Excel
+              Add via Excel
             </Button>
           </div>
-          <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2, alignItems: "center", mb: 2 }}>
+          <Box sx={{
+            display: "flex",
+            flexWrap: "wrap",
+            gap: 1.5,
+            alignItems: "center",
+            mb: 2.5,
+            p: 2,
+            background: "#fff",
+            borderRadius: "12px",
+            boxShadow: "0 4px 20px rgba(15,23,42,0.07)",
+            border: "1px solid rgba(148,163,184,0.18)",
+          }}>
             <TextField
               size="small"
               placeholder="Search name, username, phone..."
               value={gridSearch}
               onChange={(e) => setGridSearch(e.target.value)}
-              sx={{ minWidth: 220 }}
+              sx={{ minWidth: 200, flex: 1 }}
             />
             <TextField
               size="small"
@@ -879,9 +899,11 @@ export default function Restaurants() {
                 <Checkbox
                   checked={paymentDatePassedOnly}
                   onChange={(e) => setPaymentDatePassedOnly(e.target.checked)}
+                  sx={{ "&.Mui-checked": { color: "#5eabb1" } }}
                 />
               }
-              label="Need renewal (payment date passed)"
+              label="Need renewal"
+              sx={{ "& .MuiFormControlLabel-label": { fontSize: "13px", color: "#64748b" } }}
             />
           </Box>
           {/* <Table>
@@ -922,16 +944,25 @@ export default function Restaurants() {
             handleEdit={handleEdit}
           />
           <Button
-            style={{
+            sx={{
               alignSelf: "flex-start",
-              marginLeft: "20px",
-              marginTop: "40px",
+              marginTop: "32px",
               textTransform: "capitalize",
-              width: "150px",
-              color: "white",
-              backgroundColor: "turquoise",
+              width: "140px",
+              color: "#64748b",
+              background: "white",
+              border: "1px solid rgba(148,163,184,0.3)",
+              borderRadius: "10px",
+              fontWeight: 500,
+              fontSize: "14px",
+              boxShadow: "0 2px 8px rgba(15,23,42,0.04)",
+              "&:hover": {
+                background: "#fef2f2",
+                borderColor: "#fca5a5",
+                color: "#ef4444",
+              },
             }}
-            variant="contained"
+            variant="outlined"
             onClick={() => {
               localStorage.removeItem("isLoggedIn");
               deleteCookie("accessToken");
@@ -1803,7 +1834,20 @@ export default function Restaurants() {
             )}
             <LoadingButton
               onClick={handleAddRestaurant}
-              style={{ backgroundColor: "turquoise", color: "white" }}
+              sx={{
+                background: "linear-gradient(135deg, #5eabb1 0%, #4a9ba0 100%)",
+                color: "white",
+                borderRadius: "10px",
+                fontWeight: 600,
+                fontSize: "14px",
+                padding: "10px 32px",
+                boxShadow: "0 4px 14px rgba(94,171,177,0.3)",
+                textTransform: "capitalize",
+                "&:hover": {
+                  boxShadow: "0 6px 20px rgba(94,171,177,0.4)",
+                  transform: "translateY(-1px)",
+                },
+              }}
               loading={isPending || isEditing}
             >
               {isEditMode ? "Edit Restaurant" : "Add Restaurant"}

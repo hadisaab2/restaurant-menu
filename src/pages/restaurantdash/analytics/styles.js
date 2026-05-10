@@ -13,6 +13,8 @@ export const Container = styled.div`
   @media (max-width: ${breakingPoints.sm}px) {
     width: 100%;
     max-width: 100%;
+    gap: 14px;
+    margin-top: 14px;
   }
 `;
 
@@ -21,6 +23,11 @@ export const Header = styled.div`
   border-radius: 12px;
   padding: 20px 24px;
   box-shadow: 0 4px 12px rgba(15, 23, 42, 0.06);
+
+  @media (max-width: ${breakingPoints.sm}px) {
+    padding: 16px 14px;
+    border-radius: 10px;
+  }
 `;
 
 export const HeaderTitle = styled.h2`
@@ -28,6 +35,10 @@ export const HeaderTitle = styled.h2`
   font-size: 24px;
   font-weight: 700;
   color: #0f172a;
+
+  @media (max-width: ${breakingPoints.sm}px) {
+    font-size: 20px;
+  }
 `;
 
 export const HeaderActions = styled.div`
@@ -35,6 +46,12 @@ export const HeaderActions = styled.div`
   align-items: center;
   gap: 12px;
   margin-top: 16px;
+  flex-wrap: wrap;
+
+  @media (max-width: ${breakingPoints.sm}px) {
+    gap: 8px;
+    margin-top: 12px;
+  }
 `;
 
 export const ExportButton = styled.button`
@@ -72,6 +89,11 @@ export const FiltersContainer = styled.div`
   border-radius: 12px;
   padding: 20px 24px;
   box-shadow: 0 4px 12px rgba(15, 23, 42, 0.06);
+
+  @media (max-width: ${breakingPoints.sm}px) {
+    padding: 14px 12px;
+    border-radius: 10px;
+  }
 `;
 
 export const FilterRow = styled.div`
@@ -164,6 +186,12 @@ export const KPICard = styled.div`
     transform: translateY(-2px);
     box-shadow: 0 8px 16px rgba(15, 23, 42, 0.1);
   }
+
+  @media (max-width: ${breakingPoints.sm}px) {
+    padding: 14px 12px;
+    border-radius: 10px;
+    gap: 4px;
+  }
 `;
 
 export const KPILabel = styled.div`
@@ -178,6 +206,10 @@ export const KPIValue = styled.div`
   font-size: 28px;
   font-weight: 700;
   color: #0f172a;
+
+  @media (max-width: ${breakingPoints.sm}px) {
+    font-size: 22px;
+  }
 `;
 
 export const KPIChange = styled.div`
@@ -191,6 +223,11 @@ export const TrendsSection = styled.div`
   border-radius: 12px;
   padding: 24px;
   box-shadow: 0 4px 12px rgba(15, 23, 42, 0.06);
+
+  @media (max-width: ${breakingPoints.sm}px) {
+    padding: 16px 12px;
+    border-radius: 10px;
+  }
 `;
 
 export const SectionTitle = styled.h3`
@@ -262,10 +299,23 @@ export const Tab = styled.button`
     color: #3b82f6;
     background: #f8fafc;
   }
+
+  @media (max-width: ${breakingPoints.sm}px) {
+    padding: 12px 14px;
+    font-size: 13px;
+  }
+`;
+
+export const TableWrapper = styled.div`
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border-radius: 8px;
 `;
 
 export const Table = styled.table`
   width: 100%;
+  min-width: 540px;
   border-collapse: collapse;
   background: white;
   border-radius: 8px;
@@ -314,6 +364,11 @@ export const FunnelStep = styled.div`
   padding: 16px;
   background: #f8fafc;
   border-radius: 8px;
+
+  @media (max-width: ${breakingPoints.sm}px) {
+    gap: 10px;
+    padding: 12px 10px;
+  }
 `;
 
 export const FunnelStepLabel = styled.div`
