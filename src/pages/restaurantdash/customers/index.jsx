@@ -1,12 +1,20 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useMemo } from "react";
 import {
   Container,
-  Header,
-  HeaderTitle,
+  Hero,
+  HeroTitle,
+  HeroSubtitle,
+  KPIGrid,
+  KPICard,
+  KPILabel,
+  KPIValue,
+  KPIHint,
   SearchContainer,
   SearchInput,
   CustomersTable,
+  TableCount,
   TableHeader,
+  THCell,
   TableRow,
   TableCell,
   PhoneCell,
@@ -367,9 +375,33 @@ export default function Customers() {
 
   return (
     <Container>
-      <Header>
-        <HeaderTitle>Customers</HeaderTitle>
-      </Header>
+      <Hero>
+        <HeroTitle>Customers</HeroTitle>
+        <HeroSubtitle>View all customers who interacted with your menu through orders, feedback, or messages</HeroSubtitle>
+      </Hero>
+
+      <KPIGrid>
+        <KPICard $accent="#5eabb1" $delay="0s">
+          <KPILabel>Total Customers</KPILabel>
+          <KPIValue>{customers.length}</KPIValue>
+          <KPIHint>Unique customers found</KPIHint>
+        </KPICard>
+        <KPICard $accent="#3b82f6" $delay="0.05s">
+          <KPILabel>With Orders</KPILabel>
+          <KPIValue>{customers.filter(c => (c.orderCount || 0) > 0).length}</KPIValue>
+          <KPIHint>Placed at least 1 order</KPIHint>
+        </KPICard>
+        <KPICard $accent="#f59e0b" $delay="0.1s">
+          <KPILabel>With Feedback</KPILabel>
+          <KPIValue>{customers.filter(c => (c.feedbackCount || 0) > 0).length}</KPIValue>
+          <KPIHint>Left feedback or rating</KPIHint>
+        </KPICard>
+        <KPICard $accent="#8b5cf6" $delay="0.15s">
+          <KPILabel>With Threads</KPILabel>
+          <KPIValue>{customers.filter(c => (c.threadCount || 0) > 0).length}</KPIValue>
+          <KPIHint>Sent questions or suggestions</KPIHint>
+        </KPICard>
+      </KPIGrid>
 
       <SearchContainer>
         <SearchInput
@@ -385,15 +417,17 @@ export default function Customers() {
         <EmptyState>No customers found.</EmptyState>
       ) : (
         <CustomersTable>
+          <TableCount><strong>{customers.length}</strong> customer{customers.length !== 1 ? "s" : ""}</TableCount>
+          <div style={{ overflowX: "auto" }}>
           <TableHeader>
-            <TableCell>Phone</TableCell>
-            <TableCell>Name</TableCell>
-            <TableCell>Sources</TableCell>
-            <TableCell>Orders</TableCell>
-            <TableCell>Feedbacks</TableCell>
-            <TableCell>Threads</TableCell>
-            <TableCell>Last Activity</TableCell>
-            <TableCell>Action</TableCell>
+            <THCell>Phone</THCell>
+            <THCell>Name</THCell>
+            <THCell>Sources</THCell>
+            <THCell>Orders</THCell>
+            <THCell>Feedbacks</THCell>
+            <THCell>Threads</THCell>
+            <THCell>Last Activity</THCell>
+            <THCell>Action</THCell>
           </TableHeader>
           {customers.map((customer) => (
             <TableRow key={customer.phone}>
@@ -409,7 +443,7 @@ export default function Customers() {
               <TableCell>{customer.orderCount || 0}</TableCell>
               <TableCell>{customer.feedbackCount || 0}</TableCell>
               <TableCell>{customer.threadCount || 0}</TableCell>
-              <TableCell>{formatRelativeDate(customer.lastActivity)}</TableCell>
+              <TableCell style={{ fontSize: 12, color: "#64748b" }}>{formatRelativeDate(customer.lastActivity)}</TableCell>
               <TableCell>
                 <ChatButton onClick={() => handleOpenChat(customer)}>
                   Chat
@@ -417,6 +451,7 @@ export default function Customers() {
               </TableCell>
             </TableRow>
           ))}
+          </div>
         </CustomersTable>
       )}
 

@@ -75,33 +75,31 @@ export const Container = styled.div`
    PAGE HEADER
 ───────────────────────────────────────────── */
 export const PageHeader = styled.div`
-  background: linear-gradient(
-    135deg,
-    #0c0f1d 0%,
-    #1a2238 55%,
-    #0c1630 100%
-  );
+  background:
+    radial-gradient(ellipse at 80% 50%, rgba(94,171,177,0.18) 0%, transparent 55%),
+    radial-gradient(ellipse at 15% 80%, rgba(139,92,246,0.14) 0%, transparent 50%),
+    linear-gradient(135deg, #0c0f1d 0%, #1a2238 55%, #0c1630 100%);
   border-radius: 20px;
   padding: 28px 28px 24px;
   color: #f8fafc;
   position: relative;
   overflow: hidden;
-  box-shadow: 0 16px 40px rgba(10, 15, 40, 0.25);
+  box-shadow: 0 16px 40px rgba(10, 15, 40, 0.28);
 
   &::before {
     content: "";
     position: absolute;
     inset: 0;
     background-image:
-      linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+      linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px);
     background-size: 40px 40px;
     pointer-events: none;
   }
 
   @media (max-width: ${breakingPoints.sm}px) {
     padding: 20px 18px 18px;
-    border-radius: 16px;
+    border-radius: 14px;
   }
 `;
 
