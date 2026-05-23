@@ -1,7 +1,16 @@
 /**
  * Analytics Tracking Utility
  * Tracks anonymous visits and events for the Menugic Reporting Dashboard
+ * Also mirrors events to Meta Pixel when configured.
  */
+
+import {
+  metaPageView,
+  metaViewContent,
+  metaAddToCart,
+  metaInitiateCheckout,
+  metaPurchase,
+} from "./analytics/metaPixel";
 
 const BASE_URL = process.env.REACT_APP_BASE_URL;
 
@@ -227,13 +236,20 @@ export const trackEvent = async (
  */
 export const trackPageView = (restaurantId, branchId = null) => {
   trackEvent(restaurantId, "page_view", { branchId });
+  metaPageView();
 };
 
-export const trackItemView = (restaurantId, productId, categoryId, branchId = null) => {
+export const trackItemView = (restaurantId, productId, categoryId, branchId = null, productMeta = {}) => {
   trackEvent(restaurantId, "item_view", {
     branchId,
     productId,
     categoryId,
+  });
+  metaViewContent({
+    productId,
+    productName: productMeta.name || "",
+    price: productMeta.price || 0,
+    category: productMeta.category || "",
   });
 };
 
@@ -242,7 +258,8 @@ export const trackAddToCart = (
   productId,
   categoryId,
   quantity = 1,
-  branchId = null
+  branchId = null,
+  productMeta = {}
 ) => {
   trackEvent(restaurantId, "add_to_cart", {
     branchId,
@@ -250,12 +267,22 @@ export const trackAddToCart = (
     categoryId,
     quantity,
   });
+  metaAddToCart({
+    productId,
+    productName: productMeta.name || "",
+    price: productMeta.price || 0,
+    quantity,
+  });
 };
 
-export const trackCheckoutStart = (restaurantId, branchId = null, orderType = null) => {
+export const trackCheckoutStart = (restaurantId, branchId = null, orderType = null, cartMeta = {}) => {
   trackEvent(restaurantId, "checkout_start", {
     branchId,
     orderType,
+  });
+  metaInitiateCheckout({
+    items: cartMeta.items || [],
+    totalValue: cartMeta.totalValue || 0,
   });
 };
 
@@ -273,5 +300,10 @@ export const trackOrderPlaced = (
     orderType,
     revenue,
     metadata,
+  });
+  metaPurchase({
+    orderId,
+    items: metadata?.items || [],
+    totalValue: revenue || 0,
   });
 };

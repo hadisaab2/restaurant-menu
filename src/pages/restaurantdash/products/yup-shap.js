@@ -7,6 +7,8 @@ export const enProductSchema = yup.object().shape({
   category_id: yup.number().required("Required field"),
   priority: yup.number().required("Required field"),
   cover_id: yup.string().required("Required field"),
+  menu_visibility: yup.string().oneOf(['both', 'dine_in', 'delivery']).optional(),
+  delivery_price: yup.string().optional().nullable(),
 });
 
 export const arProductSchema = yup.object().shape({
@@ -16,8 +18,8 @@ export const arProductSchema = yup.object().shape({
   priority: yup.number().required("Required field"),
   en_price: yup.string().optional(),
   cover_id: yup.string().required("Required field"),
-
-
+  menu_visibility: yup.string().oneOf(['both', 'dine_in', 'delivery']).optional(),
+  delivery_price: yup.string().optional().nullable(),
 });
 
 export const EnArProductSchema = yup.object().shape({
@@ -29,5 +31,6 @@ export const EnArProductSchema = yup.object().shape({
   category_id: yup.number().required("Required field"),
   priority: yup.number().required("Required field"),
   cover_id: yup.string().required("Required field"),
-
+  menu_visibility: yup.string().oneOf(['both', 'dine_in', 'delivery']).optional(),
+  delivery_price: yup.string().optional().nullable(),
 });

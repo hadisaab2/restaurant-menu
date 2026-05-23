@@ -10,20 +10,7 @@ export const WizardContainer = styled.div`
   max-height: 85vh;
   overflow-y: auto;
   position: relative;
-  margin-bottom: max(50px, env(safe-area-inset-bottom, 50px));
-
-  &::-webkit-scrollbar {
-    width: 3px;
-  }
-
-  &::-webkit-scrollbar-track {
-    background: transparent;
-  }
-
-  &::-webkit-scrollbar-thumb {
-    background: ${(props) => props.theme.mainColor}40;
-    border-radius: 4px;
-  }
+      margin-bottom: 50px;
 `;
 
 export const StepTitle = styled.h2`
@@ -32,8 +19,7 @@ export const StepTitle = styled.h2`
   color: ${(props) => props.theme.popupTextColor || "#00112b"};
   margin-bottom: 24px;
   text-align: center;
-  letter-spacing: -0.2px;
-
+  
   @media (max-width: 768px) {
     font-size: 18px;
     margin-bottom: 16px;
@@ -47,7 +33,7 @@ export const StepHeader = styled.div`
   align-items: center;
   justify-content: space-between;
   margin-bottom: 24px;
-  margin-top: 24px;
+      margin-top: 24px;
 `;
 
 export const StepTitleText = styled(StepTitle)`
@@ -62,18 +48,12 @@ export const StepCloseButton = styled.button`
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
-  padding: 6px 10px;
+  padding: 3px 6px;
   line-height: 1;
   border-radius: 8px;
-  transition: background-color 0.2s ease;
-  -webkit-tap-highlight-color: transparent;
 
   &:hover {
     background: rgba(0, 0, 0, 0.06);
-  }
-
-  &:active {
-    background: rgba(0, 0, 0, 0.1);
   }
 `;
 
@@ -83,9 +63,9 @@ export const ProgressBar = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 28px;
+  margin-bottom: 30px;
   position: relative;
-
+  
   &::before {
     content: "";
     position: absolute;
@@ -95,11 +75,10 @@ export const ProgressBar = styled.div`
     height: 2px;
     background: ${(props) => props.theme.mainColor || "rgba(0, 0, 0, 0.1)"};
     z-index: 0;
-    opacity: 0.3;
   }
-
+  
   @media (max-width: 768px) {
-    margin-bottom: 22px;
+    margin-bottom: 24px;
   }
 `;
 
@@ -110,18 +89,17 @@ export const ProgressStep = styled.div`
   flex: 1;
   position: relative;
   z-index: 1;
-
+  
   span {
     font-size: 11px;
     color: ${(props) =>
       props.active
         ? props.theme.mainColor || props.theme.maincolor || "#007bff"
         : "#999"};
-    margin-top: 8px;
+    margin-top: 6px;
     font-weight: ${(props) => (props.active ? "600" : "400")};
     text-align: center;
-    transition: color 0.3s ease;
-
+    
     @media (max-width: 768px) {
       font-size: 9px;
     }
@@ -129,14 +107,14 @@ export const ProgressStep = styled.div`
 `;
 
 export const StepIndicator = styled.div`
-  width: 32px;
-  height: 32px;
+  width: 34px;
+  height: 34px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: 700;
-  font-size: 13px;
+  font-size: 14px;
   background: ${(props) =>
     props.completed
       ? props.theme.mainColor || props.theme.maincolor || "#007bff"
@@ -150,12 +128,12 @@ export const StepIndicator = styled.div`
       props.active || props.completed
         ? props.theme.mainColor || props.theme.maincolor || "#007bff"
         : "transparent"};
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.3s ease;
   box-shadow: ${(props) =>
     props.active || props.completed
-      ? "0 3px 10px rgba(0, 123, 255, 0.25)"
+      ? "0 4px 12px rgba(0, 123, 255, 0.3)"
       : "none"};
-
+  
   @media (max-width: 768px) {
     width: 28px;
     height: 28px;
@@ -173,20 +151,7 @@ export const StepContent = styled.div`
   min-height: 260px;
   overflow-y: auto;
   max-height: calc(85vh - 230px);
-
-  &::-webkit-scrollbar {
-    width: 3px;
-  }
-
-  &::-webkit-scrollbar-track {
-    background: transparent;
-  }
-
-  &::-webkit-scrollbar-thumb {
-    background: ${(props) => props.theme.mainColor}30;
-    border-radius: 4px;
-  }
-
+  
   @media (max-width: 768px) {
     padding: 12px 0;
     min-height: 220px;
@@ -206,7 +171,7 @@ export const NavigationButtons = styled.div`
   bottom: 0;
   background: ${(props) => props.theme.popupbackgroundColor || "#ffffff"};
   z-index: 10;
-
+  
   @media (max-width: 768px) {
     padding-top: 12px;
   }
@@ -215,53 +180,56 @@ export const NavigationButtons = styled.div`
 export const NavButton = styled.button`
   flex: ${(props) => (props.variant === "primary" ? "1.5" : "1")};
   padding: 12px 20px;
-  border-radius: 12px;
+  border-radius: 10px;
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   border: none;
   outline: none;
   -webkit-tap-highlight-color: transparent;
-  letter-spacing: 0.2px;
-
+  
   ${(props) =>
     props.variant === "primary"
       ? `
     background: ${props.theme.mainColor || props.theme.maincolor || "#007bff"};
     color: white;
-    box-shadow: 0 4px 14px rgba(0, 123, 255, 0.25);
-
+    box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
+    
     &:hover:not(:disabled) {
-      transform: translateY(-1px);
-      box-shadow: 0 6px 20px rgba(0, 123, 255, 0.35);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0, 123, 255, 0.4);
     }
-
+    
     &:active:not(:disabled) {
-      transform: scale(0.98);
+      transform: translateY(0);
     }
-
+    
     &:disabled {
-      opacity: 0.5;
+      opacity: 0.6;
       cursor: not-allowed;
     }
   `
       : `
     background: ${props.theme.categoryUnActive || "#f5f5f5"};
     color: ${props.theme.textColor || "#333"};
-    border: 1px solid ${props.theme.borderColor || "rgba(0, 0, 0, 0.08)"};
-
+    border: 1px solid ${props.theme.borderColor || "rgba(0, 0, 0, 0.1)"};
+    
     &:hover {
       background: ${props.theme.categoryUnActive || "#e0e0e0"};
+      transform: translateY(-1px);
     }
-
+    
     &:active {
-      transform: scale(0.98);
+      background: ${props.theme.categoryUnActive || "#f5f5f5"};
+      color: ${props.theme.textColor || "#333"};
+      transform: translateY(0);
     }
   `}
-
+  
   @media (max-width: 768px) {
-    padding: 11px 16px;
+    padding: 10px 18px;
     font-size: 13px;
   }
 `;
+

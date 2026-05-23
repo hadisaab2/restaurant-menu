@@ -42,12 +42,12 @@ function logCategoryOnce(categoryId) {
 
 
 
-const getProducts = async (categoryId, page = 0) => {
+const getProducts = async (categoryId, page = 0, menuMode) => {
   try {
     if (page === 0) {
       logCategoryOnce(categoryId);
     }
-    const url = GET_PRODUCTS_URL(categoryId, page);
+    const url = GET_PRODUCTS_URL(categoryId, page, menuMode);
     const response = await axios.get(url);
     return response.data;
   } catch (error) {
@@ -56,13 +56,13 @@ const getProducts = async (categoryId, page = 0) => {
 };
 
 
-export const useGetProducts = (categoryId) => {
+export const useGetProducts = (categoryId, menuMode) => {
   // Ensure categoryId is always a serializable primitive value
   const serializableCategoryId = categoryId != null ? String(categoryId) : null;
-  
+
   return useInfiniteQuery({
-    queryKey: ['products', serializableCategoryId],
-    queryFn: ({ pageParam = 0 }) => getProducts(serializableCategoryId, pageParam),
+    queryKey: ['products', serializableCategoryId, menuMode || 'all'],
+    queryFn: ({ pageParam = 0 }) => getProducts(serializableCategoryId, pageParam, menuMode),
     getNextPageParam: (lastPage, allPages) => {
       // Check if the number of products is less than 10 to determine if there's a next page
       if (lastPage.length < 10) {

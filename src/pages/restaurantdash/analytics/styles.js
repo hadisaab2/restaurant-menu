@@ -19,13 +19,26 @@ export const Container = styled.div`
 `;
 
 export const Header = styled.div`
-  background: white;
-  border-radius: 12px;
-  padding: 20px 24px;
-  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.06);
+  background: linear-gradient(135deg, #0c0f1d 0%, #1a2238 55%, #0c1630 100%);
+  border-radius: 14px;
+  padding: 24px 28px;
+  box-shadow: 0 8px 24px rgba(10, 15, 40, 0.2);
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 200px;
+    height: 200px;
+    background: radial-gradient(circle, rgba(94,171,177,0.18) 0%, transparent 70%);
+    pointer-events: none;
+  }
 
   @media (max-width: ${breakingPoints.sm}px) {
-    padding: 16px 14px;
+    padding: 18px 14px;
     border-radius: 10px;
   }
 `;
@@ -33,8 +46,13 @@ export const Header = styled.div`
 export const HeaderTitle = styled.h2`
   margin: 0;
   font-size: 24px;
-  font-weight: 700;
-  color: #0f172a;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  background: linear-gradient(120deg, #ffffff, #5eabb1);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  position: relative;
 
   @media (max-width: ${breakingPoints.sm}px) {
     font-size: 20px;
@@ -55,22 +73,25 @@ export const HeaderActions = styled.div`
 `;
 
 export const ExportButton = styled.button`
-  background: #3b82f6;
+  background: #5eabb1;
   color: white;
   border: none;
   border-radius: 8px;
   padding: 10px 20px;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
   cursor: pointer;
   display: flex;
   align-items: center;
   gap: 8px;
   transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(94, 171, 177, 0.3);
+  position: relative;
 
   &:hover {
-    background: #2563eb;
+    background: #4d9aa0;
     transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(94, 171, 177, 0.4);
   }
 
   &:active {
@@ -78,9 +99,10 @@ export const ExportButton = styled.button`
   }
 
   &:disabled {
-    background: #94a3b8;
+    background: rgba(255,255,255,0.15);
     cursor: not-allowed;
     transform: none;
+    box-shadow: none;
   }
 `;
 
@@ -177,14 +199,26 @@ export const KPICard = styled.div`
   border-radius: 12px;
   padding: 20px;
   box-shadow: 0 4px 12px rgba(15, 23, 42, 0.06);
+  border: 1px solid rgba(148, 163, 184, 0.12);
   display: flex;
   flex-direction: column;
   gap: 8px;
   transition: transform 0.2s, box-shadow 0.2s;
+  border-top: 3px solid #5eabb1;
+
+  &:nth-child(2) { border-top-color: #3b82f6; }
+  &:nth-child(3) { border-top-color: #10b981; }
+  &:nth-child(4) { border-top-color: #8b5cf6; }
+  &:nth-child(5) { border-top-color: #f59e0b; }
+  &:nth-child(6) { border-top-color: #ec4899; }
+  &:nth-child(7) { border-top-color: #ef4444; }
+  &:nth-child(8) { border-top-color: #06b6d4; }
+  &:nth-child(9) { border-top-color: #84cc16; }
+  &:nth-child(10) { border-top-color: #f97316; }
 
   &:hover {
     transform: translateY(-2px);
-    box-shadow: 0 8px 16px rgba(15, 23, 42, 0.1);
+    box-shadow: 0 8px 20px rgba(15, 23, 42, 0.1);
   }
 
   @media (max-width: ${breakingPoints.sm}px) {
@@ -271,38 +305,54 @@ export const ErrorState = styled.div`
 export const TabsContainer = styled.div`
   background: white;
   border-radius: 12px;
-  padding: 0;
+  padding: 6px;
   box-shadow: 0 4px 12px rgba(15, 23, 42, 0.06);
-  margin-bottom: 20px;
+  border: 1px solid rgba(148, 163, 184, 0.12);
+  margin-bottom: 4px;
 `;
 
 export const Tabs = styled.div`
   display: flex;
-  gap: 0;
-  border-bottom: 1px solid #e2e8f0;
+  gap: 4px;
   overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
 `;
 
 export const Tab = styled.button`
-  padding: 16px 24px;
+  padding: 12px 20px;
   border: none;
-  background: none;
-  font-size: 14px;
-  font-weight: 500;
-  color: ${(props) => (props.$active ? "#3b82f6" : "#64748b")};
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: ${(props) => (props.$active ? "600" : "500")};
+  color: ${(props) => (props.$active ? "#0f172a" : "#64748b")};
+  background: ${(props) => (props.$active ? "rgba(94,171,177,0.15)" : "transparent")};
   cursor: pointer;
-  border-bottom: 2px solid ${(props) => (props.$active ? "#3b82f6" : "transparent")};
   transition: all 0.2s;
   white-space: nowrap;
+  position: relative;
+
+  ${(props) => props.$active && `
+    &::after {
+      content: "";
+      position: absolute;
+      bottom: 2px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 20px;
+      height: 2.5px;
+      background: #5eabb1;
+      border-radius: 2px;
+    }
+  `}
 
   &:hover {
-    color: #3b82f6;
-    background: #f8fafc;
+    color: #0f172a;
+    background: ${(props) => (props.$active ? "rgba(94,171,177,0.15)" : "rgba(15,23,42,0.04)")};
   }
 
   @media (max-width: ${breakingPoints.sm}px) {
-    padding: 12px 14px;
-    font-size: 13px;
+    padding: 10px 14px;
+    font-size: 12px;
   }
 `;
 

@@ -20,11 +20,13 @@ import SideBar from "./Sidebar";
 import ProductParam from "./ProductParam";
 import Share from "./popup/share";
 import { InstallPrompt } from "./installPrompt";
+import LandingPage from "./LandingPage";
+import MenuModeContext from "./MenuModeContext";
 
-export default function Theme2() {
+export default function Theme5() {
   const [searchParams, setSearchParams] = useSearchParams();
-  const productId = searchParams.get("productId"); // Get productId from URL
-  const categoryId = searchParams.get("categoryId"); // Get productId from URL
+  const productId = searchParams.get("productId");
+  const categoryId = searchParams.get("categoryId");
   const { restaurantName: paramRestaurantName } = useParams();
   const hostname = window.location.hostname;
   const subdomain = hostname.split(".")[0];
@@ -39,6 +41,17 @@ export default function Theme2() {
     (state) => state.restaurant?.[restaurantName]?.activeLanguage || "en"
   );
 
+  // Deep links bypass the landing page
+  const hasDeepLink = !!(productId || categoryId);
+  const [menuMode, setMenuMode] = useState(() => {
+    if (hasDeepLink) return "dine_in";
+    return null;
+  });
+
+  const handleModeSelect = (mode) => {
+    setMenuMode(mode);
+  };
+
   const [showPopup, setshowPopup] = useState(null);
   const [searchText, setSearchText] = useState("");
   const [showSidebar, setshowSidebar] = useState(null);
@@ -46,7 +59,7 @@ export default function Theme2() {
   const [showInstallPopup, setShowInstallPopup] = useState(true);
 
   const showAllItemsCategory =
-    Number(restaurant?.template_id) === 2 &&
+    (Number(restaurant?.template_id) === 2 || Number(restaurant?.template_id) === 5) &&
     (restaurant?.show_all_items_category === true ||
       restaurant?.show_all_items_category === 1 ||
       restaurant?.show_all_items_category === "1");
@@ -163,75 +176,90 @@ export default function Theme2() {
       restaurant?.show_slider_image === 1 ||
       restaurant?.show_slider_image === "1") &&
     sliderImages.length > 0;
+  // Show landing page if no mode chosen yet
+  if (!menuMode) {
+    return (
+      <LandingPage
+        restaurant={restaurant}
+        restaurantName={restaurantName}
+        activeLanguage={activeLanguage}
+        onSelect={handleModeSelect}
+      />
+    );
+  }
+
   return (
-    <Container id="wrapper">
-      <MenuWrapper onClick={handleClickOutside} >
-        <BlurOverlay showPopup={showPopup} />
-        <Header
+    <MenuModeContext.Provider value={{ menuMode, setMenuMode: handleModeSelect }}>
+      <Container id="wrapper">
+        <MenuWrapper onClick={handleClickOutside} >
+          <BlurOverlay showPopup={showPopup} />
+          <Header
+            categories={theme2Categories}
+            activeCategory={activeCategory}
+            setactiveCategory={setactiveCategoryWithUrl}
+            setSearchText={setSearchText}
+            searchText={searchText}
+            setshowSidebar={setshowSidebar}
+            showSidebar={showSidebar}
+            carouselPosition={carouselPosition}
+            setcarouselPosition={setcarouselPosition}
+            popupHandler={popupHandler}
+            showMenuSlider={showMenuSlider}
+            sliderImages={sliderImages}
+            menuMode={menuMode}
+            onModeChange={handleModeSelect}
+          />
+          <Products
+            menu={restaurant.categories}
+            activeCategory={activeCategory}
+            showPopup={showPopup}
+            searchText={searchText}
+            setactiveCategory={setactiveCategoryWithUrl}
+            setcarouselPosition={setcarouselPosition}
+            carouselPosition={carouselPosition}
+            categories={theme2Categories}
+            menuMode={menuMode}
+          />
+        </MenuWrapper>
+        <DetailsBtn onClick={() => {
+          window.history.pushState({}, ""); // Add a history entry
+          popupHandler("location")
+        }}>
+          <Location />
+        </DetailsBtn>
+        {features?.cart &&<CartBtn onClick={() => {
+          window.history.pushState({}, ""); // Add a history entry
+          popupHandler("cart")
+        }}>
+          <CartCount>{itemCount}</CartCount>
+          <Cart />
+        </CartBtn>}
+        <LocationPopup
+          restaurant={restaurant}
+          showPopup={showPopup}
+          popupHandler={popupHandler}
+        />
+        {features?.cart && <CartPopup
+          restaurant={restaurant}
+          showPopup={showPopup}
+          popupHandler={popupHandler}
+        />}
+        <Share
+          showPopup={showPopup}
+          popupHandler={popupHandler}
+          activeCategory={activeCategory}
+        />
+        <SideBar
           categories={theme2Categories}
           activeCategory={activeCategory}
           setactiveCategory={setactiveCategoryWithUrl}
-          setSearchText={setSearchText}
-          searchText={searchText}
           setshowSidebar={setshowSidebar}
           showSidebar={showSidebar}
-          carouselPosition={carouselPosition}
           setcarouselPosition={setcarouselPosition}
-          popupHandler={popupHandler}
-          showMenuSlider={showMenuSlider}
-          sliderImages={sliderImages}
         />
-        <Products
-          menu={restaurant.categories}
-          activeCategory={activeCategory}
-          showPopup={showPopup}
-          searchText={searchText}
-          setactiveCategory={setactiveCategoryWithUrl}
-          setcarouselPosition={setcarouselPosition}
-          carouselPosition={carouselPosition}
-          categories={theme2Categories}
-        />
-      </MenuWrapper>
-      <DetailsBtn onClick={() => {
-        window.history.pushState({}, ""); // Add a history entry
-        popupHandler("location")
-      }}>
-        <Location />
-      </DetailsBtn>
-      {features?.cart &&<CartBtn onClick={() => {
-        window.history.pushState({}, ""); // Add a history entry
-        popupHandler("cart")
-      }}>
-        <CartCount>{itemCount}</CartCount>
-        <Cart />
-      </CartBtn>}
-      <LocationPopup
-        restaurant={restaurant}
-        showPopup={showPopup}
-        popupHandler={popupHandler}
-      />
-      {features?.cart && <CartPopup
-        restaurant={restaurant}
-        showPopup={showPopup}
-        popupHandler={popupHandler}
-      />}
-      <Share
-        showPopup={showPopup}
-        popupHandler={popupHandler}
-        activeCategory={activeCategory}
-      />
-      <SideBar
-        categories={theme2Categories}
-        activeCategory={activeCategory}
-        setactiveCategory={setactiveCategoryWithUrl}
-        setshowSidebar={setshowSidebar}
-        showSidebar={showSidebar}
-        setcarouselPosition={setcarouselPosition}
-
-      />
-      {productId &&<ProductParam productId={productId} searchParams={searchParams} setSearchParams={setSearchParams} />}
-      {features?.install_app && <InstallPrompt showInstallPopup={showInstallPopup} onInstall={handleInstallClick} restaurantName={restaurantName} onDismiss={() => setShowInstallPopup(false)} />}
-
-    </Container>
+        {productId &&<ProductParam productId={productId} searchParams={searchParams} setSearchParams={setSearchParams} />}
+        {features?.install_app && <InstallPrompt showInstallPopup={showInstallPopup} onInstall={handleInstallClick} restaurantName={restaurantName} onDismiss={() => setShowInstallPopup(false)} />}
+      </Container>
+    </MenuModeContext.Provider>
   );
 }

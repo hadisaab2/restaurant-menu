@@ -1,5 +1,7 @@
 import React, { useState } from "react";
+import { useTheme } from "styled-components";
 import { FaMapMarkerAlt, FaCrosshairs } from "react-icons/fa";
+import MapPicker from "../../../../../components/MapPicker";
 import {
   LocationContainer,
   LocationButton,
@@ -14,7 +16,34 @@ export default function LocationSelector({
   onLocationSelect,
   selectedLocation,
   hasError,
+  googleMapsApiKey,
+  activeLanguage = "en",
 }) {
+  const theme = useTheme();
+
+  // If Google Maps is enabled, use the interactive MapPicker
+  if (googleMapsApiKey) {
+    return (
+      <MapPicker
+        apiKey={googleMapsApiKey}
+        onLocationConfirm={onLocationSelect}
+        selectedLocation={selectedLocation}
+        hasError={hasError}
+        theme={theme}
+        activeLanguage={activeLanguage}
+      />
+    );
+  }
+
+  // Fallback: original GPS-only selector
+  return <FallbackLocationSelector
+    onLocationSelect={onLocationSelect}
+    selectedLocation={selectedLocation}
+    hasError={hasError}
+  />;
+}
+
+function FallbackLocationSelector({ onLocationSelect, selectedLocation, hasError }) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -35,21 +64,14 @@ export default function LocationSelector({
           longitude,
           address: `${latitude.toFixed(6)}, ${longitude.toFixed(6)}`,
         };
-
-        // Reverse geocode to get address (optional - can be enhanced with Google Geocoding API)
         onLocationSelect(location);
         setIsLoading(false);
       },
-      (err) => {
+      () => {
         setError("Unable to retrieve your location. Please try again.");
         setIsLoading(false);
-        console.error("Geolocation error:", err);
       },
-      {
-        enableHighAccuracy: true,
-        timeout: 10000,
-        maximumAge: 0,
-      }
+      { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
     );
   };
 
@@ -58,7 +80,6 @@ export default function LocationSelector({
       const url = `https://www.google.com/maps?q=${selectedLocation.latitude},${selectedLocation.longitude}`;
       window.open(url, "_blank");
     } else {
-      // Open Google Maps for location selection
       const url = `https://www.google.com/maps/search/?api=1`;
       window.open(url, "_blank");
     }
@@ -110,4 +131,3 @@ export default function LocationSelector({
     </LocationContainer>
   );
 }
-

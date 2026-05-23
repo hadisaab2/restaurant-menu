@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState, useEffect, useRef } from "react";
 import axios from "axios";
 import { useQuery } from "@tanstack/react-query";
 import { getCookie } from "../../../utilities/manageCookies";
@@ -240,8 +240,34 @@ function categoryVisitLabel(c, lang) {
 function formatStatNumber(value, { isLoading, isError }) {
   if (isLoading) return "…";
   if (isError) return "—";
-  if (value === null || value === undefined || Number.isNaN(value)) return "0";
-  return value;
+  if (value === null || value === undefined || Number.isNaN(value)) return <AnimatedCounter end={0} />;
+  return <AnimatedCounter end={Number(value) || 0} />;
+}
+
+function AnimatedCounter({ end, duration = 1200 }) {
+  const [count, setCount] = useState(0);
+  const prevEnd = useRef(0);
+
+  useEffect(() => {
+    if (end === prevEnd.current) return;
+    const startVal = prevEnd.current;
+    prevEnd.current = end;
+    const startTime = performance.now();
+
+    const animate = (now) => {
+      const elapsed = now - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      // ease-out cubic
+      const eased = 1 - Math.pow(1 - progress, 3);
+      const current = Math.round(startVal + (end - startVal) * eased);
+      setCount(current);
+      if (progress < 1) requestAnimationFrame(animate);
+    };
+
+    requestAnimationFrame(animate);
+  }, [end, duration]);
+
+  return <>{count.toLocaleString()}</>;
 }
 
 /* ─── quick action config ─── */
@@ -530,8 +556,8 @@ export default function Dashboard({ userInformation, setSection }) {
 
       {/* ── STAT CARDS ── */}
       <StatsGrid>
-        {STATS_CONFIG.map(({ key, label, hint, accent, iconBg, iconColor, Icon }) => (
-          <StatCard key={key} $accent={accent}>
+        {STATS_CONFIG.map(({ key, label, hint, accent, iconBg, iconColor, Icon }, i) => (
+          <StatCard key={key} $accent={accent} $delay={`${i * 0.07}s`}>
             <StatIconBox $bg={iconBg} $color={iconColor}>
               <Icon />
             </StatIconBox>
@@ -618,7 +644,7 @@ export default function Dashboard({ userInformation, setSection }) {
       </VisitFiltersBar>
 
       <ChartsGridWide>
-        <ChartCard>
+        <ChartCard $delay="0.1s">
           <ChartTitle>Menu visits over time</ChartTitle>
           <ChartCaption>
             Daily menu loads (restaurant page visits) for the selected period.
@@ -675,7 +701,7 @@ export default function Dashboard({ userInformation, setSection }) {
           </ChartViewport>
         </ChartCard>
 
-        <ChartCard>
+        <ChartCard $delay="0.2s">
           <ChartTitle>Top products by visits</ChartTitle>
           <ChartCaption>Most opened product detail views in the selected period.</ChartCaption>
           <ChartViewport $tall>
@@ -708,7 +734,7 @@ export default function Dashboard({ userInformation, setSection }) {
           </ChartViewport>
         </ChartCard>
 
-        <ChartCard>
+        <ChartCard $delay="0.3s">
           <ChartTitle>Top categories by visits</ChartTitle>
           <ChartCaption>Most viewed category sections in the selected period.</ChartCaption>
           <ChartViewport $tall>

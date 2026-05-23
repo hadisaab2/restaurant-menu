@@ -9,6 +9,7 @@ import {
   ContentArea,
 } from "./styles";
 import Restaurants from "./restaurants";
+import Analytics from "./analytics";
 
 export default function SuperAdmin() {
   const [activeTab, setActiveTab] = useState("Restaurants");
@@ -30,10 +31,18 @@ export default function SuperAdmin() {
         >
           Restaurants
         </Tab>
+        <Tab
+          onClick={() => setActiveTab("Analytics")}
+          activeTab={activeTab}
+          tab="Analytics"
+        >
+          Analytics
+        </Tab>
       </TabsContainer>
 
       <ContentArea>
         {activeTab === "Restaurants" && <Restaurants />}
+        {activeTab === "Analytics" && <Analytics />}
       </ContentArea>
     </Container>
   );

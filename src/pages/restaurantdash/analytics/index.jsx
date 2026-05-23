@@ -1133,64 +1133,41 @@ export default function Analytics() {
         </Tabs>
       </TabsContainer>
 
-      {activeTab === "overview" && kpis && (
-        <KPICards>
-          <KPICard>
-            <KPILabel>Total Visits</KPILabel>
-            <KPIValue>{formatNumber(kpis.visits?.value || 0)}</KPIValue>
-            {kpis.visits?.change !== null && (
-              <KPIChange $color={getChangeColor(kpis.visits.change)}>
-                {getChangeIcon(kpis.visits.change)} {formatPercent(Math.abs(kpis.visits.change))}
-              </KPIChange>
-            )}
-          </KPICard>
-          <KPICard>
-            <KPILabel>Unique Visitors</KPILabel>
-            <KPIValue>{formatNumber(kpis.uniqueVisitors?.value || 0)}</KPIValue>
-          </KPICard>
-          <KPICard>
-            <KPILabel>Orders</KPILabel>
-            <KPIValue>{formatNumber(kpis.orders?.value || 0)}</KPIValue>
-            {kpis.orders?.change !== null && (
-              <KPIChange $color={getChangeColor(kpis.orders.change)}>
-                {getChangeIcon(kpis.orders.change)} {formatPercent(Math.abs(kpis.orders.change))}
-              </KPIChange>
-            )}
-          </KPICard>
-          <KPICard>
-            <KPILabel>Revenue</KPILabel>
-            <KPIValue>{formatCurrency(kpis.revenue?.value || 0)}</KPIValue>
-            {kpis.revenue?.change !== null && (
-              <KPIChange $color={getChangeColor(kpis.revenue.change)}>
-                {getChangeIcon(kpis.revenue.change)} {formatPercent(Math.abs(kpis.revenue.change))}
-              </KPIChange>
-            )}
-          </KPICard>
-          <KPICard>
-            <KPILabel>Conversion Rate</KPILabel>
-            <KPIValue>{formatPercent(kpis.conversionRate?.value || 0)}</KPIValue>
-          </KPICard>
-          <KPICard>
-            <KPILabel>Avg Order Value</KPILabel>
-            <KPIValue>{formatCurrency(kpis.avgOrderValue?.value || 0)}</KPIValue>
-          </KPICard>
-          <KPICard>
-            <KPILabel>Cart Abandonment</KPILabel>
-            <KPIValue>{formatPercent(kpis.cartAbandonmentRate?.value || 0)}</KPIValue>
-          </KPICard>
-          <KPICard>
-            <KPILabel>Item Views</KPILabel>
-            <KPIValue>{formatNumber(kpis.itemViews?.value || 0)}</KPIValue>
-          </KPICard>
-          <KPICard>
-            <KPILabel>Add to Cart</KPILabel>
-            <KPIValue>{formatNumber(kpis.addToCart?.value || 0)}</KPIValue>
-          </KPICard>
-          <KPICard>
-            <KPILabel>Checkout Starts</KPILabel>
-            <KPIValue>{formatNumber(kpis.checkoutStarts?.value || 0)}</KPIValue>
-          </KPICard>
-        </KPICards>
+      {activeTab === "overview" && funnel && (
+        <TrendsSection>
+          <SectionTitle>Conversion Funnel</SectionTitle>
+          <div style={{ background: "white", borderRadius: "12px" }}>
+            <FunnelContainer>
+              {funnel.funnel?.map((step, index) => {
+                const maxCount = funnel.funnel[0]?.count || 1;
+                const percentage = (step.count / maxCount) * 100;
+                const colors = ["#3b82f6", "#8b5cf6", "#ec4899", "#f59e0b", "#10b981"];
+                return (
+                  <FunnelStep key={index}>
+                    <FunnelStepLabel>{step.step}</FunnelStepLabel>
+                    <FunnelStepBar>
+                      <FunnelStepFill
+                        $percentage={percentage}
+                        $color={colors[index % colors.length]}
+                      >
+                        {step.count}
+                      </FunnelStepFill>
+                    </FunnelStepBar>
+                    <div style={{ minWidth: "100px", textAlign: "right" }}>
+                      {formatPercent(step.dropOff)} drop-off
+                    </div>
+                  </FunnelStep>
+                );
+              })}
+            </FunnelContainer>
+            <div style={{ marginTop: "20px", padding: "16px", background: "#f8fafc", borderRadius: "8px" }}>
+              <div style={{ fontWeight: 600, marginBottom: "8px" }}>Overall Conversion</div>
+              <div style={{ fontSize: "24px", fontWeight: 700, color: "#10b981" }}>
+                {formatPercent(funnel.overallConversion || 0)}
+              </div>
+            </div>
+          </div>
+        </TrendsSection>
       )}
 
       {activeTab === "trends" && (
@@ -1198,7 +1175,7 @@ export default function Analytics() {
           <SectionTitle>Trends</SectionTitle>
           {trends ? (
             <>
-              {trends.visits && (
+              {trends.visits && trends.visits.length > 0 && (
                 <TrendsChart
                   data={trends.visits}
                   type="line"
@@ -1206,20 +1183,12 @@ export default function Analytics() {
                   metric="visits"
                 />
               )}
-              {trends.orders && (
+              {trends.orders && trends.orders.length > 0 && (
                 <TrendsChart
                   data={trends.orders}
                   type="line"
-                  title="Orders Trend"
+                  title="Orders & Revenue Trend"
                   metric="orders"
-                />
-              )}
-              {trends.revenue && (
-                <TrendsChart
-                  data={trends.revenue}
-                  type="line"
-                  title="Revenue Trend"
-                  metric="revenue"
                 />
               )}
             </>
@@ -1477,7 +1446,7 @@ export default function Analytics() {
                 <tbody>
                   {branches.map((branch, index) => (
                     <TableRow key={index}>
-                      <TableCell style={{ fontWeight: 600 }}>{branch.branch_id || "N/A"}</TableCell>
+                      <TableCell style={{ fontWeight: 600 }}>{branch.branch_name || `Branch #${branch.branch_id}` || "N/A"}</TableCell>
                       <TableCell>{formatNumber(branch.visits)}</TableCell>
                       <TableCell>{formatNumber(branch.orders)}</TableCell>
                       <TableCell>{formatCurrency(branch.revenue)}</TableCell>

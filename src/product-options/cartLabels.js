@@ -135,7 +135,7 @@ export function formatCartItemOptionsForOrderMessage(item, lang) {
   const blocks = cartItemFormDataToLines(item, lang === "ar" ? "ar" : "en");
   return blocks
     .map((b) =>
-      b.type === "heading" ? `${b.text}\n` : `  - ${b.text}\n`
+      b.type === "heading" ? `    *${b.text}:*\n` : `      - ${b.text}\n`
     )
     .join("");
 }

@@ -29,13 +29,33 @@ const T = {
    ANIMATIONS
 ───────────────────────────────────────────── */
 const fadeUp = keyframes`
-  from { opacity: 0; transform: translateY(10px); }
+  from { opacity: 0; transform: translateY(16px); }
   to   { opacity: 1; transform: translateY(0);    }
+`;
+
+const fadeIn = keyframes`
+  from { opacity: 0; }
+  to   { opacity: 1; }
+`;
+
+const slideInLeft = keyframes`
+  from { opacity: 0; transform: translateX(-20px); }
+  to   { opacity: 1; transform: translateX(0);     }
+`;
+
+const shimmer = keyframes`
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
 `;
 
 const pulseGlow = keyframes`
   0%, 100% { box-shadow: 0 0 0 0 rgba(94,171,177,0); }
   50%       { box-shadow: 0 0 0 6px rgba(94,171,177,0.12); }
+`;
+
+const float = keyframes`
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-4px); }
 `;
 
 /* ─────────────────────────────────────────────
@@ -90,6 +110,20 @@ export const Hero = styled.div`
     background-size: 40px 40px;
     pointer-events: none;
   }
+
+  /* floating accent orb */
+  &::after {
+    content: "";
+    position: absolute;
+    top: -30px;
+    right: -30px;
+    width: 140px;
+    height: 140px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(94,171,177,0.2) 0%, transparent 70%);
+    animation: ${float} 6s ease-in-out infinite;
+    pointer-events: none;
+  }
 `;
 
 export const HeroTitle = styled.h2`
@@ -133,12 +167,20 @@ export const MetaPill = styled.span`
   gap: 5px;
   font-size: 11.5px;
   font-weight: 500;
-  padding: 5px 12px;
+  padding: 5px 14px;
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.08);
   border: 1px solid rgba(255, 255, 255, 0.12);
   letter-spacing: 0.2px;
   backdrop-filter: blur(4px);
+  transition: all 0.25s ease;
+  animation: ${fadeIn} 0.5s ease both;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.14);
+    border-color: rgba(94, 171, 177, 0.4);
+    transform: translateY(-1px);
+  }
 `;
 
 /* ─────────────────────────────────────────────
@@ -169,7 +211,9 @@ export const StatCard = styled.div`
   box-shadow: ${T.shadow};
   position: relative;
   overflow: hidden;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  animation: ${fadeUp} 0.45s ease both;
+  animation-delay: ${(p) => p.$delay || "0s"};
 
   @media (max-width: ${breakingPoints.sm}px) {
     padding: 14px 12px 12px;
@@ -183,20 +227,37 @@ export const StatCard = styled.div`
     top: 0;
     left: 0;
     right: 0;
-    height: 3px;
-    background: ${(p) => p.$accent || T.accent};
+    height: 3.5px;
+    background: linear-gradient(90deg, ${(p) => p.$accent || T.accent}, ${(p) => p.$accentEnd || "rgba(94,171,177,0.4)"});
     border-radius: 18px 18px 0 0;
   }
 
+  /* shimmer on hover */
+  &::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.08) 50%, transparent 100%);
+    transition: left 0.5s ease;
+    pointer-events: none;
+  }
+
   &:hover {
-    transform: translateY(-3px);
+    transform: translateY(-4px);
     box-shadow: ${T.shadowHover};
+
+    &::after {
+      left: 100%;
+    }
   }
 `;
 
 export const StatIconBox = styled.div`
-  width: 38px;
-  height: 38px;
+  width: 40px;
+  height: 40px;
   border-radius: 12px;
   display: flex;
   align-items: center;
@@ -206,6 +267,11 @@ export const StatIconBox = styled.div`
   color: ${(p) => p.$color || T.accent};
   margin-bottom: 12px;
   flex-shrink: 0;
+  transition: transform 0.3s ease;
+
+  ${StatCard}:hover & {
+    transform: scale(1.1);
+  }
 `;
 
 export const StatLabel = styled.div`
@@ -262,11 +328,11 @@ export const ActionButton = styled.button`
   );
   color: #f8fafc;
   border-radius: 14px;
-  padding: 14px 12px;
+  padding: 18px 14px;
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   text-align: center;
   line-height: 1.35;
   display: flex;
@@ -275,18 +341,38 @@ export const ActionButton = styled.button`
   gap: 8px;
   letter-spacing: 0.15px;
   box-shadow: 0 4px 16px rgba(15, 23, 42, 0.16);
+  position: relative;
+  overflow: hidden;
+  animation: ${fadeUp} 0.5s ease both;
+
+  /* shine sweep on hover */
+  &::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 60%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+    transition: left 0.5s ease;
+    pointer-events: none;
+  }
 
   @media (max-width: ${breakingPoints.sm}px) {
-    padding: 12px 10px;
+    padding: 14px 10px;
     font-size: 12px;
     border-radius: 12px;
     gap: 6px;
   }
 
   &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 10px 28px rgba(15, 23, 42, 0.22);
-    filter: brightness(1.12);
+    transform: translateY(-4px) scale(1.02);
+    box-shadow: 0 14px 36px rgba(15, 23, 42, 0.25);
+    filter: brightness(1.08);
+
+    &::after {
+      left: 120%;
+    }
   }
   &:active {
     transform: scale(0.97);
@@ -334,12 +420,15 @@ export const ChartCard = styled.div`
   background: ${T.cardBg};
   border: 1px solid ${T.cardBorder};
   border-radius: 18px;
-  padding: 20px;
+  padding: 22px;
   box-shadow: ${T.shadow};
-  transition: box-shadow 0.2s ease;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
   overflow: hidden;
+  animation: ${fadeUp} 0.5s ease both;
+  animation-delay: ${(p) => p.$delay || "0s"};
 
   &:hover {
+    transform: translateY(-3px);
     box-shadow: ${T.shadowHover};
   }
 `;
@@ -508,12 +597,14 @@ export const SectionLabel = styled.div`
   display: flex;
   align-items: center;
   gap: 10px;
+  animation: ${slideInLeft} 0.4s ease both;
+  margin-top: 4px;
 
   &::after {
     content: "";
     flex: 1;
     height: 1px;
-    background: ${T.cardBorder};
+    background: linear-gradient(90deg, ${T.cardBorder}, transparent);
     border-radius: 1px;
   }
 `;

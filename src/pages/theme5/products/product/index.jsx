@@ -16,10 +16,11 @@ import {
 import { useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { convertPrice } from "../../../../utilities/convertPrice";
+import { getEffectivePrice } from "../../utils/priceUtils";
 const _ = require('lodash');
 
 const Product = React.forwardRef(
-  ({ plate, setactivePlate, activePlate, index, showPopup, setSearchParams, searchParams, activeCategoryId, categories, disableDetails }, ref) => {
+  ({ plate, setactivePlate, activePlate, index, showPopup, setSearchParams, searchParams, activeCategoryId, categories, disableDetails, menuMode }, ref) => {
     const { restaurantName: paramRestaurantName } = useParams();
 
     const hostname = window.location.hostname;
@@ -118,16 +119,19 @@ const imageSrc = hasValidImage
               
               {restaurant?.activeLanguage === 'en' ? plate.en_name : plate.ar_name}
             </PlateName>
-            {!_.isEmpty(plate.en_price) && (
-              <PriceContainer>
-                <PlatePrice discounted={finalDiscount != 0.00}>
-                  {convertPrice(parseFloat(plate.en_price),currencySymbol)}
-                </PlatePrice>
-                <DiscountPrice>
-                  {finalDiscount != 0.00 && convertPrice(parseFloat(plate.en_price) * (1 - parseFloat(finalDiscount) / 100),currencySymbol)}
-                </DiscountPrice>
-              </PriceContainer>
-            )}
+            {(() => {
+              const effectivePrice = getEffectivePrice(plate, menuMode);
+              return !isNaN(effectivePrice) && effectivePrice > 0 ? (
+                <PriceContainer>
+                  <PlatePrice discounted={finalDiscount != 0.00}>
+                    {convertPrice(effectivePrice, currencySymbol)}
+                  </PlatePrice>
+                  <DiscountPrice>
+                    {finalDiscount != 0.00 && convertPrice(effectivePrice * (1 - parseFloat(finalDiscount) / 100), currencySymbol)}
+                  </DiscountPrice>
+                </PriceContainer>
+              ) : null;
+            })()}
           </TextContainer>
         </Wrapper>
       </Container>

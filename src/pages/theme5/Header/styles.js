@@ -1,167 +1,142 @@
 import styled from "styled-components";
 import { CiSearch } from "react-icons/ci";
+import { IoMdShare } from "react-icons/io";
 import { IoShareSocialSharp } from "react-icons/io5";
 
 export const Container = styled.div`
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+width: 100%;
+display: flex;
+flex-direction: column;
+align-items: center;
 `;
 
 export const TextContainer = styled.div`
-  width: 90%;
-  display: flex;
-  align-items: ${(props) => (props.activeLanuguage == "en" ? "flex-start" : "flex-end")};
-  flex-direction: column;
-  margin-top: 24px;
-  margin-bottom: 24px;
-  font-weight: 600;
-  color: ${(props) => props.theme.textColor};
-
-  @media (min-width: 480px) {
-    width: 92%;
-  }
-
-  @media (min-width: 768px) {
-    margin-top: 28px;
-    margin-bottom: 28px;
-  }
+width: 90%;
+display: flex;
+align-items: ${props=>props.activeLanuguage=="en"?"flex-start":"flex-end"};
+flex-direction: column;
+margin-top: 30px;
+margin-bottom: 30px;
+font-weight: 600;
+color:${props=>props.theme.textColor}
 `;
-
 export const Text = styled.div`
-  font-size: 24px;
-  line-height: 1.3;
+font-size: 27px;
 
-  @media (min-width: 480px) {
-    font-size: 26px;
-  }
 
-  @media (min-width: 768px) {
-    font-size: 28px;
-  }
 `;
 
 export const SearchWapper = styled.div`
-  width: 90%;
-  display: flex;
-  align-items: center;
-  margin-top: 24px;
-  color: ${(props) => props.theme.searchTextColor};
-  height: 44px;
-  border-radius: 12px;
-  overflow: hidden;
-  position: relative;
-  flex-direction: row;
-  gap: 8px;
+width: 90%;
+display: flex;
+align-items: center;
+margin-top: 30px;
+color:${props=>props.theme.searchTextColor};
+height: 40px;
+border-radius: 10px;
+overflow: hidden;
+position: relative;
+flex-direction: row;
+gap:5px
 
-  @media (min-width: 480px) {
-    width: 92%;
-    height: 46px;
-  }
-
-  @media (min-width: 768px) {
-    height: 48px;
-    border-radius: 14px;
-  }
 `;
-
 export const SearchContainer = styled.div`
-  width: 90%;
-  display: flex;
-  align-items: center;
-  color: ${(props) => props.theme.searchTextColor};
-  height: 44px;
-  border-radius: 12px;
-  overflow: hidden;
-  position: relative;
+width: 90%;
+display: flex;
+align-items: center;
+color:${props=>props.theme.searchTextColor};
+height: 40px;
+border-radius: 10px;
+overflow: hidden;
+position: relative;
 
-  @media (min-width: 768px) {
-    height: 48px;
-    border-radius: 14px;
-  }
 `;
 
 export const Search = styled.input`
-  width: 100%;
-  height: 100%;
-  background-color: ${(props) => props.theme.searchbackground};
-  border: 0;
-  outline: none;
-  font-size: 14px;
-  padding-left: ${(props) => (props.activeLanguage == "en" ? "36px" : "12px")};
-  padding-right: ${(props) => (props.activeLanguage == "en" ? "12px" : "36px")};
-  color: ${(props) => props.theme.searchTextColor};
-  transition: box-shadow 0.2s ease;
+width: 100%;
+height:100%;
+background-color: ${props=>props.theme.searchbackground};
+border: 0;
+outline: none;
+padding-left: ${props=>props.activeLanguage=="en"?"30px":"0px"};
+padding-right: ${props=>props.activeLanguage=="en"?"0px":"30px"};
+color:${props=>props.theme.searchTextColor};
+&::placeholder{
+    color:${props=>props.theme.searchTextColor};
+    opacity: 0.5;
+}
 
-  &::placeholder {
-    color: ${(props) => props.theme.searchTextColor};
-    opacity: 0.45;
-    font-size: 13px;
-  }
-
-  &:focus {
-    box-shadow: inset 0 0 0 1.5px ${(props) => props.theme.mainColor}33;
-  }
-
-  @media (min-width: 768px) {
-    font-size: 15px;
-
-    &::placeholder {
-      font-size: 14px;
-    }
-  }
 `;
 
 export const SearchIcon = styled(CiSearch)`
-  position: absolute;
-  left: ${(props) => (props.activeLanguage == "en" ? "12px" : null)};
-  right: ${(props) => (props.activeLanguage == "en" ? null : "12px")};
-  font-size: 18px;
-  opacity: 0.7;
+position: absolute;
+left: ${props=>props.activeLanguage=="en"?"10px":null};
+right: ${props=>props.activeLanguage=="en"?null:"10px"};
+
 `;
 
 export const SidebarAction = styled.div`
-  width: 90%;
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  margin-top: 10px;
-  margin-left: 10px;
-  font-weight: 600;
-  color: ${(props) => props.theme.searchTextColor};
-  height: 40px;
-  font-size: 13px;
+width: 90%;
+display: flex;
+align-items: center;
+justify-content: flex-start;
+margin-top: 10px;
+margin-left: 10px;
 
-  @media (min-width: 480px) {
-    width: 92%;
-  }
+font-weight: 600;
+color:${props=>props.theme.searchTextColor};
+height: 40px;
+font-size: 13px;
+
 `;
+
+
+
 
 export const ShareIcon = styled.div`
-  height: 100%;
-  font-size: 13px;
-  padding-left: 14px;
-  padding-right: 14px;
-  border-radius: 12px;
-  font-weight: 500;
-  gap: 6px;
-  flex-direction: row;
+height: 100%;
+font-size: 14px;
+padding-left: 10px;
+padding-right: 10px;
+border-radius: 10px;
+font-weight: 300;
+gap:5px;
+flex-direction: row;
+display: flex;
+align-items:center;
+justify-content: center;
+background-color:${props=>props.theme.searchbackground};
+color:${props=>props.theme.searchTextColor};
+`
+export const ShareIconLogo = styled(IoShareSocialSharp)`
+color:${props=>props.theme.searchTextColor};
+font-size: 14px;
+`;
+
+export const ModePill = styled.button`
   display: flex;
   align-items: center;
-  justify-content: center;
-  background-color: ${(props) => props.theme.searchbackground};
-  color: ${(props) => props.theme.searchTextColor};
+  gap: 6px;
+  margin: 12px auto 0;
+  padding: 8px 20px;
+  border-radius: 24px;
+  border: 1.5px solid ${props => props.theme.mainColor || "#333"};
+  background: ${props => props.theme.mainColor || "#333"};
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
   cursor: pointer;
-  transition: opacity 0.2s ease;
-  -webkit-tap-highlight-color: transparent;
+  transition: all 0.25s ease;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
 
-  &:active {
-    opacity: 0.7;
+  &:hover {
+    opacity: 0.9;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
   }
 `;
 
-export const ShareIconLogo = styled(IoShareSocialSharp)`
-  color: ${(props) => props.theme.searchTextColor};
-  font-size: 15px;
+export const ModePillIcon = styled.span`
+  display: flex;
+  align-items: center;
+  font-size: 18px;
 `;

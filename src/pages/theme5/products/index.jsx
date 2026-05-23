@@ -11,6 +11,7 @@ import { addToCart } from "../../../redux/cart/cartActions";
 import { FaCartPlus } from "react-icons/fa";
 import { toast } from "react-toastify";
 import { convertPrice } from "../../../utilities/convertPrice";
+import { getEffectivePrice } from "../utils/priceUtils";
 const _ = require('lodash');
 
 export default function Products({
@@ -21,7 +22,8 @@ export default function Products({
   carouselPosition,
   setcarouselPosition,
   setactiveCategory,
-  categories
+  categories,
+  menuMode,
 }) {
   const [activePlate, setactivePlate] = useState(null);
   const [searchParams, setSearchParams] = useSearchParams();
@@ -50,13 +52,13 @@ export default function Products({
   const allItemsStyle = restaurant?.all_items_style || "grid";
   const categoryId = activeCategory && !isAllItemsCategory ? String(activeCategory) : null;
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage } =
-    useGetProducts(categoryId);
+    useGetProducts(categoryId, menuMode);
   const {
     data: allProductsPages,
     fetchNextPage: fetchNextPageAll,
     hasNextPage: hasNextPageAll,
     isFetchingNextPage: isFetchingNextPageAll,
-  } = useGetProductsByRestaurant(isAllItemsCategory ? restaurant?.id : null);
+  } = useGetProductsByRestaurant(isAllItemsCategory ? restaurant?.id : null, menuMode);
   const allProducts = allProductsPages?.pages?.flat() || [];
 
 
@@ -298,9 +300,10 @@ console.log(filteredProducts)
                     } else {
                       finalDiscount = parseFloat(plate.discount || 0);
                     }
-                    const discountedPrice = finalDiscount !== 0.00 
-                      ? parseFloat(plate.en_price) * (1 - parseFloat(finalDiscount) / 100) 
-                      : parseFloat(plate.en_price);
+                    const effectivePrice = getEffectivePrice(plate, menuMode);
+                    const discountedPrice = finalDiscount !== 0.00
+                      ? effectivePrice * (1 - parseFloat(finalDiscount) / 100)
+                      : effectivePrice;
                     let currencySymbol;
                     switch (restaurant?.currency) {
                       case "dollar": currencySymbol = "$"; break;
@@ -330,9 +333,9 @@ console.log(filteredProducts)
                         document.body.style.overflow = "hidden";
                         return;
                       }
-                      const basePrice = parseFloat(plate?.en_price || "0");
+                      const basePrice = getEffectivePrice(plate, menuMode);
                       const discountedPrice = basePrice * (1 - parseFloat(finalDiscount) / 100);
-                      dispatch(addToCart(restaurantName, plate, 1, {}, discountedPrice, ""));
+                      dispatch(addToCart(restaurantName, plate, 1, {}, discountedPrice, "", menuMode));
                       toast.success(
                         activeLanguage === "en"
                           ? "Added to cart"
@@ -366,11 +369,11 @@ console.log(filteredProducts)
                             <AllStyles.AllItemsListName>
                               {activeLanguage === "en" ? plate.en_name : plate.ar_name}
                             </AllStyles.AllItemsListName>
-                            {plate.en_price && (
+                            {effectivePrice > 0 && (
                               <AllStyles.AllItemsListPrice activeLanguage={activeLanguage}>
                                 {finalDiscount !== 0.00 && (
                                   <AllStyles.AllItemsListDiscountPrice>
-                                    {convertPrice(parseFloat(plate.en_price), currencySymbol)}
+                                    {convertPrice(effectivePrice, currencySymbol)}
                                   </AllStyles.AllItemsListDiscountPrice>
                                 )}
                                 <span>
@@ -422,6 +425,7 @@ console.log(filteredProducts)
                       activeCategoryId={section.category.id}
                       categories={categories}
                       disableDetails={false}
+                      menuMode={menuMode}
                     />
                   ))}
                 </ProductWrapper>
@@ -460,6 +464,7 @@ console.log(filteredProducts)
                           searchParams={searchParams}
                           activeCategoryId={activeCategory}
                           categories={categories}
+                          menuMode={menuMode}
                         />
                       );
                     })}

@@ -16,9 +16,10 @@ const hashFormData = (formData) => {
     }, 0);
 };
 // Action Creators
-export const addToCart = (restaurantName, itemDetails, quantity, formData,price,instruction) => {
+export const addToCart = (restaurantName, itemDetails, quantity, formData, price, instruction, menuMode) => {
   const normalizedForm = isV2Selection(formData) ? normalizeV2Selection(formData) : formData;
-  const uniqueId = `${itemDetails.id}_${hashFormData(normalizedForm)}`;
+  const modeKey = menuMode || 'both';
+  const uniqueId = `${itemDetails.id}_${modeKey}_${hashFormData(normalizedForm)}`;
   console.log(itemDetails)
   return {
     type: ADD_TO_CART,
@@ -28,9 +29,10 @@ export const addToCart = (restaurantName, itemDetails, quantity, formData,price,
         ...itemDetails,
         quantity,
         formData: normalizedForm,
-        uniqueId,// Include unique identifier in the payload
+        uniqueId,
         price,
-        instruction
+        instruction,
+        menuMode: modeKey
       }
     }
   };

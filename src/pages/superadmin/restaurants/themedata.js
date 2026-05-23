@@ -36,6 +36,7 @@ export const templates = [
       {featureName:"delivery_order",defaultValue:true},
       {featureName:"dinein_order",defaultValue:true},
       {featureName:"takeaway_order",defaultValue:true},
+      {featureName:"google_maps_integrated",defaultValue:false},
     ]
   },
   {
@@ -74,6 +75,7 @@ export const templates = [
       {featureName:"delivery_order",defaultValue:true},
       {featureName:"dinein_order",defaultValue:true},
       {featureName:"takeaway_order",defaultValue:true},
+      {featureName:"google_maps_integrated",defaultValue:false},
     ]
   },
   {
@@ -115,6 +117,7 @@ export const templates = [
       {featureName:"delivery_order",defaultValue:true},
       {featureName:"dinein_order",defaultValue:true},
       {featureName:"takeaway_order",defaultValue:true},
+      {featureName:"google_maps_integrated",defaultValue:false},
     ]
   },
   {
@@ -156,6 +159,7 @@ export const templates = [
       {featureName:"delivery_order",defaultValue:true},
       {featureName:"dinein_order",defaultValue:true},
       {featureName:"takeaway_order",defaultValue:true},
+      {featureName:"google_maps_integrated",defaultValue:false},
     ]
   },
   {
@@ -194,6 +198,7 @@ export const templates = [
       {featureName:"delivery_order",defaultValue:true},
       {featureName:"dinein_order",defaultValue:true},
       {featureName:"takeaway_order",defaultValue:true},
+      {featureName:"google_maps_integrated",defaultValue:false},
     ]
   }
 ]

@@ -193,20 +193,30 @@ export default function Wizard({ popupHandler, restaurant }) {
     if (!validateStep(2)) return;
 
     // Generate WhatsApp message
-    let message = `Hello *${restaurantName}*\n`;
-    message += `It's *${formData.fullName}* and I want to purchase the following items:\n`;
-    message += `Order Type: *${formData.deliveryType}*\n`;
+    let currencySymbol = "";
+    switch (restaurant?.currency) {
+      case "dollar": currencySymbol = "$"; break;
+      case "lb": currencySymbol = "L.L."; break;
+      case "gram": currencySymbol = "g"; break;
+      case "kilogram": currencySymbol = "kg"; break;
+    }
 
     let totalPrice = 0;
-    cart.forEach((item) => {
-      message += `• ${item.quantity} of *${
-        activeLanguage === "ar" ? item.ar_name : item.en_name
-      }*`;
-      message += `(${
-        activeLanguage === "ar"
-          ? item.category.ar_category
-          : item.category.en_category
-      })\n`;
+    let message = ``;
+    message += `*New Order - ${formData.deliveryType}*\n`;
+    message += `--------------------\n\n`;
+
+    message += `*Items:*\n`;
+    cart.forEach((item, idx) => {
+      const modeLabel = item.menuMode === 'dine_in' ? ' [Dine In]' : item.menuMode === 'delivery' ? ' [Delivery]' : '';
+      const name = (activeLanguage === "ar" ? item.ar_name : item.en_name || "").trim();
+      const category = (activeLanguage === "ar" ? item.category.ar_category : item.category.en_category || "").trim();
+      const itemTotal = item.price * item.quantity;
+      totalPrice += itemTotal;
+
+      message += `${idx + 1}. *${name}*${modeLabel}\n`;
+      message += `    ${category}\n`;
+      message += `    ${item.quantity}x ${item.price} ${currencySymbol} = *${itemTotal} ${currencySymbol}*\n`;
 
       if (item.formData) {
         message += formatCartItemOptionsForOrderMessage(
@@ -215,64 +225,36 @@ export default function Wizard({ popupHandler, restaurant }) {
         );
       }
       if (item.instruction) {
-        message += `  - Special Instruction: ${item.instruction}\n`;
+        message += `    > _${item.instruction}_\n`;
       }
-
-      let currencySymbol = "";
-      switch (restaurant?.currency) {
-        case "dollar":
-          currencySymbol = "$";
-          break;
-        case "lb":
-          currencySymbol = "L.L.";
-          break;
-        case "gram":
-          currencySymbol = "g";
-          break;
-        case "kilogram":
-          currencySymbol = "kg";
-          break;
-      }
-
-      message += `  - Price: ${item.price * item.quantity} ${currencySymbol}\n`;
-      totalPrice += item.price * item.quantity;
+      message += `\n`;
     });
 
-    let currencySymbol = "";
-    switch (restaurant?.currency) {
-      case "dollar":
-        currencySymbol = "$";
-        break;
-      case "lb":
-        currencySymbol = "L.L.";
-        break;
-      case "gram":
-        currencySymbol = "g";
-        break;
-      case "kilogram":
-        currencySymbol = "kg";
-        break;
-    }
+    message += `--------------------\n`;
+    message += `*Total: ${convertPrice(totalPrice, currencySymbol)}*\n\n`;
 
-    message += `Total Price: ${convertPrice(totalPrice, currencySymbol)}\n\n`;
-    message += `Contact Info:\n`;
-    message += `- Name: ${formData.fullName}\n`;
+    message += `*Customer:*\n`;
+    message += `- ${formData.fullName}\n`;
+    message += `- ${formData.phoneNumber}\n`;
     if (formData.selectedRegion) {
       message += `- Region: ${formData.selectedRegion}\n`;
     }
-    message += `- Phone Number: ${formData.phoneNumber}\n`;
+    let mapLink = "";
     if (formData.deliveryType === "Delivery") {
-      message += `- Address: ${formData.fullAddress}\n`;
+      message += `\n*Delivery Address:*\n`;
+      message += `${formData.fullAddress}\n`;
       if (formData.selectedLocation) {
-        message += `- Location Coordinates: ${formData.selectedLocation.latitude}, ${formData.selectedLocation.longitude}\n`;
-        message += `- Google Maps Link: https://www.google.com/maps?q=${formData.selectedLocation.latitude},${formData.selectedLocation.longitude}\n`;
+        mapLink = `https://www.google.com/maps?q=${formData.selectedLocation.latitude},${formData.selectedLocation.longitude}`;
       }
     }
     if (formData.deliveryType === "DineIn") {
-      message += `- Table Number: ${formData.tableNumber}\n`;
+      message += `- Table: #${formData.tableNumber}\n`;
     }
     if (formData.note) {
-      message += `- Order notes: ${formData.note}\n`;
+      message += `\n*Note:* _${formData.note}_\n`;
+    }
+    if (mapLink) {
+      message += `\n${mapLink}\n`;
     }
 
     const encodedMessage = encodeURIComponent(message);
@@ -307,6 +289,7 @@ export default function Wizard({ popupHandler, restaurant }) {
       total_price: item.price * item.quantity,
       form_data: item.formData || {},
       instruction: item.instruction || "",
+      menu_mode: item.menuMode || 'both',
       product_details: {
         en_name: item.en_name,
         ar_name: item.ar_name,
@@ -326,6 +309,8 @@ export default function Wizard({ popupHandler, restaurant }) {
       customer_name: formData.fullName,
       customer_phone: formData.phoneNumber,
       customer_address: formData.deliveryType === "Delivery" ? formData.fullAddress : null,
+      customer_latitude: formData.selectedLocation?.latitude || null,
+      customer_longitude: formData.selectedLocation?.longitude || null,
       table_number: formData.deliveryType === "DineIn" ? formData.tableNumber : null,
       note: formData.note,
       items: fullOrderItems,

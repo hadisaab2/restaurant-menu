@@ -1,167 +1,122 @@
 import styled, { keyframes } from "styled-components";
 
 export const Container = styled.div`
-  width: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-top: 12px;
-
-  @media (min-width: 480px) {
-    width: 33.333%;
-  }
-
-  @media (min-width: 768px) {
-    width: 25%;
-  }
-
-  @media (min-width: 1024px) {
-    width: 20%;
-  }
+    width:50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 10px;
+    @media (min-width: 1024px) {
+        width: 20%;
+    }
 `;
-
 export const Wrapper = styled.div`
-  width: 92%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  background-color: ${(props) => props.theme.BoxColor};
-  border-radius: 16px;
-  position: relative;
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
-  overflow: hidden;
+    width: 90%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: ${props=>props.theme.BoxColor};
+    border-radius: 20px;
+    position: relative;
 
-  &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
-  }
+    //cjhange loadeeerr wrappperr and this oneee colorrrr
 
-  &:active {
-    transform: scale(0.98);
-  }
-
-  @media (min-width: 768px) {
-    border-radius: 18px;
-  }
 `;
 
 export const Image = styled.img`
-  width: 90%;
-  height: 100%;
-  object-fit: cover;
-  border-radius: 12px;
-  visibility: ${(props) => (props.imageLoaded ? "visible" : "hidden")};
-  opacity: ${(props) => (props.imageLoaded ? 1 : 0)};
-  transition: opacity 0.4s ease;
+width:90%;
+height:100%;
+object-fit: cover;
+border-radius: 10px;
+visibility: ${props=>props.imageLoaded?"visible":"hidden"};
+/* display:${props=>props.imageLoaded?"block":"none"} */
 `;
-
 export const ImageContainer = styled.div`
-  position: relative;
-  width: 100%;
-  aspect-ratio: 1 / 0.85;
-  overflow: hidden;
-  margin-top: 8px;
-  display: flex;
-  justify-content: center;
-  border-radius: 12px;
-  cursor: pointer;
-  -webkit-tap-highlight-color: transparent;
+position: relative;
+width:100%;
+height: 20vh;
+overflow: hidden;
+margin-top: 10px;
+display: flex;
+justify-content: center;
+border-radius: 10px;
+@media (min-width: 1024px) {
+  height: 30vh;
+    }
 
-  @media (min-width: 768px) {
-    aspect-ratio: 1 / 0.9;
-  }
 
-  @media (min-width: 1024px) {
-    aspect-ratio: 1 / 0.95;
-  }
 `;
-
 export const TextContainer = styled.div`
-  width: 90%;
-  display: flex;
-  justify-content: center;
-  flex-direction: column;
-  text-align: ${(props) => (props.activeLanuguage == "en" ? "left" : "right")};
-  position: relative;
-  align-items: ${(props) =>
-    props.activeLanuguage == "en" ? "flex-start" : "flex-end"};
-  gap: 4px;
-  padding: 10px 0 12px;
-`;
+width:90%;
+display: flex;
+justify-content: center;
+flex-direction: column;
+text-align: ${props=>props.activeLanuguage=="en"?"left":"right"};
+position: relative;
+align-items: ${props=>props.activeLanuguage=="en"?"flex-start":"flex-end"};
+gap:5px;
+height: 10vh;
+margin-top: 5px;
 
+`;
 export const PlateName = styled.span`
-  font-size: ${(props) => props.fontSize || "14px"};
-  font-weight: 600;
-  color: ${(props) => props.theme.BoxTextColor};
-  display: -webkit-box;
+font-size: ${props=>props.fontSize};
+font-weight: 500;
+color:${props=>props.theme.BoxTextColor};
+
+display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-height: 2.8em;
-  line-height: 1.4em;
-  letter-spacing: 0.1px;
+  max-height: 3em; /* Adjust based on line-height */
+  line-height: 1.5em; /* Adjust based on your font size and design */
 
-  @media (min-width: 768px) {
-    font-size: 15px;
-  }
+
+
 `;
 
 export const PriceContainer = styled.div`
-  display: flex;
-  flex-direction: row;
-  gap: 6px;
-  align-items: center;
-  margin-top: 2px;
+display: flex;
+flex-direction: row;
+gap:5px;
 `;
 
 export const PlatePrice = styled.span`
-  color: ${(props) => props.theme.BoxPriceColor};
-  font-size: 14px;
-  font-weight: ${(props) => (props.discounted ? "400" : "700")};
-  word-spacing: 0px;
-  text-decoration: ${(props) => (props.discounted ? "line-through" : "none")};
-  opacity: ${(props) => (props.discounted ? 0.55 : 1)};
-  transition: opacity 0.2s ease;
+color:${props=>props.theme.BoxPriceColor};
+font-size: 14px;
+word-spacing: 0px;
+text-decoration:${props=>props.discounted?"line-through":"none"};
 
-  @media (min-width: 768px) {
-    font-size: 15px;
-  }
+
 `;
 
 export const DiscountPrice = styled.span`
-  color: ${(props) => props.theme.BoxPriceColor};
-  font-size: 14px;
-  font-weight: 700;
-  word-spacing: 0px;
+color:${props=>props.theme.BoxPriceColor};
+font-size: 14px;
+word-spacing: 0px;
 
-  @media (min-width: 768px) {
-    font-size: 15px;
-  }
 `;
 
-const shimmer = keyframes`
+
+
+const spin = keyframes`
   0% {
-    background-position: -200% 0;
+    transform: rotate(0deg);
   }
   100% {
-    background-position: 200% 0;
+    transform: rotate(360deg);
   }
 `;
 
 export const Loader = styled.div`
-  border: 3px solid rgba(0, 0, 0, 0.08);
-  border-left-color: ${(props) => props.theme.mainColor || "#333"};
+  border: 3px solid rgba(0, 0, 0, 0.1);
+  border-left-color: #333; /* Change color as needed */
   border-radius: 50%;
-  width: 24px;
-  height: 24px;
-  animation: spin 0.8s linear infinite;
-
-  @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-  }
+  width: 20px;
+  height: 20px;
+  animation: ${spin} 1s linear infinite; /* Apply animation */
 `;
 
 export const LoaderWrapper = styled.div`
@@ -169,21 +124,14 @@ export const LoaderWrapper = styled.div`
   position: absolute;
   justify-content: center;
   align-items: center;
-  width: 91%;
-  aspect-ratio: 1 / 0.85;
-  border-radius: 12px;
-  overflow: hidden;
-  top: 8px;
+  width:91%;
+height: 20vh;
+border-radius: 10px;
+overflow: hidden;
+top: 10px;
   z-index: 3;
-  background: ${(props) => props.theme.categoryUnactive || "#f0f0f0"};
-  background-image: linear-gradient(
-    90deg,
-    ${(props) => props.theme.categoryUnactive || "#f0f0f0"} 0%,
-    ${(props) => props.theme.backgroundColor || "#e0e0e0"} 50%,
-    ${(props) => props.theme.categoryUnactive || "#f0f0f0"} 100%
-  );
-  background-size: 200% 100%;
-  animation: ${shimmer} 1.8s ease-in-out infinite;
+  background-color: ${props=>props.theme.categoryUnactive};
+
 `;
 
 export const NEW = styled.div`
@@ -193,13 +141,11 @@ export const NEW = styled.div`
   left: auto;
   bottom: auto;
   z-index: 4;
-  font-size: 11px;
-  font-weight: 700;
-  padding: 4px 10px;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 3px 8px;
   background-color: ${(props) => props.theme.mainColor};
   color: ${(props) => props.theme.popupbuttonText};
-  border-radius: 20px;
+  border-radius: 4px;
   line-height: 1.2;
-  letter-spacing: 0.3px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 `;

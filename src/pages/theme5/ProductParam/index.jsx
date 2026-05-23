@@ -21,6 +21,8 @@ import { IoClose } from 'react-icons/io5';
 import { MdZoomIn } from 'react-icons/md';
 import { useLogProduct } from '../../../apis/products/logProduct';
 import { convertPrice } from '../../../utilities/convertPrice';
+import { useMenuMode } from '../MenuModeContext';
+import { getEffectivePrice } from '../utils/priceUtils';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { EffectCards, Pagination } from 'swiper/modules';
 import 'swiper/css';
@@ -28,6 +30,7 @@ import 'swiper/css/effect-cards';
 import 'swiper/css/pagination';
 
 export default function ProductParam({ productId, setSearchParams, searchParams }) {
+    const { menuMode } = useMenuMode();
     const { restaurantName: paramRestaurantName } = useParams();
 
     const hostname = window.location.hostname;
@@ -54,8 +57,9 @@ export default function ProductParam({ productId, setSearchParams, searchParams 
 
     useEffect(() => {
         if (fetchedProduct?.en_price && !productLoading) {
-            setBasePrice(parseFloat(fetchedProduct.en_price));
-            setTotalPrice(parseFloat(fetchedProduct?.en_price))
+            const price = getEffectivePrice(fetchedProduct, menuMode);
+            setBasePrice(price);
+            setTotalPrice(price);
             if (parseFloat(fetchedProduct?.category?.discount) === 0.00) {
                 setfinalDiscount(parseFloat(fetchedProduct?.discount))
             } else {
@@ -287,7 +291,7 @@ export default function ProductParam({ productId, setSearchParams, searchParams 
             document.body.style.overflow = "auto";
         }, 800);
         dispatch(
-            addToCart(restaurantName, fetchedProduct, quantity, formData, discountedPrice, instruction)
+            addToCart(restaurantName, fetchedProduct, quantity, formData, discountedPrice, instruction, menuMode)
         );
         setCloseAnimation(false);
         setQuantity(1);
@@ -604,7 +608,7 @@ export default function ProductParam({ productId, setSearchParams, searchParams 
                                             : "غير متوفر حالياً"}
                                     </OutOfStockNotice>
                                 )}
-                                {formSchema?.components && <ProductForm formSchema={formSchema} onPriceChange={handlePriceChange} formData={formData} setFormData={setFormData} basePrice={fetchedProduct?.en_price} formErrors={formErrors} />}
+                                {formSchema?.components && <ProductForm formSchema={formSchema} onPriceChange={handlePriceChange} formData={formData} setFormData={setFormData} basePrice={String(getEffectivePrice(fetchedProduct, menuMode))} formErrors={formErrors} />}
                                 <InstructionContainer activeLanguage={restaurant.activeLanguage}>
                                     <InstructionLabel>{restaurant.activeLanguage == "en"
                                         ? "Any Special Instuction ?"

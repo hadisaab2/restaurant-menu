@@ -13,50 +13,34 @@ export const FormGroup = styled.div`
 `;
 
 export const Label = styled.label`
-  font-weight: 700;
+  font-weight: bold;
   margin-bottom: 10px;
-  color: ${(props) => props.theme.mainColor};
+  color:${(props) => props.theme.mainColor};
   font-size: 14px;
-  letter-spacing: 0.2px;
-
-  @media (min-width: 768px) {
-    font-size: 15px;
-  }
 `;
 
 export const CheckboxLabel = styled.label`
   display: flex;
   align-items: center;
-  margin-bottom: 10px;
-  padding: 6px 0;
-  cursor: pointer;
-  -webkit-tap-highlight-color: transparent;
-
+  margin-bottom: 8px;
   input[type="checkbox"] {
-    margin-right: 10px;
-    width: 18px;
-    height: 18px;
-    accent-color: ${(props) => props.theme.mainColor};
-    cursor: pointer;
+    margin-right: 8px;
+    accent-color: ${(props) => props.theme.mainColor}; /* Change this color to your desired checkbox color */
   }
 `;
 
 export const Select = styled.select`
-  padding: 10px 12px;
-  border-radius: 10px;
-  font-size: 14px;
+  padding: 8px;
+  border-radius: 4px;
+  font-size: 16px;
   color: ${(props) => props.theme.backgroundColor};
   background-color: ${(props) => props.theme.mainColor};
-  border: none;
-  outline: none;
-  cursor: pointer;
-  -webkit-tap-highlight-color: transparent;
-
-  &:focus {
+  &:active{
     outline: none;
-    box-shadow: 0 0 0 2px ${(props) => props.theme.mainColor}40;
+    border: 0px;
+
   }
-`;
+  `;
 
 export const RadioGroup = styled.div`
   display: flex;
@@ -67,15 +51,8 @@ export const RadioGroup = styled.div`
 export const RadioLabel = styled.label`
   display: flex;
   align-items: center;
-  padding: 6px 0;
-  cursor: pointer;
-  -webkit-tap-highlight-color: transparent;
-
   input[type="radio"] {
-    margin-right: 10px;
-    width: 18px;
-    height: 18px;
-    accent-color: ${(props) => props.theme.mainColor};
-    cursor: pointer;
+    margin-right: 8px;
+    accent-color:${(props) => props.theme.mainColor}; /* Change this color to your desired radio button color */
   }
 `;

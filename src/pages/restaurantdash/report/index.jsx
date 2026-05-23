@@ -1,72 +1,173 @@
-import React, { useState } from 'react';
-import { Button, TextField, Stack } from '@mui/material';
-import { Container } from './styles';
+import React, { useState } from "react";
+import axios from "axios";
+import { getCookie } from "../../../utilities/manageCookies";
+import {
+  Container,
+  Hero,
+  HeroTitle,
+  HeroSubtitle,
+  Card,
+  SectionLabel,
+  PresetsRow,
+  PresetBtn,
+  DateRow,
+  DateInput,
+  DateSep,
+  DownloadBtn,
+  Spinner,
+  PreviewCard,
+  PreviewTitle,
+  PreviewList,
+  PreviewItem,
+  CheckIcon,
+} from "./styles";
+
+const BASE_URL = process.env.REACT_APP_BASE_URL;
+
+const PRESETS = [
+  { label: "This Week", days: 7 },
+  { label: "Last 30 Days", days: 30 },
+  { label: "Last 90 Days", days: 90 },
+  { label: "Last 6 Months", days: 180 },
+  { label: "Last Year", days: 365 },
+  { label: "Custom", days: null },
+];
+
+const fmtDate = (d) => d.toISOString().split("T")[0];
+
+const REPORT_SECTIONS = [
+  "Executive Summary (KPIs)",
+  "Daily Visits Trend (Chart)",
+  "Traffic by Day of Week (Chart)",
+  "Traffic Sources Breakdown",
+  "Device Breakdown (Mobile/Desktop)",
+  "Conversion Funnel (Visual)",
+  "Top Visited Products (Cards + Table)",
+  "Top Ordered Products + Conversion",
+  "Top Visited Categories (Cards + Table)",
+  "Least Visited Products",
+  "Revenue & Order Breakdown",
+  "Automated Insights & Recommendations",
+];
 
 export default function Report({ userInformation }) {
-    const [startDate, setStartDate] = useState('');
-    const [toDate, setToDate] = useState('');
-    const [isDownloading, setIsDownloading] = useState(false);
-    const handleDownload = async () => {
-        if (!startDate || !toDate) {
-            alert('Please select both start and end dates.');
-            return;
-        }
+  const [activePreset, setActivePreset] = useState(1); // 30 days
+  const [startDate, setStartDate] = useState(fmtDate(new Date(Date.now() - 30 * 86400000)));
+  const [endDate, setEndDate] = useState(fmtDate(new Date()));
+  const [isDownloading, setIsDownloading] = useState(false);
 
-        const url = `https://77.37.51.25/restaurants/report/generate-report?restaurant_id=${userInformation?.restaurant_id}&startDate=${startDate}&toDate=${toDate}`;
+  const handlePreset = (idx) => {
+    setActivePreset(idx);
+    const preset = PRESETS[idx];
+    if (preset.days !== null) {
+      setStartDate(fmtDate(new Date(Date.now() - preset.days * 86400000)));
+      setEndDate(fmtDate(new Date()));
+    }
+  };
 
-        try {
-            setIsDownloading(true); // 🔄 Show loader
-            const response = await fetch(url, {
-                method: 'GET',
-                headers: {
-                    // Add any required headers here (e.g., Authorization)
-                }
-            });
+  const handleDownload = async () => {
+    if (!startDate || !endDate) {
+      alert("Please select both start and end dates.");
+      return;
+    }
 
-            if (!response.ok) {
-                throw new Error('Failed to download file');
-            }
+    const url = `${BASE_URL}/restaurants/report/generate-report?restaurant_id=${userInformation?.restaurant_id}&startDate=${startDate}&toDate=${endDate}`;
 
-            const blob = await response.blob();
-            const link = document.createElement('a');
-            link.href = window.URL.createObjectURL(blob);
-            link.download = 'report.pdf'; // filename shown to user
-            document.body.appendChild(link);
-            link.click();
-            link.remove();
-        } catch (error) {
-            console.error('Download failed:', error);
-            alert('Could not download the report.');
-        } finally {
-            setIsDownloading(false); // ✅ Hide loader
-        }
-    };
-    return (
-        <Container>
-            <Stack spacing={2} direction="column" sx={{ maxWidth: 300, marginTop: 4 }}>
-                <TextField
-                    label="Start Date"
-                    type="date"
-                    value={startDate}
-                    onChange={(e) => setStartDate(e.target.value)}
-                    InputLabelProps={{ shrink: true }}
-                />
-                <TextField
-                    label="End Date"
-                    type="date"
-                    value={toDate}
-                    onChange={(e) => setToDate(e.target.value)}
-                    InputLabelProps={{ shrink: true }}
-                />
-                <Button
-                    variant="contained"
-                    onClick={handleDownload}
-                    sx={{ backgroundColor: 'turquoise', '&:hover': { backgroundColor: '#4b949a' },'&:focus': { outline: 'none' } }}
-                >
-                    {isDownloading ? 'Downloading...' : 'Download Report'}
+    try {
+      setIsDownloading(true);
+      const token = getCookie("accessToken");
+      const response = await axios.get(url, {
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
+        responseType: "blob",
+      });
 
-                </Button>
-            </Stack>
-        </Container>
-    );
+      const blob = new Blob([response.data], { type: "application/pdf" });
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = `report_${startDate}_to_${endDate}.pdf`;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(link.href);
+    } catch (error) {
+      console.error("Download failed:", error);
+      alert("Could not download the report.\n\n" + (error.response?.data?.message || error.message));
+    } finally {
+      setIsDownloading(false);
+    }
+  };
+
+  return (
+    <Container>
+      <Hero>
+        <HeroTitle>Generate Performance Report</HeroTitle>
+        <HeroSubtitle>
+          Create a comprehensive PDF report with charts, analytics, and
+          actionable insights for your business.
+        </HeroSubtitle>
+      </Hero>
+
+      <Card $delay="0.05s">
+        <SectionLabel>Select Period</SectionLabel>
+        <PresetsRow>
+          {PRESETS.map((p, i) => (
+            <PresetBtn
+              key={p.label}
+              $active={activePreset === i}
+              onClick={() => handlePreset(i)}
+            >
+              {p.label}
+            </PresetBtn>
+          ))}
+        </PresetsRow>
+
+        <DateRow>
+          <DateInput
+            type="date"
+            value={startDate}
+            onChange={(e) => {
+              setStartDate(e.target.value);
+              setActivePreset(5);
+            }}
+          />
+          <DateSep>to</DateSep>
+          <DateInput
+            type="date"
+            value={endDate}
+            onChange={(e) => {
+              setEndDate(e.target.value);
+              setActivePreset(5);
+            }}
+          />
+        </DateRow>
+      </Card>
+
+      <Card $delay="0.1s">
+        <SectionLabel>Report Contents</SectionLabel>
+        <PreviewCard>
+          <PreviewTitle>Your report will include:</PreviewTitle>
+          <PreviewList>
+            {REPORT_SECTIONS.map((section) => (
+              <PreviewItem key={section}>
+                <CheckIcon>&#10003;</CheckIcon>
+                {section}
+              </PreviewItem>
+            ))}
+          </PreviewList>
+        </PreviewCard>
+      </Card>
+
+      <Card $delay="0.15s">
+        <DownloadBtn onClick={handleDownload} disabled={isDownloading}>
+          {isDownloading ? (
+            <>
+              <Spinner /> Generating Report...
+            </>
+          ) : (
+            <>&#128196; Download Report (PDF)</>
+          )}
+        </DownloadBtn>
+      </Card>
+    </Container>
+  );
 }

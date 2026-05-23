@@ -5,6 +5,7 @@ import { useTheme } from "styled-components";
 import { CUSTOMER_ADDRESSES_URL } from "../../../../../apis/URLs";
 import { getCustomerAccessToken } from "../../../../../utilities/customerAuthStorage";
 import { DropdownWrapper } from "./OrderTypeStepStyles";
+import LocationSelector from "./LocationSelector";
 import {
   DetailsContainer,
   Input,
@@ -22,6 +23,7 @@ export default function DetailsStep({
   updateFormData,
   errors,
   restaurantName,
+  restaurant,
   activeLanguage = "en",
 }) {
   const theme = useTheme();
@@ -29,6 +31,21 @@ export default function DetailsStep({
   const [addrLoading, setAddrLoading] = useState(false);
   const appliedDefaultRef = useRef(false);
   const t = (en, ar) => (activeLanguage === "ar" ? ar : en);
+
+  // Google Maps integration
+  const features = useMemo(() => {
+    try {
+      return restaurant?.features ? JSON.parse(restaurant.features) : {};
+    } catch { return {}; }
+  }, [restaurant?.features]);
+  const googleMapsApiKey = features.google_maps_integrated ? (restaurant?.google_maps_api_key || null) : null;
+
+  const handleLocationSelect = (location) => {
+    updateFormData({
+      selectedLocation: location,
+      fullAddress: location.address || `${location.latitude}, ${location.longitude}`,
+    });
+  };
 
   const selectStyles = useMemo(
     () => ({
@@ -270,6 +287,18 @@ export default function DetailsStep({
                   "لإضافة العناوين أو تعديلها: قائمة الحساب (أيقونة الشخص) ← العناوين."
                 )}
               </HintText>
+            </InputGroup>
+          )}
+          {googleMapsApiKey && (
+            <InputGroup>
+              <Label>{t("Delivery Location *", "موقع التوصيل *")}</Label>
+              <LocationSelector
+                onLocationSelect={handleLocationSelect}
+                selectedLocation={formData.selectedLocation}
+                hasError={!!errors.fullAddress && !formData.selectedLocation}
+                googleMapsApiKey={googleMapsApiKey}
+                activeLanguage={activeLanguage}
+              />
             </InputGroup>
           )}
           <InputGroup>

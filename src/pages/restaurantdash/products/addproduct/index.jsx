@@ -75,6 +75,7 @@ export default function AddProduct({
   const [isOutOfStock, setIsOutOfStock] = useState(false);
   const [isFeatured, setIsFeatured] = useState(false);
   const [isBestSeller, setIsBestSeller] = useState(false);
+  const [menuVisibility, setMenuVisibility] = useState('both');
 
   const [productOptions, setProductOptions] = useState(() => emptyOptions());
   const [activeTab,setActiveTab]=useState("productinfo")
@@ -273,11 +274,18 @@ export default function AddProduct({
       setIsFeatured(Boolean(selectedProduct.featured));
       setIsBestSeller(Boolean(selectedProduct.is_best_seller));
 
+      setMenuVisibility(selectedProduct.menu_visibility || 'both');
+      setValue('menu_visibility', selectedProduct.menu_visibility || 'both');
+      setValue('delivery_price', selectedProduct.delivery_price || '');
+
     } else {
       setProductOptions(emptyOptions());
       setImages([]);
       setCoverId(null);
       setValue("discount", 0);
+      setMenuVisibility('both');
+      setValue('menu_visibility', 'both');
+      setValue('delivery_price', '');
     }
   }, [selectedProduct]);
 
@@ -304,7 +312,9 @@ export default function AddProduct({
           hide: isHidden,
           out_of_stock: isOutOfStock,
           featured: isFeatured,
-          is_best_seller: isBestSeller
+          is_best_seller: isBestSeller,
+          menu_visibility: menuVisibility,
+          delivery_price: data.delivery_price || null,
         });
       } else {
         handleApiCall({
@@ -318,7 +328,9 @@ export default function AddProduct({
           hide: isHidden,
           out_of_stock: isOutOfStock,
           featured: isFeatured,
-          is_best_seller: isBestSeller
+          is_best_seller: isBestSeller,
+          menu_visibility: menuVisibility,
+          delivery_price: data.delivery_price || null,
         });
       }
     })();
@@ -604,6 +616,39 @@ export default function AddProduct({
               </FormControl>
             </Box>
           </Grid>
+          <Grid item xs={12} md={6}>
+            <Box sx={fieldStyle}>
+              <FormControl fullWidth>
+                <InputLabel>Menu Availability</InputLabel>
+                <Select
+                  label="Menu Availability"
+                  value={menuVisibility}
+                  onChange={(e) => {
+                    setMenuVisibility(e.target.value);
+                    setValue('menu_visibility', e.target.value);
+                  }}
+                >
+                  <MenuItem value="both">Both Menus</MenuItem>
+                  <MenuItem value="dine_in">Dine-In Only</MenuItem>
+                  <MenuItem value="delivery">Delivery Only</MenuItem>
+                </Select>
+              </FormControl>
+            </Box>
+          </Grid>
+          {menuVisibility !== 'dine_in' && (
+            <Grid item xs={12} md={6}>
+              <TextField
+                label="Delivery Price"
+                name="delivery_price"
+                variant="outlined"
+                {...register("delivery_price")}
+                fullWidth
+                sx={fieldStyle}
+                type="number"
+                placeholder="Same as main price if empty"
+              />
+            </Grid>
+          )}
         </Grid>
         <FormControl component="fieldset">
               <FormLabel component="legend">New Item</FormLabel>

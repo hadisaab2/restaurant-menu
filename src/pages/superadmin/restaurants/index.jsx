@@ -624,6 +624,7 @@ export default function Restaurants() {
     is_paid,
     show_about_us,
     show_slider_image,
+    google_maps_api_key,
   }) => {
     const theme = JSON.parse(themeString);
     const features = JSON.parse(featureString);
@@ -657,6 +658,7 @@ export default function Restaurants() {
       is_paid,
       show_about_us,
       show_slider_image,
+      google_maps_api_key,
     });
     setIsEditMode(true);
     setTemplate(template_id);
@@ -694,7 +696,8 @@ export default function Restaurants() {
     setValue("payment_date", payment_date ? (payment_date.split?.("T")?.[0] ?? payment_date) : "");
     setValue("amount", amount != null && amount !== "" ? amount : "");
     setValue("is_paid", !!is_paid);
-    
+    setValue("google_maps_api_key", google_maps_api_key || "");
+
     // Set theme colors in form: for the current template, set every color from DB or default
     const templateConfig = templates.find((t) => t.id == template_id);
     const themeKey = (key) => theme[key] ?? theme[key?.toLowerCase?.()] ?? theme[key?.toUpperCase?.()];
@@ -1723,6 +1726,17 @@ export default function Restaurants() {
                   );
                 })}
             </FeaturesBlock>
+            {getValues("features.google_maps_integrated") && (
+              <TextField
+                {...register("google_maps_api_key")}
+                label="Google Maps API Key"
+                variant="outlined"
+                fullWidth
+                placeholder="Enter your Google Maps API key"
+                style={{ marginBottom: 16 }}
+                helperText="Required when Google Maps integration is enabled. Get your key from Google Cloud Console."
+              />
+            )}
             {(Number(template) === 3 || Number(template) === 4) && (
               <FormControl component="fieldset" style={{ display: "flex", flexDirection: "row" }}>
                 <FormLabel component="legend">Theme 3 & 4</FormLabel>

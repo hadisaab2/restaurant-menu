@@ -159,7 +159,27 @@ export default function CartStep({ restaurant, activeLanguage }) {
                 <ItemImage src={imageUrl(item)} alt={name} />
 
                 <ItemInfo>
-                  <ItemName title={name}>{name}</ItemName>
+                  <ItemName title={name}>
+                    {name}
+                    {item.menuMode && item.menuMode !== 'both' && (
+                      <span style={{
+                        display: 'inline-block',
+                        fontSize: '10px',
+                        fontWeight: 600,
+                        padding: '2px 6px',
+                        borderRadius: '8px',
+                        marginLeft: '6px',
+                        marginRight: '6px',
+                        background: item.menuMode === 'dine_in' ? '#e8f5e9' : '#e3f2fd',
+                        color: item.menuMode === 'dine_in' ? '#2e7d32' : '#1565c0',
+                        verticalAlign: 'middle',
+                      }}>
+                        {item.menuMode === 'dine_in'
+                          ? (lang === 'ar' ? 'مطعم' : 'Dine In')
+                          : (lang === 'ar' ? 'توصيل' : 'Delivery')}
+                      </span>
+                    )}
+                  </ItemName>
                   {renderCustomizations(item)}
                   {item.instruction && (
                     <NoteText>📝 {item.instruction}</NoteText>

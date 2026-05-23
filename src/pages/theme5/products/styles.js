@@ -1,30 +1,21 @@
 import styled from "styled-components";
 
 export const Container = styled.div`
-  width: 100%;
-  margin-top: 24px;
-  padding-bottom: 24px;
-  display: flex;
-  justify-content: center;
+ width: 100%;
+ margin-top: 30px;
+ padding-bottom: 20px;
+ display: flex;
+ justify-content: center;
 `;
 
 export const ProductWrapper = styled.div`
-  flex-wrap: wrap;
+ flex-wrap: wrap;
   display: flex;
   align-content: flex-start;
   width: 95%;
   min-height: ${(props) => (props.$noMinHeight ? "0" : "70vh")};
   opacity: 1;
-  transition: all 0.5s ease-in-out;
-  gap: 0;
-
-  @media (min-width: 480px) {
-    width: 96%;
-  }
-
-  @media (min-width: 768px) {
-    width: 96%;
-  }
+  transition:all 0.7s ease-in-out;
 `;
 
 export const AllItemsWrapper = styled.div`
@@ -32,11 +23,6 @@ export const AllItemsWrapper = styled.div`
   display: flex;
   flex-direction: column;
   gap: 28px;
-
-  @media (min-width: 768px) {
-    width: 96%;
-    gap: 32px;
-  }
 `;
 
 export const AllItemsSection = styled.div`
@@ -44,47 +30,21 @@ export const AllItemsSection = styled.div`
   flex-direction: column;
   gap: 12px;
   align-items: center;
-
-  @media (min-width: 768px) {
-    gap: 16px;
-  }
 `;
 
 export const AllItemsTitle = styled.h3`
   margin: 0 auto;
   width: 95%;
   max-width: 600px;
-  font-size: 18px;
+  font-size: 19px;
   font-weight: 700;
   color: ${(props) => props.theme.mainColor};
   text-align: ${(props) => (props.activeLanguage === "ar" ? "right" : "left")};
   letter-spacing: 0.3px;
-  padding: 12px 16px;
-  border-radius: 14px;
-  background: ${(props) =>
-    props.theme.BoxColor ||
-    props.theme.popupbackgroundColor ||
-    props.theme.categoryUnActive};
+  padding: 10px 14px;
+  border-radius: 12px;
+  background: ${(props) => props.theme.BoxColor || props.theme.popupbackgroundColor || props.theme.categoryUnActive};
   box-shadow: 0 2px 10px rgba(15, 23, 42, 0.08);
-  position: relative;
-
-  &::before {
-    content: "";
-    position: absolute;
-    left: ${(props) => (props.activeLanguage === "ar" ? "auto" : "0")};
-    right: ${(props) => (props.activeLanguage === "ar" ? "0" : "auto")};
-    top: 50%;
-    transform: translateY(-50%);
-    width: 4px;
-    height: 60%;
-    border-radius: 4px;
-    background: ${(props) => props.theme.mainColor};
-  }
-
-  @media (min-width: 768px) {
-    font-size: 20px;
-    max-width: 800px;
-  }
 `;
 
 export const GoToTopButton = styled.button`
@@ -101,18 +61,14 @@ export const GoToTopButton = styled.button`
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.18);
+  box-shadow: 0 6px 16px rgba(15, 23, 42, 0.18);
   z-index: 60;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-  -webkit-tap-highlight-color: transparent;
+  animation: gotoPulse 1.6s ease-in-out infinite;
 
-  &:hover {
-    transform: scale(1.08);
-    box-shadow: 0 6px 20px rgba(15, 23, 42, 0.25);
-  }
-
-  &:active {
-    transform: scale(0.95);
+  @keyframes gotoPulse {
+    0% { opacity: 0.7; transform: scale(0.98); }
+    50% { opacity: 1; transform: scale(1.05); }
+    100% { opacity: 0.7; transform: scale(0.98); }
   }
 `;
 
@@ -140,17 +96,9 @@ export const LoaderDot = styled.div`
   animation: pulse 0.8s ease-in-out infinite;
 
   @keyframes pulse {
-    0% {
-      opacity: 0.3;
-      transform: scale(0.9);
-    }
-    50% {
-      opacity: 1;
-      transform: scale(1.1);
-    }
-    100% {
-      opacity: 0.3;
-      transform: scale(0.9);
-    }
+    0% { opacity: 0.3; transform: scale(0.9); }
+    50% { opacity: 1; transform: scale(1.1); }
+    100% { opacity: 0.3; transform: scale(0.9); }
   }
 `;
+

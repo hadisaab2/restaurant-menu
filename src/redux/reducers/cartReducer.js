@@ -29,8 +29,8 @@ const cartReducer = (state = initialState, action) => {
     case ADD_TO_CART: {
       const { restaurantName, item } = action.payload;
       const restaurantCart = state[restaurantName] || [];
-      const itemIndex = restaurantCart.findIndex(cartItem => 
-        cartItem.id === item.id && isEqualFormData(cartItem.formData, item.formData)
+      const itemIndex = restaurantCart.findIndex(cartItem =>
+        cartItem.id === item.id && (cartItem.menuMode || 'both') === (item.menuMode || 'both') && isEqualFormData(cartItem.formData, item.formData)
       );
 
       if (itemIndex >= 0) {

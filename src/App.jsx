@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import ApplicationRoutes from "./routes";
 import { Provider } from "react-redux";
 import { persistor, store } from "./redux/store";
@@ -6,9 +7,13 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import HelmetFn from "./helmet";
+import { initMetaPixel } from "./utilities/analytics/metaPixel";
 
 
 function App() {
+  useEffect(() => {
+    initMetaPixel();
+  }, []);
   const queryClient = new QueryClient();
 
   return (

@@ -1,10 +1,11 @@
 import React, { useState } from "react";
-import { Container, FilterContainer, Search, SearchContainer, SearchIcon, SearchWapper, ShareIcon, ShareIconLogo, SidebarAction, Text, TextContainer } from "./styles";
+import { Container, FilterContainer, Search, SearchContainer, SearchIcon, SearchWapper, ShareIcon, ShareIconLogo, SidebarAction, Text, TextContainer, ModePill, ModePillIcon } from "./styles";
 import Categories from "./categories";
 import HeaderTop from "./headertop";
 import { useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import Theme12MenuSlider from "../../../components/Theme12MenuSlider";
+import { MdRestaurant, MdDeliveryDining } from "react-icons/md";
 
 export default function Header({
   activeCategory,
@@ -18,7 +19,9 @@ export default function Header({
   setcarouselPosition,
   popupHandler,
   showMenuSlider,
-  sliderImages
+  sliderImages,
+  menuMode,
+  onModeChange,
 
 }) {
   const { restaurantName: paramRestaurantName } = useParams();
@@ -38,9 +41,26 @@ export default function Header({
     setSearchText(e.target.value)
 
   }
+  const modeLabels = {
+    dine_in: { en: "Dine In", ar: "تناول في المطعم" },
+    delivery: { en: "Delivery", ar: "توصيل" },
+  };
+
   return (
     <Container>
       <HeaderTop setshowSidebar={setshowSidebar} showSidebar={showSidebar} />
+      {menuMode && (
+        <ModePill
+          onClick={() => onModeChange(menuMode === "dine_in" ? "delivery" : "dine_in")}
+        >
+          <ModePillIcon>
+            {menuMode === "dine_in" ? <MdRestaurant /> : <MdDeliveryDining />}
+          </ModePillIcon>
+          {activeLanguage === "ar"
+            ? modeLabels[menuMode]?.ar
+            : modeLabels[menuMode]?.en}
+        </ModePill>
+      )}
       {showMenuSlider && (
         <Theme12MenuSlider
           images={sliderImages}

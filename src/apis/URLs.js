@@ -37,16 +37,16 @@ export const EDIT_PRODUCT_URL = (id) => `${REACT_APP_BASE_URL}/products/${id}`;
 export const DELETE_PRODUCT_URL = (id) =>
   `${REACT_APP_BASE_URL}/products/${id}`;
 
-  export const GET_PRODUCTS_URL = (categoryId,page) =>
-  `${REACT_APP_BASE_URL}/products?categoryId=${categoryId}&page=${page}`;
+  export const GET_PRODUCTS_URL = (categoryId, page, menuMode) =>
+  `${REACT_APP_BASE_URL}/products?categoryId=${categoryId}&page=${page}${menuMode ? `&menuMode=${menuMode}` : ''}`;
 
-export const GET_PRODUCTS_BY_RESTAURANT_URL = (restaurantId, page) =>
-  `${REACT_APP_BASE_URL}/products?restaurantId=${restaurantId}&page=${page}`;
+export const GET_PRODUCTS_BY_RESTAURANT_URL = (restaurantId, page, menuMode) =>
+  `${REACT_APP_BASE_URL}/products?restaurantId=${restaurantId}&page=${page}${menuMode ? `&menuMode=${menuMode}` : ''}`;
 
-export const GET_FEATURED_PRODUCTS_URL = (restaurantId) =>
-  `${REACT_APP_BASE_URL}/products/featured?restaurantId=${restaurantId}`;
-export const GET_BEST_SELLERS_URL = (restaurantId) =>
-  `${REACT_APP_BASE_URL}/products/bestsellers?restaurantId=${restaurantId}`;
+export const GET_FEATURED_PRODUCTS_URL = (restaurantId, menuMode) =>
+  `${REACT_APP_BASE_URL}/products/featured?restaurantId=${restaurantId}${menuMode ? `&menuMode=${menuMode}` : ''}`;
+export const GET_BEST_SELLERS_URL = (restaurantId, menuMode) =>
+  `${REACT_APP_BASE_URL}/products/bestsellers?restaurantId=${restaurantId}${menuMode ? `&menuMode=${menuMode}` : ''}`;
 
 
 export const ADD_CATEGORY_URL = `${REACT_APP_BASE_URL}/categories`;
