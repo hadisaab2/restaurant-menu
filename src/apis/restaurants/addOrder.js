@@ -23,12 +23,13 @@ const addOrder = async ({ payload, restaurantName }) => {
 };
 
 export const useAddOrderQuery = ({ onSuccess }) => {
-  const { error, mutate, isPending } = useMutation({
+  const { error, mutate, mutateAsync, isPending } = useMutation({
     mutationFn: addOrder,
     onSuccess,
   });
 
   const handleApiCall = (payload, restaurantName) => mutate({ payload, restaurantName });
+  const handleApiCallAsync = (payload, restaurantName) => mutateAsync({ payload, restaurantName });
 
-  return { isPending, error, handleApiCall };
+  return { isPending, error, handleApiCall, handleApiCallAsync };
 };

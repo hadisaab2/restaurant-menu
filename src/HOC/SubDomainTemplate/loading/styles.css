@@ -1,63 +1,208 @@
-.text-animation {
-  background: black;
-  min-height: 100vh;
+/* Professional Loading Screen */
+
+/* Splash image for hardcoded restaurants */
+.loading-splash-img {
+  max-width: 400px;
+  max-height: 400px;
+  animation: loading-logo-in 0.8s ease-out;
+}
+
+.loading-screen {
   display: flex;
-  justify-content: center;
+  flex-direction: column;
   align-items: center;
-}
-.text-wrapper {
+  justify-content: center;
+  gap: 32px;
+  width: 100%;
+  height: 100%;
   position: relative;
-  font-size: 15px;
 }
 
-.text-wrapper h2 {
-  z-index: 4;
-  color: #fff;
-  font-size: 10vw;
-  white-space: nowrap;
+/* Animated rings */
+.loading-rings {
+  position: relative;
+  width: 80px;
+  height: 80px;
+}
+
+.loading-rings .ring {
   position: absolute;
-  transform: translate(-50%, -62%);
-  font-weight: 500;
+  inset: 0;
+  border-radius: 50%;
+  border: 2px solid transparent;
 }
 
-.text-wrapper h2:nth-child(1) {
-  color: transparent;
-  -webkit-text-stroke: 0.8px #fff;
+.loading-rings .ring:nth-child(1) {
+  border-top-color: rgba(255, 255, 255, 0.8);
+  animation: loading-spin 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
 }
 
-.text-wrapper h2:nth-child(2) {
-  color: #fff;
-  animation: wave 1.5s ease-in-out infinite;
+.loading-rings .ring:nth-child(2) {
+  inset: 6px;
+  border-right-color: rgba(255, 255, 255, 0.4);
+  animation: loading-spin 1.6s cubic-bezier(0.5, 0, 0.5, 1) infinite reverse;
 }
 
-@keyframes wave {
-  /* start point */
-  0%,
-  100% {
-    clip-path: polygon(
-      0% 46%,
-      17% 45%,
-      34% 50%,
-      56% 61%,
-      69% 62%,
-      86% 60%,
-      100% 51%,
-      100% 100%,
-      0% 100%
-    );
-  }
-  /* Mid point */
-  50% {
-    clip-path: polygon(
-      0% 59%,
-      16% 64%,
-      33% 65%,
-      52% 61%,
-      70% 52%,
-      85% 47%,
-      100% 48%,
-      100% 100%,
-      0% 100%
-    );
-  }
+.loading-rings .ring:nth-child(3) {
+  inset: 12px;
+  border-bottom-color: rgba(255, 255, 255, 0.2);
+  animation: loading-spin 2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+}
+
+/* Center dot */
+.loading-rings .center-dot {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: white;
+  animation: loading-pulse 1.5s ease-in-out infinite;
+}
+
+/* Restaurant name shimmer */
+.loading-name {
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.3) 0%,
+    rgba(255, 255, 255, 0.8) 50%,
+    rgba(255, 255, 255, 0.3) 100%
+  );
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: loading-shimmer 2s ease-in-out infinite;
+}
+
+/* Progress bar */
+.loading-progress-track {
+  width: 120px;
+  height: 2px;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+}
+
+.loading-progress-bar {
+  height: 100%;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.5);
+  animation: loading-progress 2.5s ease-in-out infinite;
+}
+
+/* Logo container with glow */
+.loading-logo-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.loading-logo-glow {
+  position: absolute;
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+  animation: loading-pulse 2s ease-in-out infinite;
+}
+
+.loading-logo-img {
+  width: 80px;
+  height: 80px;
+  border-radius: 20px;
+  object-fit: cover;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  animation: loading-logo-in 0.6s ease-out;
+  position: relative;
+  z-index: 1;
+}
+
+/* Subtle background pattern */
+.loading-bg-pattern {
+  position: absolute;
+  inset: 0;
+  opacity: 0.03;
+  background-image: radial-gradient(circle at center, rgba(255,255,255,1) 1px, transparent 1px);
+  background-size: 32px 32px;
+  pointer-events: none;
+}
+
+/* Ambient gradient orbs */
+.loading-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(60px);
+  pointer-events: none;
+  animation: loading-float 8s ease-in-out infinite;
+}
+
+.loading-orb-1 {
+  width: 200px;
+  height: 200px;
+  top: 15%;
+  right: 10%;
+  background: rgba(255, 255, 255, 0.04);
+  animation-delay: 0s;
+}
+
+.loading-orb-2 {
+  width: 160px;
+  height: 160px;
+  bottom: 20%;
+  left: 8%;
+  background: rgba(255, 255, 255, 0.03);
+  animation-delay: -3s;
+}
+
+/* Powered by */
+.loading-powered-by {
+  position: absolute;
+  bottom: 28px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-size: 11px;
+  font-weight: 400;
+  letter-spacing: 0.06em;
+  z-index: 2;
+}
+
+/* Animations */
+@keyframes loading-spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes loading-pulse {
+  0%, 100% { opacity: 0.5; transform: translate(-50%, -50%) scale(1); }
+  50% { opacity: 1; transform: translate(-50%, -50%) scale(1.2); }
+}
+
+@keyframes loading-shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+@keyframes loading-progress {
+  0% { width: 0%; transform: translateX(0); }
+  50% { width: 100%; transform: translateX(0); }
+  100% { width: 0%; transform: translateX(120px); }
+}
+
+@keyframes loading-float {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-20px) scale(1.05); }
+}
+
+@keyframes loading-logo-in {
+  0% { opacity: 0; transform: scale(0.7); }
+  100% { opacity: 1; transform: scale(1); }
 }

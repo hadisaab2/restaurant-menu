@@ -305,6 +305,13 @@ function DetailTab({ detail, restaurant, dateRange, onExport }) {
         <button onClick={onExport} style={styles.exportBtn}>Export to Excel</button>
       </div>
 
+      {/* Meta Pixel Report for this restaurant */}
+      <MetaPixelSection
+        detail={detail}
+        restaurantName={restaurant.name}
+        restaurantPixelId={restaurant.meta_pixel_id}
+      />
+
       {/* Funnel + Devices row */}
       <div style={styles.row}>
         <div style={{ ...styles.card, flex: 2 }}>
@@ -492,36 +499,89 @@ function CustomersTab({ customers, restaurant, onExport }) {
 }
 
 // ── Meta Pixel Section ──
-function MetaPixelSection({ global }) {
+// Can show global overview data OR per-restaurant detail data
+function MetaPixelSection({ global, detail, restaurantName, restaurantPixelId }) {
   const isActive = !!PIXEL_ID;
-  const metaEvents = [
-    { event: "PageView", count: global.visits, icon: "👁", desc: "Every page load" },
-    { event: "ViewContent", count: global.visits > 0 ? Math.round(global.visits * 0.38) : 0, icon: "🍽", desc: "Product detail views", note: "~from item_view events" },
-    { event: "AddToCart", count: "-", icon: "🛒", desc: "Items added to cart" },
-    { event: "InitiateCheckout", count: "-", icon: "📋", desc: "Checkout started" },
-    { event: "Purchase", count: global.orders, icon: "✅", desc: "Orders completed", revenue: global.revenue },
+  const hasRestaurantPixel = !!restaurantPixelId;
+  const isPerRestaurant = !!detail;
+
+  // Pull real event counts from funnel data when available (per-restaurant detail)
+  let visits = 0, itemViews = 0, addToCartCount = 0, checkoutStarts = 0, orders = 0, revenue = 0, conversionRate = 0, cartAbandonmentRate = 0;
+
+  if (isPerRestaurant && detail.kpis) {
+    visits = detail.kpis.visits?.value || 0;
+    orders = detail.kpis.orders?.value || 0;
+    revenue = detail.kpis.revenue?.value || 0;
+    conversionRate = detail.kpis.conversionRate?.value || 0;
+    cartAbandonmentRate = detail.kpis.cartAbandonmentRate?.value || 0;
+
+    // Get real counts from funnel
+    if (detail.funnel?.funnel) {
+      const f = detail.funnel.funnel;
+      const findStep = (name) => f.find((s) => s.step === name)?.count || 0;
+      itemViews = findStep("Item Views");
+      addToCartCount = findStep("Add to Cart");
+      checkoutStarts = findStep("Checkout Started");
+    }
+  } else if (global) {
+    visits = global.visits || 0;
+    orders = global.orders || 0;
+    revenue = global.revenue || 0;
+    conversionRate = global.conversionRate || 0;
+  }
+
+  const metaRows = [
+    { meta: "PageView", trigger: "Page load / QR scan", count: visits, use: "Track total traffic, build awareness audience", color: "#3b82f6" },
+    { meta: "ViewContent", trigger: "Product detail opened", count: isPerRestaurant ? itemViews : "-", use: "Product interest signals, retarget viewers", color: "#8b5cf6" },
+    { meta: "AddToCart", trigger: "Item added to cart", count: isPerRestaurant ? addToCartCount : "-", use: "Purchase intent audience, cart retargeting", color: "#f59e0b" },
+    { meta: "InitiateCheckout", trigger: "Checkout started", count: isPerRestaurant ? checkoutStarts : "-", use: "Cart abandonment retargeting", color: "#ef4444" },
+    { meta: "Purchase", trigger: "Order sent via WhatsApp", count: orders, use: "Lookalike audiences, ROAS tracking", color: "#10b981" },
   ];
 
+  // Audience sizing (per-restaurant only)
+  const audiences = isPerRestaurant ? [
+    { name: "All Visitors", size: visits, desc: "Everyone who visited the menu", action: "Awareness & retargeting campaigns" },
+    { name: "Product Viewers (No Purchase)", size: Math.max(0, itemViews - orders), desc: "Viewed products but didn't order", action: "Retarget with product ads" },
+    { name: "Cart Abandoners", size: Math.max(0, checkoutStarts - orders), desc: "Started checkout but didn't complete", action: "Recovery ads with discount" },
+    { name: "Past Buyers", size: orders, desc: "Customers who placed an order", action: "Upsell, loyalty, lookalike source" },
+    { name: "Lookalike (from Buyers)", size: "-", desc: "New people similar to buyers", action: "Acquisition campaigns" },
+  ] : [];
+
   return (
-    <div style={{ ...styles.card, border: isActive ? "1px solid #10b981" : "1px solid #fbbf24" }}>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
+    <div style={{ ...styles.card, border: isActive ? "1px solid #1877f2" : "1px solid #fbbf24" }}>
+      {/* Header */}
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16, flexWrap: "wrap", gap: 10 }}>
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-          <div style={{ width: 32, height: 32, borderRadius: 8, background: "#1877f2", display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", fontWeight: 700, fontSize: 16 }}>f</div>
+          <div style={{ width: 36, height: 36, borderRadius: 10, background: "#1877f2", display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", fontWeight: 700, fontSize: 18 }}>f</div>
           <div>
-            <h3 style={{ margin: 0, fontSize: 16, fontWeight: 700, color: "#0f172a" }}>Meta Pixel</h3>
-            <div style={{ fontSize: 12, color: "#64748b" }}>
-              {isActive ? `ID: ${PIXEL_ID}` : "Not configured"}
+            <h3 style={{ margin: 0, fontSize: 16, fontWeight: 700, color: "#0f172a" }}>
+              Meta Pixel {isPerRestaurant ? `- ${restaurantName}` : "- All Restaurants"}
+            </h3>
+            <div style={{ fontSize: 12, color: "#64748b", display: "flex", gap: 8, flexWrap: "wrap", marginTop: 2 }}>
+              <span>Menugic Pixel: {isActive ? PIXEL_ID : "Not set"}</span>
+              {isPerRestaurant && (
+                <span>{hasRestaurantPixel ? `Restaurant Pixel: ${restaurantPixelId}` : "No restaurant pixel"}</span>
+              )}
             </div>
           </div>
         </div>
-        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
           <span style={{
             padding: "4px 12px", borderRadius: 20, fontSize: 12, fontWeight: 600,
             background: isActive ? "#dcfce7" : "#fef3c7",
             color: isActive ? "#166534" : "#92400e",
           }}>
-            {isActive ? "Active" : "Inactive"}
+            {isActive ? "Global Active" : "Inactive"}
           </span>
+          {isPerRestaurant && (
+            <span style={{
+              padding: "4px 12px", borderRadius: 20, fontSize: 12, fontWeight: 600,
+              background: hasRestaurantPixel ? "#dbeafe" : "#f1f5f9",
+              color: hasRestaurantPixel ? "#1e40af" : "#64748b",
+            }}>
+              {hasRestaurantPixel ? "Restaurant Pixel Active" : "No Restaurant Pixel"}
+            </span>
+          )}
           {isActive && (
             <a
               href={`https://business.facebook.com/events_manager2/list/pixel/${PIXEL_ID}/overview`}
@@ -538,43 +598,112 @@ function MetaPixelSection({ global }) {
       {isActive ? (
         <>
           <div style={{ fontSize: 13, color: "#64748b", marginBottom: 14 }}>
-            All events below are sent to both your database and Meta Pixel simultaneously.
+            {isPerRestaurant
+              ? "Real event data for this restaurant. All events fire on both Menugic global pixel and restaurant pixel (if configured)."
+              : "Aggregated data across all restaurants. Select a restaurant for detailed per-event breakdown."}
           </div>
-          <div style={{ overflowX: "auto" }}>
+
+          {/* Events Table */}
+          <div style={{ overflowX: "auto", marginBottom: 16 }}>
             <table style={styles.table}>
               <thead>
                 <tr>
                   <th style={styles.th}>Meta Event</th>
-                  <th style={styles.th}>Menugic Trigger</th>
-                  <th style={styles.th}>Events Sent</th>
-                  <th style={styles.th}>Use Case</th>
+                  <th style={styles.th}>Trigger</th>
+                  <th style={styles.th}>Events</th>
+                  {isPerRestaurant && <th style={styles.th}>Rate</th>}
+                  <th style={styles.th}>Ad Use Case</th>
                 </tr>
               </thead>
               <tbody>
-                {[
-                  { meta: "PageView", trigger: "Page load", count: global.visits, use: "Track total traffic" },
-                  { meta: "ViewContent", trigger: "Product popup opened", count: "-", use: "Product interest signals" },
-                  { meta: "AddToCart", trigger: "Item added to cart", count: "-", use: "Purchase intent audience" },
-                  { meta: "InitiateCheckout", trigger: "Checkout wizard opened", count: "-", use: "Cart abandonment retargeting" },
-                  { meta: "Purchase", trigger: "Order submitted", count: global.orders, use: "Lookalike audiences, ROAS" },
-                ].map((row, i) => (
-                  <tr key={row.meta} style={i % 2 ? { background: "#f8fafc" } : {}}>
-                    <td style={{ ...styles.td, fontWeight: 600 }}>
-                      <span style={{ ...styles.badge, background: "#1877f2" }}>{row.meta}</span>
-                    </td>
-                    <td style={styles.td}>{row.trigger}</td>
-                    <td style={styles.td}>{row.count}</td>
-                    <td style={{ ...styles.td, fontSize: 12, color: "#64748b" }}>{row.use}</td>
-                  </tr>
-                ))}
+                {metaRows.map((row, i) => {
+                  let rate = "-";
+                  if (isPerRestaurant && visits > 0) {
+                    if (row.meta === "PageView") rate = "100%";
+                    else if (row.meta === "ViewContent" && itemViews > 0) rate = ((itemViews / visits) * 100).toFixed(1) + "%";
+                    else if (row.meta === "AddToCart" && addToCartCount > 0) rate = ((addToCartCount / visits) * 100).toFixed(1) + "%";
+                    else if (row.meta === "InitiateCheckout" && checkoutStarts > 0) rate = ((checkoutStarts / visits) * 100).toFixed(1) + "%";
+                    else if (row.meta === "Purchase" && orders > 0) rate = ((orders / visits) * 100).toFixed(1) + "%";
+                  }
+                  return (
+                    <tr key={row.meta} style={i % 2 ? { background: "#f8fafc" } : {}}>
+                      <td style={{ ...styles.td, fontWeight: 600 }}>
+                        <span style={{ ...styles.badge, background: row.color }}>{row.meta}</span>
+                      </td>
+                      <td style={{ ...styles.td, fontSize: 13 }}>{row.trigger}</td>
+                      <td style={{ ...styles.td, fontWeight: 600, fontSize: 15 }}>
+                        {typeof row.count === "number" ? fmtNum(row.count) : row.count}
+                      </td>
+                      {isPerRestaurant && (
+                        <td style={{ ...styles.td, fontSize: 13, color: "#64748b" }}>{rate}</td>
+                      )}
+                      <td style={{ ...styles.td, fontSize: 12, color: "#64748b" }}>{row.use}</td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>
-          <div style={{ marginTop: 14, padding: "10px 14px", background: "#eff6ff", borderRadius: 8, fontSize: 12, color: "#1e40af" }}>
-            To view full event data, audiences, and create retargeting campaigns, open{" "}
-            <a href={`https://business.facebook.com/events_manager2/list/pixel/${PIXEL_ID}/overview`} target="_blank" rel="noopener noreferrer" style={{ fontWeight: 600 }}>
-              Meta Events Manager
-            </a>
+
+          {/* Revenue summary for per-restaurant */}
+          {isPerRestaurant && (
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))", gap: 12, marginBottom: 16 }}>
+              <div style={{ background: "#f0fdf4", borderRadius: 10, padding: "12px 16px", border: "1px solid #bbf7d0" }}>
+                <div style={{ fontSize: 11, color: "#166534", fontWeight: 600, marginBottom: 4 }}>Pixel Revenue</div>
+                <div style={{ fontSize: 20, fontWeight: 700, color: "#15803d" }}>${fmtNum(revenue)}</div>
+              </div>
+              <div style={{ background: "#eff6ff", borderRadius: 10, padding: "12px 16px", border: "1px solid #bfdbfe" }}>
+                <div style={{ fontSize: 11, color: "#1e40af", fontWeight: 600, marginBottom: 4 }}>Conversion Rate</div>
+                <div style={{ fontSize: 20, fontWeight: 700, color: "#1d4ed8" }}>{fmtPct(conversionRate)}</div>
+              </div>
+              <div style={{ background: "#fef2f2", borderRadius: 10, padding: "12px 16px", border: "1px solid #fecaca" }}>
+                <div style={{ fontSize: 11, color: "#991b1b", fontWeight: 600, marginBottom: 4 }}>Cart Abandonment</div>
+                <div style={{ fontSize: 20, fontWeight: 700, color: "#dc2626" }}>{fmtPct(cartAbandonmentRate)}</div>
+              </div>
+              <div style={{ background: "#faf5ff", borderRadius: 10, padding: "12px 16px", border: "1px solid #e9d5ff" }}>
+                <div style={{ fontSize: 11, color: "#6b21a8", fontWeight: 600, marginBottom: 4 }}>Avg Order Value</div>
+                <div style={{ fontSize: 20, fontWeight: 700, color: "#7c3aed" }}>{orders > 0 ? `$${(revenue / orders).toFixed(2)}` : "$0"}</div>
+              </div>
+            </div>
+          )}
+
+          {/* Retargeting Audiences — per restaurant only */}
+          {isPerRestaurant && audiences.length > 0 && visits > 0 && (
+            <div style={{ marginBottom: 16 }}>
+              <h4 style={{ fontSize: 14, fontWeight: 700, color: "#0f172a", marginBottom: 10 }}>
+                Retargeting Audiences (ready to create in Ads Manager)
+              </h4>
+              <div style={{ overflowX: "auto" }}>
+                <table style={styles.table}>
+                  <thead>
+                    <tr>
+                      <th style={styles.th}>Audience</th>
+                      <th style={styles.th}>Est. Size</th>
+                      <th style={styles.th}>Description</th>
+                      <th style={styles.th}>Recommended Action</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {audiences.map((a, i) => (
+                      <tr key={a.name} style={i % 2 ? { background: "#f8fafc" } : {}}>
+                        <td style={{ ...styles.td, fontWeight: 600 }}>{a.name}</td>
+                        <td style={{ ...styles.td, fontWeight: 600 }}>
+                          {typeof a.size === "number" ? fmtNum(a.size) : a.size}
+                        </td>
+                        <td style={{ ...styles.td, fontSize: 12, color: "#64748b" }}>{a.desc}</td>
+                        <td style={{ ...styles.td, fontSize: 12, color: "#1e40af" }}>{a.action}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+
+          <div style={{ marginTop: 8, padding: "10px 14px", background: "#eff6ff", borderRadius: 8, fontSize: 12, color: "#1e40af" }}>
+            {isPerRestaurant
+              ? "Use these audience sizes to create Custom Audiences in Meta Ads Manager. Build retargeting and lookalike campaigns based on real user behavior."
+              : "Select a restaurant from the rankings table to see detailed Meta Pixel event data, audience sizes, and retargeting recommendations."}
           </div>
         </>
       ) : (

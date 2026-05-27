@@ -65,7 +65,7 @@ export default function Wizard({ popupHandler, restaurant }) {
   });
   const [errors, setErrors] = useState({});
 
-  const { handleApiCall: handleAddOrder, isPending } = useAddOrderQuery({
+  const { handleApiCallAsync: handleAddOrderAsync, isPending } = useAddOrderQuery({
     onSuccess: () => {
       // Order submitted successfully
     },
@@ -189,7 +189,7 @@ export default function Wizard({ popupHandler, restaurant }) {
     }
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!validateStep(2)) return;
 
     // Generate WhatsApp message
@@ -294,45 +294,55 @@ export default function Wizard({ popupHandler, restaurant }) {
       },
     }));
 
-    handleAddOrder(
-      {
-      products: simplifiedCart, // For analytics (existing)
-      restaurant_id: restaurant.id,
-      branch_id: formData.selectedBranch?.id,
-      delivery_type: formData.deliveryType,
-      // Full order details
-      customer_name: formData.fullName,
-      customer_phone: formData.phoneNumber,
-      customer_address: formData.deliveryType === "Delivery" ? formData.fullAddress : null,
-      customer_latitude: formData.selectedLocation?.latitude || null,
-      customer_longitude: formData.selectedLocation?.longitude || null,
-      table_number: formData.deliveryType === "DineIn" ? formData.tableNumber : null,
-      note: formData.note,
-      items: fullOrderItems,
-      subtotal: totalPrice,
-      total: totalPrice,
-      currency: restaurant.currency,
-      },
-      restaurantName
-    );
-
-    // Track order placed (order ID will be available in onSuccess callback if needed)
-    if (restaurant?.id) {
-      const branchId = formData.selectedBranch?.id || null;
-      trackOrderPlaced(
-        restaurant.id,
-        null, // orderId - will be updated when order is created
-        formData.deliveryType,
-        totalPrice,
-        branchId,
+    // Create order in database first to get order_number
+    let orderNumber = "";
+    try {
+      const orderResponse = await handleAddOrderAsync(
         {
+          products: simplifiedCart,
+          restaurant_id: restaurant.id,
+          branch_id: formData.selectedBranch?.id,
+          delivery_type: formData.deliveryType,
+          customer_name: formData.fullName,
+          customer_phone: formData.phoneNumber,
+          customer_address: formData.deliveryType === "Delivery" ? formData.fullAddress : null,
+          customer_latitude: formData.selectedLocation?.latitude || null,
+          customer_longitude: formData.selectedLocation?.longitude || null,
+          table_number: formData.deliveryType === "DineIn" ? formData.tableNumber : null,
+          note: formData.note,
           items: fullOrderItems,
-          customerName: formData.fullName,
-        }
+          subtotal: totalPrice,
+          total: totalPrice,
+          currency: restaurant.currency,
+        },
+        restaurantName
       );
+      orderNumber = orderResponse?.data?.order?.order_number || "";
+
+      // Track order placed
+      if (restaurant?.id) {
+        const branchId = formData.selectedBranch?.id || null;
+        trackOrderPlaced(
+          restaurant.id,
+          orderResponse?.data?.order?.id || null,
+          formData.deliveryType,
+          totalPrice,
+          branchId,
+          { items: fullOrderItems, customerName: formData.fullName }
+        );
+      }
+    } catch (e) {
+      console.error("Order creation failed:", e);
     }
 
-    const w = window.open(whatsappUrl, "_blank", "noopener,noreferrer");
+    // Prepend order number to message if available
+    if (orderNumber) {
+      message = `*${orderNumber}*\n` + message;
+    }
+
+    const finalEncodedMessage = encodeURIComponent(message);
+    const finalWhatsappUrl = whatsappUrl.replace(encodedMessage, finalEncodedMessage);
+    const w = window.open(finalWhatsappUrl || whatsappUrl, "_blank", "noopener,noreferrer");
     dispatch(clearCart(restaurantName));
     popupHandler(null);
   };

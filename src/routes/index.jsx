@@ -5,12 +5,14 @@ import {
   Routes as RoutesWrapper,
   Navigate,
 } from "react-router-dom";
-import { ADMINSIGNIN, HOME, HOME_V2, NOTFOUND, RESTAURANT, RESTAURANTDASH, SUPERADMIN, NOTSUBSCRIBED } from "./URLs";
+import { ADMINSIGNIN, HOME, HOME_V2, HOME_V3, HOME_V4, NOTFOUND, RESTAURANT, RESTAURANTDASH, SUPERADMIN, NOTSUBSCRIBED } from "./URLs";
 // import Theme1 from "../pages/theme1";
 import AdminLayout from "../HOC/AdminLayout";
 import AdminSignin from "../pages/adminauth";
 import RestaurantDash from "../pages/restaurantdash";
 import Home from "../pages/home";
+import HomeV3 from "../pages/home-v3";
+import HomeV4 from "../pages/home-v4";
 
 import { withRedirection } from "../HOC/sign-in";
 import SuperAdmin from "../pages/superadmin";
@@ -31,8 +33,10 @@ export default function ApplicationRoutes() {
         ) : (
           <>
             {/* Existing routes */}
-            <Route path={HOME} element={<Home />} />
+            <Route path={HOME} element={<HomeV3 />} />
             <Route path={HOME_V2} element={<Navigate to={HOME} replace />} />
+            <Route path={HOME_V3} element={<Navigate to={HOME} replace />} />
+            <Route path={HOME_V4} element={<HomeV4 />} />
 
             <Route path={RESTAURANT} element={<Template />} />
             <Route path={NOTFOUND} element={<NotFound />} />

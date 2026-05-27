@@ -9,11 +9,13 @@ import {
 } from "../../redux/restaurant/restaurantActions";
 import { ThemeProvider } from "styled-components";
 import Loading from "./loading";
+import { initRestaurantPixel } from "../../utilities/analytics/metaPixel";
 import Theme2 from "../../pages/theme2";
 import Theme3 from "../../pages/theme3";
 import Theme4 from "../../pages/theme4";
 import Theme5 from "../../pages/theme5";
 import Theme6 from "../../pages/theme6";
+import Theme7 from "../../pages/theme7";
 import Theme3NotSubscribed from "../../pages/theme3/NotSubscribed";
 
 export default function SubDomainTemplate({ restaurantName }) {
@@ -83,7 +85,11 @@ export default function SubDomainTemplate({ restaurantName }) {
           activeLanguage: response?.data.default_language || response?.data.languages.replace("&ar", "") || "en",
         })
       );
-      // Use default_language if available, otherwise fallback to old logic
+
+      // Initialize restaurant-specific Meta Pixel if configured
+      if (response.data.meta_pixel_id) {
+        initRestaurantPixel(response.data.meta_pixel_id);
+      }
     }
   }, [isLoading]);
   useEffect(() => {
@@ -141,6 +147,7 @@ export default function SubDomainTemplate({ restaurantName }) {
         {restaurant?.template_id == 4 && <Theme4 />}
         {restaurant?.template_id == 5 && <Theme5 />}
         {restaurant?.template_id == 6 && <Theme6 />}
+        {restaurant?.template_id == 7 && <Theme7 />}
       </ThemeProvider>
       }
       <Loading restaurantName={restaurantName} viewLoading={restaurant?.categories && !isLoading && !isTrue} />

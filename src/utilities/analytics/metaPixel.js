@@ -1,23 +1,27 @@
 /**
  * Meta Pixel Integration for Menugic
  *
- * Supports a platform-level (Menugic) pixel from env var.
- * All standard e-commerce events are mirrored to Meta.
+ * Supports:
+ * - A platform-level (Menugic) pixel from env var
+ * - Per-restaurant pixels from restaurant.meta_pixel_id
+ *
+ * Both fire simultaneously when configured — the Menugic pixel
+ * gives platform-wide analytics, and the restaurant pixel gives
+ * each business owner their own data in Meta Ads Manager.
  */
 
 const MENUGIC_PIXEL_ID = process.env.REACT_APP_MENUGIC_PIXEL_ID;
 
-let initialized = false;
+let baseInitialized = false;
+const initializedPixels = new Set();
 
 /**
- * Inject the Meta Pixel base script and initialise pixel(s).
- * Safe to call multiple times — only runs once.
+ * Load the fbevents.js script (once).
  */
-export const initMetaPixel = () => {
-  if (initialized || !MENUGIC_PIXEL_ID) return;
+const loadFbScript = () => {
   if (typeof window === "undefined") return;
+  if (window.fbq) return;
 
-  // Standard fbq loader (from Meta docs)
   (function (f, b, e, v, n, t, s) {
     if (f.fbq) return;
     n = f.fbq = function () {
@@ -34,15 +38,44 @@ export const initMetaPixel = () => {
     s = b.getElementsByTagName(e)[0];
     s.parentNode.insertBefore(t, s);
   })(window, document, "script", "https://connect.facebook.net/en_US/fbevents.js");
-
-  window.fbq("init", MENUGIC_PIXEL_ID);
-  window.fbq("track", "PageView");
-
-  initialized = true;
 };
 
 /**
- * Fire a standard Meta event.
+ * Initialize the global Menugic pixel.
+ * Called once on app mount from App.jsx.
+ */
+export const initMetaPixel = () => {
+  if (baseInitialized || !MENUGIC_PIXEL_ID) return;
+  if (typeof window === "undefined") return;
+
+  loadFbScript();
+  window.fbq("init", MENUGIC_PIXEL_ID);
+  window.fbq("track", "PageView");
+
+  initializedPixels.add(MENUGIC_PIXEL_ID);
+  baseInitialized = true;
+};
+
+/**
+ * Initialize a restaurant-specific pixel.
+ * Called when the restaurant data loads (from the theme/Template HOC).
+ * Safe to call multiple times — only inits each pixel once.
+ */
+export const initRestaurantPixel = (pixelId) => {
+  if (!pixelId || initializedPixels.has(pixelId)) return;
+  if (typeof window === "undefined") return;
+
+  loadFbScript();
+
+  // Init the restaurant's pixel alongside the global one
+  window.fbq("init", pixelId);
+  window.fbq("trackSingle", pixelId, "PageView");
+
+  initializedPixels.add(pixelId);
+};
+
+/**
+ * Fire a standard Meta event on ALL initialized pixels.
  */
 const fbqTrack = (eventName, params = {}) => {
   if (typeof window !== "undefined" && window.fbq) {
@@ -51,7 +84,7 @@ const fbqTrack = (eventName, params = {}) => {
 };
 
 /**
- * Fire a custom Meta event.
+ * Fire a custom Meta event on ALL initialized pixels.
  */
 const fbqCustom = (eventName, params = {}) => {
   if (typeof window !== "undefined" && window.fbq) {

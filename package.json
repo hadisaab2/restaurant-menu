@@ -30,7 +30,7 @@
     "axios": "^1.6.7",
     "browser-image-compression": "^2.0.2",
     "eventemitter2": "^6.4.9",
-    "framer-motion": "^12.38.0",
+    "framer-motion": "^12.40.0",
     "google-translate-api-browser": "^5.0.0",
     "html2canvas": "^1.4.1",
     "jquery": "^3.7.1",

@@ -2,6 +2,8 @@
 // export const THEME2URL = "/theme2";
 export const HOME = "/";
 export const HOME_V2 = "/v2";
+export const HOME_V3 = "/v3";
+export const HOME_V4 = "/v4";
 export const ADMINSIGNIN = "/login";
 export const RESTAURANTDASH = "/restaurant/admin";
 export const SUPERADMIN = "/superadmin";
