@@ -6,13 +6,16 @@ import { MdOutlineDelete } from "react-icons/md";
 
 export const Container = styled.div`
 position: fixed;
-bottom: ${props=>props.showPopup=="cart"?"0%":"-100%"};
+bottom: 0;
 left: 0;
 right: 0;
 min-height: 45vh;
+max-height: 95vh;
+overflow-y: auto;
 background-color: ${props=>props.theme.popupbackgroundColor};
 width: 100%;
-transition: all 0.8s ease-in-out;
+transition: transform 0.8s ease-in-out;
+transform: translateY(${props=>props.showPopup=="cart"?"0%":"100%"});
 border-top-right-radius: 60px;
 border-top-left-radius: 60px;
 box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.2);
