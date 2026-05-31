@@ -45,6 +45,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { changelanuage } from "../../../redux/restaurant/restaurantActions";
 import { FaWhatsapp } from "react-icons/fa6";
 import CustomerAccountNav from "../../../components/CustomerAccountNav";
+import { getImageUrl } from "../../../utilities/imageUrl";
 
 const WishlistHeartIcon = IoHeartOutline;
 
@@ -423,7 +424,7 @@ export default function NavigationBar({
                             >
                               {restaurant?.category_type !== "horizantal-withoutIcon" && category.image_url && (
                                 <MobileMenuCategoryIcon
-                                  src={`https://storage.googleapis.com/ecommerce-bucket-testing/${category.image_url}`}
+                                  src={getImageUrl(category.image_url)}
                                   alt={activeLanguage === "en" ? category.en_category : category.ar_category}
                                 />
                               )}

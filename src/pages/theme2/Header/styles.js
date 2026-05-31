@@ -15,8 +15,8 @@ width: 90%;
 display: flex;
 align-items: ${props=>props.activeLanuguage=="en"?"flex-start":"flex-end"};
 flex-direction: column;
-margin-top: 30px;
-margin-bottom: 30px;
+margin-top: 8px;
+margin-bottom: 8px;
 font-weight: 600;
 color:${props=>props.theme.textColor}
 `;
@@ -30,7 +30,7 @@ export const SearchWapper = styled.div`
 width: 90%;
 display: flex;
 align-items: center;
-margin-top: 30px;
+margin-top: 16px;
 color:${props=>props.theme.searchTextColor};
 height: 40px;
 border-radius: 10px;

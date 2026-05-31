@@ -23,6 +23,7 @@ import {
 import { FaHome, FaList, FaShoppingBag, FaCommentAlt, FaAddressBook, FaChevronDown, FaChevronUp, FaMapMarkerAlt } from "react-icons/fa";
 import { useParams, useSearchParams } from "react-router-dom";
 import { useSelector } from "react-redux";
+import { getImageUrl } from "../../../utilities/imageUrl";
 
 export default function SideBar({
   activeCategory,
@@ -135,7 +136,7 @@ export default function SideBar({
                             categoryId={category.id}
                           >
                             <Icon
-                              src={`https://storage.googleapis.com/ecommerce-bucket-testing/${category.image_url}`}
+                              src={getImageUrl(category.image_url)}
                             />
                           </IconWrapper>
                         )}

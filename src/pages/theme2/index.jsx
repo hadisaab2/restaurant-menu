@@ -19,7 +19,12 @@ import CartPopup from "./popup/cart";
 import SideBar from "./Sidebar";
 import ProductParam from "./ProductParam";
 import Share from "./popup/share";
+import FeedbackPopup from "../theme3/popup/feedback";
+import ContactFormPopup from "../theme3/popup/contactForm";
+import AboutUsPopup from "../theme4/popup/aboutUs";
 import { InstallPrompt } from "./installPrompt";
+import BottomTabBar from "../theme3/BottomTabBar";
+import NavigationBar from "../theme3/NavigationBar";
 
 export default function Theme2() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -165,6 +170,27 @@ export default function Theme2() {
     sliderImages.length > 0;
   return (
     <Container id="wrapper">
+      <NavigationBar
+        onProductsClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+        onBranchesClick={() => { window.history.pushState({}, ""); popupHandler("location"); }}
+        onContactFormClick={() => { window.history.pushState({}, ""); popupHandler("contactForm"); }}
+        onFeedbackClick={() => { window.history.pushState({}, ""); popupHandler("feedback"); }}
+        onAboutClick={() => { window.history.pushState({}, ""); popupHandler("about"); }}
+        onOrderClick={() => { if (features?.cart) { window.history.pushState({}, ""); popupHandler("cart"); } }}
+        onHomeClick={undefined}
+        onCategoryClick={(id) => {
+          setactiveCategoryWithUrl(id);
+          const idx = theme2Categories.findIndex(c => c.id === id);
+          if (idx >= 0) setcarouselPosition(idx);
+        }}
+        onContactClick={() => { window.history.pushState({}, ""); popupHandler("contactForm"); }}
+        categories={theme2Categories}
+        activeCategory={activeCategory}
+        setshowSidebar={setshowSidebar}
+        showSidebar={showSidebar}
+        popupHandler={popupHandler}
+        isProductDetailsOpen={!!productId}
+      />
       <MenuWrapper onClick={handleClickOutside} >
         <BlurOverlay showPopup={showPopup} />
         <Header
@@ -180,6 +206,7 @@ export default function Theme2() {
           popupHandler={popupHandler}
           showMenuSlider={showMenuSlider}
           sliderImages={sliderImages}
+          hideHeaderTop={true}
         />
         <Products
           menu={restaurant.categories}
@@ -192,19 +219,6 @@ export default function Theme2() {
           categories={theme2Categories}
         />
       </MenuWrapper>
-      <DetailsBtn onClick={() => {
-        window.history.pushState({}, ""); // Add a history entry
-        popupHandler("location")
-      }}>
-        <Location />
-      </DetailsBtn>
-      {features?.cart &&<CartBtn onClick={() => {
-        window.history.pushState({}, ""); // Add a history entry
-        popupHandler("cart")
-      }}>
-        <CartCount>{itemCount}</CartCount>
-        <Cart />
-      </CartBtn>}
       <LocationPopup
         restaurant={restaurant}
         showPopup={showPopup}
@@ -220,6 +234,21 @@ export default function Theme2() {
         popupHandler={popupHandler}
         activeCategory={activeCategory}
       />
+      <FeedbackPopup
+        restaurant={restaurant}
+        showPopup={showPopup}
+        popupHandler={popupHandler}
+      />
+      <ContactFormPopup
+        restaurant={restaurant}
+        showPopup={showPopup}
+        popupHandler={popupHandler}
+      />
+      <AboutUsPopup
+        restaurant={restaurant}
+        showPopup={showPopup}
+        popupHandler={popupHandler}
+      />
       <SideBar
         categories={theme2Categories}
         activeCategory={activeCategory}
@@ -227,11 +256,28 @@ export default function Theme2() {
         setshowSidebar={setshowSidebar}
         showSidebar={showSidebar}
         setcarouselPosition={setcarouselPosition}
-
+        onFeedbackClick={() => { window.history.pushState({}, ""); popupHandler("feedback"); }}
+        onContactClick={() => { window.history.pushState({}, ""); popupHandler("contactForm"); }}
+        onBranchesClick={() => { window.history.pushState({}, ""); popupHandler("location"); }}
+        onAboutClick={() => { window.history.pushState({}, ""); popupHandler("about"); }}
+        onShareClick={() => { window.history.pushState({}, ""); popupHandler("share"); }}
+        branches={restaurant?.branches}
       />
       {productId &&<ProductParam productId={productId} searchParams={searchParams} setSearchParams={setSearchParams} />}
       {features?.install_app && <InstallPrompt showInstallPopup={showInstallPopup} onInstall={handleInstallClick} restaurantName={restaurantName} onDismiss={() => setShowInstallPopup(false)} />}
 
+      {/* Bottom Tab Bar */}
+      <BottomTabBar
+        hideHome={true}
+        activeView="products"
+        showPopup={showPopup}
+        onCategoriesClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+        onCartClick={() => { if (features?.cart) { window.history.pushState({}, ""); popupHandler("cart"); } }}
+        onFeedbackClick={() => { window.history.pushState({}, ""); popupHandler("feedback"); }}
+        onBranchesClick={() => { window.history.pushState({}, ""); popupHandler("location"); }}
+        restaurantName={restaurantName}
+        branches={restaurant?.branches}
+      />
     </Container>
   );
 }

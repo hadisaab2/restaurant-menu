@@ -1,3 +1,4 @@
+import { getImageUrl } from "../../../../../utilities/imageUrl";
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
@@ -132,7 +133,7 @@ export default function CartItems({ setblock }) {
     const img = item.images?.[0];
     if (!img) return "";
     return img.url
-      ? `https://storage.googleapis.com/ecommerce-bucket-testing/${img.url}`
+      ? getImageUrl(getImageUrl(img.url))
       : "";
   };
 

@@ -6,8 +6,7 @@ import { addToCart } from "../../../redux/cart/cartActions";
 import { convertPrice } from "../../../utilities/convertPrice";
 import { trackItemView, trackAddToCart } from "../../../utilities/analyticsTracking";
 import ProductOptionsPicker from "../../../product-options/ProductOptionsPicker";
-
-const STORAGE_URL = "https://storage.googleapis.com/ecommerce-bucket-testing/";
+import { getImageUrl } from "../../../utilities/imageUrl";
 
 export default function ProductParam({
   product,
@@ -30,7 +29,7 @@ export default function ProductParam({
     activeLanguage === "ar" && product.ar_description
       ? product.ar_description
       : product.en_description || product.description;
-  const imageUrl = product.image_url ? `${STORAGE_URL}${product.image_url}` : null;
+  const imageUrl = product.image_url ? getImageUrl(product.image_url) : null;
 
   // Price calculation
   const basePrice = Number(product.price) || 0;

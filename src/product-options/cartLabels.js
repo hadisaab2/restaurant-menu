@@ -35,7 +35,7 @@ function sectionTitles(lang) {
  * @returns {CartOptionBlock[]}
  */
 export function v2SelectionToCartBlocks(options, selection, lang) {
-  if (!options || !isV2Selection(selection)) return [];
+  if (!options || !selection) return [];
 
   const L = lang === "ar" ? "ar" : "en";
   const hdr = sectionTitles(L);
@@ -106,9 +106,14 @@ export function cartItemFormDataToLines(item, lang) {
   if (keys.length === 0) return [];
 
   if (isV2Selection(item.formData)) {
+    const normalized = {
+      sizeId: item.formData.sizeId ?? null,
+      addonIds: item.formData.addonIds || [],
+      removalIds: item.formData.removalIds || [],
+    };
     const options = productOptionsFromCartItemFormJson(item.form_json);
     if (!options) return [];
-    return v2SelectionToCartBlocks(options, item.formData, lang);
+    return v2SelectionToCartBlocks(options, normalized, lang);
   }
 
   const L = lang === "ar" ? "ar" : "en";

@@ -11,6 +11,7 @@ import LocationPopup from "./popup/location";
 import FeedbackPopup from "./popup/feedback";
 import ContactPopup from "./popup/contact";
 import SharePopup from "./popup/share";
+import AboutUsPopup from "../theme4/popup/aboutUs";
 import Footer from "./Footer";
 import BottomBar from "./BottomBar";
 import { useParams, useSearchParams } from "react-router-dom";
@@ -252,6 +253,13 @@ export default function Theme7() {
         <SharePopup
           restaurant={restaurant}
           accentColor={accentColor}
+          popupHandler={popupHandler}
+        />
+      )}
+      {showPopup === "about" && (
+        <AboutUsPopup
+          restaurant={restaurant}
+          showPopup={showPopup}
           popupHandler={popupHandler}
         />
       )}

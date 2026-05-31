@@ -17,6 +17,7 @@ import {
 } from "./styles";
 import { useParams, useSearchParams } from "react-router-dom";
 import { useSelector } from "react-redux";
+import { getImageUrl } from "../../../utilities/imageUrl";
 
 export default function SideBar({
   activeCategory,
@@ -48,8 +49,8 @@ export default function SideBar({
 
   const filteredCategories = categories?.filter((category) =>
     restaurant?.activeLanguage === "en"
-      ? category.en_category.toLowerCase().includes(searchText.toLowerCase())
-      : category.ar_category.toLowerCase().includes(searchText.toLowerCase())
+      ? (category.en_category || "").toLowerCase().includes(searchText.toLowerCase())
+      : (category.ar_category || "").toLowerCase().includes(searchText.toLowerCase())
   );
 
   const itemClick = (id, index) => {
@@ -97,8 +98,8 @@ export default function SideBar({
                   >
                     <Icon
                       src={
-                        category.image_url 
-                          ? `https://storage.googleapis.com/ecommerce-bucket-testing/${category.image_url}`
+                        category.image_url
+                          ? getImageUrl(category.image_url)
                           : category.isAllItems && restaurant?.logoURL
                           ? `https://storage.googleapis.com/ecommerce-bucket-testing/${restaurant.logoURL}`
                           : category.isAllItems && restaurant?.cover_url

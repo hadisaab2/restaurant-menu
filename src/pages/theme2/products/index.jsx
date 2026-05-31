@@ -28,7 +28,6 @@ export default function Products({
 
   const { restaurantName: paramRestaurantName } = useParams();
   const subdomain = window.location.hostname.split(".")[0];
-  // Determine the restaurant name to use
   const restaurantName =
     subdomain !== "menugic" && subdomain !== "localhost" && subdomain !== "www"
       ? subdomain
@@ -86,7 +85,7 @@ export default function Products({
       const refs = data?.pages
         ?.flat()
         ?.filter((plate) =>
-          plate[activeLanguage === "en" ? "en_name" : "ar_name"]
+          (plate[activeLanguage === "en" ? "en_name" : "ar_name"] || plate.en_name || plate.ar_name || "")
             .toLowerCase()
             .includes(searchText.toLowerCase())
         )
@@ -148,7 +147,7 @@ const filteredProducts =
     ?.filter((plate) => {
       const isHidden = Boolean(plate?.hide) || Number(plate?.hide) === 1;
       if (isHidden) return false;
-      return plate[activeLanguage === "en" ? "en_name" : "ar_name"]
+      return (plate[activeLanguage === "en" ? "en_name" : "ar_name"] || plate.en_name || plate.ar_name || "")
         .toLowerCase()
         .includes(searchText.toLowerCase());
     }) || [];

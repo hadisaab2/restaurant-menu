@@ -15,12 +15,15 @@ import _ from 'lodash';
 import { addToCart } from '../../../redux/cart/cartActions';
 import CarouselLoader from "./carouselLoader";
 import ProductForm from "./Form";
+import ProductOptionsPicker from "../../../product-options/ProductOptionsPicker";
+import { emptySelection } from "../../../product-options/schema";
 import { FaRegCopy } from 'react-icons/fa6';
 import { TiTick } from 'react-icons/ti';
 import { IoClose } from 'react-icons/io5';
 import { MdZoomIn } from 'react-icons/md';
 import { useLogProduct } from '../../../apis/products/logProduct';
 import { convertPrice } from '../../../utilities/convertPrice';
+import { getImageUrl } from '../../../utilities/imageUrl';
 import { useMenuMode } from '../MenuModeContext';
 import { getEffectivePrice } from '../utils/priceUtils';
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -61,9 +64,9 @@ export default function ProductParam({ productId, setSearchParams, searchParams 
             setBasePrice(price);
             setTotalPrice(price);
             if (parseFloat(fetchedProduct?.category?.discount) === 0.00) {
-                setfinalDiscount(parseFloat(fetchedProduct?.discount))
+                setfinalDiscount(parseFloat(fetchedProduct?.discount) || 0)
             } else {
-                setfinalDiscount(parseFloat(fetchedProduct.category.discount))
+                setfinalDiscount(parseFloat(fetchedProduct?.category?.discount) || 0)
             }
 
         }
@@ -82,7 +85,15 @@ export default function ProductParam({ productId, setSearchParams, searchParams 
 
     useEffect(() => {
         if (!_.isEmpty(formJson)) {
-            setFormSchema(JSON.parse(formJson));
+            const parsed = JSON.parse(formJson);
+            setFormSchema(parsed);
+            if (parsed?.version === 2 && parsed?.sizes?.length > 0) {
+                const bp = parseFloat(fetchedProduct?.en_price) || 0;
+                const match = parsed.sizes.find(
+                    (s) => s.priceMode === "absolute" && Number(s.priceModifier) === bp
+                );
+                setFormData(() => ({ ...emptySelection(), sizeId: match ? match.id : parsed.sizes[0].id }));
+            }
         }
     }, [formJson]);
 
@@ -103,8 +114,8 @@ export default function ProductParam({ productId, setSearchParams, searchParams 
     const zoomLastDist = useRef(null);
     const zoomLastTap = useRef(0);
     // const basePrice = parseFloat(fetchedProduct?.en_price || 0);
-    const [basePrice, setBasePrice] = useState(parseFloat(fetchedProduct?.en_price)); // Example base price
-    const [totalPrice, setTotalPrice] = useState(parseFloat(fetchedProduct?.en_price)); // Example base price
+    const [basePrice, setBasePrice] = useState(parseFloat(fetchedProduct?.en_price) || 0); // Example base price
+    const [totalPrice, setTotalPrice] = useState(parseFloat(fetchedProduct?.en_price) || 0); // Example base price
     const [instruction, setInstruction] = useState(""); // Example base price
     const [finalDiscount, setfinalDiscount] = useState(0); // Example base price
     const isOutOfStock =
@@ -113,7 +124,7 @@ export default function ProductParam({ productId, setSearchParams, searchParams 
 
 
     const handlePriceChange = (newPrice) => {
-        setTotalPrice(newPrice);
+        setTotalPrice(parseFloat(newPrice) || 0);
     };
 
 
@@ -180,7 +191,7 @@ export default function ProductParam({ productId, setSearchParams, searchParams 
         const img = images[carouselIndex];
         if (!img) return "";
         return img.url
-            ? `https://storage.googleapis.com/ecommerce-bucket-testing/${img.url}`
+            ? getImageUrl(img.url)
             : restaurantLogoUrl || "";
     };
 
@@ -249,6 +260,8 @@ export default function ProductParam({ productId, setSearchParams, searchParams 
         return () => window.removeEventListener("popstate", handlePopState);
     }, []);
 
+    const isV2Options = formSchema?.version === 2 && Array.isArray(formSchema?.sizes);
+
     function getRequiredKeys(formSchema) {
         return formSchema.components
             .filter(component => component.validate?.required)
@@ -273,7 +286,17 @@ export default function ProductParam({ productId, setSearchParams, searchParams 
     }
 
     const handleAddToCart = () => {
-        if (JSON.stringify(formSchema) !== "{}") {
+        if (isV2Options) {
+            const errors = {};
+            if (formSchema.sizes?.length > 0 && !formData?.sizeId) {
+                errors.size = 'Please select a size.';
+            }
+            if (Object.keys(errors).length > 0) {
+                setFormErrors(errors);
+                return;
+            }
+            // v2 is valid, proceed to add to cart
+        } else if (JSON.stringify(formSchema) !== "{}") {
 
         const errors = validateFormData(formSchema, formData);
 
@@ -384,7 +407,7 @@ export default function ProductParam({ productId, setSearchParams, searchParams 
                                         <Image
                                             src={
                                                 images[0].url
-                                                    ? `https://storage.googleapis.com/ecommerce-bucket-testing/${images[0].url}`
+                                                    ? getImageUrl(images[0].url)
                                                     : restaurantLogoUrl || ""
                                             }
                                             onLoad={() => handleImageLoad(0)}
@@ -435,7 +458,7 @@ export default function ProductParam({ productId, setSearchParams, searchParams 
                                                     src={
                                                         loadedIndices[index] || index === carouselIndex
                                                             ? (image?.url
-                                                                ? `https://storage.googleapis.com/ecommerce-bucket-testing/${image.url}`
+                                                                ? getImageUrl(image.url)
                                                                 : restaurantLogoUrl || "")
                                                             : ""
                                                     }
@@ -487,7 +510,7 @@ export default function ProductParam({ productId, setSearchParams, searchParams 
                                                         src={
                                                             loadedIndices[index] || index === carouselIndex
                                                                 ? (image?.url
-                                                                    ? `https://storage.googleapis.com/ecommerce-bucket-testing/${image.url}`
+                                                                    ? getImageUrl(image.url)
                                                                     : restaurantLogoUrl || "")
                                                                 : ""
                                                         }
@@ -542,7 +565,7 @@ export default function ProductParam({ productId, setSearchParams, searchParams 
                                                         src={
                                                             loadedIndices[index] || index === carouselIndex
                                                                 ? (image?.url
-                                                                    ? `https://storage.googleapis.com/ecommerce-bucket-testing/${image.url}`
+                                                                    ? getImageUrl(image.url)
                                                                     : restaurantLogoUrl || "")
                                                                 : ""
                                                         }
@@ -608,7 +631,18 @@ export default function ProductParam({ productId, setSearchParams, searchParams 
                                             : "غير متوفر حالياً"}
                                     </OutOfStockNotice>
                                 )}
-                                {formSchema?.components && <ProductForm formSchema={formSchema} onPriceChange={handlePriceChange} formData={formData} setFormData={setFormData} basePrice={String(getEffectivePrice(fetchedProduct, menuMode))} formErrors={formErrors} />}
+                                {isV2Options && (
+                                    <ProductOptionsPicker
+                                        options={formSchema}
+                                        formData={formData}
+                                        setFormData={setFormData}
+                                        formErrors={formErrors}
+                                        activeLanguage={restaurant.activeLanguage}
+                                        basePrice={String(getEffectivePrice(fetchedProduct, menuMode))}
+                                        onPriceChange={handlePriceChange}
+                                    />
+                                )}
+                                {!isV2Options && formSchema?.components && <ProductForm formSchema={formSchema} onPriceChange={handlePriceChange} formData={formData} setFormData={setFormData} basePrice={String(getEffectivePrice(fetchedProduct, menuMode))} formErrors={formErrors} />}
                                 <InstructionContainer activeLanguage={restaurant.activeLanguage}>
                                     <InstructionLabel>{restaurant.activeLanguage == "en"
                                         ? "Any Special Instuction ?"

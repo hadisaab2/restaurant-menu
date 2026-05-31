@@ -16,6 +16,7 @@ import {
 import { useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { convertPrice } from "../../../../utilities/convertPrice";
+import { getImageUrl } from "../../../../utilities/imageUrl";
 const _ = require('lodash');
 
 const Product = React.forwardRef(
@@ -91,7 +92,7 @@ const restaurantLogoUrl = restaurant?.logoURL
   ? `https://storage.googleapis.com/ecommerce-bucket-testing/${restaurant.logoURL}`
   : null;
 const imageSrc = hasValidImage 
-  ? `https://storage.googleapis.com/ecommerce-bucket-testing/${plate.images[coverIndex].url}`
+  ? getImageUrl(plate.images[coverIndex].url)
   : restaurantLogoUrl || "";
 
     return (

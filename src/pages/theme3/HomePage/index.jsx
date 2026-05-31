@@ -57,13 +57,14 @@ import { useGetBestSellers } from "../../../apis/products/getBestSellers";
 import Product from "../products/product";
 import { CUSTOMER_WISHLIST_URL } from "../../../apis/URLs";
 import { getCustomerAccessToken } from "../../../utilities/customerAuthStorage";
+import { getImageUrl } from "../../../utilities/imageUrl";
 
 // Component for category carousel item with image fallback
 const CategoryCarouselItem = ({ category, activeLanguage, onExploreClick, logoURL }) => {
   const [imageError, setImageError] = useState(false);
   const categoryName = activeLanguage === "en" ? category.en_category : category.ar_category;
   const categoryImageUrl = category.image_url
-    ? `https://storage.googleapis.com/ecommerce-bucket-testing/${category.image_url}`
+    ? getImageUrl(category.image_url)
     : null;
 
   return (

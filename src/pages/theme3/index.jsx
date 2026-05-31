@@ -486,8 +486,8 @@ export default function Theme3() {
               searchText
                 ? theme3Categories.filter((cat) =>
                     activeLanguage === "en"
-                      ? cat.en_category.toLowerCase().includes(searchText.toLowerCase())
-                      : cat.ar_category.toLowerCase().includes(searchText.toLowerCase())
+                      ? (cat.en_category || "").toLowerCase().includes(searchText.toLowerCase())
+                      : (cat.ar_category || "").toLowerCase().includes(searchText.toLowerCase())
                   )
                 : theme3Categories
             }

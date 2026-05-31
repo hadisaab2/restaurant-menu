@@ -82,8 +82,8 @@ export default function HorizantalWithoutIcon({
                 <TextContainer>
                   <CategoryName activeCategory={activeCategory} categoryId={category.id}>
                     {activeLanuguage === "en"
-                      ? category.en_category
-                      : category.ar_category}
+                      ? (category.en_category || category.ar_category)
+                      : (category.ar_category || category.en_category)}
                   </CategoryName>
                 </TextContainer>
               </CategoryWrapper>

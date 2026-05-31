@@ -19,6 +19,9 @@ import CartPopup from "./popup/cart";
 import SideBar from "./Sidebar";
 import ProductParam from "./ProductParam";
 import Share from "./popup/share";
+import FeedbackPopup from "../theme3/popup/feedback";
+import ContactFormPopup from "../theme3/popup/contactForm";
+import AboutUsPopup from "../theme4/popup/aboutUs";
 import { InstallPrompt } from "./installPrompt";
 import LandingPage from "./LandingPage";
 import MenuModeContext from "./MenuModeContext";
@@ -248,6 +251,21 @@ export default function Theme5() {
           showPopup={showPopup}
           popupHandler={popupHandler}
           activeCategory={activeCategory}
+        />
+        <FeedbackPopup
+          restaurant={restaurant}
+          showPopup={showPopup}
+          popupHandler={popupHandler}
+        />
+        <ContactFormPopup
+          restaurant={restaurant}
+          showPopup={showPopup}
+          popupHandler={popupHandler}
+        />
+        <AboutUsPopup
+          restaurant={restaurant}
+          showPopup={showPopup}
+          popupHandler={popupHandler}
         />
         <SideBar
           categories={theme2Categories}

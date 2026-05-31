@@ -18,7 +18,8 @@ export default function Header({
   setcarouselPosition,
   popupHandler,
   showMenuSlider,
-  sliderImages
+  sliderImages,
+  hideHeaderTop = false,
 
 }) {
   const { restaurantName: paramRestaurantName } = useParams();
@@ -40,7 +41,7 @@ export default function Header({
   }
   return (
     <Container>
-      <HeaderTop setshowSidebar={setshowSidebar} showSidebar={showSidebar} />
+      {!hideHeaderTop && <HeaderTop setshowSidebar={setshowSidebar} showSidebar={showSidebar} />}
       {showMenuSlider && (
         <Theme12MenuSlider
           images={sliderImages}

@@ -45,6 +45,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { changelanuage } from "../../../redux/restaurant/restaurantActions";
 import { FaWhatsapp } from "react-icons/fa6";
 import CustomerAccountNav from "../../../components/CustomerAccountNav";
+import { getImageUrl } from "../../../utilities/imageUrl";
 
 const WishlistHeartIcon = IoHeartOutline;
 
@@ -67,6 +68,7 @@ export default function NavigationBar({
   popupHandler,
   isProductDetailsOpen = false,
 }) {
+  // Features gating is resolved after restaurant is loaded from Redux (below)
   const { restaurantName: paramRestaurantName } = useParams();
   const hostname = window.location.hostname;
   const subdomain = hostname.split(".")[0];
@@ -78,6 +80,20 @@ export default function NavigationBar({
 
   const restaurantFromRedux = useSelector((state) => state.restaurant?.[restaurantName]);
   const restaurant = restaurantProp || restaurantFromRedux;
+
+  // Parse features to gate nav items — old restaurants without these keys won't show them
+  const _features = (() => {
+    try {
+      const stored = restaurant?.features || "{}";
+      return typeof stored === "string" ? JSON.parse(stored) : stored;
+    } catch { return {}; }
+  })();
+  const showFeedback = onFeedbackClick && _features.feedback === true;
+  const showAbout = onAboutClick && _features.about_us === true;
+  const showContact = onContactFormClick && _features.contact_info === true;
+  const showUserRegistration = _features.user_registration === true;
+  const showBranches = !!onBranchesClick;
+
   const activeLanguage = useSelector(
     (state) => state.restaurant?.[restaurantName]?.activeLanguage || "en"
   );
@@ -252,15 +268,17 @@ export default function NavigationBar({
                 {activeLanguage === "en" ? "Categories" : "الفئات"}
               </NavLinkText>
             </NavLink>
-            <NavLink
-              onClick={() => handleNavClick(onFeedbackClick)}
-              activeLanguage={activeLanguage}
-            >
-              <NavLinkText activeLanguage={activeLanguage}>
-                {activeLanguage === "en" ? "Feedback" : "التعليقات"}
-              </NavLinkText>
-            </NavLink>
-            {onAboutClick && (
+            {showFeedback && (
+              <NavLink
+                onClick={() => handleNavClick(onFeedbackClick)}
+                activeLanguage={activeLanguage}
+              >
+                <NavLinkText activeLanguage={activeLanguage}>
+                  {activeLanguage === "en" ? "Feedback" : "التعليقات"}
+                </NavLinkText>
+              </NavLink>
+            )}
+            {showAbout && (
               <NavLink
                 onClick={() => handleNavClick(onAboutClick)}
                 activeLanguage={activeLanguage}
@@ -270,22 +288,26 @@ export default function NavigationBar({
                 </NavLinkText>
               </NavLink>
             )}
-            <NavLink
-              onClick={() => handleNavClick(onBranchesClick)}
-              activeLanguage={activeLanguage}
-            >
-              <NavLinkText activeLanguage={activeLanguage}>
-                {activeLanguage === "en" ? "Branches" : "الفروع"}
-              </NavLinkText>
-            </NavLink>
-            <NavLink
-              onClick={() => handleNavClick(onContactFormClick)}
-              activeLanguage={activeLanguage}
-            >
-              <NavLinkText activeLanguage={activeLanguage}>
-                {activeLanguage === "en" ? "Questions & Suggestions" : "أسئلة واقتراحات"}
-              </NavLinkText>
-            </NavLink>
+            {showBranches && (
+              <NavLink
+                onClick={() => handleNavClick(onBranchesClick)}
+                activeLanguage={activeLanguage}
+              >
+                <NavLinkText activeLanguage={activeLanguage}>
+                  {activeLanguage === "en" ? "Branches" : "الفروع"}
+                </NavLinkText>
+              </NavLink>
+            )}
+            {showContact && (
+              <NavLink
+                onClick={() => handleNavClick(onContactFormClick)}
+                activeLanguage={activeLanguage}
+              >
+                <NavLinkText activeLanguage={activeLanguage}>
+                  {activeLanguage === "en" ? "Questions & Suggestions" : "أسئلة واقتراحات"}
+                </NavLinkText>
+              </NavLink>
+            )}
           </NavLinks>
 
           <MobileMenuButton
@@ -297,13 +319,15 @@ export default function NavigationBar({
           </MobileMenuButton>
 
           <NavActions>
-            <CustomerAccountNav
-              ref={customerAccountNavRef}
-              restaurant={restaurant}
-              restaurantName={restaurantName}
-              activeLanguage={activeLanguage}
-              popupHandler={popupHandler}
-            />
+            {showUserRegistration && (
+              <CustomerAccountNav
+                ref={customerAccountNavRef}
+                restaurant={restaurant}
+                restaurantName={restaurantName}
+                activeLanguage={activeLanguage}
+                popupHandler={popupHandler}
+              />
+            )}
             {restaurant?.languages === "en&ar" && (
               <GlobeLanguageWrap ref={globeLangRef}>
                 <GlobeLanguageButton
@@ -422,7 +446,7 @@ export default function NavigationBar({
                             >
                               {restaurant?.category_type !== "horizantal-withoutIcon" && category.image_url && (
                                 <MobileMenuCategoryIcon
-                                  src={`https://storage.googleapis.com/ecommerce-bucket-testing/${category.image_url}`}
+                                  src={getImageUrl(category.image_url)}
                                   alt={activeLanguage === "en" ? category.en_category : category.ar_category}
                                 />
                               )}
@@ -439,7 +463,7 @@ export default function NavigationBar({
             </>
 
             {/* Feedback Section */}
-            <>
+            {showFeedback && (
               <MobileMenuSection>
                 <MobileMenuSectionHeader onClick={handleFeedbackClick}>
                   <MobileMenuSectionIcon>
@@ -450,33 +474,37 @@ export default function NavigationBar({
                   </MobileMenuSectionTitle>
                 </MobileMenuSectionHeader>
               </MobileMenuSection>
-            </>
+            )}
 
-            {/* Orders — under Feedback */}
-            <MobileMenuSection>
-              <MobileMenuSectionHeader onClick={handleMobileOrdersClick}>
-                <MobileMenuSectionIcon>
-                  <FaClipboardList />
-                </MobileMenuSectionIcon>
-                <MobileMenuSectionTitle activeLanguage={activeLanguage}>
-                  {activeLanguage === "en" ? "Orders" : "الطلبات"}
-                </MobileMenuSectionTitle>
-              </MobileMenuSectionHeader>
-            </MobileMenuSection>
+            {/* Orders & Wishlist — only if user registration enabled */}
+            {showUserRegistration && (
+              <>
+                <MobileMenuSection>
+                  <MobileMenuSectionHeader onClick={handleMobileOrdersClick}>
+                    <MobileMenuSectionIcon>
+                      <FaClipboardList />
+                    </MobileMenuSectionIcon>
+                    <MobileMenuSectionTitle activeLanguage={activeLanguage}>
+                      {activeLanguage === "en" ? "Orders" : "الطلبات"}
+                    </MobileMenuSectionTitle>
+                  </MobileMenuSectionHeader>
+                </MobileMenuSection>
 
-            <MobileMenuSection>
-              <MobileMenuSectionHeader onClick={handleMobileWishlistClick}>
-                <MobileMenuSectionIcon>
-                  <WishlistHeartIcon style={{ fill: "none", stroke: "currentColor" }} />
-                </MobileMenuSectionIcon>
-                <MobileMenuSectionTitle activeLanguage={activeLanguage}>
-                  {activeLanguage === "en" ? "Wishlist" : "المفضلة"}
-                </MobileMenuSectionTitle>
-              </MobileMenuSectionHeader>
-            </MobileMenuSection>
+                <MobileMenuSection>
+                  <MobileMenuSectionHeader onClick={handleMobileWishlistClick}>
+                    <MobileMenuSectionIcon>
+                      <WishlistHeartIcon style={{ fill: "none", stroke: "currentColor" }} />
+                    </MobileMenuSectionIcon>
+                    <MobileMenuSectionTitle activeLanguage={activeLanguage}>
+                      {activeLanguage === "en" ? "Wishlist" : "المفضلة"}
+                    </MobileMenuSectionTitle>
+                  </MobileMenuSectionHeader>
+                </MobileMenuSection>
+              </>
+            )}
 
             {/* About us Section */}
-            {onAboutClick && (
+            {showAbout && (
               <MobileMenuSection>
                 <MobileMenuSectionHeader onClick={handleAboutClick}>
                   <MobileMenuSectionIcon>
@@ -490,7 +518,7 @@ export default function NavigationBar({
             )}
 
             {/* Branches Section */}
-            <>
+            {showBranches && (
               <MobileMenuSection>
                 <MobileMenuSectionHeader onClick={handleBranchesClick}>
                   <MobileMenuSectionIcon>
@@ -501,10 +529,10 @@ export default function NavigationBar({
                   </MobileMenuSectionTitle>
                 </MobileMenuSectionHeader>
               </MobileMenuSection>
-            </>
+            )}
 
             {/* Contact Us Section */}
-            <>
+            {showContact && (
               <MobileMenuSection>
                 <MobileMenuSectionHeader onClick={handleContactFormClick}>
                   <MobileMenuSectionIcon>
@@ -515,7 +543,7 @@ export default function NavigationBar({
                   </MobileMenuSectionTitle>
                 </MobileMenuSectionHeader>
               </MobileMenuSection>
-            </>
+            )}
 
             {/* Social Media Section */}
             {hasSocialMedia && (

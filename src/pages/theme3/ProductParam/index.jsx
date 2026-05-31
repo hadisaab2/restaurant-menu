@@ -15,10 +15,12 @@ import { addToCart } from '../../../redux/cart/cartActions';
 import CarouselLoader from "./carouselLoader";
 import ProductForm from "./Form";
 import ProductOptionsPicker from "../../../product-options/ProductOptionsPicker";
+import { emptySelection } from "../../../product-options/schema";
 import { FaRegCopy } from 'react-icons/fa6';
 import { TiTick } from 'react-icons/ti';
 import { useLogProduct } from '../../../apis/products/logProduct';
 import { convertPrice } from '../../../utilities/convertPrice';
+import { getImageUrl } from '../../../utilities/imageUrl';
 
 export default function ProductParam({ productId, setSearchParams, searchParams }) {
     const { restaurantName: paramRestaurantName } = useParams();
@@ -50,9 +52,9 @@ export default function ProductParam({ productId, setSearchParams, searchParams 
             setBasePrice(parseFloat(fetchedProduct.en_price));
             setTotalPrice(parseFloat(fetchedProduct?.en_price))
             if (parseFloat(fetchedProduct?.category?.discount) === 0.00) {
-                setfinalDiscount(parseFloat(fetchedProduct?.discount))
+                setfinalDiscount(parseFloat(fetchedProduct?.discount) || 0)
             } else {
-                setfinalDiscount(parseFloat(fetchedProduct.category.discount))
+                setfinalDiscount(parseFloat(fetchedProduct?.category?.discount) || 0)
             }
 
         }
@@ -71,7 +73,15 @@ export default function ProductParam({ productId, setSearchParams, searchParams 
 
     useEffect(() => {
         if (!_.isEmpty(formJson)) {
-            setFormSchema(JSON.parse(formJson));
+            const parsed = JSON.parse(formJson);
+            setFormSchema(parsed);
+            if (parsed?.version === 2 && parsed?.sizes?.length > 0) {
+                const bp = parseFloat(fetchedProduct?.en_price) || 0;
+                const match = parsed.sizes.find(
+                    (s) => s.priceMode === "absolute" && Number(s.priceModifier) === bp
+                );
+                setFormData(() => ({ ...emptySelection(), sizeId: match ? match.id : parsed.sizes[0].id }));
+            }
         }
     }, [formJson]);
 
@@ -89,7 +99,7 @@ export default function ProductParam({ productId, setSearchParams, searchParams 
         const img = images[carouselIndex];
         if (!img) return restaurantLogoUrl || "";
         return img?.url
-            ? `https://storage.googleapis.com/ecommerce-bucket-testing/${img.url}`
+            ? getImageUrl(img.url)
             : restaurantLogoUrl || "";
     };
 
@@ -142,14 +152,14 @@ export default function ProductParam({ productId, setSearchParams, searchParams 
     const [quantity, setQuantity] = useState(1);
     const [carouselSwiped, setCarouselSwiped] = useState(false);
     // const basePrice = parseFloat(fetchedProduct?.en_price || 0);
-    const [basePrice, setBasePrice] = useState(parseFloat(fetchedProduct?.en_price)); // Example base price
-    const [totalPrice, setTotalPrice] = useState(parseFloat(fetchedProduct?.en_price)); // Example base price
+    const [basePrice, setBasePrice] = useState(parseFloat(fetchedProduct?.en_price) || 0); // Example base price
+    const [totalPrice, setTotalPrice] = useState(parseFloat(fetchedProduct?.en_price) || 0); // Example base price
     const [instruction, setInstruction] = useState(""); // Example base price
     const [finalDiscount, setfinalDiscount] = useState(0); // Example base price
 
 
     const handlePriceChange = (newPrice) => {
-        setTotalPrice(newPrice);
+        setTotalPrice(parseFloat(newPrice) || 0);
     };
 
 
@@ -404,7 +414,7 @@ export default function ProductParam({ productId, setSearchParams, searchParams 
                                             <Image
                                                 src={
                                                     images[0]?.url
-                                                        ? `https://storage.googleapis.com/ecommerce-bucket-testing/${images[0].url}`
+                                                        ? getImageUrl(images[0].url)
                                                         : restaurantLogoUrl || ""
                                                 }
                                                 onLoad={() => handleImageLoad(0)}
@@ -455,7 +465,7 @@ export default function ProductParam({ productId, setSearchParams, searchParams 
                                                         src={
                                                             loadedIndices[index] || index === carouselIndex
                                                                 ? (image?.url
-                                                                    ? `https://storage.googleapis.com/ecommerce-bucket-testing/${image.url}`
+                                                                    ? getImageUrl(image.url)
                                                                     : restaurantLogoUrl || "")
                                                                 : ""
                                                         }
@@ -515,7 +525,7 @@ export default function ProductParam({ productId, setSearchParams, searchParams 
                                                             src={
                                                                 loadedIndices[index] || index === carouselIndex
                                                                     ? (image?.url
-                                                                        ? `https://storage.googleapis.com/ecommerce-bucket-testing/${image.url}`
+                                                                        ? getImageUrl(image.url)
                                                                         : restaurantLogoUrl || "")
                                                                     : ""
                                                             }
@@ -575,7 +585,7 @@ export default function ProductParam({ productId, setSearchParams, searchParams 
                                                             src={
                                                                 loadedIndices[index] || index === carouselIndex
                                                                     ? (image?.url
-                                                                        ? `https://storage.googleapis.com/ecommerce-bucket-testing/${image.url}`
+                                                                        ? getImageUrl(image.url)
                                                                         : restaurantLogoUrl || "")
                                                                     : ""
                                                             }

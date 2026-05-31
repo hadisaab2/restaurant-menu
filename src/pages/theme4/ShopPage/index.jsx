@@ -22,6 +22,7 @@ import {
 import { FaShoppingBag, FaThLarge } from "react-icons/fa";
 import { CiSearch } from "react-icons/ci";
 import Products from "../products";
+import { getImageUrl } from "../../../utilities/imageUrl";
 
 export default function ShopPage({
   categories,
@@ -71,7 +72,7 @@ export default function ShopPage({
               const isActive = String(activeCategory) === String(cat.id);
               const name = activeLanguage === "en" ? (cat.en_category || cat.ar_category) : (cat.ar_category || cat.en_category);
               const categoryImageUrl = cat.image_url
-                ? `https://storage.googleapis.com/ecommerce-bucket-testing/${cat.image_url}`
+                ? getImageUrl(cat.image_url)
                 : null;
               return (
                 <ShopPill

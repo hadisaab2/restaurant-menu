@@ -153,3 +153,38 @@ export const NEW = styled.div`
   border-radius: 4px;
   line-height: 1.2;
 `;
+
+export const QuickAddButton = styled.button`
+  position: absolute;
+  bottom: 8px;
+  ${props => props.activeLanuguage === "ar" ? "left: 15px;" : "right: 15px;"}
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: none;
+  background-color: ${props => props.theme.mainColor};
+  color: ${props => props.theme.popupbuttonText || "#fff"};
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  transition: transform 0.15s ease;
+  z-index: 5;
+  &:active {
+    transform: scale(0.9);
+  }
+`;
+
+export const OutOfStockBadge = styled.div`
+  position: absolute;
+  bottom: 8px;
+  ${props => props.activeLanuguage === "ar" ? "left: 8px;" : "right: 8px;"}
+  font-size: 9px;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 10px;
+  background: rgba(220, 38, 38, 0.85);
+  color: #fff;
+  z-index: 5;
+`;

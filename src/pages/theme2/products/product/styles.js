@@ -35,14 +35,14 @@ visibility: ${props=>props.imageLoaded?"visible":"hidden"};
 export const ImageContainer = styled.div`
 position: relative;
 width:100%;
-height: 20vh;
+height: 18vh;
 overflow: hidden;
-margin-top: 10px;
+margin-top: 5px;
 display: flex;
 justify-content: center;
 border-radius: 10px;
 @media (min-width: 1024px) {
-  height: 30vh;
+  height: 24vh;
     }
 
 
@@ -55,9 +55,9 @@ flex-direction: column;
 text-align: ${props=>props.activeLanuguage=="en"?"left":"right"};
 position: relative;
 align-items: ${props=>props.activeLanuguage=="en"?"flex-start":"flex-end"};
-gap:5px;
-height: 10vh;
-margin-top: 5px;
+gap:3px;
+height: 8vh;
+margin-top: 3px;
 
 `;
 export const PlateName = styled.span`
@@ -148,4 +148,39 @@ export const NEW = styled.div`
   color: ${(props) => props.theme.popupbuttonText};
   border-radius: 4px;
   line-height: 1.2;
+`;
+
+export const QuickAddButton = styled.button`
+  position: absolute;
+  bottom: 8px;
+  ${props => props.activeLanuguage === "ar" ? "left: 15px;" : "right: 15px;"}
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: none;
+  background-color: ${props => props.theme.mainColor};
+  color: ${props => props.theme.popupbuttonText || "#fff"};
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  transition: transform 0.15s ease;
+  z-index: 5;
+  &:active {
+    transform: scale(0.9);
+  }
+`;
+
+export const OutOfStockBadge = styled.div`
+  position: absolute;
+  bottom: 8px;
+  ${props => props.activeLanuguage === "ar" ? "left: 8px;" : "right: 8px;"}
+  font-size: 9px;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 10px;
+  background: rgba(220, 38, 38, 0.85);
+  color: #fff;
+  z-index: 5;
 `;

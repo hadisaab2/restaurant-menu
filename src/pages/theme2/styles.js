@@ -5,7 +5,6 @@ import { IoBag } from "react-icons/io5";
 export const Container = styled.div`
 min-height: 100vh;
 width: 100%;
-position: relative;
 background-color: ${props=>props.theme.backgroundColor};
 font-family: ${(props) => `${props.theme.font}, "Noto Kufi Arabic" !important`};
 /* @media (min-width: 1024px) {
@@ -17,7 +16,6 @@ width: 100%;
 display: flex;
 flex-direction: column;
 height: 100%;
-position: relative;
 
 `;
 

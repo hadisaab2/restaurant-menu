@@ -59,12 +59,14 @@ import { trackAddToCart, trackItemView } from "../../../../utilities/analyticsTr
 import CarouselLoader from "./carouselLoader";
 import ProductForm from "./Form";
 import ProductOptionsPicker from "../../../../product-options/ProductOptionsPicker";
+import { emptySelection } from "../../../../product-options/schema";
 import { FaRegCopy } from "react-icons/fa";
 import { TiTick } from "react-icons/ti";
 
 import { translateForm } from "../../../../utilities/translate";
 import { useLogProduct } from "../../../../apis/products/logProduct";
 import { convertPrice } from "../../../../utilities/convertPrice";
+import { getImageUrl } from "../../../../utilities/imageUrl";
 import { toast } from "react-toastify";
 
 const _ = require('lodash');
@@ -110,7 +112,19 @@ export default function ProductDetails({
         formJson = activeCategory?.form_json
       }
     }
-    !_.isEmpty(formJson) ? setFormSchema(JSON.parse(formJson)) : setFormSchema({})
+    if (!_.isEmpty(formJson)) {
+      const parsed = JSON.parse(formJson);
+      setFormSchema(parsed);
+      if (parsed?.version === 2 && parsed?.sizes?.length > 0) {
+        const bp = parseFloat(plates[activePlate]?.en_price) || 0;
+        const match = parsed.sizes.find(
+          (s) => s.priceMode === "absolute" && Number(s.priceModifier) === bp
+        );
+        setFormData(() => ({ ...emptySelection(), sizeId: match ? match.id : parsed.sizes[0].id }));
+      }
+    } else {
+      setFormSchema({});
+    }
 
 
 
@@ -141,7 +155,7 @@ export default function ProductDetails({
     const img = images[carouselIndex];
     if (!img) return restaurantLogoUrl || "";
     return img.url
-      ? `https://storage.googleapis.com/ecommerce-bucket-testing/${img.url}`
+      ? getImageUrl(img.url)
       : restaurantLogoUrl || "";
   };
 
@@ -564,7 +578,7 @@ export default function ProductDetails({
                   <Image
                     src={
                       images[0]?.url
-                        ? `https://storage.googleapis.com/ecommerce-bucket-testing/${images[0].url}`
+                        ? getImageUrl(images[0].url)
                         : restaurantLogoUrl || ""
                     }
                     onLoad={() => handleImageLoad(0)}
@@ -615,7 +629,7 @@ export default function ProductDetails({
                         src={
                           loadedIndices[index] || index === carouselIndex
                             ? (image.url
-                                ? `https://storage.googleapis.com/ecommerce-bucket-testing/${image.url}`
+                                ? getImageUrl(image.url)
                                 : restaurantLogoUrl || "")
                             : ""
                         }
@@ -675,7 +689,7 @@ export default function ProductDetails({
                           src={
                             loadedIndices[index] || index === carouselIndex
                               ? (image.url
-                                  ? `https://storage.googleapis.com/ecommerce-bucket-testing/${image.url}`
+                                  ? getImageUrl(image.url)
                                   : restaurantLogoUrl || "")
                               : ""
                           }
@@ -735,7 +749,7 @@ export default function ProductDetails({
                           src={
                             loadedIndices[index] || index === carouselIndex
                               ? (image.url
-                                  ? `https://storage.googleapis.com/ecommerce-bucket-testing/${image.url}`
+                                  ? getImageUrl(image.url)
                                   : restaurantLogoUrl || "")
                               : ""
                           }

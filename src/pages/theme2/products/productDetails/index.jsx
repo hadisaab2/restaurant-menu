@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
+import { createPortal } from "react-dom";
 import {
   AddToCart,
   BackBtn,
@@ -46,6 +47,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { addToCart } from "../../../../redux/cart/cartActions";
 import CarouselLoader from "./carouselLoader";
 import ProductForm from "./Form";
+import ProductOptionsPicker from "../../../../product-options/ProductOptionsPicker";
+import { emptySelection } from "../../../../product-options/schema";
 import { FaRegCopy } from "react-icons/fa";
 import { TiTick } from "react-icons/ti";
 import { IoClose } from "react-icons/io5";
@@ -53,6 +56,7 @@ import { MdZoomIn } from "react-icons/md";
 import { translateForm } from "../../../../utilities/translate";
 import { useLogProduct } from "../../../../apis/products/logProduct";
 import { convertPrice } from "../../../../utilities/convertPrice";
+import { getImageUrl } from "../../../../utilities/imageUrl";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { EffectCards, Pagination } from "swiper/modules";
 import "swiper/css";
@@ -102,9 +106,20 @@ export default function ProductDetails({
         formJson = activeCategory?.form_json
       }
     }
-    !_.isEmpty(formJson) ? setFormSchema(JSON.parse(formJson)) : setFormSchema({})
-
-
+    if (!_.isEmpty(formJson)) {
+      const parsed = JSON.parse(formJson);
+      setFormSchema(parsed);
+      // Auto-select default size matching product base price
+      if (parsed?.version === 2 && parsed?.sizes?.length > 0) {
+        const basePrice = parseFloat(plates[activePlate]?.en_price) || 0;
+        const match = parsed.sizes.find(
+          (s) => s.priceMode === "absolute" && Number(s.priceModifier) === basePrice
+        );
+        setFormData(() => ({ ...emptySelection(), sizeId: match ? match.id : parsed.sizes[0].id }));
+      }
+    } else {
+      setFormSchema({});
+    }
 
   }, [restaurant.activeLanguage])
 
@@ -128,21 +143,18 @@ export default function ProductDetails({
   const zoomLastDist = useRef(null);
   const zoomLastTap = useRef(0);
 
-  let finalDiscount;
-
-  if (parseFloat(activeCategory.discount) === 0.00) {
-    finalDiscount = parseFloat(plates[activePlate].discount);
-  } else {
-    finalDiscount = parseFloat(activeCategory.discount);
-  }
+  const catDiscount = parseFloat(activeCategory?.discount) || 0;
+  const plateDiscount = parseFloat(plates[activePlate]?.discount) || 0;
+  const finalDiscount = catDiscount === 0 ? plateDiscount : catDiscount;
 
   const enPrice = plates[activePlate]?.en_price || "0";
-  const basePrice = enPrice.includes(".") ? parseFloat(enPrice).toFixed(2) : parseFloat(enPrice).toFixed(0);
-  const [totalPrice, setTotalPrice] = useState(basePrice); // Example base price
+  const parsedPrice = parseFloat(enPrice) || 0;
+  const basePrice = parsedPrice % 1 !== 0 ? parsedPrice.toFixed(2) : parsedPrice.toFixed(0);
+  const [totalPrice, setTotalPrice] = useState(parsedPrice);
   const [instruction, setInstruction] = useState("");
 
   const handlePriceChange = (newPrice) => {
-    setTotalPrice(newPrice);
+    setTotalPrice(parseFloat(newPrice) || 0);
   };
 
   const [CloseAnimation, setCloseAnimation] = useState(true);
@@ -204,7 +216,7 @@ export default function ProductDetails({
     const img = images[carouselIndex];
     if (!img) return "";
     return img.url
-      ? `https://storage.googleapis.com/ecommerce-bucket-testing/${img.url}`
+      ? getImageUrl(img.url)
       : restaurantLogoUrl || "";
   };
 
@@ -273,6 +285,8 @@ export default function ProductDetails({
     return () => window.removeEventListener("popstate", handlePopState);
   }, []);
 
+  const isV2Options = formSchema?.version === 2 && Array.isArray(formSchema?.sizes);
+
   function getRequiredKeys(formSchema) {
     return formSchema.components
       .filter(component => component.validate?.required)
@@ -297,8 +311,18 @@ export default function ProductDetails({
   }
 
 
-  const handleAddToCart = () => {    
-    if (JSON.stringify(formSchema) !== "{}") {
+  const handleAddToCart = () => {
+    if (isV2Options) {
+      const errors = {};
+      if (formSchema.sizes?.length > 0 && !formData?.sizeId) {
+        errors.size = 'Please select a size.';
+      }
+      if (Object.keys(errors).length > 0) {
+        setFormErrors(errors);
+        return;
+      }
+      // v2 is valid, proceed to add to cart
+    } else if (JSON.stringify(formSchema) !== "{}") {
       const errors = validateFormData(formSchema, formData);
 
       if (Object.keys(errors).length > 0) {
@@ -403,7 +427,7 @@ export default function ProductDetails({
 
   const carouselStyle = restaurant?.product_details_carousel_style || "normal";
 
-  return (
+  return createPortal(
     <>
       <Wrapper
         // x={productPositions[activePlate]?.x}
@@ -431,7 +455,7 @@ export default function ProductDetails({
                   <Image
                     src={
                       images[0].url
-                        ? `https://storage.googleapis.com/ecommerce-bucket-testing/${images[0].url}`
+                        ? getImageUrl(images[0].url)
                         : restaurantLogoUrl || ""
                     }
                     onLoad={() => handleImageLoad(0)}
@@ -482,7 +506,7 @@ export default function ProductDetails({
                         src={
                           loadedIndices[index] || index === carouselIndex
                             ? (image.url
-                                ? `https://storage.googleapis.com/ecommerce-bucket-testing/${image.url}`
+                                ? getImageUrl(image.url)
                                 : restaurantLogoUrl || "")
                             : ""
                         }
@@ -534,7 +558,7 @@ export default function ProductDetails({
                           src={
                             loadedIndices[index] || index === carouselIndex
                               ? (image.url
-                                  ? `https://storage.googleapis.com/ecommerce-bucket-testing/${image.url}`
+                                  ? getImageUrl(image.url)
                                   : restaurantLogoUrl || "")
                               : ""
                           }
@@ -589,7 +613,7 @@ export default function ProductDetails({
                           src={
                             loadedIndices[index] || index === carouselIndex
                               ? (image.url
-                                  ? `https://storage.googleapis.com/ecommerce-bucket-testing/${image.url}`
+                                  ? getImageUrl(image.url)
                                   : restaurantLogoUrl || "")
                               : ""
                           }
@@ -660,7 +684,18 @@ export default function ProductDetails({
                 </OutOfStockNotice>
               )}
 
-              {formSchema?.components && <ProductForm formSchema={formSchema} onPriceChange={handlePriceChange} formData={formData} setFormData={setFormData} basePrice={basePrice} formErrors={formErrors} />}
+              {isV2Options && (
+                <ProductOptionsPicker
+                  options={formSchema}
+                  formData={formData}
+                  setFormData={setFormData}
+                  formErrors={formErrors}
+                  activeLanguage={restaurant.activeLanguage}
+                  basePrice={basePrice}
+                  onPriceChange={handlePriceChange}
+                />
+              )}
+              {!isV2Options && formSchema?.components && <ProductForm formSchema={formSchema} onPriceChange={handlePriceChange} formData={formData} setFormData={setFormData} basePrice={basePrice} formErrors={formErrors} />}
               <InstructionContainer activeLanguage={restaurant.activeLanguage}>
                 <InstructionLabel>{restaurant.activeLanguage == "en"
                   ? "Any Special Instuction ?"
@@ -683,9 +718,11 @@ export default function ProductDetails({
             <AddToCart onClick={handleAddToCart}>{restaurant.activeLanguage == "en"
               ? "Add To Cart"
               : "أضف إلى السلة"}
-              <QuantityPrice>
-                {convertPrice(quantity * (totalPrice * (1 - parseFloat(finalDiscount) / 100)), currencySymbol)}
-              </QuantityPrice>
+              {totalPrice > 0 && (
+                <QuantityPrice>
+                  {convertPrice(quantity * (totalPrice * (1 - finalDiscount / 100)), currencySymbol)}
+                </QuantityPrice>
+              )}
             </AddToCart>
           </ButtonWrapper>
         }
@@ -713,6 +750,7 @@ export default function ProductDetails({
           />
         </ZoomOverlay>
       )}
-    </>
+    </>,
+    document.body
   );
 }

@@ -1,7 +1,8 @@
 import { emptySelection } from "./schema";
 
 /**
- * List price for a size row: absolute price when set; 0 or missing uses product base price.
+ * List price for a size row: base price + priceModifier (additive).
+ * priceModifier=0 or missing means no extra cost (uses base price as-is).
  * @param {string|number} basePrice
  * @param {import('./schema').SizeOption|undefined} size
  */
@@ -9,13 +10,14 @@ export function sizeListPrice(basePrice, size) {
   const base = parseFloat(basePrice) || 0;
   if (!size) return base;
   const p = Number(size.priceModifier);
-  if (Number.isNaN(p) || p === 0) return base;
-  return p;
+  if (Number.isNaN(p)) return base;
+  if (size.priceMode === "absolute") return p;
+  return base + p;
 }
 
 /**
  * Unit price after size + add-ons (single quantity, before discount).
- * Size `priceModifier` is the variant price (replaces product list price); add-ons still add.
+ * Size `priceModifier` adds to the base price; add-ons also add.
  * @param {string|number} basePrice
  * @param {import('./schema').ProductOptionsV2} options
  * @param {ReturnType<import('./schema').emptySelection>} selection

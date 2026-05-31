@@ -54,14 +54,14 @@ export const AccountIconButton = styled.button`
   border-radius: 12px;
   cursor: pointer;
   background: transparent;
-  color: ${(p) => p.theme?.textColor || "#1e293b"};
+  color: ${(p) => p.theme?.mainColor || p.theme?.textColor || "#1e293b"};
   box-shadow: none;
   transition: color 0.2s ease, opacity 0.2s ease, transform 0.15s ease;
   font-family: ${(p) => `${p.theme?.font || "system-ui"}, "Noto Kufi Arabic"`};
 
   &:hover {
     color: ${(p) => p.theme?.mainColor || "#0f172a"};
-    opacity: 1;
+    opacity: 0.8;
   }
 
   &:focus-visible {
@@ -74,8 +74,8 @@ export const AccountIconButton = styled.button`
   }
 
   svg {
-    width: 20px;
-    height: 20px;
+    width: 24px;
+    height: 24px;
     opacity: 0.95;
   }
 `;

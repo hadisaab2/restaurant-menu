@@ -2,8 +2,7 @@ import React from "react";
 import { motion } from "framer-motion";
 import { FiPlus } from "react-icons/fi";
 import { convertPrice } from "../../../utilities/convertPrice";
-
-const STORAGE_URL = "https://storage.googleapis.com/ecommerce-bucket-testing/";
+import { getImageUrl } from "../../../utilities/imageUrl";
 
 export default function ProductCard({
   product,
@@ -19,7 +18,7 @@ export default function ProductCard({
       ? product.ar_description
       : product.en_description || product.description;
   const price = product.price ? convertPrice(Number(product.price), currencySymbol) : null;
-  const imageUrl = product.image_url ? `${STORAGE_URL}${product.image_url}` : null;
+  const imageUrl = product.image_url ? getImageUrl(product.image_url) : null;
   const isOutOfStock = product.is_available === false || product.is_available === 0;
 
   return (

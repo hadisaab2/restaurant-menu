@@ -16,6 +16,7 @@ import {
 import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import { sendCategoryVisitLog } from "../../../../../apis/categories/logCategory";
+import { getImageUrl } from "../../../../../utilities/imageUrl";
 
 export default function VerticalCategory({
   categories,
@@ -101,8 +102,8 @@ export default function VerticalCategory({
                     <IconWrapper activeCategory={activeCategory} categoryId={category.id} >
                       <Icon 
                         src={
-                          category.image_url 
-                            ? `https://storage.googleapis.com/ecommerce-bucket-testing/${category.image_url}`
+                          category.image_url
+                            ? getImageUrl(category.image_url)
                             : category.isAllItems && restaurant?.logoURL
                             ? `https://storage.googleapis.com/ecommerce-bucket-testing/${restaurant.logoURL}`
                             : category.isAllItems && restaurant?.cover_url
@@ -116,8 +117,8 @@ export default function VerticalCategory({
                   <TextContainer>
                     <CategoryName activeCategory={activeCategory} categoryId={category.id}>
                       {activeLanuguage == "en"
-                        ? category.en_category
-                        : category.ar_category}
+                        ? (category.en_category || category.ar_category)
+                        : (category.ar_category || category.en_category)}
                     </CategoryName>
                   </TextContainer>
                 </CategoryWrapper>

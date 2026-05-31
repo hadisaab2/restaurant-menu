@@ -21,11 +21,11 @@ position: relative;
 `;
 
 export const Brand = styled.img`
-max-width: 250px;
-max-height: 120px;
+max-width: min(250px, 50vw);
+max-height: 100px;
+object-fit: contain;
 position: absolute;
 margin-right: 7px;
-/* margin-left: 20px; */
 
 `;
 

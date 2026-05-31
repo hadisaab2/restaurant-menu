@@ -14,7 +14,7 @@ export const TabBarContainer = styled.nav`
   justify-content: space-around;
   padding: 8px 0 calc(8px + env(safe-area-inset-bottom));
   box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.08);
-  z-index: 1600;
+  z-index: 298;
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   transition: opacity 0.4s ease, transform 0.4s ease;

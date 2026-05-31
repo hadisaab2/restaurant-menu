@@ -2,8 +2,8 @@ import styled from "styled-components";
 
 export const Container = styled.div`
  width: 100%;
- margin-top: 30px;
- padding-bottom: 20px;
+ margin-top: 10px;
+ padding-bottom: 90px;
  display: flex;
  justify-content: center;
 `;
@@ -22,13 +22,13 @@ export const AllItemsWrapper = styled.div`
   width: 95%;
   display: flex;
   flex-direction: column;
-  gap: 28px;
+  gap: 14px;
 `;
 
 export const AllItemsSection = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 8px;
   align-items: center;
 `;
 

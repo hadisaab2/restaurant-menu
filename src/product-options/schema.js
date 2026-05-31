@@ -96,8 +96,8 @@ export function hasAnyOptions(options) {
 export function isV2Selection(formData) {
   if (!formData || typeof formData !== "object") return false;
   return (
-    Object.prototype.hasOwnProperty.call(formData, "sizeId") &&
-    Array.isArray(formData.addonIds) &&
+    Object.prototype.hasOwnProperty.call(formData, "sizeId") ||
+    Array.isArray(formData.addonIds) ||
     Array.isArray(formData.removalIds)
   );
 }

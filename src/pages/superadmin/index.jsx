@@ -10,6 +10,7 @@ import {
 } from "./styles";
 import Restaurants from "./restaurants";
 import Analytics from "./analytics";
+import ErrorLogs from "./errorLogs";
 
 export default function SuperAdmin() {
   const [activeTab, setActiveTab] = useState("Restaurants");
@@ -38,11 +39,19 @@ export default function SuperAdmin() {
         >
           Analytics
         </Tab>
+        <Tab
+          onClick={() => setActiveTab("Error Logs")}
+          activeTab={activeTab}
+          tab="Error Logs"
+        >
+          Error Logs
+        </Tab>
       </TabsContainer>
 
       <ContentArea>
         {activeTab === "Restaurants" && <Restaurants />}
         {activeTab === "Analytics" && <Analytics />}
+        {activeTab === "Error Logs" && <ErrorLogs />}
       </ContentArea>
     </Container>
   );

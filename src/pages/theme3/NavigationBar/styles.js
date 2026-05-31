@@ -66,8 +66,10 @@ export const LogoContainer = styled.div`
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+  overflow: hidden;
   transition: transform 0.2s ease;
   z-index: 1;
+  max-height: 100%;
 
   &:hover {
     transform: scale(1.05);
@@ -78,6 +80,7 @@ export const LogoContainer = styled.div`
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%);
+    max-width: 50vw;
 
     &:hover {
       transform: translate(-50%, -50%) scale(1.05);
@@ -86,15 +89,16 @@ export const LogoContainer = styled.div`
 `;
 
 export const Logo = styled.img`
-  height: 60px;
+  height: auto;
+  max-height: 85px;
   width: auto;
-  max-width: 250px;
+  max-width: min(280px, 40vw);
   object-fit: contain;
   transition: all 0.3s ease;
 
   @media (max-width: 768px) {
-    height: 60px;
-    max-width: 200px;
+    max-height: 60px;
+    max-width: min(200px, 45vw);
   }
 `;
 
@@ -476,8 +480,9 @@ export const MobileMenuLogoContainer = styled.div`
 
 export const MobileMenuLogo = styled.img`
   height: 60px;
+  max-height: 60px;
   width: auto;
-  max-width: 200px;
+  max-width: min(200px, 50vw);
   object-fit: contain;
 `;
 
@@ -592,19 +597,20 @@ export const GlobeLanguageButton = styled.button`
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 32px;
-  height: 32px;
+  width: 34px;
+  height: 34px;
   padding: 0;
   margin: 0;
   border: none;
   border-radius: 8px;
   cursor: pointer;
   background: transparent;
-  color: ${(p) => p.theme?.textColor || "#1e293b"};
+  color: ${(p) => p.theme?.mainColor || p.theme?.textColor || "#1e293b"};
   transition: color 0.2s ease, transform 0.15s ease;
 
   &:hover {
     color: ${(p) => p.theme?.mainColor || "#0f172a"};
+    opacity: 0.8;
   }
 
   &:focus-visible {
@@ -613,8 +619,8 @@ export const GlobeLanguageButton = styled.button`
   }
 
   svg {
-    width: 22px;
-    height: 22px;
+    width: 24px;
+    height: 24px;
     flex-shrink: 0;
   }
 `;

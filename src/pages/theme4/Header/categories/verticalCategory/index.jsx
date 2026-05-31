@@ -16,12 +16,13 @@ import {
 import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import { sendCategoryVisitLog } from "../../../../../apis/categories/logCategory";
+import { getImageUrl } from "../../../../../utilities/imageUrl";
 
 // Component for category item with image fallback
 const CategoryItem = ({ category, index, activeLanuguage, activeCategory, itemClick, carouselRefs, logoURL }) => {
   const [imageError, setImageError] = useState(false);
   const categoryImageUrl = category.image_url
-    ? `https://storage.googleapis.com/ecommerce-bucket-testing/${category.image_url}`
+    ? getImageUrl(category.image_url)
     : null;
 
   return (

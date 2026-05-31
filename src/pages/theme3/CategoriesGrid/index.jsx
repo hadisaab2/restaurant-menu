@@ -9,12 +9,13 @@ import {
 } from "./styles";
 import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
+import { getImageUrl } from "../../../utilities/imageUrl";
 
 // Component for category icon with fallback to logo
 const CategoryIconWithFallback = ({ category, logoURL, activeLanguage, showOnePerLine, onCategoryClick }) => {
   const [imageError, setImageError] = useState(false);
   const categoryImageUrl = category.image_url
-    ? `https://storage.googleapis.com/ecommerce-bucket-testing/${category.image_url}`
+    ? getImageUrl(category.image_url)
     : null;
 
   return (

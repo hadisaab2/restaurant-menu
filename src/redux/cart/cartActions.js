@@ -17,7 +17,14 @@ const hashFormData = (formData) => {
 };
 // Action Creators
 export const addToCart = (restaurantName, itemDetails, quantity, formData, price, instruction, menuMode) => {
-  const normalizedForm = isV2Selection(formData) ? normalizeV2Selection(formData) : formData;
+  let normalizedForm = formData;
+  if (isV2Selection(formData)) {
+    normalizedForm = normalizeV2Selection({
+      sizeId: formData.sizeId ?? null,
+      addonIds: formData.addonIds || [],
+      removalIds: formData.removalIds || [],
+    });
+  }
   const modeKey = menuMode || 'both';
   const uniqueId = `${itemDetails.id}_${modeKey}_${hashFormData(normalizedForm)}`;
   console.log(itemDetails)

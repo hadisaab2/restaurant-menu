@@ -46,6 +46,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { addToCart } from "../../../../redux/cart/cartActions";
 import CarouselLoader from "./carouselLoader";
 import ProductForm from "./Form";
+import ProductOptionsPicker from "../../../../product-options/ProductOptionsPicker";
+import { emptySelection } from "../../../../product-options/schema";
 import { FaRegCopy } from "react-icons/fa";
 import { TiTick } from "react-icons/ti";
 import { IoClose } from "react-icons/io5";
@@ -53,6 +55,7 @@ import { MdZoomIn } from "react-icons/md";
 import { translateForm } from "../../../../utilities/translate";
 import { useLogProduct } from "../../../../apis/products/logProduct";
 import { convertPrice } from "../../../../utilities/convertPrice";
+import { getImageUrl } from "../../../../utilities/imageUrl";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { EffectCards, Pagination } from "swiper/modules";
 import "swiper/css";
@@ -102,7 +105,19 @@ export default function ProductDetails({
         formJson = activeCategory?.form_json
       }
     }
-    !_.isEmpty(formJson) ? setFormSchema(JSON.parse(formJson)) : setFormSchema({})
+    if (!_.isEmpty(formJson)) {
+      const parsed = JSON.parse(formJson);
+      setFormSchema(parsed);
+      if (parsed?.version === 2 && parsed?.sizes?.length > 0) {
+        const bp = parseFloat(plates[activePlate]?.en_price) || 0;
+        const match = parsed.sizes.find(
+          (s) => s.priceMode === "absolute" && Number(s.priceModifier) === bp
+        );
+        setFormData(() => ({ ...emptySelection(), sizeId: match ? match.id : parsed.sizes[0].id }));
+      }
+    } else {
+      setFormSchema({});
+    }
 
 
 
@@ -204,7 +219,7 @@ export default function ProductDetails({
     const img = images[carouselIndex];
     if (!img) return "";
     return img.url
-      ? `https://storage.googleapis.com/ecommerce-bucket-testing/${img.url}`
+      ? getImageUrl(img.url)
       : restaurantLogoUrl || "";
   };
 
@@ -273,6 +288,8 @@ export default function ProductDetails({
     return () => window.removeEventListener("popstate", handlePopState);
   }, []);
 
+  const isV2Options = formSchema?.version === 2 && Array.isArray(formSchema?.sizes);
+
   function getRequiredKeys(formSchema) {
     return formSchema.components
       .filter(component => component.validate?.required)
@@ -297,8 +314,18 @@ export default function ProductDetails({
   }
 
 
-  const handleAddToCart = () => {    
-    if (JSON.stringify(formSchema) !== "{}") {
+  const handleAddToCart = () => {
+    if (isV2Options) {
+      const errors = {};
+      if (formSchema.sizes?.length > 0 && !formData?.sizeId) {
+        errors.size = 'Please select a size.';
+      }
+      if (Object.keys(errors).length > 0) {
+        setFormErrors(errors);
+        return;
+      }
+      // v2 is valid, proceed to add to cart
+    } else if (JSON.stringify(formSchema) !== "{}") {
       const errors = validateFormData(formSchema, formData);
 
       if (Object.keys(errors).length > 0) {
@@ -431,7 +458,7 @@ export default function ProductDetails({
                   <Image
                     src={
                       images[0].url
-                        ? `https://storage.googleapis.com/ecommerce-bucket-testing/${images[0].url}`
+                        ? getImageUrl(images[0].url)
                         : restaurantLogoUrl || ""
                     }
                     onLoad={() => handleImageLoad(0)}
@@ -482,7 +509,7 @@ export default function ProductDetails({
                         src={
                           loadedIndices[index] || index === carouselIndex
                             ? (image.url
-                                ? `https://storage.googleapis.com/ecommerce-bucket-testing/${image.url}`
+                                ? getImageUrl(image.url)
                                 : restaurantLogoUrl || "")
                             : ""
                         }
@@ -534,7 +561,7 @@ export default function ProductDetails({
                           src={
                             loadedIndices[index] || index === carouselIndex
                               ? (image.url
-                                  ? `https://storage.googleapis.com/ecommerce-bucket-testing/${image.url}`
+                                  ? getImageUrl(image.url)
                                   : restaurantLogoUrl || "")
                               : ""
                           }
@@ -589,7 +616,7 @@ export default function ProductDetails({
                           src={
                             loadedIndices[index] || index === carouselIndex
                               ? (image.url
-                                  ? `https://storage.googleapis.com/ecommerce-bucket-testing/${image.url}`
+                                  ? getImageUrl(image.url)
                                   : restaurantLogoUrl || "")
                               : ""
                           }
@@ -660,7 +687,18 @@ export default function ProductDetails({
                 </OutOfStockNotice>
               )}
 
-              {formSchema?.components && <ProductForm formSchema={formSchema} onPriceChange={handlePriceChange} formData={formData} setFormData={setFormData} basePrice={basePrice} formErrors={formErrors} />}
+              {isV2Options && (
+                <ProductOptionsPicker
+                  options={formSchema}
+                  formData={formData}
+                  setFormData={setFormData}
+                  formErrors={formErrors}
+                  activeLanguage={restaurant.activeLanguage}
+                  basePrice={basePrice}
+                  onPriceChange={handlePriceChange}
+                />
+              )}
+              {!isV2Options && formSchema?.components && <ProductForm formSchema={formSchema} onPriceChange={handlePriceChange} formData={formData} setFormData={setFormData} basePrice={basePrice} formErrors={formErrors} />}
               <InstructionContainer activeLanguage={restaurant.activeLanguage}>
                 <InstructionLabel>{restaurant.activeLanguage == "en"
                   ? "Any Special Instuction ?"

@@ -2,6 +2,7 @@ import React from "react";
 import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import { convertPrice } from "../../../../../utilities/convertPrice";
+import { getImageUrl } from "../../../../../utilities/imageUrl";
 import {
   ReviewContainer,
   ReviewSection,
@@ -63,7 +64,7 @@ export default function ReviewStep({ formData, restaurant, activeLanguage }) {
             <ReviewCartItem key={item.uniqueId}>
               <ItemSummary>
                 <ReviewItemImage
-                  src={`https://storage.googleapis.com/ecommerce-bucket-testing/${item.images?.[0]?.url || ""}`}
+                  src={getImageUrl(item.images?.[0]?.url)}
                   alt={activeLanguage === "en" ? item.en_name : item.ar_name}
                 />
                 <ReviewValue style={{ flex: 2 }}>

@@ -39,7 +39,8 @@ import {
   Typography,
   Alert,
 } from "@mui/material";
-import { templates } from "./themedata";
+import { templates, ALL_FEATURES, DEFAULT_FEATURES, getColorGroupsForTemplate, getColorKeysForTemplate, COLOR_PRESETS } from "./themedata";
+import { useGetQuickDemoTemplates, useCreateQuickDemo } from "../../../apis/restaurants/quickDemo";
 import { useAddRestaurantQuery } from "../../../apis/restaurants/addRestaurant";
 import { useGetRestaurants } from "../../../apis/restaurants/getRestaurants";
 import { useEditRestaurantQuery } from "../../../apis/restaurants/editRestaurant";
@@ -112,6 +113,7 @@ export default function Restaurants() {
   const [aboutUsValueForm, setAboutUsValueForm] = useState({ en_title: "", ar_title: "", en_description: "", ar_description: "", icon_type: "heart" });
   const [squareDimension, setSquareDimension] = useState(true); // Default false
   const [showExcelModal, setShowExcelModal] = useState(false);
+  const [showQuickDemoModal, setShowQuickDemoModal] = useState(false);
   const [excelTab, setExcelTab] = useState(0); // 0: Normal, 1: Duplicate, 2: Products/Categories
   const [excelFile, setExcelFile] = useState(null);
   const [duplicateSourceId, setDuplicateSourceId] = useState("");
@@ -836,7 +838,11 @@ export default function Restaurants() {
             setIsOpen={setIsPopupOpen}
           />
           <div style={{ display: "flex", gap: "12px", marginBottom: "20px", flexWrap: "wrap", alignItems: "center" }}>
-            <AddRestaurant onClick={() => setShowAddComponent(true)}>
+            <AddRestaurant onClick={() => {
+              // Set default features for new restaurant
+              setValue("features", { ...DEFAULT_FEATURES });
+              setShowAddComponent(true);
+            }}>
               Add Restaurant
             </AddRestaurant>
             <Button
@@ -858,6 +864,26 @@ export default function Restaurants() {
               onClick={() => setShowExcelModal(true)}
             >
               Add via Excel
+            </Button>
+            <Button
+              variant="contained"
+              sx={{
+                background: "linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%)",
+                color: "white",
+                textTransform: "capitalize",
+                borderRadius: "10px",
+                fontWeight: 600,
+                fontSize: "14px",
+                padding: "8px 20px",
+                boxShadow: "0 4px 14px rgba(139,92,246,0.3)",
+                "&:hover": {
+                  boxShadow: "0 6px 20px rgba(139,92,246,0.4)",
+                  transform: "translateY(-1px)",
+                },
+              }}
+              onClick={() => setShowQuickDemoModal(true)}
+            >
+              Quick Demo
             </Button>
           </div>
           <Box sx={{
@@ -1173,6 +1199,13 @@ export default function Restaurants() {
               </Button>
             </DialogActions>
           </Dialog>
+
+          {/* Quick Demo Dialog */}
+          <QuickDemoDialog
+            open={showQuickDemoModal}
+            onClose={() => setShowQuickDemoModal(false)}
+            onSuccess={() => { setShowQuickDemoModal(false); refetchRestaurants(); }}
+          />
         </>
       ) : (
         <>
@@ -1628,29 +1661,92 @@ export default function Restaurants() {
                     onChange={handletemplate}
                     value={watch("template_id") ?? selectedProduct?.template_id ?? ""}
                   >
-                    {templates.map(({ name, id }) => (
-                      <MenuItem value={id}>{name}</MenuItem>
+                    {templates.map(({ name, id, description }) => (
+                      <MenuItem key={id} value={id}>
+                        <span><strong>{id}.</strong> {name} <span style={{ color: "#999", fontSize: 12 }}>— {description}</span></span>
+                      </MenuItem>
                     ))}
                   </Select>
                 </FormControl>
               </Box>
 
-              {templates
-                .find((t) => t.id == template)
-                ?.colors.map((color) => {
-                  const defaultValue = selectedProduct?.theme?.[color] || (color === "homepageBackgroundColor" ? "#ffffff" : "");
-                  return (
-                    <TextField
-                      label={color}
-                      name={color}
-                      variant="outlined"
-                      {...register(`theme.[${color}]`, { required: "Required" })}
-                      defaultValue={defaultValue}
-                      style={{ width: "32%", marginTop: "5px" }}
+              {/* Color Presets */}
+              {Number(template) > 0 && (
+                <Box sx={{ width: "100%", mt: 2, mb: 2 }}>
+                  <Typography variant="subtitle2" sx={{ mb: 1.5, fontWeight: 700, color: "#555", textTransform: "uppercase", fontSize: 11, letterSpacing: 1 }}>
+                    Quick Presets
+                  </Typography>
+                  <Box sx={{ display: "flex", gap: 1.5, flexWrap: "wrap" }}>
+                    {COLOR_PRESETS.map((preset) => (
+                      <Box
+                        key={preset.name}
+                        onClick={() => {
+                          const keys = getColorKeysForTemplate(Number(template));
+                          keys.forEach((key) => {
+                            if (preset.colors[key]) {
+                              setValue(`theme.[${key}]`, preset.colors[key]);
+                            }
+                          });
+                        }}
+                        sx={{
+                          cursor: "pointer",
+                          border: "1px solid #ddd",
+                          borderRadius: 2,
+                          padding: "10px 16px",
+                          display: "flex",
+                          alignItems: "center",
+                          gap: 1.5,
+                          transition: "all 0.2s",
+                          "&:hover": { borderColor: preset.colors.mainColor, boxShadow: `0 2px 8px ${preset.colors.mainColor}30` },
+                        }}
+                      >
+                        <Box sx={{ display: "flex", gap: 0.5 }}>
+                          <Box sx={{ width: 16, height: 16, borderRadius: "50%", border: "1px solid #ccc", backgroundColor: preset.colors.backgroundColor }} />
+                          <Box sx={{ width: 16, height: 16, borderRadius: "50%", backgroundColor: preset.colors.mainColor }} />
+                          <Box sx={{ width: 16, height: 16, borderRadius: "50%", border: "1px solid #ccc", backgroundColor: preset.colors.textColor }} />
+                        </Box>
+                        <Box>
+                          <Typography sx={{ fontSize: 12, fontWeight: 600, lineHeight: 1.2 }}>{preset.name}</Typography>
+                          <Typography sx={{ fontSize: 10, color: "#999" }}>{preset.description}</Typography>
+                        </Box>
+                      </Box>
+                    ))}
+                  </Box>
+                </Box>
+              )}
 
-                    />
-                  );
-                })}
+              {/* Color groups — organized by purpose, with color pickers */}
+              {getColorGroupsForTemplate(Number(template)).map((group) => (
+                <Box key={group.key} sx={{ width: "100%", mt: 2 }}>
+                  <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 700, color: "#555", textTransform: "uppercase", fontSize: 11, letterSpacing: 1 }}>
+                    {group.title}
+                  </Typography>
+                  <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
+                    {group.colors.map(({ key, label }) => {
+                      const val = watch(`theme.[${key}]`) || selectedProduct?.theme?.[key] || (key === "homepageBackgroundColor" ? "#ffffff" : "");
+                      return (
+                        <Box key={key} sx={{ display: "flex", alignItems: "center", gap: 1, width: "32%", minWidth: 240, mb: 0.5 }}>
+                          <input
+                            type="color"
+                            value={val || "#ffffff"}
+                            onChange={(e) => setValue(`theme.[${key}]`, e.target.value)}
+                            style={{ width: 36, height: 36, border: "1px solid #ddd", cursor: "pointer", borderRadius: 6, padding: 2 }}
+                          />
+                          <TextField
+                            size="small"
+                            variant="outlined"
+                            {...register(`theme.[${key}]`)}
+                            defaultValue={val}
+                            placeholder="#ffffff"
+                            style={{ width: 110 }}
+                          />
+                          <Typography variant="caption" sx={{ color: "#888", fontSize: 11 }}>{label}</Typography>
+                        </Box>
+                      );
+                    })}
+                  </Box>
+                </Box>
+              ))}
             </ColorsBlock>
             {isTemplate4 && (
               <>
@@ -1667,34 +1763,6 @@ export default function Restaurants() {
                     <MenuItem value="shop">Shop (categories and products on one page)</MenuItem>
                   </Select>
                 </FormControl>
-                <FormSectionHeader>Section backgrounds (theme4)</FormSectionHeader>
-                <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1, mb: 2 }}>
-                  {[
-                    { key: "heroSectionBackgroundColor", label: "Hero" },
-                    { key: "welcomeSectionBackgroundColor", label: "Welcome" },
-                    { key: "valueCardsSectionBackgroundColor", label: "Value cards section" },
-                    { key: "valueCardBackgroundColor", label: "Value card (card bg)" },
-                    { key: "categoriesSectionBackgroundColor", label: "Categories" },
-                    { key: "featuredProductsSectionBackgroundColor", label: "Featured products" },
-                    { key: "locationsSectionBackgroundColor", label: "Locations" },
-                    { key: "socialSectionBackgroundColor", label: "Social" },
-                    { key: "howItWorksSectionBackgroundColor", label: "How it works (section bg)" },
-                    { key: "howItWorksStepIconBackgroundColor", label: "How it works step icon (bg)" },
-                    { key: "howItWorksStepIconColor", label: "How it works step icon (color)" },
-                    { key: "footerSectionBackgroundColor", label: "Footer" },
-                    { key: "footerTextColor", label: "Footer text color" },
-                  ].map(({ key, label }) => (
-                    <TextField
-                      key={key}
-                      label={label}
-                      variant="outlined"
-                      {...register(`theme.[${key}]`)}
-                      defaultValue={selectedProduct?.theme?.[key] ?? ""}
-                      placeholder="Leave empty = homepage color"
-                      style={{ width: "32%", minWidth: 200 }}
-                    />
-                  ))}
-                </Box>
               </>
             )}
             <FormSectionHeader>Features</FormSectionHeader>
@@ -1703,28 +1771,25 @@ export default function Restaurants() {
               <Arrow />
             </FeaturesSection>
             <FeaturesBlock viewFeaturesSection={viewFeaturesSection}>
-              {templates
-                .find((t) => t.id == template)
-                ?.features.map((feature) => {
-                  return (
-                    <FormControl component="fieldset" style={{ display: "flex", flexDirection: "row" }}>
-                      <FormLabel component="legend">{feature.featureName}</FormLabel>
-                      <FormControlLabel
-                        control={<Checkbox
-                          {...register(`features.${feature.featureName}`)}
-                          defaultChecked={getValues(`features.${feature.featureName}`) ?? false} // ✅ Use `defaultChecked`
-                          onChange={(e) => {
-                            setValue("features", {
-                              ...getValues("features"), // ✅ Preserve existing features
-                              [feature.featureName]: e.target.checked, // ✅ Update only the clicked checkbox
-                            });
-                          }}
-                        />}
-                        label={feature.featureName}
+              {ALL_FEATURES.map((feature) => (
+                <FormControl key={feature.key} component="fieldset" style={{ display: "flex", flexDirection: "row", minWidth: "32%" }}>
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        {...register(`features.${feature.key}`)}
+                        defaultChecked={getValues(`features.${feature.key}`) ?? feature.defaultValue}
+                        onChange={(e) => {
+                          setValue("features", {
+                            ...getValues("features"),
+                            [feature.key]: e.target.checked,
+                          });
+                        }}
                       />
-                    </FormControl>
-                  );
-                })}
+                    }
+                    label={feature.label}
+                  />
+                </FormControl>
+              ))}
             </FeaturesBlock>
             {getValues("features.google_maps_integrated") && (
               <TextField
@@ -1734,7 +1799,18 @@ export default function Restaurants() {
                 fullWidth
                 placeholder="Enter your Google Maps API key"
                 style={{ marginBottom: 16 }}
-                helperText="Required when Google Maps integration is enabled. Get your key from Google Cloud Console."
+                helperText="Required when Google Maps integration is enabled."
+              />
+            )}
+            {getValues("features.meta_pixel") && (
+              <TextField
+                {...register("meta_pixel_id")}
+                label="Meta Pixel ID"
+                variant="outlined"
+                fullWidth
+                placeholder="Enter Meta Pixel ID (e.g., 1234567890123456)"
+                style={{ marginBottom: 16 }}
+                helperText="Get this from Meta Events Manager. Events fire automatically."
               />
             )}
             {(Number(template) === 3 || Number(template) === 4) && (
@@ -2020,5 +2096,246 @@ export default function Restaurants() {
         </DialogActions>
       </Dialog>
     </Container>
+  );
+}
+
+// ── Quick Demo Dialog ──
+function QuickDemoDialog({ open, onClose, onSuccess }) {
+  const { data: demoTemplates, isLoading: loadingTemplates } = useGetQuickDemoTemplates();
+  const { createDemo, isPending } = useCreateQuickDemo({
+    onSuccess: (data) => {
+      setResult(data);
+    },
+  });
+
+  const [businessType, setBusinessType] = useState("");
+  const [name, setName] = useState("");
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("demo123");
+  const [templateId, setTemplateId] = useState(3);
+  const [colorPreset, setColorPreset] = useState("Clean Teal");
+  const [currency, setCurrency] = useState("dollar");
+  const [languages, setLanguages] = useState("en&ar");
+  const [logoFile, setLogoFile] = useState(null);
+  const [logoPreview, setLogoPreview] = useState(null);
+  const [result, setResult] = useState(null);
+
+  const selectedTemplate = demoTemplates?.find((t) => t.file === businessType);
+
+  const handleCreate = () => {
+    if (!businessType || !name || !username || !password) return;
+    const payload = new FormData();
+    payload.append("businessType", businessType);
+    payload.append("restaurantName", name);
+    payload.append("username", username);
+    payload.append("password", password);
+    payload.append("templateId", templateId);
+    payload.append("colorPreset", colorPreset);
+    payload.append("currency", currency);
+    payload.append("languages", languages);
+    payload.append("defaultLanguage", "en");
+    if (logoFile) payload.append("logo", logoFile);
+    createDemo(payload);
+  };
+
+  const handleClose = () => {
+    if (result) onSuccess();
+    else onClose();
+    setResult(null);
+    setBusinessType("");
+    setName("");
+    setUsername("");
+    setLogoFile(null);
+    setLogoPreview(null);
+  };
+
+  const businessIcons = {
+    restaurant: "🍽️", cafe: "☕", pizza: "🍕", "flower-shop": "🌸",
+    cosmetics: "💄", bakery: "🧁", grocery: "🛒", "gym-supplements": "💪", "balloon-shop": "🎈",
+    burger: "🍔",
+  };
+
+  return (
+    <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
+      <DialogTitle sx={{ fontWeight: 700, fontSize: 20 }}>
+        Quick Demo
+        <Typography variant="body2" color="text.secondary">
+          Create a fully populated demo restaurant in seconds
+        </Typography>
+      </DialogTitle>
+      <DialogContent>
+        {result ? (
+          <Box sx={{ textAlign: "center", py: 3 }}>
+            <Typography variant="h5" sx={{ mb: 1, color: "#10b981" }}>Demo Created!</Typography>
+            <Typography variant="body1" sx={{ mb: 0.5, fontWeight: 600 }}>{result.restaurant.name}</Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+              {result.summary.categories} categories, {result.summary.products} products
+            </Typography>
+            <Typography variant="body2" sx={{ mb: 0.5 }}>
+              Username: <strong>{result.restaurant.username}</strong>
+            </Typography>
+            <Typography variant="body2" sx={{ mb: 2 }}>
+              URL: <a href={`/${result.restaurant.username}`} target="_blank" rel="noopener noreferrer">/{result.restaurant.username}</a>
+            </Typography>
+            <Alert severity="info" sx={{ textAlign: "left", mt: 2 }}>
+              Upload the logo and cover image from the restaurant edit page.
+            </Alert>
+          </Box>
+        ) : (
+          <Box sx={{ display: "flex", flexDirection: "column", gap: 2.5, mt: 1 }}>
+            {/* Business Type */}
+            <Box>
+              <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 600 }}>Business Type</Typography>
+              <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
+                {loadingTemplates ? (
+                  <Typography color="text.secondary">Loading templates...</Typography>
+                ) : (
+                  demoTemplates?.map((t) => (
+                    <Box
+                      key={t.file}
+                      onClick={() => {
+                        setBusinessType(t.file);
+                        setCurrency(t.defaultCurrency || "dollar");
+                        setColorPreset(t.defaultColorPreset || "Clean Teal");
+                        setTemplateId(t.defaultThemeTemplate || 3);
+                      }}
+                      sx={{
+                        cursor: "pointer",
+                        border: businessType === t.file ? "2px solid #6d28d9" : "1px solid #ddd",
+                        borderRadius: 2,
+                        px: 1.5, py: 1,
+                        display: "flex", alignItems: "center", gap: 1,
+                        bgcolor: businessType === t.file ? "#f5f3ff" : "transparent",
+                        transition: "all 0.15s",
+                        "&:hover": { borderColor: "#8b5cf6" },
+                      }}
+                    >
+                      <span style={{ fontSize: 18 }}>{businessIcons[t.file] || "🏪"}</span>
+                      <Box>
+                        <Typography sx={{ fontSize: 13, fontWeight: 600, lineHeight: 1.2 }}>{t.displayName}</Typography>
+                        <Typography sx={{ fontSize: 10, color: "#999" }}>{t.categoriesCount} cats, {t.productsCount} items</Typography>
+                      </Box>
+                    </Box>
+                  ))
+                )}
+              </Box>
+            </Box>
+
+            {/* Name + Username + Password */}
+            <Box sx={{ display: "flex", gap: 1.5 }}>
+              <TextField size="small" label="Restaurant Name" value={name} onChange={(e) => setName(e.target.value)} fullWidth required />
+              <TextField size="small" label="Username" value={username} onChange={(e) => setUsername(e.target.value)} fullWidth required />
+            </Box>
+            <Box sx={{ display: "flex", gap: 1.5, alignItems: "center" }}>
+              <TextField size="small" label="Password" value={password} onChange={(e) => setPassword(e.target.value)} sx={{ maxWidth: 200 }} />
+              <Button variant="outlined" component="label" size="small" sx={{ minWidth: 120, height: 40, textTransform: "none" }}>
+                {logoFile ? "Change Logo" : "Upload Logo"}
+                <input type="file" accept="image/*" hidden onChange={(e) => {
+                  const file = e.target.files[0];
+                  if (file) {
+                    setLogoFile(file);
+                    setLogoPreview(URL.createObjectURL(file));
+                  }
+                }} />
+              </Button>
+              {logoPreview && <img src={logoPreview} alt="Logo" style={{ width: 40, height: 40, borderRadius: 8, objectFit: "cover", border: "1px solid #ddd" }} />}
+            </Box>
+
+            {/* Template Selection */}
+            <Box>
+              <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 600 }}>Theme Template</Typography>
+              <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap" }}>
+                {templates.map((t) => (
+                  <Box
+                    key={t.id}
+                    onClick={() => setTemplateId(t.id)}
+                    sx={{
+                      cursor: "pointer",
+                      border: templateId === t.id ? "2px solid #6d28d9" : "1px solid #ddd",
+                      borderRadius: 1.5,
+                      px: 1.5, py: 0.8,
+                      bgcolor: templateId === t.id ? "#f5f3ff" : "transparent",
+                      transition: "all 0.15s",
+                      "&:hover": { borderColor: "#8b5cf6" },
+                    }}
+                  >
+                    <Typography sx={{ fontSize: 12, fontWeight: 600 }}>{t.id}. {t.name}</Typography>
+                  </Box>
+                ))}
+              </Box>
+            </Box>
+
+            {/* Color Preset */}
+            <Box>
+              <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 600 }}>Color Preset</Typography>
+              <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap" }}>
+                {COLOR_PRESETS.map((p) => (
+                  <Box
+                    key={p.name}
+                    onClick={() => setColorPreset(p.name)}
+                    sx={{
+                      cursor: "pointer",
+                      border: colorPreset === p.name ? "2px solid #6d28d9" : "1px solid #ddd",
+                      borderRadius: 1.5,
+                      px: 1.5, py: 0.8,
+                      display: "flex", alignItems: "center", gap: 1,
+                      bgcolor: colorPreset === p.name ? "#f5f3ff" : "transparent",
+                      "&:hover": { borderColor: "#8b5cf6" },
+                    }}
+                  >
+                    <Box sx={{ display: "flex", gap: 0.3 }}>
+                      <Box sx={{ width: 12, height: 12, borderRadius: "50%", border: "1px solid #ccc", bgcolor: p.colors.backgroundColor }} />
+                      <Box sx={{ width: 12, height: 12, borderRadius: "50%", bgcolor: p.colors.mainColor }} />
+                      <Box sx={{ width: 12, height: 12, borderRadius: "50%", border: "1px solid #ccc", bgcolor: p.colors.textColor }} />
+                    </Box>
+                    <Typography sx={{ fontSize: 11, fontWeight: 500 }}>{p.name}</Typography>
+                  </Box>
+                ))}
+              </Box>
+            </Box>
+
+            {/* Currency + Language */}
+            <Box sx={{ display: "flex", gap: 1.5 }}>
+              <FormControl size="small" sx={{ minWidth: 140 }}>
+                <InputLabel>Currency</InputLabel>
+                <Select value={currency} onChange={(e) => setCurrency(e.target.value)} label="Currency">
+                  <MenuItem value="dollar">Dollar ($)</MenuItem>
+                  <MenuItem value="lb">Lebanese (L.L.)</MenuItem>
+                </Select>
+              </FormControl>
+              <FormControl size="small" sx={{ minWidth: 140 }}>
+                <InputLabel>Languages</InputLabel>
+                <Select value={languages} onChange={(e) => setLanguages(e.target.value)} label="Languages">
+                  <MenuItem value="en">English only</MenuItem>
+                  <MenuItem value="ar">Arabic only</MenuItem>
+                  <MenuItem value="en&ar">English & Arabic</MenuItem>
+                </Select>
+              </FormControl>
+            </Box>
+
+            {/* Summary */}
+            {selectedTemplate && (
+              <Alert severity="info" icon={false}>
+                Will create: <strong>{selectedTemplate.categoriesCount} categories</strong>, <strong>{selectedTemplate.productsCount} products</strong> with images and options
+              </Alert>
+            )}
+          </Box>
+        )}
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={handleClose}>{result ? "Done" : "Cancel"}</Button>
+        {!result && (
+          <LoadingButton
+            variant="contained"
+            onClick={handleCreate}
+            loading={isPending}
+            disabled={!businessType || !name || !username || !password}
+            sx={{ background: "linear-gradient(135deg, #8b5cf6, #6d28d9)" }}
+          >
+            Create Demo
+          </LoadingButton>
+        )}
+      </DialogActions>
+    </Dialog>
   );
 }

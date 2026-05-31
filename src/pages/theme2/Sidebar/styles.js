@@ -97,8 +97,9 @@ margin-top: 5vh;
 
 
 export const Brand = styled.img`
-max-width: 200px;
-max-height: 200px;
+max-width: min(200px, 60vw);
+max-height: 120px;
+object-fit: contain;
 margin-right: ${props => !props.showSidebar ? "150px" : "0px"};
 transition: all 0.8s ease-in-out;
 opacity: ${props => !props.showSidebar ? "0" : "1"};

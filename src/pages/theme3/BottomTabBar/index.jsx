@@ -37,6 +37,14 @@ export default function BottomTabBar({
     dispatch(changelanuage({ name: restaurantName, activeLanguage: newLanguage }));
   };
 
+  // Parse features to gate tabs
+  const _features = (() => {
+    try {
+      const stored = restaurant?.features || "{}";
+      return typeof stored === "string" ? JSON.parse(stored) : stored;
+    } catch { return {}; }
+  })();
+
   const tabs = [
     {
       id: "home",
@@ -76,10 +84,8 @@ export default function BottomTabBar({
     },
   ].filter(tab => {
     if (hideHome && tab.id === "home") return false;
-    // Only show branches tab if branches exist
-    if (tab.id === "branches") {
-      return branches && branches.length > 0;
-    }
+    if (tab.id === "branches") return branches && branches.length > 0;
+    if (tab.id === "feedback") return _features.feedback === true;
     return true;
   });
 
@@ -91,6 +97,7 @@ export default function BottomTabBar({
       {tabs.map((tab) => (
         <TabItem
           key={tab.id}
+          data-tab={tab.id}
           onClick={tab.onClick}
           $active={tab.active}
           activeLanguage={activeLanguage}

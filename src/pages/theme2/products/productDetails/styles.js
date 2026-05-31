@@ -51,7 +51,7 @@ padding-bottom:150px;
   overflow-y: auto;
   transition: all 0.7s;
   animation: ${slideAnimation} 0.5s;
-  z-index: 6;
+  z-index: 2000;
   ::-webkit-scrollbar {
     display: none;
   }
@@ -67,26 +67,26 @@ padding-bottom:150px;
 
 
 const ImageAnimation = keyframes`
- 0% { 
+ 0% {
     height:20vh;
     top:0px;
 }
 
- 100% { 
+ 100% {
     height:45vh;
-    top:80px;
+    top:10px;
 
     }
 `;
 const ImageAnimationScreen = keyframes`
- 0% { 
+ 0% {
     height:30vh;
     top:0px;
 }
 
- 100% { 
+ 100% {
     height:70vh;
-    top:80px;
+    top:10px;
 
     }
 `;
@@ -95,7 +95,7 @@ export const ImagesContainer = styled.div`
   width: 100%;
   height: ${(props) => (props.isNormalCarousel ? "auto" : (props.squareDimension ? "55vh" : "70vh"))};
   min-height: ${(props) => (props.isNormalCarousel ? (props.squareDimension ? "45vh" : "60vh") : "unset")};
-  margin-top: ${(props) => (props.isNormalCarousel ? "80px" : "65px")};
+  margin-top: 10px !important;
   padding: ${(props) => (props.isNormalCarousel ? "0 5%" : "10px 0")};
   transition: all 0.8s;
   display: flex;
@@ -106,7 +106,7 @@ export const ImagesContainer = styled.div`
   position: relative;
   @media (min-width: 1024px) {
     min-height: ${(props) => (props.isNormalCarousel ? (props.squareDimension ? "50vh" : "65vh") : "unset")};
-    margin-top: ${(props) => (props.isNormalCarousel ? "90px" : "65px")};
+    margin-top: 0;
   }
 `;
 
@@ -269,13 +269,13 @@ export const BackBtn = styled.button`
 
 export const ItemCategory = styled.div`
   width: 100%;
-  height: 90px;
-  position: absolute;
-  top: 0;
+  height: auto;
+  padding: 10px 0;
   color: black;
   display: ${(props) => (props.CloseAnimation ? "flex" : "none")};
   justify-content: center;
   align-items: center;
+  margin-top: 10px !important;
 `;
 const CategoryAnimation = keyframes`
  0% { 
