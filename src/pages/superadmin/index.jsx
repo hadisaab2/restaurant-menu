@@ -11,6 +11,8 @@ import {
 import Restaurants from "./restaurants";
 import Analytics from "./analytics";
 import ErrorLogs from "./errorLogs";
+import TemplateManager from "./templateManager";
+import ColorThemeManager from "./colorThemeManager";
 
 export default function SuperAdmin() {
   const [activeTab, setActiveTab] = useState("Restaurants");
@@ -46,12 +48,28 @@ export default function SuperAdmin() {
         >
           Error Logs
         </Tab>
+        <Tab
+          onClick={() => setActiveTab("Templates")}
+          activeTab={activeTab}
+          tab="Templates"
+        >
+          Templates
+        </Tab>
+        <Tab
+          onClick={() => setActiveTab("Color Themes")}
+          activeTab={activeTab}
+          tab="Color Themes"
+        >
+          Color Themes
+        </Tab>
       </TabsContainer>
 
       <ContentArea>
         {activeTab === "Restaurants" && <Restaurants />}
         {activeTab === "Analytics" && <Analytics />}
         {activeTab === "Error Logs" && <ErrorLogs />}
+        {activeTab === "Templates" && <TemplateManager />}
+        {activeTab === "Color Themes" && <ColorThemeManager />}
       </ContentArea>
     </Container>
   );
