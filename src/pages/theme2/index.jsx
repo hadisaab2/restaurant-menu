@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import {
+  BlurOverlay,
   Cart,
   CartBtn,
   Container,
@@ -18,9 +19,9 @@ import CartPopup from "./popup/cart";
 import SideBar from "./Sidebar";
 import ProductParam from "./ProductParam";
 import Share from "./popup/share";
-import FeedbackPopup from "./popup/feedback";
-import ContactFormPopup from "./popup/contactForm";
-import AboutUsPopup from "./popup/aboutUs";
+import FeedbackPopup from "../theme3/popup/feedback";
+import ContactFormPopup from "../theme3/popup/contactForm";
+import AboutUsPopup from "../theme4/popup/aboutUs";
 import { InstallPrompt } from "./installPrompt";
 import BottomTabBar from "../theme3/BottomTabBar";
 import NavigationBar from "../theme3/NavigationBar";
@@ -191,6 +192,7 @@ export default function Theme2() {
         isProductDetailsOpen={!!productId}
       />
       <MenuWrapper onClick={handleClickOutside} >
+        <BlurOverlay showPopup={showPopup} />
         <Header
           categories={theme2Categories}
           activeCategory={activeCategory}
