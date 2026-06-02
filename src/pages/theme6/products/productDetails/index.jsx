@@ -366,7 +366,7 @@ export default function ProductDetails({
   };
   // Get restaurant logo URL for fallback
   const restaurantLogoUrl = restaurant?.logoURL
-    ? `https://storage.googleapis.com/ecommerce-bucket-testing/${restaurant.logoURL}`
+    ? getImageUrl(restaurant.logoURL)
     : null;
 
   // this code is to put the image cover at the beggining of the array

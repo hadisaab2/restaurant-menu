@@ -1,0 +1,2 @@
+"use strict";(self.webpackChunkrestaurant_menu=self.webpackChunkrestaurant_menu||[]).push([[145],{76145:(e,u,n)=>{n.r(u),n.d(u,{default:()=>t});n(82483);var r=n(56723);function t(){return(0,r.jsx)("div",{children:"Not Found"})}}}]);
+//# sourceMappingURL=145.e809feb9.chunk.js.map

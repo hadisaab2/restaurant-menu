@@ -136,7 +136,7 @@ export const CategoryName = styled.span`
   color: ${(props) =>
     props.categoryId == props.activeCategory
       ? props.theme.categoryActiveText || props.theme.categoryactivetext || "#ffffff"
-      : props.theme.textColor || "#333"};
+      : props.theme.categoryUnactiveText || props.theme.categoryunactivetext || props.theme.textColor || "#333"};
   user-select: none;
   -webkit-user-select: none;
   -moz-user-select: none;

@@ -46,7 +46,7 @@ export const CarouselItem = styled.div`
   justify-content: center;
   font-weight: 500;
   transition:all 0.2s ease-in-out;
-  color:${props => props.categoryId == props.activeCategory ? props.theme.categoryactive : props.theme.categoryunactive};
+  color:${props => props.categoryId == props.activeCategory ? (props.theme.categoryActiveText || props.theme.categoryactive) : (props.theme.categoryUnactiveText || props.theme.categoryunactivetext || props.theme.categoryunactive || props.theme.textColor || "#333")};
   line-height: ${props => props.activeLanuguage == "ar" ? "1.5" : "null"};
   font-size: 14px;
   white-space: nowrap; /* Prevent wrapping of text */

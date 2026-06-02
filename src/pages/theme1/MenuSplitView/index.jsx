@@ -19,8 +19,7 @@ import {
 import Theme1ProductCard from "./Theme1ProductCard";
 import { useGetProducts } from "../../../apis/products/getProductsByCategory";
 import { useGetProductsByRestaurant } from "../../../apis/products/getProductsByRestaurant";
-
-const BUCKET = "https://storage.googleapis.com/ecommerce-bucket-testing/";
+import { getImageUrl } from "../../../utilities/imageUrl";
 
 export default function MenuSplitView({
   categories,
@@ -177,7 +176,7 @@ export default function MenuSplitView({
               activeLanguage === "en" ? cat.en_category : cat.ar_category;
             const active = String(cat.id) === String(activeCategory);
             const img = cat.image_url
-              ? `${BUCKET}${cat.image_url}`
+              ? getImageUrl(cat.image_url)
               : null;
             return (
               <CatItem

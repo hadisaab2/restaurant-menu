@@ -1,6 +1,5 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { lazy, Suspense, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import Theme1 from "../../pages/theme1";
 import { useNavigate, useParams } from "react-router-dom";
 import { useGetRestaurant } from "../../apis/restaurants/getRestaurant";
 import {
@@ -10,13 +9,16 @@ import {
 import { ThemeProvider } from "styled-components";
 import Loading from "./loading";
 import { initRestaurantPixel } from "../../utilities/analytics/metaPixel";
-import Theme2 from "../../pages/theme2";
-import Theme3 from "../../pages/theme3";
-import Theme4 from "../../pages/theme4";
-import Theme5 from "../../pages/theme5";
-import Theme6 from "../../pages/theme6";
-import Theme7 from "../../pages/theme7";
-import Theme3NotSubscribed from "../../pages/theme3/NotSubscribed";
+
+// Lazy load themes — only the one needed for this restaurant will be downloaded
+const Theme1 = lazy(() => import("../../pages/theme1"));
+const Theme2 = lazy(() => import("../../pages/theme2"));
+const Theme3 = lazy(() => import("../../pages/theme3"));
+const Theme4 = lazy(() => import("../../pages/theme4"));
+const Theme5 = lazy(() => import("../../pages/theme5"));
+const Theme6 = lazy(() => import("../../pages/theme6"));
+const Theme7 = lazy(() => import("../../pages/theme7"));
+const Theme3NotSubscribed = lazy(() => import("../../pages/theme3/NotSubscribed"));
 
 
 
@@ -120,7 +122,9 @@ export default function Template() {
           font: response.data.font,
         }}
       >
-        <Theme3NotSubscribed restaurant={response.data} />
+        <Suspense fallback={null}>
+          <Theme3NotSubscribed restaurant={response.data} />
+        </Suspense>
       </ThemeProvider>
     );
   }
@@ -136,13 +140,15 @@ export default function Template() {
            font: response.data.font,
          }}
        >
-        {restaurant?.template_id == 1 && <Theme1 />}
-        {restaurant?.template_id == 2 && <Theme2 />}
-        {restaurant?.template_id == 3 && <Theme3 />}
-        {restaurant?.template_id == 4 && <Theme4 />}
-        {restaurant?.template_id == 5 && <Theme5 />}
-        {restaurant?.template_id == 6 && <Theme6 />}
-        {restaurant?.template_id == 7 && <Theme7 />}
+        <Suspense fallback={null}>
+          {restaurant?.template_id == 1 && <Theme1 />}
+          {restaurant?.template_id == 2 && <Theme2 />}
+          {restaurant?.template_id == 3 && <Theme3 />}
+          {restaurant?.template_id == 4 && <Theme4 />}
+          {restaurant?.template_id == 5 && <Theme5 />}
+          {restaurant?.template_id == 6 && <Theme6 />}
+          {restaurant?.template_id == 7 && <Theme7 />}
+        </Suspense>
        </ThemeProvider>
        }
        <Loading restaurantName={restaurantName} viewLoading={restaurant?.categories && !isLoading && !isTrue} />

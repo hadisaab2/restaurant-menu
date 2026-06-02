@@ -293,8 +293,8 @@ export const CatItem = styled.button`
       : "transparent"};
   color: ${(p) =>
     p.$active
-      ? p.theme.popupbuttonText || "#fff"
-      : p.theme.BoxTextColor || p.theme.textColor || "#334155"};
+      ? p.theme.categoryActiveText || p.theme.popupbuttonText || "#fff"
+      : p.theme.categoryUnactiveText || p.theme.BoxTextColor || p.theme.textColor || "#334155"};
   transition: background 0.2s, transform 0.15s;
 
   &:active {

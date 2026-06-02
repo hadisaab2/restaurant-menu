@@ -32,8 +32,7 @@ import { getProduct, PRODUCT_QUERY_KEY } from "../../../apis/products/getProduct
 import { useQueryClient } from "@tanstack/react-query";
 import { trackItemView, trackAddToCart } from "../../../utilities/analyticsTracking";
 import { productNeedsOptionsDialog } from "../../../product-options/resolveOptions";
-
-const BUCKET = "https://storage.googleapis.com/ecommerce-bucket-testing/";
+import { getImageUrl } from "../../../utilities/imageUrl";
 
 function Theme1ProductCard({
   plate,
@@ -91,9 +90,9 @@ function Theme1ProductCard({
     plate.images?.findIndex((img) => img.id === plate.new_cover_id) ?? -1;
   const hasImg = coverIndex >= 0 && plate.images?.[coverIndex]?.url;
   const logoFallback = restaurant?.logoURL
-    ? `${BUCKET}${restaurant.logoURL}`
+    ? getImageUrl(restaurant.logoURL)
     : "";
-  const imageSrc = hasImg ? `${BUCKET}${plate.images[coverIndex].url}` : logoFallback;
+  const imageSrc = hasImg ? getImageUrl(plate.images[coverIndex].url) : logoFallback;
 
   const hasForm = productNeedsOptionsDialog(plate?.form_json, activeCat?.form_json);
 

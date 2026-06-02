@@ -11,6 +11,7 @@ import { addToCart } from "../../../redux/cart/cartActions";
 import { FaCartPlus } from "react-icons/fa";
 import { toast } from "react-toastify";
 import { convertPrice } from "../../../utilities/convertPrice";
+import { getImageUrl } from "../../../utilities/imageUrl";
 import { getEffectivePrice } from "../utils/priceUtils";
 const _ = require('lodash');
 
@@ -360,7 +361,7 @@ console.log(filteredProducts)
                           <AllStyles.AllItemsListImage>
                             {imageUrl && (
                               <img 
-                                src={`https://storage.googleapis.com/ecommerce-bucket-testing/${imageUrl}`}
+                                src={getImageUrl(imageUrl)}
                                 alt={activeLanguage === "en" ? plate.en_name : plate.ar_name}
                               />
                             )}

@@ -18,6 +18,7 @@ export const colorGroups = {
       { key: "categoryActiveText", label: "Active Category Text" },
       { key: "categoryActiveIcon", label: "Active Category Icon" },
       { key: "categoryUnActive", label: "Inactive Category Background" },
+      { key: "categoryUnactiveText", label: "Inactive Category Text" },
       { key: "categoryUnactiveIcon", label: "Inactive Category Icon" },
       { key: "homepageCategoriesBackgroundColor", label: "Categories Section Background" },
     ],
@@ -224,7 +225,7 @@ export const COLOR_PRESETS = [
     colors: {
       mainColor: "#5eabb1", backgroundColor: "#f0f6f6", textColor: "#111111",
       categoryActive: "#5eabb1", categoryActiveText: "#ffffff", categoryActiveIcon: "#ffffff",
-      categoryUnActive: "#e0eded", categoryUnactiveIcon: "#6b8a8d", homepageCategoriesBackgroundColor: "#e8f1f1",
+      categoryUnActive: "#e0eded", categoryUnactiveText: "#6b8a8d", categoryUnactiveIcon: "#6b8a8d", homepageCategoriesBackgroundColor: "#e8f1f1",
       BoxColor: "#ffffff", BoxTextColor: "#111111", BoxPriceColor: "#3d8f95",
       searchbackground: "#dfeaea", searchTextColor: "#111111",
       languagebackground: "#dfeaea", languageTextColor: "#333333",
@@ -243,7 +244,7 @@ export const COLOR_PRESETS = [
     colors: {
       mainColor: "#b8943d", backgroundColor: "#f7f1e6", textColor: "#1a1207",
       categoryActive: "#b8943d", categoryActiveText: "#ffffff", categoryActiveIcon: "#ffffff",
-      categoryUnActive: "#ede4d2", categoryUnactiveIcon: "#8a7555", homepageCategoriesBackgroundColor: "#f0e8d8",
+      categoryUnActive: "#ede4d2", categoryUnactiveText: "#8a7555", categoryUnactiveIcon: "#8a7555", homepageCategoriesBackgroundColor: "#f0e8d8",
       BoxColor: "#ffffff", BoxTextColor: "#1a1207", BoxPriceColor: "#9a7a20",
       searchbackground: "#ede4d2", searchTextColor: "#1a1207",
       languagebackground: "#ede4d2", languageTextColor: "#3d2e14",
@@ -262,7 +263,7 @@ export const COLOR_PRESETS = [
     colors: {
       mainColor: "#e85d5d", backgroundColor: "#0f1a2e", textColor: "#f5f5f5",
       categoryActive: "#e85d5d", categoryActiveText: "#ffffff", categoryActiveIcon: "#ffffff",
-      categoryUnActive: "#182640", categoryUnactiveIcon: "#8899aa", homepageCategoriesBackgroundColor: "#142035",
+      categoryUnActive: "#182640", categoryUnactiveText: "#8899aa", categoryUnactiveIcon: "#8899aa", homepageCategoriesBackgroundColor: "#142035",
       BoxColor: "#1c2a45", BoxTextColor: "#f5f5f5", BoxPriceColor: "#ff7070",
       searchbackground: "#1c2a45", searchTextColor: "#e0e0e0",
       languagebackground: "#1c2a45", languageTextColor: "#b0c0d0",
@@ -281,7 +282,7 @@ export const COLOR_PRESETS = [
     colors: {
       mainColor: "#388e3c", backgroundColor: "#f0f7f0", textColor: "#0d1f0d",
       categoryActive: "#388e3c", categoryActiveText: "#ffffff", categoryActiveIcon: "#ffffff",
-      categoryUnActive: "#dceadc", categoryUnactiveIcon: "#5a7a5a", homepageCategoriesBackgroundColor: "#e5f0e5",
+      categoryUnActive: "#dceadc", categoryUnactiveText: "#5a7a5a", categoryUnactiveIcon: "#5a7a5a", homepageCategoriesBackgroundColor: "#e5f0e5",
       BoxColor: "#ffffff", BoxTextColor: "#0d1f0d", BoxPriceColor: "#2e7d32",
       searchbackground: "#dceadc", searchTextColor: "#0d1f0d",
       languagebackground: "#dceadc", languageTextColor: "#2a3d2a",
@@ -300,7 +301,7 @@ export const COLOR_PRESETS = [
     colors: {
       mainColor: "#6a3de8", backgroundColor: "#f2edfa", textColor: "#1a0f2e",
       categoryActive: "#6a3de8", categoryActiveText: "#ffffff", categoryActiveIcon: "#ffffff",
-      categoryUnActive: "#e2d9f0", categoryUnactiveIcon: "#7a60a0", homepageCategoriesBackgroundColor: "#eae3f4",
+      categoryUnActive: "#e2d9f0", categoryUnactiveText: "#7a60a0", categoryUnactiveIcon: "#7a60a0", homepageCategoriesBackgroundColor: "#eae3f4",
       BoxColor: "#ffffff", BoxTextColor: "#1a0f2e", BoxPriceColor: "#5a2dc8",
       searchbackground: "#e2d9f0", searchTextColor: "#1a0f2e",
       languagebackground: "#e2d9f0", languageTextColor: "#2e1a50",
@@ -319,7 +320,7 @@ export const COLOR_PRESETS = [
     colors: {
       mainColor: "#e65100", backgroundColor: "#fef2e8", textColor: "#2a1608",
       categoryActive: "#e65100", categoryActiveText: "#ffffff", categoryActiveIcon: "#ffffff",
-      categoryUnActive: "#f5e0cc", categoryUnactiveIcon: "#9a7050", homepageCategoriesBackgroundColor: "#f8e8d8",
+      categoryUnActive: "#f5e0cc", categoryUnactiveText: "#9a7050", categoryUnactiveIcon: "#9a7050", homepageCategoriesBackgroundColor: "#f8e8d8",
       BoxColor: "#ffffff", BoxTextColor: "#2a1608", BoxPriceColor: "#d84800",
       searchbackground: "#f5e0cc", searchTextColor: "#2a1608",
       languagebackground: "#f5e0cc", languageTextColor: "#4a2a10",
@@ -338,7 +339,7 @@ export const COLOR_PRESETS = [
     colors: {
       mainColor: "#1565c0", backgroundColor: "#edf2fa", textColor: "#0a1628",
       categoryActive: "#1565c0", categoryActiveText: "#ffffff", categoryActiveIcon: "#ffffff",
-      categoryUnActive: "#d8e4f4", categoryUnactiveIcon: "#5a7aa0", homepageCategoriesBackgroundColor: "#e2ebf6",
+      categoryUnActive: "#d8e4f4", categoryUnactiveText: "#5a7aa0", categoryUnactiveIcon: "#5a7aa0", homepageCategoriesBackgroundColor: "#e2ebf6",
       BoxColor: "#ffffff", BoxTextColor: "#0a1628", BoxPriceColor: "#0d47a1",
       searchbackground: "#d8e4f4", searchTextColor: "#0a1628",
       languagebackground: "#d8e4f4", languageTextColor: "#1a3050",
@@ -357,7 +358,7 @@ export const COLOR_PRESETS = [
     colors: {
       mainColor: "#c2185b", backgroundColor: "#fbeff2", textColor: "#2a0f18",
       categoryActive: "#c2185b", categoryActiveText: "#ffffff", categoryActiveIcon: "#ffffff",
-      categoryUnActive: "#f0d4dc", categoryUnactiveIcon: "#a06070", homepageCategoriesBackgroundColor: "#f5e0e6",
+      categoryUnActive: "#f0d4dc", categoryUnactiveText: "#a06070", categoryUnactiveIcon: "#a06070", homepageCategoriesBackgroundColor: "#f5e0e6",
       BoxColor: "#ffffff", BoxTextColor: "#2a0f18", BoxPriceColor: "#ad1457",
       searchbackground: "#f0d4dc", searchTextColor: "#2a0f18",
       languagebackground: "#f0d4dc", languageTextColor: "#4a1828",

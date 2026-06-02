@@ -152,8 +152,8 @@ const Product = React.forwardRef(
       Boolean(plate?.out_of_stock) || Number(plate?.out_of_stock) === 1;
     const coverIndex = plate.images?.findIndex((image) => image.id === plate.new_cover_id) ?? -1;
     const hasValidImage = coverIndex >= 0 && plate.images?.[coverIndex]?.url;
-    const restaurantLogoUrl = restaurant?.logoURL 
-      ? `https://storage.googleapis.com/ecommerce-bucket-testing/${restaurant.logoURL}`
+    const restaurantLogoUrl = restaurant?.logoURL
+      ? getImageUrl(restaurant.logoURL)
       : null;
     const imageSrc = hasValidImage 
       ? getImageUrl(plate.images[coverIndex].url)

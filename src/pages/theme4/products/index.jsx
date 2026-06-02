@@ -10,6 +10,7 @@ import { useGetProducts } from "../../../apis/products/getProductsByCategory";
 import { useGetProductsByRestaurant } from "../../../apis/products/getProductsByRestaurant";
 import { getProduct, PRODUCT_QUERY_KEY } from "../../../apis/products/getProduct";
 import { convertPrice } from "../../../utilities/convertPrice";
+import { getImageUrl } from "../../../utilities/imageUrl";
 import { addToCart } from "../../../redux/cart/cartActions";
 import { CUSTOMER_WISHLIST_URL } from "../../../apis/URLs";
 import { getCustomerAccessToken } from "../../../utilities/customerAuthStorage";
@@ -382,7 +383,7 @@ console.log(filteredProducts)
                     const coverIndex = plate.images?.findIndex(img => img.id == plate.new_cover_id) ?? 0;
                     const imageUrl = plate.images?.[coverIndex]?.url;
                     const restaurantLogoUrl = restaurant?.logoURL
-                      ? `https://storage.googleapis.com/ecommerce-bucket-testing/${restaurant.logoURL}`
+                      ? getImageUrl(restaurant.logoURL)
                       : null;
                     const features = JSON.parse(restaurant?.features || "{}");
                     const isOutOfStock = Boolean(plate?.out_of_stock) || Number(plate?.out_of_stock) === 1;
@@ -446,7 +447,7 @@ console.log(filteredProducts)
                           <AllItemsListImage $isLogoFallback={!imageUrl}>
                             {imageUrl ? (
                               <img 
-                                src={`https://storage.googleapis.com/ecommerce-bucket-testing/${imageUrl}`}
+                                src={getImageUrl(imageUrl)}
                                 alt={activeLanguage === "en" ? plate.en_name : plate.ar_name}
                                 onError={(e) => {
                                   if (restaurantLogoUrl && e.target.src !== restaurantLogoUrl) {
