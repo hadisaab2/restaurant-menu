@@ -1,12 +1,9 @@
-import React, { useEffect } from "react";
-import {
-  Container,
-  Close,
-  NoItems,
-} from "./styles";
+import React from "react";
+import { NoItems } from "./styles";
 import Wizard from "./Wizard";
 import { useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
+import PopupShell from "../PopupShell";
 
 export default function CartPopup({
   restaurant,
@@ -27,28 +24,12 @@ export default function CartPopup({
   );
   const isCartEmpty = cart.length === 0;
 
-  useEffect(() => {
-    const handlePopState = () => {
-      // Revert to the normal view when back is pressed
-      popupHandler(null);
-    };
-
-    // Add event listener for popstate
-    window.addEventListener("popstate", handlePopState);
-
-    // Cleanup event listener
-    return () => window.removeEventListener("popstate", handlePopState);
-  }, []);
-
-  const handleClose = () => {
-    if (typeof popupHandler === "function") {
-      popupHandler(null);
-    }
-  };
-
   return (
-    <Container showPopup={showPopup}>
-      
+    <PopupShell
+      open={showPopup === "cart"}
+      onClose={() => popupHandler(null)}
+      title={activeLanguage === "ar" ? "سلة المشتريات" : "Your Cart"}
+    >
       {isCartEmpty ? (
         <NoItems>
           {activeLanguage === "en"
@@ -58,6 +39,6 @@ export default function CartPopup({
       ) : (
         <Wizard popupHandler={popupHandler} restaurant={restaurant} />
       )}
-    </Container>
+    </PopupShell>
   );
 }
