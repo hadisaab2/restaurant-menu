@@ -4,7 +4,6 @@
     
     <meta charset="utf-8" />
     <link id="favicon" rel="icon" type="image/png" href="menugicLogo.png">
-    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <meta name="theme-color" content="#000000" />
     <meta
@@ -25,7 +24,7 @@
               restaurantName = pathParts[1];
           }
 
-          document.write(`<link rel="manifest" href="https://77.37.51.25/restaurants/manifest/${restaurantName}">`);
+          document.write(`<link rel="manifest" href="${window.location.protocol}//${window.location.host}/restaurants/manifest/${restaurantName}">`);
       })();
   </script>
 
