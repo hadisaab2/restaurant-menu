@@ -5,7 +5,7 @@ console.log("🌐 REACT_APP_BASE_URL:", REACT_APP_BASE_URL);
 if (!REACT_APP_BASE_URL) {
   console.warn("⚠️  WARNING: REACT_APP_BASE_URL is not set! API calls will fail!");
   console.warn("   Create a .env file in restaurant-menu directory with:");
-  console.warn("   REACT_APP_BASE_URL=https://77.37.51.25");
+  console.warn("   REACT_APP_BASE_URL=https://77.37.51.25 (must be HTTPS)");
 }
 
 export const SIGNIN_URL = `${REACT_APP_BASE_URL}/auth/signin`;
