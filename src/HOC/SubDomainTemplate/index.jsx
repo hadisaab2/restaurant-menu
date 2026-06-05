@@ -20,6 +20,12 @@ const Theme6 = lazy(() => import("../../pages/theme6"));
 const Theme7 = lazy(() => import("../../pages/theme7"));
 const Theme3NotSubscribed = lazy(() => import("../../pages/theme3/NotSubscribed"));
 
+// Tiny component inside Suspense — only renders after lazy chunk loads
+function ThemeLoaded({ onReady }) {
+  useEffect(() => { onReady(); }, []);
+  return null;
+}
+
 export default function SubDomainTemplate({ restaurantName }) {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -35,6 +41,7 @@ export default function SubDomainTemplate({ restaurantName }) {
 
   const restaurant = useSelector((state) => state.restaurant?.[restaurantName]);
   const [isTrue, setIsTrue] = useState(true);
+  const [themeReady, setThemeReady] = useState(false);
 
   // Check if restaurant is valid (subscribed/activated)
   useEffect(() => {
@@ -137,15 +144,18 @@ export default function SubDomainTemplate({ restaurantName }) {
     return null;
   }
 
+  const dataReady = restaurant?.categories && !isLoading && !isTrue;
+
   return (
     <>
-      {(restaurant?.categories && !isLoading && !isTrue) && <ThemeProvider
+      {dataReady && <ThemeProvider
         theme={{
           ...JSON.parse(response.data.theme),
           font: response.data.font,
         }}
       >
         <Suspense fallback={null}>
+          <ThemeLoaded onReady={() => setThemeReady(true)} />
           {restaurant?.template_id == 1 && <Theme1 />}
           {restaurant?.template_id == 2 && <Theme2 />}
           {restaurant?.template_id == 3 && <Theme3 />}
@@ -156,7 +166,7 @@ export default function SubDomainTemplate({ restaurantName }) {
         </Suspense>
       </ThemeProvider>
       }
-      <Loading restaurantName={restaurantName} viewLoading={restaurant?.categories && !isLoading && !isTrue} />
+      <Loading restaurantName={restaurantName} viewLoading={dataReady && themeReady} />
     </>
   );
 

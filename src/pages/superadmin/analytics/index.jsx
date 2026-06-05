@@ -34,7 +34,10 @@ export default function SuperAdminAnalytics() {
   const [customers, setCustomers] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [tab, setTab] = useState("overview"); // overview | detail | customers
+  const [tab, setTab] = useState("overview"); // overview | detail | customers | actions | livefeed | heatmap
+  const [actionBreakdown, setActionBreakdown] = useState(null);
+  const [liveFeed, setLiveFeed] = useState(null);
+  const [heatmap, setHeatmap] = useState(null);
 
   const fetchOverview = useCallback(async () => {
     setLoading(true);
@@ -78,6 +81,54 @@ export default function SuperAdminAnalytics() {
       setTab("customers");
     } catch (e) {
       console.error("Customers fetch error:", e);
+    }
+    setLoading(false);
+  }, [startDate, endDate]);
+
+  const fetchActionBreakdown = useCallback(async () => {
+    setLoading(true);
+    try {
+      const { data } = await axios.get(
+        `${API}/analytics/superadmin/action-breakdown?start_date=${startDate}&end_date=${endDate}`,
+        { headers: headers() }
+      );
+      setActionBreakdown(data.data);
+      setTab("actions");
+    } catch (e) {
+      console.error("Action breakdown error:", e);
+      setError(e.response?.data?.message || e.message);
+    }
+    setLoading(false);
+  }, [startDate, endDate]);
+
+  const fetchLiveFeed = useCallback(async () => {
+    setLoading(true);
+    try {
+      const { data } = await axios.get(
+        `${API}/analytics/superadmin/live-feed?limit=100`,
+        { headers: headers() }
+      );
+      setLiveFeed(data.data);
+      setTab("livefeed");
+    } catch (e) {
+      console.error("Live feed error:", e);
+      setError(e.response?.data?.message || e.message);
+    }
+    setLoading(false);
+  }, []);
+
+  const fetchHeatmap = useCallback(async () => {
+    setLoading(true);
+    try {
+      const { data } = await axios.get(
+        `${API}/analytics/superadmin/heatmap?start_date=${startDate}&end_date=${endDate}`,
+        { headers: headers() }
+      );
+      setHeatmap(data.data);
+      setTab("heatmap");
+    } catch (e) {
+      console.error("Heatmap error:", e);
+      setError(e.response?.data?.message || e.message);
     }
     setLoading(false);
   }, [startDate, endDate]);
@@ -148,7 +199,16 @@ export default function SuperAdminAnalytics() {
       {/* Tabs */}
       <div style={s.tabBar}>
         <button onClick={() => { setTab("overview"); setSelectedRestaurant(null); }} style={tab === "overview" ? { ...s.tabBtn, ...s.tabActive } : s.tabBtn}>
-          All Restaurants
+          Overview
+        </button>
+        <button onClick={fetchActionBreakdown} style={tab === "actions" ? { ...s.tabBtn, ...s.tabActive } : s.tabBtn}>
+          Action Breakdown
+        </button>
+        <button onClick={fetchLiveFeed} style={tab === "livefeed" ? { ...s.tabBtn, ...s.tabActive } : s.tabBtn}>
+          Live Feed
+        </button>
+        <button onClick={fetchHeatmap} style={tab === "heatmap" ? { ...s.tabBtn, ...s.tabActive } : s.tabBtn}>
+          Heatmap
         </button>
         {selectedRestaurant && (
           <>
@@ -196,6 +256,25 @@ export default function SuperAdminAnalytics() {
           restaurant={selectedRestaurant}
           onExport={() => handleExport(selectedRestaurant.restaurant_id)}
         />
+      )}
+
+      {/* Action Breakdown Tab */}
+      {tab === "actions" && actionBreakdown && !loading && (
+        <ActionBreakdownTab
+          data={actionBreakdown}
+          onExport={() => handleExport(null)}
+          onSelectRestaurant={handleSelectRestaurant}
+        />
+      )}
+
+      {/* Live Feed Tab */}
+      {tab === "livefeed" && liveFeed && !loading && (
+        <LiveFeedTab data={liveFeed} onRefresh={fetchLiveFeed} />
+      )}
+
+      {/* Heatmap Tab */}
+      {tab === "heatmap" && heatmap && !loading && (
+        <HeatmapTab data={heatmap} />
       )}
     </div>
   );
@@ -712,6 +791,308 @@ function MetaPixelSection({ global, detail, restaurantName, restaurantPixelId })
         </div>
       )}
     </div>
+  );
+}
+
+// ── Action Breakdown Tab ──
+function ActionBreakdownTab({ data, onExport, onSelectRestaurant }) {
+  const { restaurants, globalTotals } = data;
+  const EVENT_TYPES = ["page_view", "item_view", "add_to_cart", "checkout_start", "order_placed"];
+  const EVENT_LABELS = { page_view: "Page View", item_view: "Item View", add_to_cart: "Add to Cart", checkout_start: "Checkout", order_placed: "Order" };
+
+  return (
+    <>
+      {/* Global Totals */}
+      <div style={styles.kpiGrid}>
+        {globalTotals.map((t) => (
+          <KpiCard key={t.event_type} label={EVENT_LABELS[t.event_type] || t.event_type} value={fmtNum(parseInt(t.count))} />
+        ))}
+      </div>
+
+      <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: 16, marginTop: 16 }}>
+        <button onClick={onExport} style={styles.exportBtn}>Export All to Excel</button>
+      </div>
+
+      {/* Per-Restaurant Breakdown Table */}
+      <div style={styles.card}>
+        <h3 style={styles.cardTitle}>Action Breakdown by Restaurant</h3>
+        <div style={{ overflowX: "auto" }}>
+          <table style={styles.table}>
+            <thead>
+              <tr>
+                <th style={styles.th}>Restaurant</th>
+                <th style={styles.th}>Visits</th>
+                <th style={styles.th}>Unique</th>
+                {EVENT_TYPES.map((t) => (
+                  <th key={t} style={styles.th}>{EVENT_LABELS[t]}</th>
+                ))}
+                <th style={styles.th}>Visit=PV?</th>
+              </tr>
+            </thead>
+            <tbody>
+              {restaurants.map((r, i) => {
+                const match = r.visits === r.page_view;
+                return (
+                  <tr key={r.restaurant_id} style={i % 2 ? { background: "#f8fafc" } : {}}>
+                    <td style={{ ...styles.td, fontWeight: 600, cursor: "pointer", color: "#5eabb1" }}
+                      onClick={() => onSelectRestaurant(r)}>
+                      {r.restaurant_name}
+                    </td>
+                    <td style={styles.td}>{r.visits}</td>
+                    <td style={styles.td}>{r.unique_visitors}</td>
+                    {EVENT_TYPES.map((t) => (
+                      <td key={t} style={{ ...styles.td, fontWeight: t === "order_placed" ? 700 : 400 }}>
+                        {r[t] || 0}
+                      </td>
+                    ))}
+                    <td style={styles.td}>
+                      <span style={{
+                        ...styles.badge,
+                        background: match ? "#16a34a" : "#f59e0b",
+                      }}>
+                        {match ? "Match" : `${r.visits - r.page_view > 0 ? "+" : ""}${r.visits - r.page_view}`}
+                      </span>
+                    </td>
+                  </tr>
+                );
+              })}
+              {restaurants.length === 0 && (
+                <tr><td colSpan={8 + EVENT_TYPES.length} style={{ ...styles.td, textAlign: "center", color: "#94a3b8" }}>No data</td></tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+        <div style={{ marginTop: 12, fontSize: 12, color: "#64748b", padding: "8px 12px", background: "#f8fafc", borderRadius: 8 }}>
+          <strong>Visit=PV?</strong> compares visit count vs page_view events. They should match. Differences indicate ad blockers or tracking issues.
+        </div>
+      </div>
+    </>
+  );
+}
+
+// ── Live Feed Tab ──
+function LiveFeedTab({ data, onRefresh }) {
+  const [autoRefresh, setAutoRefresh] = useState(false);
+
+  useEffect(() => {
+    if (!autoRefresh) return;
+    const interval = setInterval(onRefresh, 10000);
+    return () => clearInterval(interval);
+  }, [autoRefresh, onRefresh]);
+
+  return (
+    <>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
+        <h3 style={{ margin: 0, fontSize: 18, fontWeight: 700, color: "#0f172a" }}>
+          Live Activity Feed
+        </h3>
+        <div style={{ display: "flex", gap: 8 }}>
+          <button
+            onClick={() => setAutoRefresh(!autoRefresh)}
+            style={{
+              ...styles.smallBtn,
+              background: autoRefresh ? "#dcfce7" : "#f8fafc",
+              color: autoRefresh ? "#16a34a" : "#475569",
+              borderColor: autoRefresh ? "#16a34a" : "#e2e8f0",
+            }}
+          >
+            {autoRefresh ? "Auto-refresh ON (10s)" : "Auto-refresh OFF"}
+          </button>
+          <button onClick={onRefresh} style={styles.exportBtn}>Refresh</button>
+        </div>
+      </div>
+
+      <div style={styles.card}>
+        <div style={{ maxHeight: 600, overflowY: "auto" }}>
+          <table style={styles.table}>
+            <thead>
+              <tr>
+                <th style={styles.th}>Time</th>
+                <th style={styles.th}>Type</th>
+                <th style={styles.th}>Restaurant</th>
+                <th style={styles.th}>Visitor</th>
+                <th style={styles.th}>Details</th>
+                <th style={styles.th}>Source</th>
+              </tr>
+            </thead>
+            <tbody>
+              {data.map((item, i) => (
+                <tr key={`${item.type}-${item.id}`} style={i % 2 ? { background: "#f8fafc" } : {}}>
+                  <td style={{ ...styles.td, fontSize: 12, whiteSpace: "nowrap" }}>
+                    {new Date(item.timestamp).toLocaleString("en-GB", { timeZone: "Asia/Beirut", hour: "2-digit", minute: "2-digit", second: "2-digit", day: "2-digit", month: "short" })}
+                  </td>
+                  <td style={styles.td}>
+                    {item.type === "visit" ? (
+                      <span style={{ ...styles.badge, background: "#3b82f6" }}>Visit</span>
+                    ) : (
+                      <span style={{ ...styles.badge, background: eventColor(item.event_type) }}>
+                        {item.event_type?.replace("_", " ")}
+                      </span>
+                    )}
+                  </td>
+                  <td style={{ ...styles.td, fontWeight: 600, color: "#5eabb1" }}>
+                    {item.restaurant_name || `#${item.restaurant_id}`}
+                  </td>
+                  <td style={{ ...styles.td, fontSize: 11, color: "#64748b" }}>
+                    {(item.visitor_id || "").slice(0, 16)}...
+                  </td>
+                  <td style={{ ...styles.td, fontSize: 12 }}>
+                    {item.type === "visit" ? (
+                      <span>{item.device_type || "?"} - {item.landing_page || "/"}</span>
+                    ) : (
+                      <span>
+                        {item.product_name || (item.product_id ? `Product #${item.product_id}` : "")}
+                        {item.revenue ? ` - $${item.revenue}` : ""}
+                        {item.order_id ? ` (Order #${item.order_id})` : ""}
+                      </span>
+                    )}
+                  </td>
+                  <td style={{ ...styles.td, fontSize: 12 }}>
+                    {item.source || item.referrer || "-"}
+                  </td>
+                </tr>
+              ))}
+              {data.length === 0 && (
+                <tr><td colSpan={6} style={{ ...styles.td, textAlign: "center", color: "#94a3b8" }}>No recent activity</td></tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </>
+  );
+}
+
+// ── Heatmap Tab ──
+function HeatmapTab({ data }) {
+  const { hourlyHeatmap, dailyTrend, eventsByHour } = data;
+  const DAYS = ["", "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+  const HOURS = Array.from({ length: 24 }, (_, i) => i);
+
+  // Build heatmap grid
+  const grid = {};
+  let maxCount = 1;
+  hourlyHeatmap.forEach((h) => {
+    const key = `${h.day_of_week}-${h.hour}`;
+    const count = parseInt(h.count);
+    grid[key] = count;
+    if (count > maxCount) maxCount = count;
+  });
+
+  const getColor = (count) => {
+    if (!count) return "#f8fafc";
+    const intensity = Math.min(count / maxCount, 1);
+    const r = Math.round(94 + (255 - 94) * (1 - intensity));
+    const g = Math.round(171 + (255 - 171) * (1 - intensity));
+    const b = Math.round(177 + (255 - 177) * (1 - intensity));
+    return `rgb(${r}, ${g}, ${b})`;
+  };
+
+  // Events by hour — pivot for chart
+  const hourlyEvents = {};
+  (eventsByHour || []).forEach((e) => {
+    if (!hourlyEvents[e.hour]) hourlyEvents[e.hour] = {};
+    hourlyEvents[e.hour][e.event_type] = parseInt(e.count);
+  });
+
+  return (
+    <>
+      {/* Weekly Heatmap Grid */}
+      <div style={styles.card}>
+        <h3 style={styles.cardTitle}>Weekly Visit Heatmap</h3>
+        <div style={{ overflowX: "auto" }}>
+          <table style={{ borderCollapse: "collapse", fontSize: 11, width: "100%" }}>
+            <thead>
+              <tr>
+                <th style={{ padding: "6px 8px", textAlign: "left", fontSize: 11, color: "#64748b" }}>Day</th>
+                {HOURS.map((h) => (
+                  <th key={h} style={{ padding: "4px 2px", textAlign: "center", fontSize: 10, color: "#94a3b8", minWidth: 28 }}>
+                    {h}:00
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {[1, 2, 3, 4, 5, 6, 7].map((day) => (
+                <tr key={day}>
+                  <td style={{ padding: "4px 8px", fontWeight: 600, color: "#475569", fontSize: 12 }}>{DAYS[day]}</td>
+                  {HOURS.map((hour) => {
+                    const count = grid[`${day}-${hour}`] || 0;
+                    return (
+                      <td
+                        key={hour}
+                        title={`${DAYS[day]} ${hour}:00 - ${count} visits`}
+                        style={{
+                          padding: 0,
+                          textAlign: "center",
+                        }}
+                      >
+                        <div style={{
+                          width: 24, height: 24, borderRadius: 4, margin: "2px auto",
+                          background: getColor(count),
+                          display: "flex", alignItems: "center", justifyContent: "center",
+                          fontSize: 9, color: count > maxCount * 0.5 ? "#fff" : "#64748b",
+                          fontWeight: count > 0 ? 600 : 400,
+                          cursor: "default",
+                        }}>
+                          {count > 0 ? count : ""}
+                        </div>
+                      </td>
+                    );
+                  })}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <div style={{ marginTop: 10, display: "flex", alignItems: "center", gap: 8, fontSize: 11, color: "#94a3b8" }}>
+          <span>Less</span>
+          {[0, 0.25, 0.5, 0.75, 1].map((i) => (
+            <div key={i} style={{ width: 16, height: 16, borderRadius: 3, background: getColor(maxCount * i) }} />
+          ))}
+          <span>More</span>
+        </div>
+      </div>
+
+      {/* Daily Trend */}
+      {dailyTrend.length > 0 && (
+        <div style={{ ...styles.card, marginTop: 16 }}>
+          <h3 style={styles.cardTitle}>Daily Visit Trend</h3>
+          <ResponsiveContainer width="100%" height={250}>
+            <LineChart data={dailyTrend}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="date" tick={{ fontSize: 11 }} tickFormatter={(d) => new Date(d).toLocaleDateString("en-GB", { day: "2-digit", month: "short" })} />
+              <YAxis />
+              <Tooltip labelFormatter={(d) => new Date(d).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" })} />
+              <Legend />
+              <Line type="monotone" dataKey="visits" stroke="#5eabb1" strokeWidth={2} dot={false} name="Visits" />
+              <Line type="monotone" dataKey="unique_visitors" stroke="#8b5cf6" strokeWidth={2} dot={false} name="Unique Visitors" />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+      )}
+
+      {/* Events by Hour */}
+      {Object.keys(hourlyEvents).length > 0 && (
+        <div style={{ ...styles.card, marginTop: 16 }}>
+          <h3 style={styles.cardTitle}>Events by Hour of Day</h3>
+          <ResponsiveContainer width="100%" height={250}>
+            <BarChart data={HOURS.map((h) => ({ hour: `${h}:00`, ...hourlyEvents[h] }))}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="hour" tick={{ fontSize: 10 }} />
+              <YAxis />
+              <Tooltip />
+              <Legend />
+              <Bar dataKey="page_view" stackId="a" fill="#3b82f6" name="Page View" />
+              <Bar dataKey="item_view" stackId="a" fill="#8b5cf6" name="Item View" />
+              <Bar dataKey="add_to_cart" stackId="a" fill="#f59e0b" name="Add to Cart" />
+              <Bar dataKey="checkout_start" stackId="a" fill="#ef4444" name="Checkout" />
+              <Bar dataKey="order_placed" stackId="a" fill="#10b981" name="Order" />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+      )}
+    </>
   );
 }
 
