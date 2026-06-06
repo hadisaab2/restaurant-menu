@@ -25,6 +25,7 @@ import AboutUsPopup from "../theme4/popup/aboutUs";
 import { InstallPrompt } from "./installPrompt";
 import BottomTabBar from "../theme3/BottomTabBar";
 import NavigationBar from "../theme3/NavigationBar";
+import { trackVisit, trackPageView } from "../../utilities/analyticsTracking";
 
 export default function Theme2() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -114,6 +115,14 @@ export default function Theme2() {
   
 
   
+    useEffect(() => {
+      if (restaurant?.id) {
+        const branchId = restaurant?.branches?.[0]?.id || null;
+        trackVisit(restaurant.id, branchId);
+        trackPageView(restaurant.id, branchId);
+      }
+    }, [restaurant?.id]);
+
     useEffect(() => {
       // Log PWA requirements
       console.log('🔍 PWA Debug Info:');

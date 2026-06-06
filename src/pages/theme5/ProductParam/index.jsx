@@ -13,6 +13,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import _ from 'lodash';
 import { addToCart } from '../../../redux/cart/cartActions';
+import { trackItemView, trackAddToCart } from '../../../utilities/analyticsTracking';
 import CarouselLoader from "./carouselLoader";
 import ProductForm from "./Form";
 import ProductOptionsPicker from "../../../product-options/ProductOptionsPicker";
@@ -69,6 +70,13 @@ export default function ProductParam({ productId, setSearchParams, searchParams 
                 setfinalDiscount(parseFloat(fetchedProduct?.category?.discount) || 0)
             }
 
+            // Track item view
+            if (restaurant?.id && fetchedProduct?.id) {
+                const branchId = restaurant?.branches?.[0]?.id || null;
+                trackItemView(restaurant.id, fetchedProduct.id, fetchedProduct.category_id, branchId, {
+                    name: fetchedProduct.en_name, price: parseFloat(fetchedProduct.en_price) || 0,
+                });
+            }
         }
     }, [productLoading]);
 
@@ -313,6 +321,13 @@ export default function ProductParam({ productId, setSearchParams, searchParams 
             setSearchParams(next);
             document.body.style.overflow = "auto";
         }, 800);
+        // Track add to cart
+        if (restaurant?.id && fetchedProduct?.id) {
+            const branchId = restaurant?.branches?.[0]?.id || null;
+            trackAddToCart(restaurant.id, fetchedProduct.id, fetchedProduct.category_id, quantity, branchId, {
+                name: fetchedProduct.en_name, price: discountedPrice,
+            });
+        }
         dispatch(
             addToCart(restaurantName, fetchedProduct, quantity, formData, discountedPrice, instruction, menuMode)
         );

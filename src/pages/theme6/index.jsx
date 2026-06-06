@@ -18,6 +18,7 @@ import ContactFormPopup from "../theme3/popup/contactForm";
 import AboutUsPopup from "../theme4/popup/aboutUs";
 import { InstallPrompt } from "./installPrompt";
 import BottomTabBar from "./BottomTabBar";
+import { trackVisit, trackPageView } from "../../utilities/analyticsTracking";
 
 export default function Theme2() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -104,23 +105,21 @@ export default function Theme2() {
   };
 
   useEffect(() => {
-    console.log("🔍 PWA Debug Info:");
-    console.log("- Protocol:", window.location.protocol);
-    console.log("- Host:", window.location.hostname);
-    console.log("- Navigator:", navigator.userAgent);
+    if (restaurant?.id) {
+      const branchId = restaurant?.branches?.[0]?.id || null;
+      trackVisit(restaurant.id, branchId);
+      trackPageView(restaurant.id, branchId);
+    }
+  }, [restaurant?.id]);
 
+  useEffect(() => {
     const handleBeforeInstallPrompt = (event) => {
       event.preventDefault();
-      console.log("✅ Install prompt event captured!");
       setDeferredPrompt(event);
       setShowInstallPopup(true);
     };
 
     window.addEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
-
-    window.addEventListener("appinstalled", (event) => {
-      console.log("🎉 Application installed successfully!");
-    });
 
     return () => {
       window.removeEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
