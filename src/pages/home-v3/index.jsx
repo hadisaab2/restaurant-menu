@@ -112,8 +112,6 @@ export default function HomeV3() {
     <div className="font-sans antialiased bg-white text-apple-text">
       <Navbar onGetStarted={scrollToContact} />
       <Hero onGetStarted={scrollToContact} onSeeLiveDemo={() => setDemoOpen(true)} />
-      <SocialProof />
-      <Templates />
       <WhyMenugic />
       <DashboardShowcase />
       <HowItWorks />
