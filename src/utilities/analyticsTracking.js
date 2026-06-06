@@ -139,10 +139,19 @@ const detectLanguage = () => {
   return navigator.language || navigator.userLanguage || "en";
 };
 
+// Dedup guard — prevents duplicate tracking calls per session per restaurant
+const _tracked = {};
+const isDuplicate = (key) => {
+  if (_tracked[key]) return true;
+  _tracked[key] = true;
+  return false;
+};
+
 /**
- * Track a visit
+ * Track a visit (once per restaurant per session)
  */
 export const trackVisit = async (restaurantId, branchId = null) => {
+  if (isDuplicate(`visit_${restaurantId}`)) return;
   try {
     const sourceData = detectSource();
     const visitorId = getVisitorId();
@@ -165,16 +174,11 @@ export const trackVisit = async (restaurantId, branchId = null) => {
       referrer: document.referrer || null,
     };
 
-    // Send tracking request (fire and forget)
     fetch(`${BASE_URL}/analytics/track/visit`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(visitData),
-    }).catch((err) => {
-      console.error("Error tracking visit:", err);
-    });
+    }).catch((err) => console.error("Error tracking visit:", err));
   } catch (error) {
     console.error("Error in trackVisit:", error);
   }
@@ -235,6 +239,7 @@ export const trackEvent = async (
  * Helper functions for common events
  */
 export const trackPageView = (restaurantId, branchId = null) => {
+  if (isDuplicate(`pageview_${restaurantId}`)) return;
   trackEvent(restaurantId, "page_view", { branchId });
   metaPageView();
 };

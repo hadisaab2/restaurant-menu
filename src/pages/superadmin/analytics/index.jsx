@@ -14,6 +14,7 @@ const headers = () => ({ Authorization: `Bearer ${getCookie("accessToken")}` });
 const COLORS = ["#5eabb1", "#8b5cf6", "#f59e0b", "#ef4444", "#10b981", "#3b82f6", "#ec4899"];
 
 const datePresets = [
+  { label: "Today", days: 0 },
   { label: "7d", days: 7 },
   { label: "30d", days: 30 },
   { label: "90d", days: 90 },
@@ -25,8 +26,8 @@ const fmtNum = (n) => (n >= 1000 ? `${(n / 1000).toFixed(1)}k` : Number(n).toFix
 const fmtPct = (n) => `${Number(n).toFixed(1)}%`;
 
 export default function SuperAdminAnalytics() {
-  const [preset, setPreset] = useState(1); // 30d default
-  const [startDate, setStartDate] = useState(fmtDate(new Date(Date.now() - 30 * 86400000)));
+  const [preset, setPreset] = useState(0); // Today default
+  const [startDate, setStartDate] = useState(fmtDate(new Date()));
   const [endDate, setEndDate] = useState(fmtDate(new Date()));
   const [overview, setOverview] = useState(null);
   const [selectedRestaurant, setSelectedRestaurant] = useState(null);
@@ -871,8 +872,19 @@ function ActionBreakdownTab({ data, onExport, onSelectRestaurant }) {
 }
 
 // ── Live Feed Tab ──
+const FEED_FILTERS = [
+  { label: "All", value: "all" },
+  { label: "Visits", value: "visit" },
+  { label: "Page View", value: "page_view" },
+  { label: "Item View", value: "item_view" },
+  { label: "Add to Cart", value: "add_to_cart" },
+  { label: "Checkout", value: "checkout_start" },
+  { label: "Order", value: "order_placed" },
+];
+
 function LiveFeedTab({ data, onRefresh }) {
   const [autoRefresh, setAutoRefresh] = useState(false);
+  const [feedFilter, setFeedFilter] = useState("all");
 
   useEffect(() => {
     if (!autoRefresh) return;
@@ -880,13 +892,24 @@ function LiveFeedTab({ data, onRefresh }) {
     return () => clearInterval(interval);
   }, [autoRefresh, onRefresh]);
 
+  const filtered = feedFilter === "all"
+    ? data
+    : data.filter((item) =>
+        feedFilter === "visit"
+          ? item.type === "visit"
+          : item.type === "event" && item.event_type === feedFilter
+      );
+
   return (
     <>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16, flexWrap: "wrap", gap: 10 }}>
         <h3 style={{ margin: 0, fontSize: 18, fontWeight: 700, color: "#0f172a" }}>
           Live Activity Feed
+          <span style={{ fontSize: 13, fontWeight: 400, color: "#94a3b8", marginLeft: 8 }}>
+            ({filtered.length} entries)
+          </span>
         </h3>
-        <div style={{ display: "flex", gap: 8 }}>
+        <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
           <button
             onClick={() => setAutoRefresh(!autoRefresh)}
             style={{
@@ -900,6 +923,25 @@ function LiveFeedTab({ data, onRefresh }) {
           </button>
           <button onClick={onRefresh} style={styles.exportBtn}>Refresh</button>
         </div>
+      </div>
+
+      {/* Type Filter */}
+      <div style={{ display: "flex", gap: 4, marginBottom: 14, flexWrap: "wrap" }}>
+        {FEED_FILTERS.map((f) => (
+          <button
+            key={f.value}
+            onClick={() => setFeedFilter(f.value)}
+            style={{
+              ...styles.smallBtn,
+              background: feedFilter === f.value ? "#5eabb1" : "#f8fafc",
+              color: feedFilter === f.value ? "#fff" : "#475569",
+              borderColor: feedFilter === f.value ? "#5eabb1" : "#e2e8f0",
+              fontWeight: feedFilter === f.value ? 600 : 400,
+            }}
+          >
+            {f.label}
+          </button>
+        ))}
       </div>
 
       <div style={styles.card}>
@@ -916,7 +958,7 @@ function LiveFeedTab({ data, onRefresh }) {
               </tr>
             </thead>
             <tbody>
-              {data.map((item, i) => (
+              {filtered.map((item, i) => (
                 <tr key={`${item.type}-${item.id}`} style={i % 2 ? { background: "#f8fafc" } : {}}>
                   <td style={{ ...styles.td, fontSize: 12, whiteSpace: "nowrap" }}>
                     {new Date(item.timestamp).toLocaleString("en-GB", { timeZone: "Asia/Beirut", hour: "2-digit", minute: "2-digit", second: "2-digit", day: "2-digit", month: "short" })}
@@ -952,8 +994,8 @@ function LiveFeedTab({ data, onRefresh }) {
                   </td>
                 </tr>
               ))}
-              {data.length === 0 && (
-                <tr><td colSpan={6} style={{ ...styles.td, textAlign: "center", color: "#94a3b8" }}>No recent activity</td></tr>
+              {filtered.length === 0 && (
+                <tr><td colSpan={6} style={{ ...styles.td, textAlign: "center", color: "#94a3b8" }}>No activity for this filter</td></tr>
               )}
             </tbody>
           </table>
