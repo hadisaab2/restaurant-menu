@@ -4,7 +4,7 @@ import { FiArrowRight, FiX } from "react-icons/fi";
 import { TEMPLATES, TEMPLATE_DEMO_URLS } from "./data";
 import Navbar from "./components/Navbar";
 import Hero from "./components/Hero";
-import SocialProof from "./components/SocialProof";
+import TrustStrip from "./components/TrustStrip";
 import Templates from "./components/Templates";
 import WhyMenugic from "./components/WhyMenugic";
 import HowItWorks from "./components/HowItWorks";
@@ -112,6 +112,8 @@ export default function HomeV3() {
     <div className="font-sans antialiased bg-white text-apple-text">
       <Navbar onGetStarted={scrollToContact} />
       <Hero onGetStarted={scrollToContact} onSeeLiveDemo={() => setDemoOpen(true)} />
+      <TrustStrip />
+      <Templates />
       <WhyMenugic />
       <DashboardShowcase />
       <HowItWorks />

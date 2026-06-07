@@ -2,7 +2,7 @@ import styled from "styled-components";
 
 export const Container = styled.div`
  width: 100%;
- margin-top: 30px;
+ margin-top: 20px;
  padding-bottom: 20px;
  display: flex;
  justify-content: center;
@@ -36,7 +36,7 @@ export const AllItemsTitle = styled.h3`
   margin: 0 auto;
   width: 95%;
   max-width: 600px;
-  font-size: 19px;
+  font-size: 16px;
   font-weight: 700;
   color: ${(props) => props.theme.mainColor};
   text-align: ${(props) => (props.activeLanguage === "ar" ? "right" : "left")};

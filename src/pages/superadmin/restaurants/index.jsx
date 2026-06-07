@@ -971,6 +971,7 @@ export default function Restaurants() {
             setSelectedIdForAction={setSelectedIdForAction}
             setIsPopupOpen={setIsPopupOpen}
             handleEdit={handleEdit}
+            onRefresh={refetch}
           />
           <Button
             sx={{

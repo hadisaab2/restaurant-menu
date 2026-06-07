@@ -6,23 +6,22 @@ display: flex;
 align-items: center;
 justify-content: center;
 position: relative;
-height: 10vh;
+height: 56px;
 width: 100%;
 `;
 export const HeaderWrapper = styled.div`
 display: flex;
 align-items: center;
 position: relative;
-height: 10vh;
+height: 56px;
 justify-content: space-between;
 width: 90%;
-position: relative;
 
 `;
 
 export const Brand = styled.img`
-max-width: 250px;
-max-height: 120px;
+max-width: 200px;
+max-height: 40px;
 position: absolute;
 margin-right: 7px;
 /* margin-left: 20px; */
@@ -90,6 +89,6 @@ font-size: 14px;
 
 export const MenuIcon = styled(HiMenuAlt2)`
 color: ${props=>props.theme.mainColor};
-font-size: 27px;
+font-size: 24px;
 
 `;

@@ -18,7 +18,7 @@ export const CarouselContainer = styled.div`
   justify-content: center;
   flex-direction: column;
   gap: 4px;
-  height: 100px;
+  height: 88px;
   /* Hide scrollbar in WebKit browsers */
   &::-webkit-scrollbar {
     display: none;
@@ -53,17 +53,17 @@ export const CarouselItem = styled.div`
 `;
 
 export const CategoryWrapper = styled.div`
-  width:75%;
+  width:62%;
   height:100%;
-  border-radius: 50px;
+  border-radius: 16px;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-direction: column;
   background-color:${props => props.categoryId == props.activeCategory ? props.theme.categoryActive : props.theme.categoryUnActive};
-  box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(0, 0, 0, 0.06);
   transition: 0.2s all ease-in-out;
-  color:${props => props.categoryId == props.activeCategory ? "white" : "black"};//edit thiss
+  color:${props => props.categoryId == props.activeCategory ? "white" : "black"};
 `;
 
 
@@ -75,9 +75,9 @@ flex:1;
 
 `;
 export const IconWrapper = styled.div`
-width:42px;
-height:42px;
-border-radius: 50%;
+width:34px;
+height:34px;
+border-radius: 12px;
 background-color: black;
 display: flex;
 align-items: center;
@@ -105,7 +105,8 @@ export const CategoryName = styled.span`
     text-align: center;
     white-space: normal;
     word-wrap: break-word;
-    font-size: 12px;
+    font-size: 10px;
+    letter-spacing: 0.2px;
     color: ${(props) => (props.categoryId == props.activeCategory ? (props.theme.categoryActiveText || props.theme.categoryactivetext) : (props.theme.categoryUnactiveText || props.theme.categoryunactivetext || props.theme.textColor || "#333"))};
   user-select: none !important;
   -webkit-user-select: none !important;  /* For Safari (iOS) */

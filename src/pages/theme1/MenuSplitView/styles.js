@@ -22,9 +22,10 @@ export const T1ProductWrapper = styled.div`
   align-items: center;
   justify-content: flex-start;
   background-color: ${(p) => p.theme.BoxColor};
-  border-radius: 18px;
+  border-radius: 14px;
   position: relative;
-  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.06);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
 `;
 
 export const T1Loader = styled.div`
@@ -42,9 +43,9 @@ export const T1LoaderWrap = styled.div`
   justify-content: center;
   align-items: center;
   width: 91%;
-  height: 17vh;
-  min-height: 100px;
-  max-height: 158px;
+  height: 15vh;
+  min-height: 90px;
+  max-height: 140px;
   border-radius: 10px;
   overflow: hidden;
   top: 8px;
@@ -55,9 +56,9 @@ export const T1LoaderWrap = styled.div`
 export const T1ImageContainer = styled.div`
   position: relative;
   width: 100%;
-  height: 17vh;
-  min-height: 100px;
-  max-height: 158px;
+  height: 15vh;
+  min-height: 90px;
+  max-height: 140px;
   overflow: hidden;
   margin-top: 8px;
   display: flex;
@@ -152,7 +153,8 @@ export const T1PriceRow = styled.div`
 
 export const T1PlatePrice = styled.span`
   color: ${(p) => p.theme.BoxPriceColor};
-  font-size: 11px;
+  font-size: 12px;
+  font-weight: ${(p) => (p.$discounted ? 400 : 600)};
   word-spacing: 0;
   text-decoration: ${(p) => (p.$discounted ? "line-through" : "none")};
   opacity: ${(p) => (p.$discounted ? 0.75 : 1)};
@@ -173,8 +175,8 @@ export const T1Actions = styled.div`
 `;
 
 export const T1AddBtn = styled.button`
-  min-width: 26px;
-  height: 26px;
+  min-width: 30px;
+  height: 30px;
   border-radius: 50%;
   border: none;
   background: ${(p) => p.theme.mainColor};
@@ -242,13 +244,11 @@ export const SplitRoot = styled.div`
 `;
 
 export const SidebarWrap = styled.aside`
-  width: 92px;
-  min-width: 92px;
+  width: 76px;
+  min-width: 76px;
   flex-shrink: 0;
-  /* Remove the right border (theme1 requirement) */
   border-right: none;
   border-left: ${(p) => (p.$isRtl ? `1px solid ${p.theme.categoryUnActive || "#e5e7eb"}` : "none")};
-  /* Match sidebar background to page background color */
   background: ${(p) => p.theme.backgroundColor || "#f8f9fa"};
   display: flex;
   flex-direction: column;
@@ -256,19 +256,18 @@ export const SidebarWrap = styled.aside`
   position: sticky;
   top: 72px;
   align-self: flex-start;
-  box-shadow: 2px 0 12px rgba(15, 23, 42, 0.06);
+  box-shadow: 1px 0 6px rgba(0, 0, 0, 0.04);
 `;
 
 export const SidebarScroll = styled.div`
   overflow-y: auto;
   overflow-x: hidden;
   flex: 1;
-  padding: 8px 6px 16px;
+  padding: 6px 4px 12px;
   -webkit-overflow-scrolling: touch;
 
-  /* Hide scrollbar (invisible but still scrollable) */
-  scrollbar-width: none; /* Firefox */
-  -ms-overflow-style: none; /* IE/Edge */
+  scrollbar-width: none;
+  -ms-overflow-style: none;
   &::-webkit-scrollbar {
     width: 0;
     height: 0;
@@ -280,22 +279,26 @@ export const CatItem = styled.button`
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 6px;
+  gap: 5px;
   width: 100%;
-  padding: 10px 4px;
-  margin-bottom: 4px;
+  padding: 8px 3px;
+  margin-bottom: 3px;
   border: none;
-  border-radius: 12px;
+  border-radius: 10px;
   cursor: pointer;
   background: ${(p) =>
     p.$active
-      ? p.theme.mainColor || "#2563eb"
+      ? `${p.theme.mainColor || "#2563eb"}18`
       : "transparent"};
+  border-left: ${(p) =>
+    p.$active
+      ? `3px solid ${p.theme.mainColor || "#2563eb"}`
+      : "3px solid transparent"};
   color: ${(p) =>
     p.$active
-      ? p.theme.categoryActiveText || p.theme.popupbuttonText || "#fff"
+      ? p.theme.mainColor || p.theme.categoryActiveText || "#2563eb"
       : p.theme.categoryUnactiveText || p.theme.BoxTextColor || p.theme.textColor || "#334155"};
-  transition: background 0.2s, transform 0.15s;
+  transition: background 0.2s, border-color 0.2s, transform 0.15s;
 
   &:active {
     transform: scale(0.97);
@@ -303,9 +306,9 @@ export const CatItem = styled.button`
 `;
 
 export const CatIcon = styled.div`
-  width: 44px;
-  height: 44px;
-  border-radius: 12px;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
   overflow: hidden;
   background: ${(p) =>
     p.$active ? "rgba(255,255,255,0.25)" : p.theme.categoryUnActive || "#f1f5f9"};
@@ -321,8 +324,9 @@ export const CatIcon = styled.div`
 `;
 
 export const CatLabel = styled.span`
-  font-size: 10px;
+  font-size: 9px;
   font-weight: 600;
+  letter-spacing: 0.2px;
   text-align: center;
   line-height: 1.2;
   max-width: 100%;
@@ -336,7 +340,7 @@ export const CatLabel = styled.span`
 export const MainPanel = styled.main`
   flex: 1;
   min-width: 0;
-  padding: 10px 12px 24px;
+  padding: 8px 10px 20px;
   display: flex;
   flex-direction: column;
   gap: 12px;
@@ -344,12 +348,12 @@ export const MainPanel = styled.main`
 
 export const SearchBar = styled.input`
   width: 100%;
-  padding: 10px 14px;
+  padding: 9px 12px;
   border-radius: 12px;
   border: 1px solid ${(p) => p.theme.categoryUnActive || "#e5e7eb"};
   background: ${(p) => p.theme.BoxColor || "#fff"};
   color: ${(p) => p.theme.BoxTextColor || p.theme.textColor || "#111"};
-  font-size: 14px;
+  font-size: 13px;
   outline: none;
   &::placeholder {
     opacity: 0.5;
@@ -360,7 +364,7 @@ export const SearchBar = styled.input`
 `;
 
 export const SectionTitle = styled.h2`
-  margin: 0;
+  margin: 0 0 4px;
   font-size: 17px;
   font-weight: 700;
   color: ${(p) => p.theme.mainColor};
@@ -370,7 +374,7 @@ export const SectionTitle = styled.h2`
 export const Grid = styled.div`
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 12px;
+  gap: 10px;
   width: 100%;
 
   @media (min-width: 768px) {
@@ -385,7 +389,8 @@ export const Card = styled.article`
   background: ${(p) => p.theme.BoxColor || "#fff"};
   border-radius: 14px;
   overflow: hidden;
-  box-shadow: 0 2px 12px rgba(15, 23, 42, 0.08);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.05);
   display: flex;
   flex-direction: column;
   position: relative;
@@ -395,10 +400,9 @@ export const Card = styled.article`
 export const CardImageWrap = styled.div`
   position: relative;
   width: 100%;
-  /* Theme2-like "boxed" image sizing */
-  height: 20vh;
-  min-height: 120px;
-  max-height: 220px;
+  height: 16vh;
+  min-height: 110px;
+  max-height: 180px;
   background: ${(p) => p.theme.categoryUnActive || "#f1f5f9"};
   cursor: pointer;
   border-radius: 10px;
@@ -433,7 +437,7 @@ export const Badge = styled.span`
 `;
 
 export const CardBody = styled.div`
-  padding: 10px 10px 12px;
+  padding: 8px 8px 10px;
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -495,8 +499,8 @@ export const PriceNow = styled.span`
 `;
 
 export const AddBtn = styled.button`
-  min-width: 28px;
-  height: 28px;
+  min-width: 32px;
+  height: 32px;
   border-radius: 50%;
   border: none;
   background: ${(p) => p.theme.mainColor};

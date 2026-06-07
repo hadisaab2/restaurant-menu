@@ -69,19 +69,10 @@ function PlanCard({ plan, i, onGetStarted }) {
           {plan.tagline}
         </p>
 
-        <div className="mt-7 min-h-[5.5rem]">
-          <div className={`flex flex-wrap items-baseline gap-x-1 ${plan.recommended ? "text-white" : "text-apple-text"}`}>
-            <span className={`text-[1.35rem] font-semibold leading-none ${plan.recommended ? "text-white/90" : ""}`}>$</span>
-            <span className="text-[2.65rem] md:text-[2.85rem] font-bold leading-none tracking-tight">
-              <PriceCountUp price={plan.price} started={inView} />
-            </span>
-            <span className={`text-[0.95rem] font-medium leading-none ml-0.5 ${plan.recommended ? "text-white/75" : "text-apple-muted"}`}>
-              / year
-            </span>
-          </div>
-          <p className={`mt-2.5 text-[0.8rem] leading-snug ${plan.recommended ? "text-white/55" : "text-apple-muted"}`}>
-            Billed yearly
-          </p>
+        <div className="mt-7 min-h-[5.5rem] flex items-center">
+          <span className={`text-[1.6rem] md:text-[1.8rem] font-bold tracking-tight ${plan.recommended ? "text-white" : "text-apple-accent"}`}>
+            Let's talk
+          </span>
         </div>
 
         <ul className="mt-6 space-y-3.5 flex-1">
@@ -121,7 +112,7 @@ function PlanCard({ plan, i, onGetStarted }) {
               : "bg-apple-accent text-white hover:bg-apple-accentHover"
           }`}
         >
-          Get {plan.name}
+          Contact Us
         </button>
       </div>
     </motion.div>

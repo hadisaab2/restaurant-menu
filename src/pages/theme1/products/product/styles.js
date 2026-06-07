@@ -21,10 +21,9 @@ export const Wrapper = styled.div`
     align-items: center;
     justify-content: center;
     background-color: ${props=>props.theme.BoxColor};
-    border-radius: 20px;
+    border-radius: 14px;
+    border: 1px solid rgba(0, 0, 0, 0.06);
     position: relative;
-
-    //cjhange loadeeerr wrappperr and this oneee colorrrr
 
 `;
 
@@ -39,7 +38,7 @@ visibility: ${props=>props.imageLoaded?"visible":"hidden"};
 export const ImageContainer = styled.div`
 position: relative;
 width:100%;
-height: 20vh;
+height: 16vh;
 overflow: hidden;
 margin-top: 10px;
 display: flex;
@@ -89,10 +88,10 @@ gap:5px;
 
 export const PlatePrice = styled.span`
 color:${props=>props.theme.BoxPriceColor};
-font-size: 14px;
+font-size: 15px;
+font-weight: 600;
 word-spacing: 0px;
 text-decoration:${props=>props.discounted?"line-through":"none"};
-
 
 `;
 
@@ -129,7 +128,7 @@ export const LoaderWrapper = styled.div`
   justify-content: center;
   align-items: center;
   width:91%;
-height: 20vh;
+height: 16vh;
 border-radius: 10px;
 overflow: hidden;
 top: 10px;
@@ -158,8 +157,8 @@ export const QuickAddButton = styled.button`
   position: absolute;
   bottom: 8px;
   ${props => props.activeLanuguage === "ar" ? "left: 15px;" : "right: 15px;"}
-  width: 28px;
-  height: 28px;
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
   border: none;
   background-color: ${props => props.theme.mainColor};
@@ -168,7 +167,7 @@ export const QuickAddButton = styled.button`
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.12);
   transition: transform 0.15s ease;
   z-index: 5;
   &:active {
