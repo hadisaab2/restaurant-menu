@@ -17,6 +17,7 @@ import RegionSelect from "./regionSelect";
 import { useAddOrderQuery } from "../../../../../apis/restaurants/addOrder";
 import { convertPrice } from "../../../../../utilities/convertPrice";
 import { formatCartItemOptionsForOrderMessage } from "../../../../../product-options/cartLabels";
+import { formatWhatsappNumber } from "../../../../../utilities/formatWhatsappNumber";
 
 export default function Order({ setblock, popupHandler, restaurant }) {
   const { restaurantName: paramRestaurantName } = useParams();
@@ -183,9 +184,7 @@ export default function Order({ setblock, popupHandler, restaurant }) {
     if (!selectedBranch.whatsapp_number) {
       whatsappUrl = `https://wa.me/${restaurant.phone_number}?text=${encodedMessage}`;
     } else {
-      newWhatsappNumber = selectedBranch?.whatsapp_number?.startsWith("961")
-        ? selectedBranch?.whatsapp_number
-        : "961" + selectedBranch?.whatsapp_number;
+      newWhatsappNumber = formatWhatsappNumber(selectedBranch?.whatsapp_number, restaurant?.country_code);
       whatsappUrl = `https://wa.me/${newWhatsappNumber}?text=${encodedMessage}`;
 
     }

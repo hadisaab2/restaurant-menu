@@ -627,6 +627,7 @@ export default function Restaurants() {
     show_about_us,
     show_slider_image,
     google_maps_api_key,
+    country_code,
   }) => {
     const theme = JSON.parse(themeString);
     const features = JSON.parse(featureString);
@@ -661,6 +662,7 @@ export default function Restaurants() {
       show_about_us,
       show_slider_image,
       google_maps_api_key,
+      country_code,
     });
     setIsEditMode(true);
     setTemplate(template_id);
@@ -699,6 +701,7 @@ export default function Restaurants() {
     setValue("amount", amount != null && amount !== "" ? amount : "");
     setValue("is_paid", !!is_paid);
     setValue("google_maps_api_key", google_maps_api_key || "");
+    setValue("country_code", country_code || "961");
 
     // Set theme colors in form: for the current template, set every color from DB or default
     const templateConfig = templates.find((t) => t.id == template_id);
@@ -1283,6 +1286,27 @@ export default function Restaurants() {
                   <MenuItem value="lb">Lb</MenuItem>
                   <MenuItem value="gram">Gram</MenuItem>
                   <MenuItem value="killogram">KilloGram</MenuItem>
+                  <MenuItem value="IQD">Iraqi Dinar (IQD)</MenuItem>
+                  <MenuItem value="JOD">Jordanian Dinar (JOD)</MenuItem>
+                </Select>
+              </FormControl>
+            </Box>
+            <Box sx={{ mb: 2 }}>
+              <FormControl fullWidth required error={!isEmpty(formState?.errors?.country_code)}>
+                <InputLabel>Country Code</InputLabel>
+                <Select
+                  label="Country Code"
+                  {...register("country_code")}
+                  defaultValue={selectedProduct?.country_code || "961"}
+                >
+                  <MenuItem value="961">Lebanon (+961)</MenuItem>
+                  <MenuItem value="964">Iraq (+964)</MenuItem>
+                  <MenuItem value="962">Jordan (+962)</MenuItem>
+                  <MenuItem value="966">Saudi Arabia (+966)</MenuItem>
+                  <MenuItem value="971">UAE (+971)</MenuItem>
+                  <MenuItem value="974">Qatar (+974)</MenuItem>
+                  <MenuItem value="965">Kuwait (+965)</MenuItem>
+                  <MenuItem value="20">Egypt (+20)</MenuItem>
                 </Select>
               </FormControl>
             </Box>

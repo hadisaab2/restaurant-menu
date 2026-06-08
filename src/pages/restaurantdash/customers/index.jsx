@@ -44,6 +44,7 @@ import {
 } from "./styles";
 import { getCookie } from "../../../utilities/manageCookies";
 import axios from "axios";
+import { formatWhatsappNumber } from "../../../utilities/formatWhatsappNumber";
 
 const BASE_URL = process.env.REACT_APP_BASE_URL;
 
@@ -256,9 +257,7 @@ export default function Customers() {
 
         // Send via WhatsApp
         const phoneNumber = selectedCustomer.phone.replace(/\D/g, ""); // Remove non-digits
-        const whatsappNumber = phoneNumber.startsWith("961")
-          ? phoneNumber
-          : `961${phoneNumber}`;
+        const whatsappNumber = formatWhatsappNumber(phoneNumber, restaurantInfo?.country_code);
         const encodedMessage = encodeURIComponent(newMessage);
         const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodedMessage}`;
         

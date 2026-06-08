@@ -50,6 +50,7 @@ import { FaWhatsapp } from "react-icons/fa";
 import { FaLocationDot } from "react-icons/fa6";
 import { useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
+import { formatWhatsappNumber } from "../../../../utilities/formatWhatsappNumber";
 
 export default function LocationPopup({
   restaurant,
@@ -167,9 +168,7 @@ export default function LocationPopup({
                 {restaurant?.branches?.map((branch) => {
                   return (
                     <Option>
-                      <a href={`https://wa.me/${branch?.whatsapp_number?.startsWith("961")
-                        ? branch?.whatsapp_number
-                        : "961" + branch?.whatsapp_number}`} style={{ textDecoration: "none", color: "inherit" }}>
+                      <a href={`https://wa.me/${formatWhatsappNumber(branch?.whatsapp_number, restaurant?.country_code)}`} style={{ textDecoration: "none", color: "inherit" }}>
                         {branch?.whatsapp_number}-{branch?.name}
                       </a>
                     </Option>

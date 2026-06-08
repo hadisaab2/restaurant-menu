@@ -21,6 +21,7 @@ import { IoLocationOutline } from "react-icons/io5";
 import { FaPhone, FaWhatsapp, FaFacebook, FaInstagram, FaTwitter, FaLinkedin, FaYoutube, FaGlobe, FaTiktok } from "react-icons/fa";
 import { useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
+import { formatWhatsappNumber } from "../../../../utilities/formatWhatsappNumber";
 
 // Helper function to get social media icon
 const getSocialIcon = (platform) => {
@@ -126,7 +127,7 @@ export default function ContactPopup({ showPopup, popupHandler, restaurant }) {
                     {branch.whatsapp_number && (
                       <LocationIconButton
                         as="a"
-                        href={`https://wa.me/${branch.whatsapp_number.replace(/\s/g, "").startsWith("961") ? branch.whatsapp_number.replace(/\s/g, "") : "961" + branch.whatsapp_number.replace(/\s/g, "")}`}
+                        href={`https://wa.me/${formatWhatsappNumber(branch.whatsapp_number, restaurant?.country_code)}`}
                         target="_blank"
                         rel="noopener noreferrer"
                         whatsapp

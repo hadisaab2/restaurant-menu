@@ -89,7 +89,7 @@ export default function TrustStrip() {
         {logos.length > 0 && (
           <>
             <p className="text-center text-xs font-semibold uppercase tracking-[0.2em] text-apple-muted/60 mb-5">
-              Trusted by businesses across Lebanon
+              Trusted by businesses across the region
             </p>
             <div className="flex flex-wrap justify-center items-center gap-6 md:gap-10">
               {logos.slice(0, 12).map((l, i) => (

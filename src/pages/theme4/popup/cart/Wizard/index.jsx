@@ -7,6 +7,7 @@ import { useAddOrderQuery } from "../../../../../apis/restaurants/addOrder";
 import { CUSTOMER_ME_URL } from "../../../../../apis/URLs";
 import { getCustomerAccessToken } from "../../../../../utilities/customerAuthStorage";
 import { convertPrice } from "../../../../../utilities/convertPrice";
+import { formatWhatsappNumber } from "../../../../../utilities/formatWhatsappNumber";
 import { formatCartItemOptionsForOrderMessage } from "../../../../../product-options/cartLabels";
 import { trackCheckoutStart, trackOrderPlaced } from "../../../../../utilities/analyticsTracking";
 import CartStep from "./CartStep";
@@ -260,11 +261,7 @@ export default function Wizard({ popupHandler, restaurant }) {
     if (!formData.selectedBranch?.whatsapp_number) {
       whatsappUrl = `https://wa.me/${restaurant.phone_number}?text=${encodedMessage}`;
     } else {
-      newWhatsappNumber = formData.selectedBranch?.whatsapp_number?.startsWith(
-        "961"
-      )
-        ? formData.selectedBranch?.whatsapp_number
-        : "961" + formData.selectedBranch?.whatsapp_number;
+      newWhatsappNumber = formatWhatsappNumber(formData.selectedBranch?.whatsapp_number, restaurant?.country_code);
       whatsappUrl = `https://wa.me/${newWhatsappNumber}?text=${encodedMessage}`;
     }
 
