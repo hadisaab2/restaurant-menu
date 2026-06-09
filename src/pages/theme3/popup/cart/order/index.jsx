@@ -17,7 +17,7 @@ import RegionSelect from "./regionSelect";
 import { useAddOrderQuery } from "../../../../../apis/restaurants/addOrder";
 import { convertPrice } from "../../../../../utilities/convertPrice";
 import { formatCartItemOptionsForOrderMessage } from "../../../../../product-options/cartLabels";
-import { formatWhatsappNumber } from "../../../../../utilities/formatWhatsappNumber";
+import { formatWhatsappNumber, buildWhatsappUrl } from "../../../../../utilities/formatWhatsappNumber";
 
 export default function Order({ setblock, popupHandler, restaurant }) {
   const { restaurantName: paramRestaurantName } = useParams();
@@ -179,14 +179,12 @@ export default function Order({ setblock, popupHandler, restaurant }) {
       message += `- Order notes: ${details.note || "None"}\n`;
     }
 
-    const encodedMessage = encodeURIComponent(message);
     let whatsappUrl = "", newWhatsappNumber = "";
     if (!selectedBranch.whatsapp_number) {
-      whatsappUrl = `https://wa.me/${restaurant.phone_number}?text=${encodedMessage}`;
+      whatsappUrl = buildWhatsappUrl(restaurant.phone_number, message);
     } else {
       newWhatsappNumber = formatWhatsappNumber(selectedBranch?.whatsapp_number, restaurant?.country_code);
-      whatsappUrl = `https://wa.me/${newWhatsappNumber}?text=${encodedMessage}`;
-
+      whatsappUrl = buildWhatsappUrl(newWhatsappNumber, message);
     }
     //log order to database
     const simplifiedCart = cart.map(item => ({
@@ -206,7 +204,8 @@ export default function Order({ setblock, popupHandler, restaurant }) {
       restaurantName
     )
 
-const w = window.open(whatsappUrl, "_blank", "noopener,noreferrer");
+    // Redirect to WhatsApp immediately (works on iOS WebView)
+    window.location.href = whatsappUrl;
     dispatch(clearCart(restaurantName));
     setblock("cart");
     popupHandler(null);

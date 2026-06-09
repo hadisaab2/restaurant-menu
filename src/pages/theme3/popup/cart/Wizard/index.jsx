@@ -7,7 +7,7 @@ import { useAddOrderQuery } from "../../../../../apis/restaurants/addOrder";
 import { CUSTOMER_ME_URL } from "../../../../../apis/URLs";
 import { getCustomerAccessToken } from "../../../../../utilities/customerAuthStorage";
 import { convertPrice } from "../../../../../utilities/convertPrice";
-import { formatWhatsappNumber } from "../../../../../utilities/formatWhatsappNumber";
+import { formatWhatsappNumber, buildWhatsappUrl } from "../../../../../utilities/formatWhatsappNumber";
 import { formatCartItemOptionsForOrderMessage } from "../../../../../product-options/cartLabels";
 import { trackCheckoutStart, trackOrderPlaced } from "../../../../../utilities/analyticsTracking";
 import CartStep from "./CartStep";
@@ -254,15 +254,14 @@ export default function Wizard({ popupHandler, restaurant }) {
       message += `\n${mapLink}\n`;
     }
 
-    const encodedMessage = encodeURIComponent(message);
     let whatsappUrl = "";
     let newWhatsappNumber = "";
 
     if (!formData.selectedBranch?.whatsapp_number) {
-      whatsappUrl = `https://wa.me/${restaurant.phone_number}?text=${encodedMessage}`;
+      whatsappUrl = buildWhatsappUrl(restaurant.phone_number, message);
     } else {
       newWhatsappNumber = formatWhatsappNumber(formData.selectedBranch?.whatsapp_number, restaurant?.country_code);
-      whatsappUrl = `https://wa.me/${newWhatsappNumber}?text=${encodedMessage}`;
+      whatsappUrl = buildWhatsappUrl(newWhatsappNumber, message);
     }
 
     // Log order to database (simplified for analytics)
@@ -291,32 +290,29 @@ export default function Wizard({ popupHandler, restaurant }) {
       },
     }));
 
-    // Create order in database first to get order_number
-    let orderNumber = "";
-    try {
-      const orderResponse = await handleAddOrderAsync(
-        {
-          products: simplifiedCart,
-          restaurant_id: restaurant.id,
-          branch_id: formData.selectedBranch?.id,
-          delivery_type: formData.deliveryType,
-          customer_name: formData.fullName,
-          customer_phone: formData.phoneNumber,
-          customer_address: formData.deliveryType === "Delivery" ? formData.fullAddress : null,
-          customer_latitude: formData.selectedLocation?.latitude || null,
-          customer_longitude: formData.selectedLocation?.longitude || null,
-          table_number: formData.deliveryType === "DineIn" ? formData.tableNumber : null,
-          note: formData.note,
-          items: fullOrderItems,
-          subtotal: totalPrice,
-          total: totalPrice,
-          currency: restaurant.currency,
-        },
-        restaurantName
-      );
-      orderNumber = orderResponse?.data?.order?.order_number || "";
-
-      // Track order placed
+    // Create order in database (fire-and-forget to avoid iOS popup blocking)
+    const simplifiedCartCopy = [...simplifiedCart];
+    const fullOrderItemsCopy = [...fullOrderItems];
+    handleAddOrderAsync(
+      {
+        products: simplifiedCartCopy,
+        restaurant_id: restaurant.id,
+        branch_id: formData.selectedBranch?.id,
+        delivery_type: formData.deliveryType,
+        customer_name: formData.fullName,
+        customer_phone: formData.phoneNumber,
+        customer_address: formData.deliveryType === "Delivery" ? formData.fullAddress : null,
+        customer_latitude: formData.selectedLocation?.latitude || null,
+        customer_longitude: formData.selectedLocation?.longitude || null,
+        table_number: formData.deliveryType === "DineIn" ? formData.tableNumber : null,
+        note: formData.note,
+        items: fullOrderItemsCopy,
+        subtotal: totalPrice,
+        total: totalPrice,
+        currency: restaurant.currency,
+      },
+      restaurantName
+    ).then((orderResponse) => {
       if (restaurant?.id) {
         const branchId = formData.selectedBranch?.id || null;
         trackOrderPlaced(
@@ -325,21 +321,13 @@ export default function Wizard({ popupHandler, restaurant }) {
           formData.deliveryType,
           totalPrice,
           branchId,
-          { items: fullOrderItems, customerName: formData.fullName }
+          { items: fullOrderItemsCopy, customerName: formData.fullName }
         );
       }
-    } catch (e) {
-      console.error("Order creation failed:", e);
-    }
+    }).catch((e) => console.error("Order creation failed:", e));
 
-    // Prepend order number to message if available
-    if (orderNumber) {
-      message = `*${orderNumber}*\n` + message;
-    }
-
-    const finalEncodedMessage = encodeURIComponent(message);
-    const finalWhatsappUrl = whatsappUrl.replace(encodedMessage, finalEncodedMessage);
-    const w = window.open(finalWhatsappUrl || whatsappUrl, "_blank", "noopener,noreferrer");
+    // Redirect to WhatsApp immediately (works on iOS WebView)
+    window.location.href = whatsappUrl;
     dispatch(clearCart(restaurantName));
     popupHandler(null);
   };

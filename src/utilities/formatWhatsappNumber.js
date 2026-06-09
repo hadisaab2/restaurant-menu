@@ -14,3 +14,20 @@ export const formatWhatsappNumber = (number, countryCode = "961") => {
   if (clean.startsWith("+")) return clean.replace("+", "");
   return countryCode + clean;
 };
+
+/**
+ * Build a WhatsApp URL that opens the app directly (skips wa.me redirect).
+ * Uses whatsapp:// deep link on mobile, falls back to wa.me on desktop.
+ *
+ * @param {string} phone - Formatted phone number with country code
+ * @param {string} message - The message text (will be URI-encoded)
+ * @returns {string} The WhatsApp URL
+ */
+export const buildWhatsappUrl = (phone, message) => {
+  const encoded = encodeURIComponent(message);
+  const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+  if (isMobile) {
+    return `whatsapp://send?phone=${phone}&text=${encoded}`;
+  }
+  return `https://wa.me/${phone}?text=${encoded}`;
+};

@@ -7,6 +7,7 @@ import { useAddOrderQuery } from "../../../../apis/restaurants/addOrder";
 import { trackOrderPlaced } from "../../../../utilities/analyticsTracking";
 import { convertPrice } from "../../../../utilities/convertPrice";
 import { formatCartItemOptionsForOrderMessage } from "../../../../product-options/cartLabels";
+import { buildWhatsappUrl } from "../../../../utilities/formatWhatsappNumber";
 
 const STORAGE_URL = "https://storage.googleapis.com/ecommerce-bucket-testing/";
 
@@ -149,8 +150,7 @@ export default function CartPopup({
 
   const sendWhatsApp = async () => {
     let msg = buildWhatsAppMessage();
-    const encoded = encodeURIComponent(msg);
-    const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encoded}`;
+    const whatsappUrl = buildWhatsappUrl(whatsappNumber, msg);
 
     // Prepare order data for database
     const simplifiedCart = cart.map((item) => ({
@@ -177,32 +177,29 @@ export default function CartPopup({
       },
     }));
 
-    // Create order in database first to get order_number
-    let orderNumber = "";
-    try {
-      const orderResponse = await handleAddOrderAsync(
-        {
-          products: simplifiedCart,
-          restaurant_id: restaurant?.id,
-          branch_id: restaurant?.branches?.[0]?.id,
-          delivery_type: orderType,
-          customer_name: customerName,
-          customer_phone: customerPhone,
-          customer_address: orderType === "Delivery" ? customerAddress : null,
-          customer_latitude: null,
-          customer_longitude: null,
-          table_number: orderType === "DineIn" ? tableNumber : null,
-          note: orderNotes,
-          items: fullOrderItems,
-          subtotal: total,
-          total: total,
-          currency: restaurant?.currency,
-        },
-        restaurantName
-      );
-      orderNumber = orderResponse?.data?.order?.order_number || "";
-
-      // Track order placed
+    // Create order in database (fire-and-forget to avoid iOS popup blocking)
+    const simplifiedCartCopy = [...simplifiedCart];
+    const fullOrderItemsCopy = [...fullOrderItems];
+    handleAddOrderAsync(
+      {
+        products: simplifiedCartCopy,
+        restaurant_id: restaurant?.id,
+        branch_id: restaurant?.branches?.[0]?.id,
+        delivery_type: orderType,
+        customer_name: customerName,
+        customer_phone: customerPhone,
+        customer_address: orderType === "Delivery" ? customerAddress : null,
+        customer_latitude: null,
+        customer_longitude: null,
+        table_number: orderType === "DineIn" ? tableNumber : null,
+        note: orderNotes,
+        items: fullOrderItemsCopy,
+        subtotal: total,
+        total: total,
+        currency: restaurant?.currency,
+      },
+      restaurantName
+    ).then((orderResponse) => {
       if (restaurant?.id) {
         const branchId = restaurant?.branches?.[0]?.id || null;
         trackOrderPlaced(
@@ -211,21 +208,13 @@ export default function CartPopup({
           orderType,
           total,
           branchId,
-          { items: fullOrderItems, customerName: customerName }
+          { items: fullOrderItemsCopy, customerName: customerName }
         );
       }
-    } catch (e) {
-      console.error("Order creation failed:", e);
-    }
+    }).catch((e) => console.error("Order creation failed:", e));
 
-    // Prepend order number to message if available
-    if (orderNumber) {
-      msg = `*${orderNumber}*\n` + msg;
-    }
-
-    const finalEncodedMessage = encodeURIComponent(msg);
-    const finalWhatsappUrl = whatsappUrl.replace(encoded, finalEncodedMessage);
-    window.open(finalWhatsappUrl || whatsappUrl, "_blank", "noopener,noreferrer");
+    // Redirect to WhatsApp immediately (works on iOS WebView)
+    window.location.href = whatsappUrl;
     dispatch(clearCart(restaurantName));
     popupHandler(null);
   };
