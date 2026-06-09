@@ -17,7 +17,7 @@ import RegionSelect from "./regionSelect";
 import { useAddOrderQuery } from "../../../../../apis/restaurants/addOrder";
 import { convertPrice } from "../../../../../utilities/convertPrice";
 import { formatCartItemOptionsForOrderMessage } from "../../../../../product-options/cartLabels";
-import { formatWhatsappNumber, buildWhatsappUrl } from "../../../../../utilities/formatWhatsappNumber";
+import { formatWhatsappNumber, openWhatsApp } from "../../../../../utilities/formatWhatsappNumber";
 
 export default function Order({ setblock, popupHandler, restaurant }) {
   const { restaurantName: paramRestaurantName } = useParams();
@@ -179,13 +179,9 @@ export default function Order({ setblock, popupHandler, restaurant }) {
       message += `- Order notes: ${details.note || "None"}\n`;
     }
 
-    let whatsappUrl = "", newWhatsappNumber = "";
-    if (!selectedBranch.whatsapp_number) {
-      whatsappUrl = buildWhatsappUrl(restaurant.phone_number, message);
-    } else {
-      newWhatsappNumber = formatWhatsappNumber(selectedBranch?.whatsapp_number, restaurant?.country_code);
-      whatsappUrl = buildWhatsappUrl(newWhatsappNumber, message);
-    }
+    const whatsappPhone = selectedBranch?.whatsapp_number
+      ? formatWhatsappNumber(selectedBranch.whatsapp_number, restaurant?.country_code)
+      : restaurant.phone_number;
     //log order to database
     const simplifiedCart = cart.map(item => ({
       id: item.id,
@@ -205,7 +201,7 @@ export default function Order({ setblock, popupHandler, restaurant }) {
     )
 
     // Redirect to WhatsApp immediately (works on iOS WebView)
-    window.location.href = whatsappUrl;
+    openWhatsApp(whatsappPhone, message);
     dispatch(clearCart(restaurantName));
     setblock("cart");
     popupHandler(null);

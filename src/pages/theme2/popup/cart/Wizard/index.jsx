@@ -7,7 +7,7 @@ import { useAddOrderQuery } from "../../../../../apis/restaurants/addOrder";
 import { CUSTOMER_ME_URL } from "../../../../../apis/URLs";
 import { getCustomerAccessToken } from "../../../../../utilities/customerAuthStorage";
 import { convertPrice } from "../../../../../utilities/convertPrice";
-import { formatWhatsappNumber, buildWhatsappUrl } from "../../../../../utilities/formatWhatsappNumber";
+import { formatWhatsappNumber, openWhatsApp } from "../../../../../utilities/formatWhatsappNumber";
 import { formatCartItemOptionsForOrderMessage } from "../../../../../product-options/cartLabels";
 import { trackCheckoutStart, trackOrderPlaced } from "../../../../../utilities/analyticsTracking";
 import CartStep from "./CartStep";
@@ -254,15 +254,9 @@ export default function Wizard({ popupHandler, restaurant }) {
       message += `\n${mapLink}\n`;
     }
 
-    let whatsappUrl = "";
-    let newWhatsappNumber = "";
-
-    if (!formData.selectedBranch?.whatsapp_number) {
-      whatsappUrl = buildWhatsappUrl(restaurant.phone_number, message);
-    } else {
-      newWhatsappNumber = formatWhatsappNumber(formData.selectedBranch?.whatsapp_number, restaurant?.country_code);
-      whatsappUrl = buildWhatsappUrl(newWhatsappNumber, message);
-    }
+    const whatsappPhone = formData.selectedBranch?.whatsapp_number
+      ? formatWhatsappNumber(formData.selectedBranch.whatsapp_number, restaurant?.country_code)
+      : restaurant.phone_number;
 
     // Log order to database (simplified for analytics)
     const simplifiedCart = cart.map((item) => ({
@@ -326,8 +320,8 @@ export default function Wizard({ popupHandler, restaurant }) {
       }
     }).catch((e) => console.error("Order creation failed:", e));
 
-    // Redirect to WhatsApp immediately (works on iOS WebView)
-    window.location.href = whatsappUrl;
+    // Open WhatsApp directly (deep link with fallback)
+    openWhatsApp(whatsappPhone, message);
     dispatch(clearCart(restaurantName));
     popupHandler(null);
   };

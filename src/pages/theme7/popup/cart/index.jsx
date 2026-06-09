@@ -7,7 +7,7 @@ import { useAddOrderQuery } from "../../../../apis/restaurants/addOrder";
 import { trackOrderPlaced } from "../../../../utilities/analyticsTracking";
 import { convertPrice } from "../../../../utilities/convertPrice";
 import { formatCartItemOptionsForOrderMessage } from "../../../../product-options/cartLabels";
-import { buildWhatsappUrl } from "../../../../utilities/formatWhatsappNumber";
+import { openWhatsApp } from "../../../../utilities/formatWhatsappNumber";
 
 const STORAGE_URL = "https://storage.googleapis.com/ecommerce-bucket-testing/";
 
@@ -150,7 +150,6 @@ export default function CartPopup({
 
   const sendWhatsApp = async () => {
     let msg = buildWhatsAppMessage();
-    const whatsappUrl = buildWhatsappUrl(whatsappNumber, msg);
 
     // Prepare order data for database
     const simplifiedCart = cart.map((item) => ({
@@ -214,7 +213,7 @@ export default function CartPopup({
     }).catch((e) => console.error("Order creation failed:", e));
 
     // Redirect to WhatsApp immediately (works on iOS WebView)
-    window.location.href = whatsappUrl;
+    openWhatsApp(whatsappNumber, msg);
     dispatch(clearCart(restaurantName));
     popupHandler(null);
   };
