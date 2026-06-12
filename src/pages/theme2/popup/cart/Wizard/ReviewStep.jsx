@@ -3,6 +3,7 @@ import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import { convertPrice } from "../../../../../utilities/convertPrice";
 import { getImageUrl } from "../../../../../utilities/imageUrl";
+import { getCurrencySymbol } from "../../../../../utilities/getCurrencySymbol";
 import {
   ReviewContainer,
   ReviewSection,
@@ -33,23 +34,7 @@ export default function ReviewStep({ formData, restaurant, activeLanguage }) {
     return total + item.price * item.quantity;
   }, 0);
 
-  let currencySymbol = "";
-  switch (restaurant?.currency) {
-    case "dollar":
-      currencySymbol = "$";
-      break;
-    case "lb":
-      currencySymbol = "L.L.";
-      break;
-    case "gram":
-      currencySymbol = "g";
-      break;
-    case "kilogram":
-      currencySymbol = "kg";
-      break;
-    default:
-      currencySymbol = "";
-  }
+  const currencySymbol = getCurrencySymbol(restaurant?.currency);
 
   return (
     <ReviewContainer>

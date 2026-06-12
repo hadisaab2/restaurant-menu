@@ -18,6 +18,7 @@ import { useAddOrderQuery } from "../../../../../apis/restaurants/addOrder";
 import { convertPrice } from "../../../../../utilities/convertPrice";
 import { formatCartItemOptionsForOrderMessage } from "../../../../../product-options/cartLabels";
 import { formatWhatsappNumber, openWhatsApp } from "../../../../../utilities/formatWhatsappNumber";
+import { getCurrencySymbol } from "../../../../../utilities/getCurrencySymbol";
 
 export default function Order({ setblock, popupHandler, restaurant }) {
   const { restaurantName: paramRestaurantName } = useParams();
@@ -72,23 +73,7 @@ export default function Order({ setblock, popupHandler, restaurant }) {
     });
   };
 
-  let currencySymbol;
-  switch (restaurant?.currency) {
-    case "dollar":
-      currencySymbol = "$";
-      break;
-    case "lb":
-      currencySymbol = "L.L.";
-      break;
-    case "gram":
-      currencySymbol = "g";
-      break;
-    case "kilogram":
-      currencySymbol = "kg";
-      break;
-    default:
-      currencySymbol = ""; // No currency or unsupported currency
-  }
+  const currencySymbol = getCurrencySymbol(restaurant?.currency);
 
 //   const openWhatsApp = (url) => {
 //  const w = window.open(url, "_blank", "noopener,noreferrer");

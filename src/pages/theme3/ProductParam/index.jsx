@@ -21,6 +21,7 @@ import { TiTick } from 'react-icons/ti';
 import { useLogProduct } from '../../../apis/products/logProduct';
 import { convertPrice } from '../../../utilities/convertPrice';
 import { getImageUrl } from '../../../utilities/imageUrl';
+import { getCurrencySymbol } from "../../../utilities/getCurrencySymbol";
 
 export default function ProductParam({ productId, setSearchParams, searchParams }) {
     const { restaurantName: paramRestaurantName } = useParams();
@@ -348,23 +349,7 @@ export default function ProductParam({ productId, setSearchParams, searchParams 
             ? fetchedProduct?.en_description
             : fetchedProduct?.ar_description;
 
-    let currencySymbol;
-    switch (restaurant?.currency) {
-        case "dollar":
-            currencySymbol = "$";
-            break;
-        case "lb":
-            currencySymbol = "L.L.";
-            break;
-        case "gram":
-            currencySymbol = "g";
-            break;
-        case "kilogram":
-            currencySymbol = "kg";
-            break;
-        default:
-            currencySymbol = ""; // No currency or unsupported currency
-    }
+    const currencySymbol = getCurrencySymbol(restaurant?.currency);
 
 
 

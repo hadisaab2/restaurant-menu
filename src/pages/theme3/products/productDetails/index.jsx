@@ -68,6 +68,7 @@ import { useLogProduct } from "../../../../apis/products/logProduct";
 import { convertPrice } from "../../../../utilities/convertPrice";
 import { getImageUrl } from "../../../../utilities/imageUrl";
 import { toast } from "react-toastify";
+import { getCurrencySymbol } from "../../../../utilities/getCurrencySymbol";
 
 const _ = require('lodash');
 
@@ -505,23 +506,7 @@ export default function ProductDetails({
     ? rawDescription.replace(/<br\s*\/?>/gi, '')
     : '';
 
-  let currencySymbol;
-  switch (restaurant?.currency) {
-    case "dollar":
-      currencySymbol = "$";
-      break;
-    case "lb":
-      currencySymbol = "L.L.";
-      break;
-    case "gram":
-      currencySymbol = "g";
-      break;
-    case "kilogram":
-      currencySymbol = "kg";
-      break;
-    default:
-      currencySymbol = ""; // No currency or unsupported currency
-  }
+  const currencySymbol = getCurrencySymbol(restaurant?.currency);
 
   let features = JSON.parse(restaurant.features)
   const isOutOfStock =

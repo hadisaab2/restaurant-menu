@@ -31,6 +31,7 @@ import { IoHeartOutline } from "react-icons/io5";
 import { FaCartPlus } from "react-icons/fa";
 import { toast } from "react-toastify";
 import { trackItemView, trackAddToCart } from "../../../../utilities/analyticsTracking";
+import { getCurrencySymbol } from "../../../../utilities/getCurrencySymbol";
 const _ = require('lodash');
 
 const WishlistHeartIcon = IoHeartOutline;
@@ -112,23 +113,7 @@ const Product = React.forwardRef(
     const customerToken = getCustomerAccessToken(restaurantName);
     const inWishlist =
       wishlistIds && typeof wishlistIds.has === "function" && wishlistIds.has(plate.id);
-    let currencySymbol;
-    switch (restaurant?.currency) {
-      case "dollar":
-        currencySymbol = "$";
-        break;
-      case "lb":
-        currencySymbol = "L.L.";
-        break;
-      case "gram":
-        currencySymbol = "g";
-        break;
-      case "kilogram":
-        currencySymbol = "kg";
-        break;
-      default:
-        currencySymbol = ""; // No currency or unsupported currency
-    }
+    const currencySymbol = getCurrencySymbol(restaurant?.currency);
 
     // If activeCategoryId is "all-items", use the product's actual category_id
     const categoryIdToUse = activeCategoryId === "all-items" ? plate.category_id : activeCategoryId;

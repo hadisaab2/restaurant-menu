@@ -36,6 +36,7 @@ import {
 } from './styles';
 import { convertPrice } from '../../../../../utilities/convertPrice';
 import { cartItemFormDataToLines } from '../../../../../product-options/cartLabels';
+import { getCurrencySymbol } from "../../../../../utilities/getCurrencySymbol";
 
 /* ─── helpers ─── */
 const SIZE_HEADINGS   = ["Size:", "الحجم:"];
@@ -89,14 +90,7 @@ export default function CartItems({ setblock }) {
     if (qty > 1) dispatch(adjustQuantity(restaurantName, uid, qty - 1));
   };
 
-  let currencySymbol = "";
-  switch (restaurant?.currency) {
-    case "dollar":   currencySymbol = "$";    break;
-    case "lb":       currencySymbol = "L.L."; break;
-    case "gram":     currencySymbol = "g";    break;
-    case "kilogram": currencySymbol = "kg";   break;
-    default:         currencySymbol = "";
-  }
+  const currencySymbol = getCurrencySymbol(restaurant?.currency);
 
   const renderCustomizations = (item) => {
     const blocks = cartItemFormDataToLines(item, lang);

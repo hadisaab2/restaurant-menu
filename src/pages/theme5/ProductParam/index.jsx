@@ -32,6 +32,7 @@ import { EffectCards, Pagination } from 'swiper/modules';
 import 'swiper/css';
 import 'swiper/css/effect-cards';
 import 'swiper/css/pagination';
+import { getCurrencySymbol } from "../../../utilities/getCurrencySymbol";
 
 export default function ProductParam({ productId, setSearchParams, searchParams }) {
     const { menuMode } = useMenuMode();
@@ -367,23 +368,7 @@ export default function ProductParam({ productId, setSearchParams, searchParams 
             ? fetchedProduct?.en_description
             : fetchedProduct?.ar_description;
 
-    let currencySymbol;
-    switch (restaurant?.currency) {
-        case "dollar":
-            currencySymbol = "$";
-            break;
-        case "lb":
-            currencySymbol = "L.L.";
-            break;
-        case "gram":
-            currencySymbol = "g";
-            break;
-        case "kilogram":
-            currencySymbol = "kg";
-            break;
-        default:
-            currencySymbol = ""; // No currency or unsupported currency
-    }
+    const currencySymbol = getCurrencySymbol(restaurant?.currency);
 
     const carouselStyle = restaurant?.product_details_carousel_style || "normal";
 

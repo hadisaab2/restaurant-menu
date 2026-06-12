@@ -62,6 +62,7 @@ import { EffectCards, Pagination } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/effect-cards";
 import "swiper/css/pagination";
+import { getCurrencySymbol } from "../../../../utilities/getCurrencySymbol";
 
 const _ = require('lodash');
 
@@ -402,23 +403,7 @@ export default function ProductDetails({
       ? plates[activePlate]?.en_description
       : plates[activePlate]?.ar_description;
 
-  let currencySymbol;
-  switch (restaurant?.currency) {
-    case "dollar":
-      currencySymbol = "$";
-      break;
-    case "lb":
-      currencySymbol = "L.L.";
-      break;
-    case "gram":
-      currencySymbol = "g";
-      break;
-    case "kilogram":
-      currencySymbol = "kg";
-      break;
-    default:
-      currencySymbol = ""; // No currency or unsupported currency
-  }
+  const currencySymbol = getCurrencySymbol(restaurant?.currency);
 
   let features = JSON.parse(restaurant.features)
   const isOutOfStock =

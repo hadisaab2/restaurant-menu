@@ -14,6 +14,7 @@ import CartStep from "./CartStep";
 import OrderTypeStep from "./OrderTypeStep";
 import DetailsStep from "./DetailsStep";
 import ReviewStep from "./ReviewStep";
+import { getCurrencySymbol } from "../../../../../utilities/getCurrencySymbol";
 import {
   WizardContainer,
   ProgressBar,
@@ -194,13 +195,7 @@ export default function Wizard({ popupHandler, restaurant }) {
     if (!validateStep(2)) return;
 
     // Generate WhatsApp message
-    let currencySymbol = "";
-    switch (restaurant?.currency) {
-      case "dollar": currencySymbol = "$"; break;
-      case "lb": currencySymbol = "L.L."; break;
-      case "gram": currencySymbol = "g"; break;
-      case "kilogram": currencySymbol = "kg"; break;
-    }
+    const currencySymbol = getCurrencySymbol(restaurant?.currency);
 
     let totalPrice = 0;
     let message = ``;

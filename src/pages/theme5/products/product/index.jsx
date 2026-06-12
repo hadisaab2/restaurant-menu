@@ -18,6 +18,7 @@ import { useSelector } from "react-redux";
 import { convertPrice } from "../../../../utilities/convertPrice";
 import { getImageUrl } from "../../../../utilities/imageUrl";
 import { getEffectivePrice } from "../../utils/priceUtils";
+import { getCurrencySymbol } from "../../../../utilities/getCurrencySymbol";
 const _ = require('lodash');
 
 const Product = React.forwardRef(
@@ -59,23 +60,7 @@ const Product = React.forwardRef(
         document.body.style.overflow = "hidden";
       }
     };
-    let currencySymbol;
-    switch (restaurant?.currency) {
-      case "dollar":
-        currencySymbol = "$";
-        break;
-      case "lb":
-        currencySymbol = "L.L.";
-        break;
-      case "gram":
-        currencySymbol = "g";
-        break;
-      case "kilogram":
-        currencySymbol = "kg";
-        break;
-      default:
-        currencySymbol = ""; // No currency or unsupported currency
-    }
+    const currencySymbol = getCurrencySymbol(restaurant?.currency);
 
     const activeCategory = categories.find((category) => category.id == activeCategoryId)
 

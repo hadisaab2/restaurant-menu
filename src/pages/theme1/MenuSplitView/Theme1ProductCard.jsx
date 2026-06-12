@@ -33,6 +33,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { trackItemView, trackAddToCart } from "../../../utilities/analyticsTracking";
 import { productNeedsOptionsDialog } from "../../../product-options/resolveOptions";
 import { getImageUrl } from "../../../utilities/imageUrl";
+import { getCurrencySymbol } from "../../../utilities/getCurrencySymbol";
 
 function Theme1ProductCard({
   plate,
@@ -66,23 +67,7 @@ function Theme1ProductCard({
     finalDiscount = parseFloat(plate.discount || 0);
   }
 
-  let currencySymbol = "";
-  switch (restaurant?.currency) {
-    case "dollar":
-      currencySymbol = "$";
-      break;
-    case "lb":
-      currencySymbol = "L.L.";
-      break;
-    case "gram":
-      currencySymbol = "g";
-      break;
-    case "kilogram":
-      currencySymbol = "kg";
-      break;
-    default:
-      currencySymbol = "";
-  }
+  const currencySymbol = getCurrencySymbol(restaurant?.currency);
 
   const isOutOfStock =
     Boolean(plate?.out_of_stock) || Number(plate?.out_of_stock) === 1;

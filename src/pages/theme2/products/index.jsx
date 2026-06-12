@@ -12,6 +12,7 @@ import { FaCartPlus } from "react-icons/fa";
 import { toast } from "react-toastify";
 import { convertPrice } from "../../../utilities/convertPrice";
 import { getImageUrl } from "../../../utilities/imageUrl";
+import { getCurrencySymbol } from "../../../utilities/getCurrencySymbol";
 const _ = require('lodash');
 
 export default function Products({
@@ -301,14 +302,7 @@ console.log(filteredProducts)
                     const discountedPrice = finalDiscount !== 0.00 
                       ? parseFloat(plate.en_price) * (1 - parseFloat(finalDiscount) / 100) 
                       : parseFloat(plate.en_price);
-                    let currencySymbol;
-                    switch (restaurant?.currency) {
-                      case "dollar": currencySymbol = "$"; break;
-                      case "lb": currencySymbol = "L.L."; break;
-                      case "gram": currencySymbol = "g"; break;
-                      case "kilogram": currencySymbol = "kg"; break;
-                      default: currencySymbol = "";
-                    }
+                    const currencySymbol = getCurrencySymbol(restaurant?.currency);
                     const coverIndex = plate.images?.findIndex(img => img.id == plate.new_cover_id) ?? 0;
                     const imageUrl = plate.images?.[coverIndex]?.url;
                     const features = JSON.parse(restaurant?.features || "{}");
