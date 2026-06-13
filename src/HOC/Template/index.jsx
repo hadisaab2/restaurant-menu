@@ -18,6 +18,7 @@ const Theme4 = lazy(() => import("../../pages/theme4"));
 const Theme5 = lazy(() => import("../../pages/theme5"));
 const Theme6 = lazy(() => import("../../pages/theme6"));
 const Theme7 = lazy(() => import("../../pages/theme7"));
+const Theme8 = lazy(() => import("../../pages/theme8"));
 const Theme3NotSubscribed = lazy(() => import("../../pages/theme3/NotSubscribed"));
 
 
@@ -158,6 +159,7 @@ export default function Template() {
           {restaurant?.template_id == 5 && <Theme5 />}
           {restaurant?.template_id == 6 && <Theme6 />}
           {restaurant?.template_id == 7 && <Theme7 />}
+          {restaurant?.template_id == 8 && <Theme8 />}
         </Suspense>
        </ThemeProvider>
        }

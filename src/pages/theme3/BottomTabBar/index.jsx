@@ -15,6 +15,7 @@ export default function BottomTabBar({
   showPopup = null,
   onHomeClick,
   hideHome = false,
+  hideCategories = false,
   onCategoriesClick,
   onCartClick,
   onContactClick,
@@ -84,6 +85,7 @@ export default function BottomTabBar({
     },
   ].filter(tab => {
     if (hideHome && tab.id === "home") return false;
+    if (hideCategories && tab.id === "categories") return false;
     if (tab.id === "branches") return branches && branches.length > 0;
     if (tab.id === "feedback") return _features.feedback === true;
     return true;

@@ -702,6 +702,7 @@ export default function Restaurants() {
     setValue("is_paid", !!is_paid);
     setValue("google_maps_api_key", google_maps_api_key || "");
     setValue("country_code", country_code || "961");
+    setValue("features.landing_columns", features?.landing_columns || 3);
 
     // Set theme colors in form: for the current template, set every color from DB or default
     const templateConfig = templates.find((t) => t.id == template_id);
@@ -1310,6 +1311,22 @@ export default function Restaurants() {
                 </Select>
               </FormControl>
             </Box>
+            {Number(getValues("template_id")) === 8 && (
+              <Box sx={{ mb: 2 }}>
+                <FormControl fullWidth>
+                  <InputLabel>Landing Categories Per Row</InputLabel>
+                  <Select
+                    label="Landing Categories Per Row"
+                    {...register("features.landing_columns")}
+                    defaultValue={selectedProduct?.features?.landing_columns || 3}
+                  >
+                    <MenuItem value={1}>1 per row</MenuItem>
+                    <MenuItem value={2}>2 per row</MenuItem>
+                    <MenuItem value={3}>3 per row</MenuItem>
+                  </Select>
+                </FormControl>
+              </Box>
+            )}
             <FormControl component="fieldset">
               <FormLabel component="legend">Square Dimension</FormLabel>
               <FormControlLabel

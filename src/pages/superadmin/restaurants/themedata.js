@@ -183,6 +183,15 @@ export const templates = [
     hasShopMode: false,
     hasSections: false,
   },
+  {
+    id: 8,
+    name: "Landing + Categories",
+    description: "Landing page with slider, category grid, then product browsing",
+    colorGroups: ["general", "categories", "products", "navigation", "popups", "bottomBar"],
+    hasHomePage: false,
+    hasShopMode: false,
+    hasSections: false,
+  },
 ];
 
 // ── Helpers ──

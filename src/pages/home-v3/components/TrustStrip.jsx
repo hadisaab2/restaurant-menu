@@ -78,7 +78,7 @@ export default function TrustStrip() {
               className="text-center"
             >
               <div className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-[#5700FF] to-[#8B5CF6] bg-clip-text text-transparent">
-                <AnimatedNumber value={s.value.replace(/[^0-9]/g, "")} suffix={s.value.replace(/[0-9]/g, "")} />
+                <AnimatedNumber value={String(s.target || s.value || "0").replace(/[^0-9]/g, "")} suffix={s.suffix || String(s.value || "").replace(/[0-9]/g, "")} />
               </div>
               <div className="text-xs md:text-sm text-apple-muted mt-1">{s.label}</div>
             </motion.div>
