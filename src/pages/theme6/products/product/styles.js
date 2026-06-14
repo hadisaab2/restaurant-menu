@@ -164,3 +164,25 @@ export const LoaderWrapper = styled.div`
   background-color: ${(props) => props.theme.categoryUnActive || "#f0f0f0"};
   border-radius: 22px 22px 0 0;
 `;
+
+export const WishlistHeartBtn = styled.button`
+  position: absolute;
+  bottom: 8px;
+  left: ${(props) => (props.activeLanuguage === "en" ? "8px" : "auto")};
+  right: ${(props) => (props.activeLanuguage === "en" ? "auto" : "8px")};
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 0;
+  background-color: rgba(255, 255, 255, 0.95);
+  color: ${(props) => (props.$filled ? "#e11d48" : props.theme.BoxTextColor || "#333")};
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 5;
+  transition: transform 0.2s ease, color 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12);
+  &:hover { transform: scale(1.08); }
+  &:active { transform: scale(0.95); }
+`;

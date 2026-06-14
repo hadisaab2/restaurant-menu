@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import axios from "axios";
 import {
   Container,
   DiscountPrice,
@@ -12,17 +13,21 @@ import {
   PriceContainer,
   TextContainer,
   Wrapper,
+  WishlistHeartBtn,
 } from "./styles";
 import { useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { convertPrice } from "../../../../utilities/convertPrice";
 import { getImageUrl } from "../../../../utilities/imageUrl";
 import { getEffectivePrice } from "../../utils/priceUtils";
+import { CUSTOMER_WISHLIST_URL, CUSTOMER_WISHLIST_PRODUCT_URL } from "../../../../apis/URLs";
+import { getCustomerAccessToken } from "../../../../utilities/customerAuthStorage";
+import { IoHeartOutline } from "react-icons/io5";
 import { getCurrencySymbol } from "../../../../utilities/getCurrencySymbol";
 const _ = require('lodash');
 
 const Product = React.forwardRef(
-  ({ plate, setactivePlate, activePlate, index, showPopup, setSearchParams, searchParams, activeCategoryId, categories, disableDetails, menuMode }, ref) => {
+  ({ plate, setactivePlate, activePlate, index, showPopup, setSearchParams, searchParams, activeCategoryId, categories, disableDetails, menuMode, wishlistIds, onWishlistChange }, ref) => {
     const { restaurantName: paramRestaurantName } = useParams();
 
     const hostname = window.location.hostname;
@@ -61,6 +66,29 @@ const Product = React.forwardRef(
       }
     };
     const currencySymbol = getCurrencySymbol(restaurant?.currency);
+    const customerToken = getCustomerAccessToken(restaurantName);
+    const inWishlist = wishlistIds && typeof wishlistIds.has === "function" && wishlistIds.has(plate.id);
+
+    const handleWishlistClick = (event) => {
+      if (event) { event.preventDefault(); event.stopPropagation(); }
+      if (!customerToken || !plate?.id) return;
+      (async () => {
+        try {
+          if (inWishlist) {
+            await axios.delete(CUSTOMER_WISHLIST_PRODUCT_URL(plate.id), {
+              headers: { Authorization: `Bearer ${customerToken}` },
+            });
+          } else {
+            await axios.post(CUSTOMER_WISHLIST_URL, { product_id: plate.id }, {
+              headers: { Authorization: `Bearer ${customerToken}` },
+            });
+          }
+          onWishlistChange?.();
+        } catch (err) {
+          console.error("Wishlist error:", err);
+        }
+      })();
+    };
 
     const activeCategory = categories.find((category) => category.id == activeCategoryId)
 
@@ -99,6 +127,18 @@ const imageSrc = hasValidImage
               src={imageSrc}
               imageLoaded={imageLoaded}
             />
+            {customerToken && (
+              <WishlistHeartBtn
+                type="button"
+                activeLanuguage={restaurant?.activeLanguage}
+                $filled={inWishlist}
+                onClick={handleWishlistClick}
+                onMouseDown={(e) => { e.stopPropagation(); e.preventDefault(); }}
+                onTouchStart={(e) => e.stopPropagation()}
+              >
+                <IoHeartOutline size={16} />
+              </WishlistHeartBtn>
+            )}
           </ImageContainer>
           <TextContainer activeLanuguage={restaurant?.activeLanguage}>
             <PlateName fontSize={restaurant?.font_size}>

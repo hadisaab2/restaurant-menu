@@ -1,4 +1,5 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, useCallback } from "react";
+import axios from "axios";
 import { Container, ProductWrapper } from "./styles";
 import * as AllStyles from "./allItemsStyles";
 import Product from "./product";
@@ -8,6 +9,8 @@ import { useParams, useSearchParams } from "react-router-dom";
 import { useGetProducts } from "../../../apis/products/getProductsByCategory";
 import { useGetProductsByRestaurant } from "../../../apis/products/getProductsByRestaurant";
 import { addToCart } from "../../../redux/cart/cartActions";
+import { CUSTOMER_WISHLIST_URL } from "../../../apis/URLs";
+import { getCustomerAccessToken } from "../../../utilities/customerAuthStorage";
 import { FaCartPlus } from "react-icons/fa";
 import { toast } from "react-toastify";
 import { convertPrice } from "../../../utilities/convertPrice";
@@ -45,6 +48,22 @@ export default function Products({
     (state) => state.restaurant?.[restaurantName]
   );
   const dispatch = useDispatch();
+
+  const [wishlistIds, setWishlistIds] = useState(() => new Set());
+
+  const refreshWishlist = useCallback(async () => {
+    const tok = getCustomerAccessToken(restaurantName);
+    if (!tok) { setWishlistIds(new Set()); return; }
+    try {
+      const { data } = await axios.get(CUSTOMER_WISHLIST_URL, {
+        headers: { Authorization: `Bearer ${tok}` },
+      });
+      const ids = (Array.isArray(data) ? data : []).map((p) => p.id);
+      setWishlistIds(new Set(ids));
+    } catch { setWishlistIds(new Set()); }
+  }, [restaurantName]);
+
+  useEffect(() => { refreshWishlist(); }, [refreshWishlist]);
 
   const [productPositions, setProductPositions] = useState([]); // x y and width of product
   const [productRefs, setProductRefs] = useState([]);
@@ -421,6 +440,8 @@ console.log(filteredProducts)
                       categories={categories}
                       disableDetails={false}
                       menuMode={menuMode}
+                      wishlistIds={wishlistIds}
+                      onWishlistChange={refreshWishlist}
                     />
                   ))}
                 </ProductWrapper>
@@ -460,6 +481,8 @@ console.log(filteredProducts)
                           activeCategoryId={activeCategory}
                           categories={categories}
                           menuMode={menuMode}
+                          wishlistIds={wishlistIds}
+                          onWishlistChange={refreshWishlist}
                         />
                       );
                     })}

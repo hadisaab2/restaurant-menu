@@ -55,7 +55,8 @@ export default function RestaurantDash() {
     setUserInformation(JSON.parse(storedUserInfo));
   }, []);
 
-  const isTheme3Or4 = Number(userInformation?.template_id) === 3 || Number(userInformation?.template_id) === 4;
+  // All themes now have access to VIP features when enabled from superadmin
+  const isTheme3Or4 = true;
   const isFeedbacksSection = section === "Feedbacks";
   const isQuestionsSection = section === "QuestionsSuggestions";
   const isOrdersSection = section === "Orders";
