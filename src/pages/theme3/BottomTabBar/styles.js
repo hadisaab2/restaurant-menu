@@ -6,7 +6,9 @@ export const TabBarContainer = styled.nav`
   left: 0;
   right: 0;
   width: 100%;
-  height: 70px;
+  height: auto;
+  min-height: 56px;
+  padding-bottom: max(8px, env(safe-area-inset-bottom, 8px));
   background: ${(props) => props.theme?.bottomTabBarBackgroundColor || props.theme?.navigationBarBackgroundColor || props.theme?.backgroundColor || "#ffffff"};
   border-top: 1px solid ${(props) => props.theme?.mainColor ? `${props.theme.mainColor}20` : "rgba(0, 0, 0, 0.1)"};
   display: flex;

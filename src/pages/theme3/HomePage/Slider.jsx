@@ -46,21 +46,16 @@ export default function Slider({ images, activeLanguage }) {
             setActiveIndex(swiper.realIndex);
           }}
           modules={[Autoplay]}
-          slidesPerView={1.2}
+          slidesPerView={1.06}
           spaceBetween={10}
-          loop={totalSlides > 1}
+          loop={true}
+          loopAdditionalSlides={2}
           grabCursor
-          speed={400}
-          autoplay={
-            totalSlides > 1
-              ? { delay: 5000, disableOnInteraction: false }
-              : false
-          }
-          breakpoints={{
-            576: { slidesPerView: 1.5, spaceBetween: 10 },
-            768: { slidesPerView: 2, spaceBetween: 10 },
-            992: { slidesPerView: 2.5, spaceBetween: 10 },
-            1200: { slidesPerView: 3, spaceBetween: 10 },
+          speed={800}
+          autoplay={{
+            delay: 3500,
+            disableOnInteraction: false,
+            pauseOnMouseEnter: true,
           }}
           className="home-banner-swiper tag-group recomand-swiper"
         >

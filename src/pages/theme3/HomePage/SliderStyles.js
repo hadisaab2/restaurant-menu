@@ -23,50 +23,31 @@ const scaleIn = keyframes`
 export const SliderContainer = styled.div`
   width: 100%;
   position: relative;
-  padding: 24px 0 44px 0;
+  padding: 12px 0 8px 0;
   background: ${props => props.theme.backgroundColor || "transparent"};
-  
-  @media (max-width: 768px) {
-    padding: 20px 0 0px 0;
-  }
 `;
 
-/* Wrapper: swiper-btn-center-lr1 style (centered L/R arrows) */
+/* Wrapper */
 export const SwiperWrap = styled.div`
   width: 100%;
   overflow: hidden;
-  padding: 10px 0;
-  margin-bottom: 10px;
+  padding: 0;
+  margin-bottom: 6px;
   position: relative;
-  
+
   .home-banner-swiper {
     overflow: hidden;
-    padding: 0 8px;
+    padding: 0 12px;
   }
-  
+
   .home-banner-swiper .swiper-wrapper {
     align-items: stretch;
   }
-  
+
   .home-banner-swiper .swiper-slide {
     height: auto;
     display: flex;
     box-sizing: border-box;
-    width: auto;
-  }
-  
-  @media (min-width: 768px) {
-    padding: 8px 0;
-    .home-banner-swiper {
-      padding: 0 12px;
-    }
-  }
-  
-  @media (min-width: 1200px) {
-    padding: 12px 0;
-    .home-banner-swiper {
-      padding: 0 16px;
-    }
   }
 `;
 
@@ -108,7 +89,7 @@ export const SliderTrack = styled.div`
 export const SlideCard = styled.div`
   width: 100%;
   height: 100%;
-  min-height: 160px;
+  min-height: 260px;
   position: relative;
   border-radius: 16px;
   overflow: hidden;
@@ -116,26 +97,21 @@ export const SlideCard = styled.div`
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transition: box-shadow 0.3s ease;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
-  
-  &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
-  }
-  
+
   @media (max-width: 767px) {
-    min-height: 140px;
-    border-radius: 12px;
+    min-height: 240px;
+    border-radius: 14px;
   }
-  
+
   @media (min-width: 768px) {
-    min-height: 180px;
+    min-height: 300px;
   }
-  
+
   @media (min-width: 1200px) {
-    min-height: 200px;
-    border-radius: 20px;
+    min-height: 340px;
+    border-radius: 18px;
   }
 `;
 
@@ -146,7 +122,12 @@ export const CardBody = styled.div`
   align-items: flex-end;
   padding: 16px;
   pointer-events: none;
-  
+  background: linear-gradient(
+    180deg,
+    transparent 40%,
+    rgba(0, 0, 0, 0.35) 100%
+  );
+
   @media (min-width: 1200px) {
     padding: 20px;
   }
