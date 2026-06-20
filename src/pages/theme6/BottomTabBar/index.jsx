@@ -1,6 +1,7 @@
 import React from "react";
 import { TabBar, Tab, TabIconWrap, TabLabel, CartBadge } from "./styles";
 import { MdRestaurantMenu, MdSearch, MdShoppingBag, MdMoreHoriz } from "react-icons/md";
+import useBrowserBottomOffset from "../../../utilities/useBrowserBottomOffset";
 
 export default function BottomTabBar({
   activeTab,
@@ -13,9 +14,10 @@ export default function BottomTabBar({
   cartEnabled,
 }) {
   const isRtl = activeLanguage === "ar";
+  const bottomOffset = useBrowserBottomOffset();
 
   return (
-    <TabBar dir={isRtl ? "rtl" : "ltr"} role="navigation" aria-label="Main navigation">
+    <TabBar dir={isRtl ? "rtl" : "ltr"} role="navigation" aria-label="Main navigation" style={bottomOffset > 0 ? { bottom: `${bottomOffset}px` } : undefined}>
       <Tab active={activeTab === "menu"} onClick={onMenuClick} aria-label={isRtl ? "القائمة" : "Menu"}>
         <TabIconWrap active={activeTab === "menu"}>
           <MdRestaurantMenu size={22} />

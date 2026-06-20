@@ -14,6 +14,7 @@ import ErrorLogs from "./errorLogs";
 import TemplateManager from "./templateManager";
 import ColorThemeManager from "./colorThemeManager";
 import Monitoring from "./monitoring";
+import Prospects from "./prospects";
 
 export default function SuperAdmin() {
   const [activeTab, setActiveTab] = useState("Restaurants");
@@ -70,6 +71,13 @@ export default function SuperAdmin() {
         >
           Monitoring
         </Tab>
+        <Tab
+          onClick={() => setActiveTab("Prospects")}
+          activeTab={activeTab}
+          tab="Prospects"
+        >
+          Prospects
+        </Tab>
       </TabsContainer>
 
       <ContentArea>
@@ -79,6 +87,7 @@ export default function SuperAdmin() {
         {activeTab === "Templates" && <TemplateManager />}
         {activeTab === "Color Themes" && <ColorThemeManager />}
         {activeTab === "Monitoring" && <Monitoring />}
+        {activeTab === "Prospects" && <Prospects />}
       </ContentArea>
     </Container>
   );

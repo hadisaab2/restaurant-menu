@@ -9,6 +9,7 @@ import {
 import { FaHome, FaTh, FaShoppingCart, FaCommentAlt, FaMapMarkerAlt, FaGlobe } from "react-icons/fa";
 import { useSelector, useDispatch } from "react-redux";
 import { changelanuage } from "../../../redux/restaurant/restaurantActions";
+import useBrowserBottomOffset from "../../../utilities/useBrowserBottomOffset";
 
 export default function BottomTabBar({
   activeView,
@@ -24,6 +25,7 @@ export default function BottomTabBar({
   isProductDetailsOpen = false,
 }) {
   const dispatch = useDispatch();
+  const bottomOffset = useBrowserBottomOffset();
   const activeLanguage = useSelector(
     (state) => state.restaurant?.[restaurantName]?.activeLanguage || "en"
   );
@@ -85,7 +87,7 @@ export default function BottomTabBar({
   const showLanguageChanger = restaurant?.languages === "en&ar";
 
   return (
-    <TabBarContainer data-tab-bar $isProductDetailsOpen={isProductDetailsOpen}>
+    <TabBarContainer data-tab-bar $isProductDetailsOpen={isProductDetailsOpen} style={bottomOffset > 0 ? { bottom: `${bottomOffset}px` } : undefined}>
       {tabs.map((tab) => (
         <TabItem
           key={tab.id}
