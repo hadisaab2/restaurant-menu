@@ -15,6 +15,8 @@ import OrderTypeStep from "./OrderTypeStep";
 import DetailsStep from "./DetailsStep";
 import ReviewStep from "./ReviewStep";
 import { getCurrencySymbol } from "../../../../../utilities/getCurrencySymbol";
+import PaymentMethodStep from "../../../../../components/PaymentMethodStep";
+import StripeCardForm from "../../../../../components/StripeCardForm";
 import {
   WizardContainer,
   ProgressBar,
@@ -28,13 +30,6 @@ import {
   StepTitleText,
   StepCloseButton,
 } from "./styles";
-
-const STEPS = [
-  { id: "cart", label: "Cart", number: 1 },
-  { id: "orderType", label: "Order Type", number: 2 },
-  { id: "details", label: "Details", number: 3 },
-  { id: "review", label: "Review", number: 4 },
-];
 
 export default function Wizard({ popupHandler, restaurant }) {
   const { restaurantName: paramRestaurantName } = useParams();
@@ -66,6 +61,29 @@ export default function Wizard({ popupHandler, restaurant }) {
     note: "",
   });
   const [errors, setErrors] = useState({});
+  const [paymentMethod, setPaymentMethod] = useState("whatsapp");
+  const [clientSecret, setClientSecret] = useState(null);
+  const [paymentSuccess, setPaymentSuccess] = useState(false);
+
+  // Parse features for payment
+  let features = {};
+  try { features = JSON.parse(restaurant?.features || "{}"); } catch { features = {}; }
+  const hasOnlinePayment = features.online_payment === true;
+
+  const STEPS = hasOnlinePayment
+    ? [
+        { id: "cart", label: "Cart", number: 1 },
+        { id: "orderType", label: "Order Type", number: 2 },
+        { id: "details", label: "Details", number: 3 },
+        { id: "payment", label: "Payment", number: 4 },
+        { id: "review", label: "Review", number: 5 },
+      ]
+    : [
+        { id: "cart", label: "Cart", number: 1 },
+        { id: "orderType", label: "Order Type", number: 2 },
+        { id: "details", label: "Details", number: 3 },
+        { id: "review", label: "Review", number: 4 },
+      ];
 
   const { handleApiCallAsync: handleAddOrderAsync, isPending } = useAddOrderQuery({
     onSuccess: () => {
@@ -191,13 +209,96 @@ export default function Wizard({ popupHandler, restaurant }) {
     }
   };
 
+  const currencySymbol = getCurrencySymbol(restaurant?.currency);
+  const totalPrice = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+
   const handleSubmit = async () => {
     if (!validateStep(2)) return;
 
-    // Generate WhatsApp message
-    const currencySymbol = getCurrencySymbol(restaurant?.currency);
+    // Prepare full order items (needed for all payment methods)
+    const fullOrderItems = cart.map((item) => ({
+      product_id: item.id,
+      product_name: activeLanguage === "en" ? item.en_name : item.ar_name,
+      quantity: item.quantity,
+      price: item.price,
+      total_price: item.price * item.quantity,
+      form_data: item.formData || {},
+      instruction: item.instruction || "",
+      product_details: {
+        en_name: item.en_name,
+        ar_name: item.ar_name,
+        en_price: item.en_price,
+        ar_price: item.ar_price,
+        category_id: item.category_id,
+      },
+    }));
 
-    let totalPrice = 0;
+    const simplifiedCart = cart.map((item) => ({
+      id: item.id,
+      quantity: item.quantity,
+      branch_id: formData.selectedBranch?.id,
+      restaurant_id: restaurant.id,
+    }));
+
+    const orderPayload = {
+      products: simplifiedCart,
+      restaurant_id: restaurant.id,
+      branch_id: formData.selectedBranch?.id,
+      delivery_type: formData.deliveryType,
+      customer_name: formData.fullName,
+      customer_phone: formData.phoneNumber,
+      customer_address: formData.deliveryType === "Delivery" ? formData.fullAddress : null,
+      customer_latitude: formData.selectedLocation?.latitude || null,
+      customer_longitude: formData.selectedLocation?.longitude || null,
+      table_number: formData.deliveryType === "DineIn" ? formData.tableNumber : null,
+      note: formData.note,
+      items: fullOrderItems,
+      subtotal: totalPrice,
+      total: totalPrice,
+      currency: restaurant.currency,
+    };
+
+    // Handle COD / pay_at_store payment methods
+    if (paymentMethod === "cod" || paymentMethod === "pay_at_store") {
+      handleAddOrderAsync(
+        { ...orderPayload, payment_method: paymentMethod },
+        restaurantName
+      ).then((r) => {
+        if (restaurant?.id) {
+          trackOrderPlaced(restaurant.id, r?.data?.order?.id, formData.deliveryType, totalPrice, formData.selectedBranch?.id, { items: fullOrderItems });
+        }
+      }).catch(console.error);
+      dispatch(clearCart(restaurantName));
+      popupHandler(null);
+      return;
+    }
+
+    // Handle card payment
+    if (paymentMethod === "card") {
+      try {
+        const orderResponse = await handleAddOrderAsync(
+          { ...orderPayload, payment_method: "card" },
+          restaurantName
+        );
+        const orderId = orderResponse?.data?.order?.id;
+        if (orderId) {
+          const { data: paymentData } = await axios.post(
+            `${process.env.REACT_APP_BASE_URL}/payments/create-intent`,
+            { order_id: orderId }
+          );
+          setClientSecret(paymentData.data.client_secret);
+          if (restaurant?.id) {
+            trackOrderPlaced(restaurant.id, orderId, formData.deliveryType, totalPrice, formData.selectedBranch?.id, { items: fullOrderItems });
+          }
+        }
+      } catch (e) {
+        console.error("Payment intent failed:", e);
+      }
+      return;
+    }
+
+    // Default: WhatsApp flow
+    let whatsappTotalPrice = 0;
     let message = ``;
     message += `*New Order - ${formData.deliveryType}*\n`;
     message += `--------------------\n\n`;
@@ -207,7 +308,7 @@ export default function Wizard({ popupHandler, restaurant }) {
       const name = (activeLanguage === "ar" ? item.ar_name : item.en_name || "").trim();
       const category = (activeLanguage === "ar" ? item.category.ar_category : item.category.en_category || "").trim();
       const itemTotal = item.price * item.quantity;
-      totalPrice += itemTotal;
+      whatsappTotalPrice += itemTotal;
 
       message += `${idx + 1}. *${name}*\n`;
       message += `    ${category}\n`;
@@ -223,7 +324,7 @@ export default function Wizard({ popupHandler, restaurant }) {
     });
 
     message += `--------------------\n`;
-    message += `*Total: ${convertPrice(totalPrice, currencySymbol)}*\n\n`;
+    message += `*Total: ${convertPrice(whatsappTotalPrice, currencySymbol)}*\n\n`;
 
     message += `*Customer:*\n`;
     message += `- ${formData.fullName}\n`;
@@ -253,64 +354,19 @@ export default function Wizard({ popupHandler, restaurant }) {
       ? formatWhatsappNumber(formData.selectedBranch.whatsapp_number, restaurant?.country_code)
       : restaurant.phone_number;
 
-    // Log order to database (simplified for analytics)
-    const simplifiedCart = cart.map((item) => ({
-      id: item.id,
-      quantity: item.quantity,
-      branch_id: formData.selectedBranch?.id,
-      restaurant_id: restaurant.id,
-    }));
-
-    // Prepare full order items with all details
-    const fullOrderItems = cart.map((item) => ({
-      product_id: item.id,
-      product_name: activeLanguage === "en" ? item.en_name : item.ar_name,
-      quantity: item.quantity,
-      price: item.price,
-      total_price: item.price * item.quantity,
-      form_data: item.formData || {},
-      instruction: item.instruction || "",
-      product_details: {
-        en_name: item.en_name,
-        ar_name: item.ar_name,
-        en_price: item.en_price,
-        ar_price: item.ar_price,
-        category_id: item.category_id,
-      },
-    }));
-
     // Create order in database (fire-and-forget to avoid iOS popup blocking)
-    const simplifiedCartCopy = [...simplifiedCart];
-    const fullOrderItemsCopy = [...fullOrderItems];
     handleAddOrderAsync(
-      {
-        products: simplifiedCartCopy,
-        restaurant_id: restaurant.id,
-        branch_id: formData.selectedBranch?.id,
-        delivery_type: formData.deliveryType,
-        customer_name: formData.fullName,
-        customer_phone: formData.phoneNumber,
-        customer_address: formData.deliveryType === "Delivery" ? formData.fullAddress : null,
-        customer_latitude: formData.selectedLocation?.latitude || null,
-        customer_longitude: formData.selectedLocation?.longitude || null,
-        table_number: formData.deliveryType === "DineIn" ? formData.tableNumber : null,
-        note: formData.note,
-        items: fullOrderItemsCopy,
-        subtotal: totalPrice,
-        total: totalPrice,
-        currency: restaurant.currency,
-      },
+      { ...orderPayload, payment_method: "whatsapp" },
       restaurantName
     ).then((orderResponse) => {
       if (restaurant?.id) {
-        const branchId = formData.selectedBranch?.id || null;
         trackOrderPlaced(
           restaurant.id,
           orderResponse?.data?.order?.id || null,
           formData.deliveryType,
-          totalPrice,
-          branchId,
-          { items: fullOrderItemsCopy, customerName: formData.fullName }
+          whatsappTotalPrice,
+          formData.selectedBranch?.id || null,
+          { items: fullOrderItems, customerName: formData.fullName }
         );
       }
     }).catch((e) => console.error("Order creation failed:", e));
@@ -322,8 +378,9 @@ export default function Wizard({ popupHandler, restaurant }) {
   };
 
   const renderStepContent = () => {
-    switch (currentStep) {
-      case 0:
+    const stepId = STEPS[currentStep]?.id;
+    switch (stepId) {
+      case "cart":
         return (
           <CartStep
             formData={formData}
@@ -332,7 +389,7 @@ export default function Wizard({ popupHandler, restaurant }) {
             activeLanguage={activeLanguage}
           />
         );
-      case 1:
+      case "orderType":
         return (
           <OrderTypeStep
             formData={formData}
@@ -342,7 +399,7 @@ export default function Wizard({ popupHandler, restaurant }) {
             setErrors={setErrors}
           />
         );
-      case 2:
+      case "details":
         return (
           <DetailsStep
             formData={formData}
@@ -353,7 +410,32 @@ export default function Wizard({ popupHandler, restaurant }) {
             activeLanguage={activeLanguage}
           />
         );
-      case 3:
+      case "payment":
+        return (
+          <PaymentMethodStep
+            restaurant={restaurant}
+            activeLanguage={activeLanguage}
+            selectedMethod={paymentMethod}
+            onMethodChange={setPaymentMethod}
+            totalPrice={totalPrice}
+            currencySymbol={currencySymbol}
+          />
+        );
+      case "review":
+        if (paymentMethod === "card" && clientSecret) {
+          return (
+            <StripeCardForm
+              clientSecret={clientSecret}
+              restaurant={restaurant}
+              onSuccess={() => {
+                setPaymentSuccess(true);
+                dispatch(clearCart(restaurantName));
+                popupHandler(null);
+              }}
+              onError={(err) => console.error("Payment failed:", err)}
+            />
+          );
+        }
         return (
           <ReviewStep
             formData={formData}

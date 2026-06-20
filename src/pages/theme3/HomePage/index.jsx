@@ -140,7 +140,7 @@ export default function HomePage({ onExploreClick, categories, setSearchParams, 
   const branches = restaurant?.branches || [];
   const socialMedia = restaurant?.socialMedia || [];
   const sliderImages = restaurant?.sliderImages || [];
-  const hasSlider = restaurant?.has_slider || false;
+  const hasSlider = restaurant?.has_slider || restaurant?.show_slider_image || false;
   const restaurantId = restaurant?.id ?? restaurant?.restaurant_id;
   const { data: featuredProducts = [], isLoading: isLoadingFeatured } = useGetFeaturedProducts(restaurantId);
   const { data: bestsellersRaw } = useGetBestSellers(restaurantId);

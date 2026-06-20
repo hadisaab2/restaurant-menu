@@ -9,7 +9,7 @@ const backgroundColors = [
   { name: "aldaouksweets", color: "#E1DBCA" },
   { name: "junkies", color: "#111111" },
   { name: "cheeseboard", color: "#194b70" },
-  { name: "balloweenevent", color: "#1a1a1a" },
+  { name: "balloweenevent", color: "#FEFDFE" },
   { name: "the1burger", color: "#038796" },
   { name: "alsharqsweets", color: "#f5f5f5" },
   { name: "paradise", color: "#F9E2F0" },
@@ -89,7 +89,7 @@ export default function Loading({ restaurantName, viewLoading }) {
   return (
     <Container viewLoading={viewLoading} bg={bgColor}>
       {isHardcoded && splashSrc ? (
-        /* ── Hardcoded restaurant: full splash image like original ── */
+        /* ── Hardcoded restaurant: full splash image ── */
         <>
           <img
             src={splashSrc}

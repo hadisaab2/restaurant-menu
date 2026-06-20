@@ -167,8 +167,8 @@ export const templates = [
   },
   {
     id: 6,
-    name: "Tab Navigation",
-    description: "Bottom tab bar: menu, search, cart, more",
+    name: "Multi-Branch",
+    description: "Branch landing page with slider, then menu per branch",
     colorGroups: ["general", "categories", "products", "navigation", "popups", "bottomBar"],
     hasHomePage: false,
     hasShopMode: false,

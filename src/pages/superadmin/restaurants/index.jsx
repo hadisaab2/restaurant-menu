@@ -703,6 +703,10 @@ export default function Restaurants() {
     setValue("google_maps_api_key", google_maps_api_key || "");
     setValue("country_code", country_code || "961");
     setValue("features.landing_columns", features?.landing_columns || 3);
+    setValue("features.online_payment", features?.online_payment || false);
+    setValue("features.stripe_publishable_key", features?.stripe_publishable_key || "");
+    setValue("features.stripe_secret_key", features?.stripe_secret_key || "");
+    setValue("features.payment_methods", features?.payment_methods || ["whatsapp"]);
 
     // Set theme colors in form: for the current template, set every color from DB or default
     const templateConfig = templates.find((t) => t.id == template_id);
@@ -1327,6 +1331,78 @@ export default function Restaurants() {
                 </FormControl>
               </Box>
             )}
+            {/* ── Online Payment Settings ── */}
+            <Box sx={{ mb: 2, p: 2, border: "1px solid #e2e8f0", borderRadius: 2 }}>
+              <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 700, color: "#0f172a" }}>
+                Online Payment
+              </Typography>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={!!getValues("features.online_payment")}
+                    onChange={(e) => setValue("features.online_payment", e.target.checked)}
+                  />
+                }
+                label="Enable Online Payment"
+              />
+              {getValues("features.online_payment") && (
+                <>
+                  <TextField
+                    {...register("features.stripe_publishable_key")}
+                    label="Stripe Publishable Key"
+                    variant="outlined"
+                    fullWidth
+                    placeholder="pk_live_..."
+                    style={{ marginBottom: 12, marginTop: 8 }}
+                    size="small"
+                  />
+                  <TextField
+                    {...register("features.stripe_secret_key")}
+                    label="Stripe Secret Key"
+                    variant="outlined"
+                    fullWidth
+                    placeholder="sk_live_..."
+                    type="password"
+                    style={{ marginBottom: 12 }}
+                    size="small"
+                    helperText="Stored securely. Never exposed to the frontend."
+                  />
+                  <Typography variant="caption" sx={{ display: "block", mb: 1, color: "#64748b" }}>
+                    Payment Methods (check all that apply):
+                  </Typography>
+                  {[
+                    { value: "card", label: "Credit/Debit Card" },
+                    { value: "whatsapp", label: "WhatsApp Order" },
+                    { value: "cod", label: "Cash on Delivery" },
+                    { value: "pay_at_store", label: "Pay at Store" },
+                  ].map((method) => {
+                    const currentMethods = getValues("features.payment_methods") || ["whatsapp"];
+                    return (
+                      <FormControlLabel
+                        key={method.value}
+                        control={
+                          <Checkbox
+                            checked={currentMethods.includes(method.value)}
+                            onChange={(e) => {
+                              const methods = [...currentMethods];
+                              if (e.target.checked) {
+                                if (!methods.includes(method.value)) methods.push(method.value);
+                              } else {
+                                const idx = methods.indexOf(method.value);
+                                if (idx > -1) methods.splice(idx, 1);
+                              }
+                              setValue("features.payment_methods", methods);
+                            }}
+                          />
+                        }
+                        label={method.label}
+                      />
+                    );
+                  })}
+                </>
+              )}
+            </Box>
+
             <FormControl component="fieldset">
               <FormLabel component="legend">Square Dimension</FormLabel>
               <FormControlLabel

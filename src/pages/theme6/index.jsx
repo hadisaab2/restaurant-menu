@@ -19,8 +19,9 @@ import AboutUsPopup from "../theme4/popup/aboutUs";
 import { InstallPrompt } from "./installPrompt";
 import BottomTabBar from "./BottomTabBar";
 import { trackVisit, trackPageView } from "../../utilities/analyticsTracking";
+import LandingPage from "./LandingPage";
 
-export default function Theme2() {
+export default function Theme6() {
   const [searchParams, setSearchParams] = useSearchParams();
   const productId = searchParams.get("productId");
   const categoryId = searchParams.get("categoryId");
@@ -43,6 +44,28 @@ export default function Theme2() {
   const [deferredPrompt, setDeferredPrompt] = useState(null);
   const [showInstallPopup, setShowInstallPopup] = useState(true);
   const [activeTab, setActiveTab] = useState("menu");
+
+  // Multi-branch landing page
+  const branches = restaurant?.branches || [];
+  const hasMultipleBranches = branches.length > 1;
+  const [showLanding, setShowLanding] = useState(() => {
+    if (productId || categoryId) return false;
+    return hasMultipleBranches;
+  });
+  const [selectedBranch, setSelectedBranch] = useState(() => {
+    return hasMultipleBranches ? null : branches[0] || null;
+  });
+
+  const handleBranchSelect = (branch) => {
+    setSelectedBranch(branch);
+    setShowLanding(false);
+  };
+
+  const handleBackToLanding = () => {
+    if (hasMultipleBranches) {
+      setShowLanding(true);
+    }
+  };
 
   const showAllItemsCategory =
     (Number(restaurant?.template_id) === 2 ||
@@ -181,6 +204,47 @@ export default function Theme2() {
     window.history.pushState({}, "");
     popupHandler("location");
   };
+
+  // Multi-branch landing page
+  if (showLanding && hasMultipleBranches && !productId) {
+    return (
+      <>
+        <LandingPage
+          restaurant={restaurant}
+          restaurantName={restaurantName}
+          activeLanguage={activeLanguage}
+          showPopup={showPopup}
+          sliderImages={sliderImages}
+          onBranchSelect={handleBranchSelect}
+          onCartClick={handleCartTab}
+          onBranchesClick={handleMoreTab}
+          onFeedbackClick={() => { window.history.pushState({}, ""); popupHandler("feedback"); }}
+          popupHandler={popupHandler}
+          setshowSidebar={setshowSidebar}
+          showSidebar={showSidebar}
+        />
+        <LocationPopup restaurant={restaurant} showPopup={showPopup} popupHandler={popupHandler} />
+        {features?.cart && <CartPopup restaurant={restaurant} showPopup={showPopup} popupHandler={popupHandler} />}
+        <FeedbackPopup restaurant={restaurant} showPopup={showPopup} popupHandler={popupHandler} />
+        <ContactFormPopup restaurant={restaurant} showPopup={showPopup} popupHandler={popupHandler} />
+        <AboutUsPopup restaurant={restaurant} showPopup={showPopup} popupHandler={popupHandler} />
+        <SideBar
+          categories={theme2Categories}
+          activeCategory={activeCategory}
+          setactiveCategory={setactiveCategoryWithUrl}
+          setshowSidebar={setshowSidebar}
+          showSidebar={showSidebar}
+          setcarouselPosition={setcarouselPosition}
+          onFeedbackClick={() => { window.history.pushState({}, ""); popupHandler("feedback"); }}
+          onContactClick={() => { window.history.pushState({}, ""); popupHandler("contactForm"); }}
+          onBranchesClick={() => { window.history.pushState({}, ""); popupHandler("location"); }}
+          onAboutClick={() => { window.history.pushState({}, ""); popupHandler("about"); }}
+          onShareClick={() => { window.history.pushState({}, ""); popupHandler("share"); }}
+          branches={branches}
+        />
+      </>
+    );
+  }
 
   return (
     <Container id="wrapper">
