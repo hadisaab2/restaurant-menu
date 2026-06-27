@@ -38,6 +38,7 @@ export function ensureOptionIds(options) {
       labelEn: String(s.labelEn ?? ""),
       labelAr: String(s.labelAr ?? ""),
       priceModifier: normalizePriceModifier(s.priceModifier),
+      priceMode: s.priceMode || "absolute",
     })),
     addons: (options.addons || []).map((a) => ({
       ...a,

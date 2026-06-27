@@ -41,6 +41,7 @@ import {
 } from "@mui/material";
 import { templates, ALL_FEATURES, DEFAULT_FEATURES, getColorGroupsForTemplate, getColorKeysForTemplate, COLOR_PRESETS } from "./themedata";
 import { useGetQuickDemoTemplates, useCreateQuickDemo } from "../../../apis/restaurants/quickDemo";
+import { useFetchOmegaPreview, useImportFromOmega } from "../../../apis/restaurants/omegaImport";
 import { useAddRestaurantQuery } from "../../../apis/restaurants/addRestaurant";
 import { useGetRestaurants } from "../../../apis/restaurants/getRestaurants";
 import { useEditRestaurantQuery } from "../../../apis/restaurants/editRestaurant";
@@ -2226,6 +2227,16 @@ function QuickDemoDialog({ open, onClose, onSuccess }) {
     },
   });
 
+  // Omega import hooks
+  const { fetchPreview, isFetching, previewData, resetPreview } = useFetchOmegaPreview();
+  const { importOmega, isImporting } = useImportFromOmega({
+    onSuccess: (data) => {
+      setResult(data);
+    },
+  });
+
+  const [mode, setMode] = useState("template"); // "template" | "import"
+  const [omegaSlug, setOmegaSlug] = useState("");
   const [businessType, setBusinessType] = useState("");
   const [name, setName] = useState("");
   const [username, setUsername] = useState("");
@@ -2240,20 +2251,44 @@ function QuickDemoDialog({ open, onClose, onSuccess }) {
 
   const selectedTemplate = demoTemplates?.find((t) => t.file === businessType);
 
+  // Auto-fill name from Omega preview
+  useEffect(() => {
+    if (previewData?.name && mode === "import") {
+      setName(previewData.name);
+      const autoUser = previewData.name.toLowerCase().replace(/[^a-z0-9]+/g, "").slice(0, 20);
+      setUsername(autoUser);
+    }
+  }, [previewData, mode]);
+
   const handleCreate = () => {
-    if (!businessType || !name || !username || !password) return;
-    const payload = new FormData();
-    payload.append("businessType", businessType);
-    payload.append("restaurantName", name);
-    payload.append("username", username);
-    payload.append("password", password);
-    payload.append("templateId", templateId);
-    payload.append("colorPreset", colorPreset);
-    payload.append("currency", currency);
-    payload.append("languages", languages);
-    payload.append("defaultLanguage", "en");
-    if (logoFile) payload.append("logo", logoFile);
-    createDemo(payload);
+    if (mode === "import") {
+      if (!omegaSlug || !name || !username || !password || !previewData) return;
+      importOmega({
+        omegaSlug,
+        restaurantName: name,
+        username,
+        password,
+        templateId,
+        colorPreset,
+        currency,
+        languages,
+        defaultLanguage: "en",
+      });
+    } else {
+      if (!businessType || !name || !username || !password) return;
+      const payload = new FormData();
+      payload.append("businessType", businessType);
+      payload.append("restaurantName", name);
+      payload.append("username", username);
+      payload.append("password", password);
+      payload.append("templateId", templateId);
+      payload.append("colorPreset", colorPreset);
+      payload.append("currency", currency);
+      payload.append("languages", languages);
+      payload.append("defaultLanguage", "en");
+      if (logoFile) payload.append("logo", logoFile);
+      createDemo(payload);
+    }
   };
 
   const handleClose = () => {
@@ -2265,6 +2300,14 @@ function QuickDemoDialog({ open, onClose, onSuccess }) {
     setUsername("");
     setLogoFile(null);
     setLogoPreview(null);
+    setOmegaSlug("");
+    resetPreview();
+    setMode("template");
+  };
+
+  const handleFetchOmega = () => {
+    if (!omegaSlug) return;
+    fetchPreview(omegaSlug);
   };
 
   const businessIcons = {
@@ -2272,6 +2315,10 @@ function QuickDemoDialog({ open, onClose, onSuccess }) {
     cosmetics: "💄", bakery: "🧁", grocery: "🛒", "gym-supplements": "💪", "balloon-shop": "🎈",
     burger: "🍔",
   };
+
+  const isCreateDisabled = mode === "import"
+    ? !previewData || !name || !username || !password
+    : !businessType || !name || !username || !password;
 
   return (
     <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
@@ -2284,7 +2331,9 @@ function QuickDemoDialog({ open, onClose, onSuccess }) {
       <DialogContent>
         {result ? (
           <Box sx={{ textAlign: "center", py: 3 }}>
-            <Typography variant="h5" sx={{ mb: 1, color: "#10b981" }}>Demo Created!</Typography>
+            <Typography variant="h5" sx={{ mb: 1, color: "#10b981" }}>
+              {mode === "import" ? "Import Complete!" : "Demo Created!"}
+            </Typography>
             <Typography variant="body1" sx={{ mb: 0.5, fontWeight: 600 }}>{result.restaurant.name}</Typography>
             <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
               {result.summary.categories} categories, {result.summary.products} products
@@ -2295,49 +2344,137 @@ function QuickDemoDialog({ open, onClose, onSuccess }) {
             <Typography variant="body2" sx={{ mb: 2 }}>
               URL: <a href={`/${result.restaurant.username}`} target="_blank" rel="noopener noreferrer">/{result.restaurant.username}</a>
             </Typography>
-            <Alert severity="info" sx={{ textAlign: "left", mt: 2 }}>
-              Upload the logo and cover image from the restaurant edit page.
-            </Alert>
+            {mode === "import" && (
+              <Alert severity="success" sx={{ textAlign: "left", mt: 2 }}>
+                All images have been downloaded and uploaded to our servers.
+              </Alert>
+            )}
           </Box>
         ) : (
           <Box sx={{ display: "flex", flexDirection: "column", gap: 2.5, mt: 1 }}>
-            {/* Business Type */}
-            <Box>
-              <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 600 }}>Business Type</Typography>
-              <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
-                {loadingTemplates ? (
-                  <Typography color="text.secondary">Loading templates...</Typography>
-                ) : (
-                  demoTemplates?.map((t) => (
-                    <Box
-                      key={t.file}
-                      onClick={() => {
-                        setBusinessType(t.file);
-                        setCurrency(t.defaultCurrency || "dollar");
-                        setColorPreset(t.defaultColorPreset || "Clean Teal");
-                        setTemplateId(t.defaultThemeTemplate || 3);
-                      }}
-                      sx={{
-                        cursor: "pointer",
-                        border: businessType === t.file ? "2px solid #6d28d9" : "1px solid #ddd",
-                        borderRadius: 2,
-                        px: 1.5, py: 1,
-                        display: "flex", alignItems: "center", gap: 1,
-                        bgcolor: businessType === t.file ? "#f5f3ff" : "transparent",
-                        transition: "all 0.15s",
-                        "&:hover": { borderColor: "#8b5cf6" },
-                      }}
-                    >
-                      <span style={{ fontSize: 18 }}>{businessIcons[t.file] || "🏪"}</span>
-                      <Box>
-                        <Typography sx={{ fontSize: 13, fontWeight: 600, lineHeight: 1.2 }}>{t.displayName}</Typography>
-                        <Typography sx={{ fontSize: 10, color: "#999" }}>{t.categoriesCount} cats, {t.productsCount} items</Typography>
-                      </Box>
-                    </Box>
-                  ))
-                )}
+            {/* Mode Toggle */}
+            <Box sx={{ display: "flex", bgcolor: "#f3f4f6", borderRadius: 2, p: 0.5 }}>
+              <Box
+                onClick={() => { setMode("template"); resetPreview(); }}
+                sx={{
+                  flex: 1, py: 1, textAlign: "center", borderRadius: 1.5, cursor: "pointer",
+                  fontWeight: 600, fontSize: 13, transition: "all 0.2s",
+                  bgcolor: mode === "template" ? "#6d28d9" : "transparent",
+                  color: mode === "template" ? "#fff" : "#666",
+                }}
+              >
+                Use Template
+              </Box>
+              <Box
+                onClick={() => { setMode("import"); setBusinessType(""); }}
+                sx={{
+                  flex: 1, py: 1, textAlign: "center", borderRadius: 1.5, cursor: "pointer",
+                  fontWeight: 600, fontSize: 13, transition: "all 0.2s",
+                  bgcolor: mode === "import" ? "#6d28d9" : "transparent",
+                  color: mode === "import" ? "#fff" : "#666",
+                }}
+              >
+                Import from URL
               </Box>
             </Box>
+
+            {mode === "import" ? (
+              <>
+                {/* Omega Slug Input */}
+                <Box>
+                  <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 600 }}>Omega Restaurant Slug</Typography>
+                  <Box sx={{ display: "flex", gap: 1 }}>
+                    <TextField
+                      size="small"
+                      placeholder="e.g. gilbertsburgerbite"
+                      value={omegaSlug}
+                      onChange={(e) => setOmegaSlug(e.target.value)}
+                      fullWidth
+                      InputProps={{
+                        startAdornment: (
+                          <Typography sx={{ color: "#999", fontSize: 12, mr: 0.5, whiteSpace: "nowrap" }}>
+                            menu.omegasoftware.ca/
+                          </Typography>
+                        ),
+                      }}
+                    />
+                    <LoadingButton
+                      variant="contained"
+                      size="small"
+                      onClick={handleFetchOmega}
+                      loading={isFetching}
+                      disabled={!omegaSlug}
+                      sx={{ minWidth: 80, textTransform: "none", bgcolor: "#6d28d9" }}
+                    >
+                      Fetch
+                    </LoadingButton>
+                  </Box>
+                </Box>
+
+                {/* Omega Preview */}
+                {previewData && (
+                  <Box sx={{ border: "1px solid #e0e0e0", borderRadius: 2, p: 2, bgcolor: "#fafafa" }}>
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 2, mb: 1.5 }}>
+                      {previewData.logo && (
+                        <img src={previewData.logo} alt="Logo" style={{ width: 48, height: 48, borderRadius: 10, objectFit: "cover", border: "1px solid #ddd" }} />
+                      )}
+                      <Box>
+                        <Typography sx={{ fontWeight: 700, fontSize: 16 }}>{previewData.name}</Typography>
+                        <Typography sx={{ fontSize: 12, color: "#666" }}>{previewData.address}</Typography>
+                      </Box>
+                    </Box>
+                    <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.8, mb: 1 }}>
+                      {previewData.categories?.map((c, i) => (
+                        <Box key={i} sx={{ fontSize: 11, px: 1.2, py: 0.4, bgcolor: "#e8e0f5", borderRadius: 1, color: "#6d28d9", fontWeight: 500 }}>
+                          {c.name} ({c.itemCount})
+                        </Box>
+                      ))}
+                    </Box>
+                    <Typography sx={{ fontSize: 12, color: "#888" }}>
+                      Total: <strong>{previewData.totalItems} items</strong> | Currency: {previewData.currency} | {previewData.phone && `Phone: ${previewData.phone}`}
+                    </Typography>
+                  </Box>
+                )}
+              </>
+            ) : (
+              /* Business Type - Template Mode */
+              <Box>
+                <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 600 }}>Business Type</Typography>
+                <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
+                  {loadingTemplates ? (
+                    <Typography color="text.secondary">Loading templates...</Typography>
+                  ) : (
+                    demoTemplates?.map((t) => (
+                      <Box
+                        key={t.file}
+                        onClick={() => {
+                          setBusinessType(t.file);
+                          setCurrency(t.defaultCurrency || "dollar");
+                          setColorPreset(t.defaultColorPreset || "Clean Teal");
+                          setTemplateId(t.defaultThemeTemplate || 3);
+                        }}
+                        sx={{
+                          cursor: "pointer",
+                          border: businessType === t.file ? "2px solid #6d28d9" : "1px solid #ddd",
+                          borderRadius: 2,
+                          px: 1.5, py: 1,
+                          display: "flex", alignItems: "center", gap: 1,
+                          bgcolor: businessType === t.file ? "#f5f3ff" : "transparent",
+                          transition: "all 0.15s",
+                          "&:hover": { borderColor: "#8b5cf6" },
+                        }}
+                      >
+                        <span style={{ fontSize: 18 }}>{businessIcons[t.file] || "🏪"}</span>
+                        <Box>
+                          <Typography sx={{ fontSize: 13, fontWeight: 600, lineHeight: 1.2 }}>{t.displayName}</Typography>
+                          <Typography sx={{ fontSize: 10, color: "#999" }}>{t.categoriesCount} cats, {t.productsCount} items</Typography>
+                        </Box>
+                      </Box>
+                    ))
+                  )}
+                </Box>
+              </Box>
+            )}
 
             {/* Name + Username + Password */}
             <Box sx={{ display: "flex", gap: 1.5 }}>
@@ -2346,17 +2483,21 @@ function QuickDemoDialog({ open, onClose, onSuccess }) {
             </Box>
             <Box sx={{ display: "flex", gap: 1.5, alignItems: "center" }}>
               <TextField size="small" label="Password" value={password} onChange={(e) => setPassword(e.target.value)} sx={{ maxWidth: 200 }} />
-              <Button variant="outlined" component="label" size="small" sx={{ minWidth: 120, height: 40, textTransform: "none" }}>
-                {logoFile ? "Change Logo" : "Upload Logo"}
-                <input type="file" accept="image/*" hidden onChange={(e) => {
-                  const file = e.target.files[0];
-                  if (file) {
-                    setLogoFile(file);
-                    setLogoPreview(URL.createObjectURL(file));
-                  }
-                }} />
-              </Button>
-              {logoPreview && <img src={logoPreview} alt="Logo" style={{ width: 40, height: 40, borderRadius: 8, objectFit: "cover", border: "1px solid #ddd" }} />}
+              {mode === "template" && (
+                <>
+                  <Button variant="outlined" component="label" size="small" sx={{ minWidth: 120, height: 40, textTransform: "none" }}>
+                    {logoFile ? "Change Logo" : "Upload Logo"}
+                    <input type="file" accept="image/*" hidden onChange={(e) => {
+                      const file = e.target.files[0];
+                      if (file) {
+                        setLogoFile(file);
+                        setLogoPreview(URL.createObjectURL(file));
+                      }
+                    }} />
+                  </Button>
+                  {logoPreview && <img src={logoPreview} alt="Logo" style={{ width: 40, height: 40, borderRadius: 8, objectFit: "cover", border: "1px solid #ddd" }} />}
+                </>
+              )}
             </Box>
 
             {/* Template Selection */}
@@ -2432,9 +2573,14 @@ function QuickDemoDialog({ open, onClose, onSuccess }) {
             </Box>
 
             {/* Summary */}
-            {selectedTemplate && (
+            {mode === "template" && selectedTemplate && (
               <Alert severity="info" icon={false}>
                 Will create: <strong>{selectedTemplate.categoriesCount} categories</strong>, <strong>{selectedTemplate.productsCount} products</strong> with images and options
+              </Alert>
+            )}
+            {mode === "import" && previewData && (
+              <Alert severity="info" icon={false}>
+                Will import: <strong>{previewData.categories?.length} categories</strong>, <strong>{previewData.totalItems} products</strong> — images will be downloaded to our servers
               </Alert>
             )}
           </Box>
@@ -2446,11 +2592,11 @@ function QuickDemoDialog({ open, onClose, onSuccess }) {
           <LoadingButton
             variant="contained"
             onClick={handleCreate}
-            loading={isPending}
-            disabled={!businessType || !name || !username || !password}
+            loading={isPending || isImporting}
+            disabled={isCreateDisabled}
             sx={{ background: "linear-gradient(135deg, #8b5cf6, #6d28d9)" }}
           >
-            Create Demo
+            {mode === "import" ? "Import & Create" : "Create Demo"}
           </LoadingButton>
         )}
       </DialogActions>
