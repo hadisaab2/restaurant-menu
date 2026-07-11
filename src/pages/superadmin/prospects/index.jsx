@@ -5,6 +5,7 @@ import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import DialogActions from "@mui/material/DialogActions";
+import ReviewDialog, { uploadLogo } from "../../../components/shared/ReviewDialog";
 
 const API = process.env.REACT_APP_BASE_URL;
 const headers = () => ({ Authorization: `Bearer ${getCookie("accessToken")}` });
@@ -30,30 +31,7 @@ const LANGUAGES = [
   { value: "both", label: "Both" },
 ];
 
-const TEMPLATES = [
-  { value: "restaurant", label: "Restaurant" },
-  { value: "cafe", label: "Cafe" },
-  { value: "pizza", label: "Pizza Shop" },
-  { value: "burger", label: "Burger Restaurant" },
-  { value: "bakery", label: "Bakery" },
-  { value: "flower-shop", label: "Flower Shop" },
-  { value: "balloon-shop", label: "Balloon Shop" },
-  { value: "cosmetics", label: "Cosmetics" },
-  { value: "grocery", label: "Grocery Store" },
-  { value: "gym-supplements", label: "Gym & Supplements" },
-  { value: "custom", label: "Custom (blank)" },
-];
-
-const COLOR_PRESETS = [
-  { name: "Clean Teal", color: "#5eabb1" },
-  { name: "Warm Gold", color: "#b8943d" },
-  { name: "Dark Coral", color: "#e85d5d" },
-  { name: "Fresh Green", color: "#388e3c" },
-  { name: "Royal Purple", color: "#6a3de8" },
-  { name: "Sunset Orange", color: "#e65100" },
-  { name: "Ocean Blue", color: "#1565c0" },
-  { name: "Rose Pink", color: "#c2185b" },
-];
+// TEMPLATES and COLOR_PRESETS now imported from shared ReviewDialog
 
 /* ─── Styles ─── */
 const s = {
@@ -703,8 +681,21 @@ export default function Prospects() {
         rows={reviewRows}
         setRows={setReviewRows}
         onClose={() => { setReviewOpen(false); setReviewRows([]); }}
-        showToast={showToast}
-        onDone={() => { fetchProspects(); }}
+        title={`Review & Build Demos (${reviewRows.length} prospects)`}
+        onBuild={async (rows) => {
+          const items = [];
+          for (const r of rows) {
+            let logoUrl = null;
+            if (r.logoFile) {
+              try { logoUrl = await uploadLogo(r.logoFile); } catch (e) { console.error("Logo upload failed for", r.business_name, e); }
+            }
+            items.push({ prospect_id: r.prospect_id, template: r.template, colorPreset: r.colorPreset || null, logoUrl, socials: { instagram: r.ig_handle || "", facebook: r.facebook || "", tiktok: r.tiktok || "" } });
+          }
+          const { data } = await axios.post(`${API}/superadmin/prospects/build-batch`, { items }, { headers: headers(), timeout: 600000 });
+          showToast(`Built: ${data.data.summary.success} demos, ${data.data.summary.errors} errors`);
+          fetchProspects();
+          return data.data;
+        }}
       />
 
       {/* Importing overlay */}
@@ -1117,6 +1108,27 @@ function SendMessageDialog({ open, prospect, onClose, showToast, onSent }) {
           Copy SMS
         </button>
         <button
+          onClick={async () => {
+            // Save current message as a reusable template
+            const rawMsg = message
+              .replace(prospect.business_name || "", "{business_name}")
+              .replace(prospect.demo_url || "", "{demo_url}");
+            try {
+              await axios.post(`${API}/superadmin/prospects/templates`, {
+                stage,
+                language: language === "both" ? "en" : language,
+                body: rawMsg,
+              }, { headers: headers() });
+              showToast("Template saved!");
+            } catch (e) {
+              showToast(e.response?.data?.message || "Failed to save template", "error");
+            }
+          }}
+          style={{ padding: "9px 18px", borderRadius: 10, border: "none", fontSize: 13, fontWeight: 600, cursor: "pointer", background: "#8b5cf6", color: "#fff" }}
+        >
+          Save as Template
+        </button>
+        <button
           onClick={handleSend}
           disabled={sending || blocked}
           style={{ padding: "9px 18px", borderRadius: 10, border: "none", fontSize: 13, fontWeight: 600, cursor: "pointer", background: blocked ? "#94a3b8" : "#5eabb1", color: "#fff", opacity: sending ? 0.6 : 1 }}
@@ -1128,162 +1140,3 @@ function SendMessageDialog({ open, prospect, onClose, showToast, onSent }) {
   );
 }
 
-/* ═════════════════════════════════════════════
-   Review & Build Demos Dialog
-   ═════════════════════════════════════════════ */
-function ReviewDialog({ open, rows, setRows, onClose, showToast, onDone }) {
-  const [building, setBuilding] = useState(false);
-  const [buildResults, setBuildResults] = useState(null);
-
-  const updateRow = (idx, key, value) => {
-    setRows(prev => prev.map((r, i) => i === idx ? { ...r, [key]: value } : r));
-  };
-
-  const uploadLogo = async (file) => {
-    const fd = new FormData();
-    fd.append("image", file);
-    const { data } = await axios.post(`${API}/superadmin/upload-image`, fd, {
-      headers: { ...headers(), "Content-Type": "multipart/form-data" },
-    });
-    return data.fileName || null;
-  };
-
-  const handleBuildAll = async () => {
-    setBuilding(true);
-    try {
-      // Upload logos first
-      const items = [];
-      for (const r of rows) {
-        let logoUrl = null;
-        if (r.logoFile) {
-          try {
-            logoUrl = await uploadLogo(r.logoFile);
-          } catch (e) {
-            console.error("Logo upload failed for", r.business_name, e);
-          }
-        }
-        items.push({
-          prospect_id: r.prospect_id,
-          template: r.template,
-          colorPreset: r.colorPreset || null,
-          logoUrl,
-          socials: {
-            instagram: r.ig_handle || "",
-            facebook: r.facebook || "",
-            tiktok: r.tiktok || "",
-          },
-        });
-      }
-      const { data } = await axios.post(`${API}/superadmin/prospects/build-batch`, { items }, { headers: headers(), timeout: 600000 });
-      setBuildResults(data.data);
-      showToast(`Built: ${data.data.summary.success} demos, ${data.data.summary.errors} errors`);
-      onDone();
-    } catch (err) {
-      showToast(err.response?.data?.message || "Build failed", "error");
-    }
-    setBuilding(false);
-  };
-
-  return (
-    <Dialog open={open} onClose={building ? undefined : onClose} maxWidth="lg" fullWidth>
-      <DialogTitle sx={{ fontWeight: 700, fontSize: 18, color: "#0f172a" }}>
-        Review & Build Demos ({rows.length} prospects)
-      </DialogTitle>
-      <DialogContent>
-        {!buildResults ? (
-          <div style={{ overflowX: "auto" }}>
-            <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 12 }}>
-              <thead>
-                <tr>
-                  {["Business", "Category", "Template", "Colors", "Logo", "IG", "FB", "TikTok"].map(h => (
-                    <th key={h} style={{ padding: "8px 6px", textAlign: "left", borderBottom: "2px solid #e2e8f0", fontSize: 11, fontWeight: 700, color: "#475569" }}>{h}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {rows.map((r, i) => (
-                  <tr key={r.prospect_id} style={i % 2 ? { background: "#f8fafc" } : {}}>
-                    <td style={{ padding: "6px", borderBottom: "1px solid #f1f5f9", fontWeight: 600, minWidth: 100 }}>{r.business_name}</td>
-                    <td style={{ padding: "6px", borderBottom: "1px solid #f1f5f9", fontSize: 11 }}>{r.category}</td>
-                    <td style={{ padding: "6px", borderBottom: "1px solid #f1f5f9", minWidth: 130 }}>
-                      <select value={r.template} onChange={e => updateRow(i, "template", e.target.value)} style={{ padding: "4px 6px", borderRadius: 6, border: "1px solid #e2e8f0", fontSize: 11, width: "100%" }}>
-                        {TEMPLATES.map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
-                      </select>
-                    </td>
-                    <td style={{ padding: "6px", borderBottom: "1px solid #f1f5f9", minWidth: 160 }}>
-                      <div style={{ display: "flex", flexWrap: "wrap", gap: 4 }}>
-                        {COLOR_PRESETS.map(c => (
-                          <div
-                            key={c.name}
-                            onClick={() => updateRow(i, "colorPreset", c.name)}
-                            title={c.name}
-                            style={{
-                              width: 28, height: 28, borderRadius: 6, background: c.color,
-                              cursor: "pointer", border: r.colorPreset === c.name ? "3px solid #0f172a" : "2px solid transparent",
-                              transition: "border 0.15s", boxSizing: "border-box",
-                            }}
-                          />
-                        ))}
-                      </div>
-                      <div style={{ fontSize: 10, color: "#64748b", marginTop: 4 }}>
-                        {r.colorPreset || "Default"}
-                      </div>
-                    </td>
-                    <td style={{ padding: "6px", borderBottom: "1px solid #f1f5f9", minWidth: 90 }}>
-                      <input
-                        type="file"
-                        accept="image/*"
-                        onChange={e => updateRow(i, "logoFile", e.target.files?.[0] || null)}
-                        style={{ fontSize: 10, width: 80 }}
-                      />
-                      {r.logoFile && <div style={{ fontSize: 10, color: "#10b981", marginTop: 2 }}>{r.logoFile.name}</div>}
-                    </td>
-                    <td style={{ padding: "6px", borderBottom: "1px solid #f1f5f9", fontSize: 11 }}>{r.ig_handle || "-"}</td>
-                    <td style={{ padding: "6px", borderBottom: "1px solid #f1f5f9", fontSize: 11 }}>{r.facebook || "-"}</td>
-                    <td style={{ padding: "6px", borderBottom: "1px solid #f1f5f9", fontSize: 11 }}>{r.tiktok || "-"}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        ) : (
-          <div>
-            <div style={{ display: "flex", gap: 12, marginBottom: 16, flexWrap: "wrap" }}>
-              <div style={{ padding: "10px 16px", borderRadius: 10, background: "#dcfce7", border: "1px solid #bbf7d0" }}>
-                <div style={{ fontSize: 20, fontWeight: 700, color: "#16a34a" }}>{buildResults.summary.success}</div>
-                <div style={{ fontSize: 11, color: "#166534" }}>Built</div>
-              </div>
-              <div style={{ padding: "10px 16px", borderRadius: 10, background: "#fef2f2", border: "1px solid #fecaca" }}>
-                <div style={{ fontSize: 20, fontWeight: 700, color: "#dc2626" }}>{buildResults.summary.errors}</div>
-                <div style={{ fontSize: 11, color: "#991b1b" }}>Errors</div>
-              </div>
-              <div style={{ padding: "10px 16px", borderRadius: 10, background: "#f8fafc", border: "1px solid #e2e8f0" }}>
-                <div style={{ fontSize: 20, fontWeight: 700, color: "#64748b" }}>{buildResults.summary.skipped}</div>
-                <div style={{ fontSize: 11, color: "#475569" }}>Skipped</div>
-              </div>
-            </div>
-            <div style={{ maxHeight: 300, overflowY: "auto" }}>
-              {buildResults.results.map((r, i) => (
-                <div key={i} style={{ padding: "8px 12px", marginBottom: 6, borderRadius: 8, background: r.status === "success" ? "#f0fdf4" : r.status === "skipped" ? "#f8fafc" : "#fef2f2", fontSize: 12 }}>
-                  <strong>Prospect #{r.prospect_id}</strong>: {r.status} {r.demo_url && <span>— <a href={r.demo_url} target="_blank" rel="noopener noreferrer">{r.demo_url}</a></span>} {r.message && <span style={{ color: "#dc2626" }}>— {r.message}</span>}
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-      </DialogContent>
-      <DialogActions sx={{ padding: "12px 24px 20px" }}>
-        {!buildResults ? (
-          <>
-            <button onClick={onClose} disabled={building} style={{ padding: "8px 20px", borderRadius: 8, border: "none", background: "#f1f5f9", color: "#64748b", fontSize: 13, fontWeight: 600, cursor: "pointer" }}>Cancel</button>
-            <button onClick={handleBuildAll} disabled={building} style={{ padding: "8px 20px", borderRadius: 8, border: "none", background: "#5eabb1", color: "#fff", fontSize: 13, fontWeight: 600, cursor: "pointer", opacity: building ? 0.6 : 1 }}>
-              {building ? "Building..." : `Build ${rows.length} Demos`}
-            </button>
-          </>
-        ) : (
-          <button onClick={() => { setBuildResults(null); onClose(); }} style={{ padding: "8px 20px", borderRadius: 8, border: "none", background: "#5eabb1", color: "#fff", fontSize: 13, fontWeight: 600, cursor: "pointer" }}>Done</button>
-        )}
-      </DialogActions>
-    </Dialog>
-  );
-}

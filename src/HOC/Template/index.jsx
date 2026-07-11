@@ -120,23 +120,21 @@ export default function Template() {
   };
   
   const isValid = getIsValid();
-  const isTheme3NotSubscribed =
-    (isValid === false || isValid === 0) && response?.data?.template_id === 3;
-  if (isTheme3NotSubscribed && response?.data) {
-    return (
-      <ThemeProvider
-        theme={{
-          ...JSON.parse(response.data.theme),
-          font: response.data.font,
-        }}
-      >
-        <Suspense fallback={null}>
-          <Theme3NotSubscribed restaurant={response.data} />
-        </Suspense>
-      </ThemeProvider>
-    );
-  }
   if (isValid === false || isValid === 0) {
+    if (response?.data) {
+      return (
+        <ThemeProvider
+          theme={{
+            ...JSON.parse(response.data.theme || '{}'),
+            font: response.data.font,
+          }}
+        >
+          <Suspense fallback={null}>
+            <Theme3NotSubscribed restaurant={response.data} />
+          </Suspense>
+        </ThemeProvider>
+      );
+    }
     return null;
   }
 

@@ -45,6 +45,12 @@ export default function Theme2() {
     (state) => state.restaurant?.[restaurantName]?.activeLanguage || "en"
   );
 
+  // Set document direction for RTL when Arabic
+  useEffect(() => {
+    document.documentElement.setAttribute("dir", activeLanguage === "ar" ? "rtl" : "ltr");
+    return () => document.documentElement.removeAttribute("dir");
+  }, [activeLanguage]);
+
   const [showPopup, setshowPopup] = useState(null);
   const [searchText, setSearchText] = useState("");
   const [showSidebar, setshowSidebar] = useState(null);

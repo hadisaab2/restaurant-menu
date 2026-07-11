@@ -40,3 +40,36 @@ export const useImportFromOmega = ({ onSuccess }) => {
 
   return { error, importOmega: mutate, isImporting: isPending };
 };
+
+// POST /restaurants/quick-demo/fetch-thrubits
+export const useFetchThrubitsPreview = () => {
+  const { error, mutate, isPending, data, reset } = useMutation({
+    mutationFn: async (thrubitsSlug) => {
+      const res = await axios.post(
+        `${BASE_URL}/restaurants/quick-demo/fetch-thrubits`,
+        { thrubitsSlug },
+        { headers: headers() }
+      );
+      return res.data.data;
+    },
+  });
+
+  return { error, fetchThrubitsPreview: mutate, isFetchingThrubits: isPending, thrubitsPreviewData: data, resetThrubitsPreview: reset };
+};
+
+// POST /restaurants/quick-demo/import-thrubits
+export const useImportFromThrubits = ({ onSuccess }) => {
+  const { error, mutate, isPending } = useMutation({
+    mutationFn: async (payload) => {
+      const res = await axios.post(
+        `${BASE_URL}/restaurants/quick-demo/import-thrubits`,
+        payload,
+        { headers: headers() }
+      );
+      return res.data;
+    },
+    onSuccess,
+  });
+
+  return { error, importThrubits: mutate, isImportingThrubits: isPending };
+};

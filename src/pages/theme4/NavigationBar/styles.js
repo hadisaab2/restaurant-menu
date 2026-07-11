@@ -604,7 +604,7 @@ export const GlobeLanguageButton = styled.button`
   border-radius: 8px;
   cursor: pointer;
   background: transparent;
-  color: ${(p) => p.theme?.textColor || "#1e293b"};
+  color: ${(p) => p.theme?.mainColor || p.theme?.textColor || "#1e293b"};
   transition: color 0.2s ease, transform 0.15s ease;
 
   &:hover {

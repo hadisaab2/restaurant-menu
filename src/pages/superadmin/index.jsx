@@ -15,6 +15,8 @@ import TemplateManager from "./templateManager";
 import ColorThemeManager from "./colorThemeManager";
 import Monitoring from "./monitoring";
 import Prospects from "./prospects";
+import Zones from "./zones";
+import Pipeline from "./pipeline";
 
 export default function SuperAdmin() {
   const [activeTab, setActiveTab] = useState("Restaurants");
@@ -78,6 +80,20 @@ export default function SuperAdmin() {
         >
           Prospects
         </Tab>
+        <Tab
+          onClick={() => setActiveTab("Zones")}
+          activeTab={activeTab}
+          tab="Zones"
+        >
+          Zones
+        </Tab>
+        <Tab
+          onClick={() => setActiveTab("Pipeline")}
+          activeTab={activeTab}
+          tab="Pipeline"
+        >
+          Pipeline
+        </Tab>
       </TabsContainer>
 
       <ContentArea>
@@ -88,6 +104,8 @@ export default function SuperAdmin() {
         {activeTab === "Color Themes" && <ColorThemeManager />}
         {activeTab === "Monitoring" && <Monitoring />}
         {activeTab === "Prospects" && <Prospects />}
+        {activeTab === "Zones" && <Zones />}
+        {activeTab === "Pipeline" && <Pipeline />}
       </ContentArea>
     </Container>
   );

@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
+import axios from "axios";
 import {
   CateogoryIcon,
   Container,
@@ -55,8 +56,31 @@ export default function RestaurantDash() {
     setUserInformation(JSON.parse(storedUserInfo));
   }, []);
 
-  // All themes now have access to VIP features when enabled from superadmin
-  const isTheme3Or4 = true;
+  // Load restaurant features to check VIP access
+  const [restaurantFeatures, setRestaurantFeatures] = useState(null);
+
+  useEffect(() => {
+    const restaurantId = userInformation?.restaurant_id;
+    if (!restaurantId) return;
+    const token = getCookie("accessToken");
+    if (!token) return;
+    axios.get(`${process.env.REACT_APP_BASE_URL}/restaurants/${restaurantId}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    }).then(({ data }) => {
+      try {
+        const features = typeof data?.data?.features === "string" ? JSON.parse(data.data.features) : data?.data?.features;
+        setRestaurantFeatures(features || {});
+      } catch { setRestaurantFeatures({}); }
+    }).catch(() => setRestaurantFeatures({}));
+  }, [userInformation?.restaurant_id]);
+
+  // VIP features are enabled only if the customer-facing feature is active
+  const isVipEnabled = useMemo(() => {
+    if (!restaurantFeatures) return false;
+    return !!(restaurantFeatures.feedback || restaurantFeatures.user_registration);
+  }, [restaurantFeatures]);
+
+  const isTheme3Or4 = isVipEnabled;
   const isFeedbacksSection = section === "Feedbacks";
   const isQuestionsSection = section === "QuestionsSuggestions";
   const isOrdersSection = section === "Orders";

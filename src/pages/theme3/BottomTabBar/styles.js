@@ -5,6 +5,7 @@ export const TabBarContainer = styled.nav`
   bottom: 0;
   left: 0;
   right: 0;
+  transition: bottom 0.15s ease-out;
   width: 100%;
   height: auto;
   min-height: 56px;

@@ -59,15 +59,7 @@ export default function SubDomainTemplate({ restaurantName }) {
         'responseIsValid': responseIsValid
       });
       
-      // Only redirect if explicitly false and not theme3/5 (same subscription UX as theme3)
-      if (
-        (responseIsValid === false || responseIsValid === 0) &&
-        response.data.template_id != 3 &&
-        response.data.template_id != 5
-      ) {
-        console.log('SubDomainTemplate - Redirecting to notsubscribed');
-        navigate("/notsubscribed");
-      }
+      // Invalid restaurants are handled in the render (NotSubscribed page for all themes)
     }
     // Don't check Redux state - only use response data to avoid stale data issues
   }, [isLoading, response, navigate]);
@@ -125,23 +117,21 @@ export default function SubDomainTemplate({ restaurantName }) {
   };
   
   const isValid = getIsValid();
-  const isTheme3NotSubscribed =
-    (isValid === false || isValid === 0) && response?.data?.template_id === 3;
-  if (isTheme3NotSubscribed && response?.data) {
-    return (
-      <ThemeProvider
-        theme={{
-          ...JSON.parse(response.data.theme),
-          font: response.data.font,
-        }}
-      >
-        <Suspense fallback={null}>
-          <Theme3NotSubscribed restaurant={response.data} />
-        </Suspense>
-      </ThemeProvider>
-    );
-  }
   if (isValid === false || isValid === 0) {
+    if (response?.data) {
+      return (
+        <ThemeProvider
+          theme={{
+            ...JSON.parse(response.data.theme || '{}'),
+            font: response.data.font,
+          }}
+        >
+          <Suspense fallback={null}>
+            <Theme3NotSubscribed restaurant={response.data} />
+          </Suspense>
+        </ThemeProvider>
+      );
+    }
     return null;
   }
 

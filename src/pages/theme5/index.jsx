@@ -45,6 +45,12 @@ export default function Theme5() {
     (state) => state.restaurant?.[restaurantName]?.activeLanguage || "en"
   );
 
+  // Set document direction for RTL when Arabic
+  useEffect(() => {
+    document.documentElement.setAttribute("dir", activeLanguage === "ar" ? "rtl" : "ltr");
+    return () => document.documentElement.removeAttribute("dir");
+  }, [activeLanguage]);
+
   // Deep links bypass the landing page
   const hasDeepLink = !!(productId || categoryId);
   const [menuMode, setMenuMode] = useState(() => {

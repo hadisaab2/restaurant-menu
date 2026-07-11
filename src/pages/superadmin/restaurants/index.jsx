@@ -41,7 +41,7 @@ import {
 } from "@mui/material";
 import { templates, ALL_FEATURES, DEFAULT_FEATURES, getColorGroupsForTemplate, getColorKeysForTemplate, COLOR_PRESETS } from "./themedata";
 import { useGetQuickDemoTemplates, useCreateQuickDemo } from "../../../apis/restaurants/quickDemo";
-import { useFetchOmegaPreview, useImportFromOmega } from "../../../apis/restaurants/omegaImport";
+import { useFetchOmegaPreview, useImportFromOmega, useFetchThrubitsPreview, useImportFromThrubits } from "../../../apis/restaurants/omegaImport";
 import { useAddRestaurantQuery } from "../../../apis/restaurants/addRestaurant";
 import { useGetRestaurants } from "../../../apis/restaurants/getRestaurants";
 import { useEditRestaurantQuery } from "../../../apis/restaurants/editRestaurant";
@@ -629,6 +629,7 @@ export default function Restaurants() {
     show_slider_image,
     google_maps_api_key,
     country_code,
+    meta_pixel_id,
   }) => {
     const theme = JSON.parse(themeString);
     const features = JSON.parse(featureString);
@@ -664,11 +665,19 @@ export default function Restaurants() {
       show_slider_image,
       google_maps_api_key,
       country_code,
+      meta_pixel_id,
     });
     setIsEditMode(true);
     setTemplate(template_id);
     setValue("template_id", template_id);
     setValue("username", username);
+
+    // Set features with nested fields merged in before setValue
+    features.landing_columns = features.landing_columns || 3;
+    features.online_payment = features.online_payment || false;
+    features.stripe_publishable_key = features.stripe_publishable_key || "";
+    features.stripe_secret_key = features.stripe_secret_key || "";
+    features.payment_methods = features.payment_methods || ["whatsapp"];
     setValue("features", features);
 
     setValue("phone_number", phone_number);
@@ -703,24 +712,18 @@ export default function Restaurants() {
     setValue("is_paid", !!is_paid);
     setValue("google_maps_api_key", google_maps_api_key || "");
     setValue("country_code", country_code || "961");
-    setValue("features.landing_columns", features?.landing_columns || 3);
-    setValue("features.online_payment", features?.online_payment || false);
-    setValue("features.stripe_publishable_key", features?.stripe_publishable_key || "");
-    setValue("features.stripe_secret_key", features?.stripe_secret_key || "");
-    setValue("features.payment_methods", features?.payment_methods || ["whatsapp"]);
+    setValue("meta_pixel_id", meta_pixel_id || "");
 
-    // Set theme colors in form: for the current template, set every color from DB or default
-    const templateConfig = templates.find((t) => t.id == template_id);
+    // Set theme colors in form: use getColorKeysForTemplate to get all expected color keys
+    const colorKeys = getColorKeysForTemplate(template_id);
     const themeKey = (key) => theme[key] ?? theme[key?.toLowerCase?.()] ?? theme[key?.toUpperCase?.()];
-    if (templateConfig?.colors) {
-      templateConfig.colors.forEach((colorKey) => {
-        const value = themeKey(colorKey) ?? (colorKey === "homepageBackgroundColor" ? "#ffffff" : "");
-        setValue(`theme.[${colorKey}]`, value);
-      });
-    }
-    // Also set any extra keys that might exist in theme (e.g. legacy keys)
+    colorKeys.forEach((colorKey) => {
+      const value = themeKey(colorKey) ?? (colorKey === "homepageBackgroundColor" ? "#ffffff" : "");
+      setValue(`theme.[${colorKey}]`, value);
+    });
+    // Also set any extra keys from DB not in the template's color groups
     Object.keys(theme).forEach((key) => {
-      if (!templateConfig?.colors?.includes(key)) {
+      if (!colorKeys.includes(key)) {
         setValue(`theme.[${key}]`, theme[key]);
       }
     });
@@ -2230,13 +2233,18 @@ function QuickDemoDialog({ open, onClose, onSuccess }) {
   // Omega import hooks
   const { fetchPreview, isFetching, previewData, resetPreview } = useFetchOmegaPreview();
   const { importOmega, isImporting } = useImportFromOmega({
-    onSuccess: (data) => {
-      setResult(data);
-    },
+    onSuccess: (data) => { setResult(data); },
+  });
+  // Thrubits import hooks
+  const { fetchThrubitsPreview, isFetchingThrubits, thrubitsPreviewData, resetThrubitsPreview } = useFetchThrubitsPreview();
+  const { importThrubits, isImportingThrubits } = useImportFromThrubits({
+    onSuccess: (data) => { setResult(data); },
   });
 
   const [mode, setMode] = useState("template"); // "template" | "import"
+  const [importSource, setImportSource] = useState("omega"); // "omega" | "thrubits"
   const [omegaSlug, setOmegaSlug] = useState("");
+  const [thrubitsSlug, setThrubitsSlug] = useState("");
   const [businessType, setBusinessType] = useState("");
   const [name, setName] = useState("");
   const [username, setUsername] = useState("");
@@ -2251,29 +2259,28 @@ function QuickDemoDialog({ open, onClose, onSuccess }) {
 
   const selectedTemplate = demoTemplates?.find((t) => t.file === businessType);
 
-  // Auto-fill name from Omega preview
+  // Auto-fill name from import preview (Omega or Thrubits)
+  const activePreview = importSource === "thrubits" ? thrubitsPreviewData : previewData;
   useEffect(() => {
-    if (previewData?.name && mode === "import") {
-      setName(previewData.name);
-      const autoUser = previewData.name.toLowerCase().replace(/[^a-z0-9]+/g, "").slice(0, 20);
+    if (activePreview?.name && mode === "import") {
+      setName(activePreview.name);
+      const autoUser = activePreview.name.toLowerCase().replace(/[^a-z0-9]+/g, "").slice(0, 20);
       setUsername(autoUser);
+      if (activePreview.currency) setCurrency(activePreview.currency === "lbp" ? "lbp" : "dollar");
     }
-  }, [previewData, mode]);
+  }, [activePreview, mode]);
 
   const handleCreate = () => {
     if (mode === "import") {
-      if (!omegaSlug || !name || !username || !password || !previewData) return;
-      importOmega({
-        omegaSlug,
-        restaurantName: name,
-        username,
-        password,
-        templateId,
-        colorPreset,
-        currency,
-        languages,
-        defaultLanguage: "en",
-      });
+      if (!name || !username || !password || !activePreview) return;
+      const commonConfig = { restaurantName: name, username, password, templateId, colorPreset, currency, languages, defaultLanguage: "en" };
+      if (importSource === "thrubits") {
+        if (!thrubitsSlug) return;
+        importThrubits({ thrubitsSlug, ...commonConfig });
+      } else {
+        if (!omegaSlug) return;
+        importOmega({ omegaSlug, ...commonConfig });
+      }
     } else {
       if (!businessType || !name || !username || !password) return;
       const payload = new FormData();
@@ -2317,7 +2324,7 @@ function QuickDemoDialog({ open, onClose, onSuccess }) {
   };
 
   const isCreateDisabled = mode === "import"
-    ? !previewData || !name || !username || !password
+    ? !activePreview || !name || !username || !password
     : !businessType || !name || !username || !password;
 
   return (
@@ -2380,30 +2387,71 @@ function QuickDemoDialog({ open, onClose, onSuccess }) {
 
             {mode === "import" ? (
               <>
-                {/* Omega Slug Input */}
+                {/* Import Source Toggle */}
+                <Box sx={{ display: "flex", gap: 0, bgcolor: "#f1f5f9", borderRadius: 2, p: 0.5, mb: 1 }}>
+                  {[{ key: "omega", label: "Omega" }, { key: "thrubits", label: "Thrubits" }].map((s) => (
+                    <Box key={s.key}
+                      onClick={() => { setImportSource(s.key); resetPreview(); resetThrubitsPreview(); }}
+                      sx={{
+                        flex: 1, py: 0.5, textAlign: "center", borderRadius: 1.5, cursor: "pointer",
+                        fontWeight: 600, fontSize: 12, transition: "all 0.2s",
+                        bgcolor: importSource === s.key ? "#8b5cf6" : "transparent",
+                        color: importSource === s.key ? "#fff" : "#666",
+                      }}>
+                      {s.label}
+                    </Box>
+                  ))}
+                </Box>
+
+                {/* Slug Input */}
                 <Box>
-                  <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 600 }}>Omega Restaurant Slug</Typography>
+                  <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 600 }}>
+                    {importSource === "thrubits" ? "Thrubits Restaurant Slug" : "Omega Restaurant Slug"}
+                  </Typography>
                   <Box sx={{ display: "flex", gap: 1 }}>
-                    <TextField
-                      size="small"
-                      placeholder="e.g. gilbertsburgerbite"
-                      value={omegaSlug}
-                      onChange={(e) => setOmegaSlug(e.target.value)}
-                      fullWidth
-                      InputProps={{
-                        startAdornment: (
-                          <Typography sx={{ color: "#999", fontSize: 12, mr: 0.5, whiteSpace: "nowrap" }}>
-                            menu.omegasoftware.ca/
-                          </Typography>
-                        ),
-                      }}
-                    />
+                    {importSource === "thrubits" ? (
+                      <TextField
+                        size="small"
+                        placeholder="e.g. royal-donuts"
+                        value={thrubitsSlug}
+                        onChange={(e) => setThrubitsSlug(e.target.value)}
+                        fullWidth
+                        InputProps={{
+                          startAdornment: (
+                            <Typography sx={{ color: "#999", fontSize: 12, mr: 0.5, whiteSpace: "nowrap" }}>
+                              rest.thrubits.com/restaurant/
+                            </Typography>
+                          ),
+                        }}
+                      />
+                    ) : (
+                      <TextField
+                        size="small"
+                        placeholder="e.g. gilbertsburgerbite"
+                        value={omegaSlug}
+                        onChange={(e) => setOmegaSlug(e.target.value)}
+                        fullWidth
+                        InputProps={{
+                          startAdornment: (
+                            <Typography sx={{ color: "#999", fontSize: 12, mr: 0.5, whiteSpace: "nowrap" }}>
+                              menu.omegasoftware.ca/
+                            </Typography>
+                          ),
+                        }}
+                      />
+                    )}
                     <LoadingButton
                       variant="contained"
                       size="small"
-                      onClick={handleFetchOmega}
-                      loading={isFetching}
-                      disabled={!omegaSlug}
+                      onClick={() => {
+                        if (importSource === "thrubits") {
+                          if (thrubitsSlug) fetchThrubitsPreview(thrubitsSlug);
+                        } else {
+                          if (omegaSlug) fetchPreview(omegaSlug);
+                        }
+                      }}
+                      loading={isFetching || isFetchingThrubits}
+                      disabled={importSource === "thrubits" ? !thrubitsSlug : !omegaSlug}
                       sx={{ minWidth: 80, textTransform: "none", bgcolor: "#6d28d9" }}
                     >
                       Fetch
@@ -2411,27 +2459,27 @@ function QuickDemoDialog({ open, onClose, onSuccess }) {
                   </Box>
                 </Box>
 
-                {/* Omega Preview */}
-                {previewData && (
+                {/* Import Preview */}
+                {activePreview && (
                   <Box sx={{ border: "1px solid #e0e0e0", borderRadius: 2, p: 2, bgcolor: "#fafafa" }}>
                     <Box sx={{ display: "flex", alignItems: "center", gap: 2, mb: 1.5 }}>
-                      {previewData.logo && (
-                        <img src={previewData.logo} alt="Logo" style={{ width: 48, height: 48, borderRadius: 10, objectFit: "cover", border: "1px solid #ddd" }} />
+                      {activePreview.logo && (
+                        <img src={activePreview.logo} alt="Logo" style={{ width: 48, height: 48, borderRadius: 10, objectFit: "cover", border: "1px solid #ddd" }} />
                       )}
                       <Box>
-                        <Typography sx={{ fontWeight: 700, fontSize: 16 }}>{previewData.name}</Typography>
-                        <Typography sx={{ fontSize: 12, color: "#666" }}>{previewData.address}</Typography>
+                        <Typography sx={{ fontWeight: 700, fontSize: 16 }}>{activePreview.name}</Typography>
+                        <Typography sx={{ fontSize: 12, color: "#666" }}>{activePreview.address}</Typography>
                       </Box>
                     </Box>
                     <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.8, mb: 1 }}>
-                      {previewData.categories?.map((c, i) => (
+                      {activePreview.categories?.map((c, i) => (
                         <Box key={i} sx={{ fontSize: 11, px: 1.2, py: 0.4, bgcolor: "#e8e0f5", borderRadius: 1, color: "#6d28d9", fontWeight: 500 }}>
                           {c.name} ({c.itemCount})
                         </Box>
                       ))}
                     </Box>
                     <Typography sx={{ fontSize: 12, color: "#888" }}>
-                      Total: <strong>{previewData.totalItems} items</strong> | Currency: {previewData.currency} | {previewData.phone && `Phone: ${previewData.phone}`}
+                      Total: <strong>{activePreview.totalItems} items</strong> | Currency: {activePreview.currency} | {activePreview.phone && `Phone: ${activePreview.phone}`}
                     </Typography>
                   </Box>
                 )}
@@ -2580,7 +2628,7 @@ function QuickDemoDialog({ open, onClose, onSuccess }) {
             )}
             {mode === "import" && previewData && (
               <Alert severity="info" icon={false}>
-                Will import: <strong>{previewData.categories?.length} categories</strong>, <strong>{previewData.totalItems} products</strong> — images will be downloaded to our servers
+                Will import: <strong>{activePreview.categories?.length} categories</strong>, <strong>{activePreview.totalItems} products</strong> — images will be downloaded to our servers
               </Alert>
             )}
           </Box>
@@ -2592,7 +2640,7 @@ function QuickDemoDialog({ open, onClose, onSuccess }) {
           <LoadingButton
             variant="contained"
             onClick={handleCreate}
-            loading={isPending || isImporting}
+            loading={isPending || isImporting || isImportingThrubits}
             disabled={isCreateDisabled}
             sx={{ background: "linear-gradient(135deg, #8b5cf6, #6d28d9)" }}
           >
