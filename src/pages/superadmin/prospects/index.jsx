@@ -6,6 +6,7 @@ import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import DialogActions from "@mui/material/DialogActions";
 import ReviewDialog, { uploadLogo } from "../../../components/shared/ReviewDialog";
+import { openWhatsApp } from "../../../utilities/formatWhatsappNumber";
 
 const API = process.env.REACT_APP_BASE_URL;
 const headers = () => ({ Authorization: `Bearer ${getCookie("accessToken")}` });
@@ -972,7 +973,11 @@ function SendMessageDialog({ open, prospect, onClose, showToast, onSent }) {
         { headers: headers() },
       );
       if (data.data?.whatsapp_url) {
-        window.open(data.data.whatsapp_url, "_blank");
+        // Use direct WhatsApp deep link (same as cart) instead of opening new tab
+        const phone = prospect.business_phone || prospect.whatsapp_number || "";
+        const digits = phone.replace(/\D/g, "");
+        const intlPhone = digits.startsWith("961") ? digits : "961" + (digits.startsWith("0") ? digits.slice(1) : digits);
+        openWhatsApp(intlPhone, message);
       }
       showToast(`${STAGES.find(s => s.value === stage)?.label || stage} sent & logged`);
       onSent();

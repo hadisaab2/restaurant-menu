@@ -38,6 +38,7 @@ import {
   Tab,
   Typography,
   Alert,
+  Autocomplete,
 } from "@mui/material";
 import { templates, ALL_FEATURES, DEFAULT_FEATURES, getColorGroupsForTemplate, getColorKeysForTemplate, COLOR_PRESETS } from "./themedata";
 import { useGetQuickDemoTemplates, useCreateQuickDemo } from "../../../apis/restaurants/quickDemo";
@@ -115,6 +116,7 @@ export default function Restaurants() {
   const [squareDimension, setSquareDimension] = useState(true); // Default false
   const [showExcelModal, setShowExcelModal] = useState(false);
   const [showQuickDemoModal, setShowQuickDemoModal] = useState(false);
+  const [showDuplicateModal, setShowDuplicateModal] = useState(false);
   const [excelTab, setExcelTab] = useState(0); // 0: Normal, 1: Duplicate, 2: Products/Categories
   const [excelFile, setExcelFile] = useState(null);
   const [duplicateSourceId, setDuplicateSourceId] = useState("");
@@ -124,6 +126,7 @@ export default function Restaurants() {
     password: "",
     email: "",
     phone_number: "",
+    template_id: "",
   });
   const [excelRestaurantId, setExcelRestaurantId] = useState("");
   const [excelUploading, setExcelUploading] = useState(false);
@@ -707,7 +710,14 @@ export default function Restaurants() {
     setValue("business_type", business_type || "restaurant");
     setValue("all_items_style", all_items_style || "grid");
     setValue("product_details_carousel_style", product_details_carousel_style || "normal");
-    setValue("payment_date", payment_date ? (payment_date.split?.("T")?.[0] ?? payment_date) : "");
+    // Convert yyyy-mm-dd to dd/mm/yyyy for display
+    const pdRaw = payment_date ? (payment_date.split?.("T")?.[0] ?? payment_date) : "";
+    if (pdRaw && pdRaw.includes("-")) {
+      const [y, m, d] = pdRaw.split("-");
+      setValue("payment_date", `${parseInt(d)}/${parseInt(m)}/${y}`);
+    } else {
+      setValue("payment_date", pdRaw);
+    }
     setValue("amount", amount != null && amount !== "" ? amount : "");
     setValue("is_paid", !!is_paid);
     setValue("google_maps_api_key", google_maps_api_key || "");
@@ -897,6 +907,20 @@ export default function Restaurants() {
             >
               Quick Demo
             </Button>
+            <Button
+              variant="outlined"
+              sx={{
+                textTransform: "none",
+                fontWeight: 600,
+                fontSize: 13,
+                borderColor: "#8b5cf6",
+                color: "#8b5cf6",
+                "&:hover": { borderColor: "#7c3aed", background: "rgba(139,92,246,0.05)" },
+              }}
+              onClick={() => setShowDuplicateModal(true)}
+            >
+              Duplicate Restaurant
+            </Button>
           </div>
           <Box sx={{
             display: "flex",
@@ -1054,20 +1078,14 @@ export default function Restaurants() {
               
               {excelTab === 1 && (
                 <Box sx={{ mt: 3, display: "flex", flexDirection: "column", gap: 2 }}>
-                  <FormControl fullWidth>
-                    <InputLabel>Select Restaurant to Duplicate</InputLabel>
-                    <Select
-                      value={duplicateSourceId}
-                      onChange={(e) => setDuplicateSourceId(e.target.value)}
-                      label="Select Restaurant to Duplicate"
-                    >
-                      {restaurants.map((restaurant) => (
-                        <MenuItem key={restaurant.restaurant_id} value={restaurant.restaurant_id}>
-                          {restaurant.restaurantName} ({restaurant.username})
-                        </MenuItem>
-                      ))}
-                    </Select>
-                  </FormControl>
+                  <Autocomplete
+                    options={restaurants}
+                    getOptionLabel={(option) => `${option.restaurantName} (${option.username})`}
+                    value={restaurants.find((r) => r.restaurant_id === duplicateSourceId) || null}
+                    onChange={(_, newVal) => setDuplicateSourceId(newVal ? newVal.restaurant_id : "")}
+                    renderInput={(params) => <TextField {...params} label="Select Restaurant to Duplicate" />}
+                    fullWidth
+                  />
                   
                   <TextField
                     label="New Restaurant Name"
@@ -1219,6 +1237,93 @@ export default function Restaurants() {
             onClose={() => setShowQuickDemoModal(false)}
             onSuccess={() => { setShowQuickDemoModal(false); refetchRestaurants(); }}
           />
+
+          {/* Duplicate Restaurant Dialog */}
+          <Dialog open={showDuplicateModal} onClose={() => setShowDuplicateModal(false)} maxWidth="sm" fullWidth>
+            <DialogTitle sx={{ fontWeight: 700 }}>Duplicate Restaurant</DialogTitle>
+            <DialogContent>
+              <Box sx={{ display: "flex", flexDirection: "column", gap: 2, mt: 1 }}>
+                <Autocomplete
+                  options={restaurants}
+                  getOptionLabel={(option) => `${option.restaurantName} (${option.username})`}
+                  value={restaurants.find((r) => r.restaurant_id === duplicateSourceId) || null}
+                  onChange={(_, newVal) => setDuplicateSourceId(newVal ? newVal.restaurant_id : "")}
+                  renderInput={(params) => <TextField {...params} label="Source Restaurant" />}
+                  fullWidth
+                />
+                <TextField
+                  label="New Restaurant Name *"
+                  value={duplicateFormData.name}
+                  onChange={(e) => setDuplicateFormData({ ...duplicateFormData, name: e.target.value })}
+                  fullWidth
+                />
+                <TextField
+                  label="New Username *"
+                  value={duplicateFormData.username}
+                  onChange={(e) => setDuplicateFormData({ ...duplicateFormData, username: e.target.value })}
+                  fullWidth
+                />
+                <TextField
+                  label="New Password *"
+                  type="password"
+                  value={duplicateFormData.password}
+                  onChange={(e) => setDuplicateFormData({ ...duplicateFormData, password: e.target.value })}
+                  fullWidth
+                />
+                <TextField
+                  label="Email (optional)"
+                  type="email"
+                  value={duplicateFormData.email}
+                  onChange={(e) => setDuplicateFormData({ ...duplicateFormData, email: e.target.value })}
+                  fullWidth
+                />
+                <TextField
+                  label="Phone (optional)"
+                  value={duplicateFormData.phone_number}
+                  onChange={(e) => setDuplicateFormData({ ...duplicateFormData, phone_number: e.target.value })}
+                  fullWidth
+                />
+                <FormControl fullWidth>
+                  <InputLabel>Theme (optional — keeps source theme if empty)</InputLabel>
+                  <Select
+                    value={duplicateFormData.template_id}
+                    onChange={(e) => setDuplicateFormData({ ...duplicateFormData, template_id: e.target.value })}
+                    label="Theme (optional — keeps source theme if empty)"
+                  >
+                    <MenuItem value="">
+                      <em>Keep source theme</em>
+                    </MenuItem>
+                    {templates.map((t) => (
+                      <MenuItem key={t.id} value={t.id}>
+                        {t.id}. {t.name}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+                <div style={{ fontSize: 12, color: "#64748b", background: "#f8fafc", padding: 10, borderRadius: 8 }}>
+                  Duplicates: all settings, categories, products (with images), branches, social media, slider images, badges, slogans.
+                </div>
+              </Box>
+            </DialogContent>
+            <DialogActions sx={{ padding: "12px 24px 20px" }}>
+              <Button onClick={() => setShowDuplicateModal(false)} sx={{ textTransform: "none" }}>Cancel</Button>
+              <LoadingButton
+                variant="contained"
+                loading={isDuplicating}
+                disabled={!duplicateSourceId || !duplicateFormData.name || !duplicateFormData.username || !duplicateFormData.password}
+                onClick={() => {
+                  handleDuplicateRestaurant({
+                    source_restaurant_id: parseInt(duplicateSourceId),
+                    ...duplicateFormData,
+                  });
+                  setShowDuplicateModal(false);
+                }}
+                sx={{ textTransform: "none", background: "#8b5cf6" }}
+              >
+                Duplicate
+              </LoadingButton>
+            </DialogActions>
+          </Dialog>
         </>
       ) : (
         <>
@@ -1447,9 +1552,21 @@ export default function Restaurants() {
             </FormControl>
             <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2, alignItems: "center", mt: 1 }}>
               <TextField
-                label="Payment Date"
-                type="date"
-                {...register("payment_date")}
+                label="Payment Date (dd/mm/yyyy)"
+                type="text"
+                placeholder="17/3/2025"
+                {...register("payment_date", {
+                  setValueAs: (v) => {
+                    if (!v) return null;
+                    // Accept dd/mm/yyyy and convert to yyyy-mm-dd for API
+                    const parts = v.split("/");
+                    if (parts.length === 3) {
+                      const [d, m, y] = parts;
+                      return `${y.padStart(4, "20")}-${m.padStart(2, "0")}-${d.padStart(2, "0")}`;
+                    }
+                    return v; // already yyyy-mm-dd
+                  },
+                })}
                 InputLabelProps={{ shrink: true }}
                 style={{ width: "180px" }}
               />

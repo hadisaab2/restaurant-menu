@@ -369,7 +369,7 @@ export default function HomePage({ onExploreClick, categories, setSearchParams, 
 
       {/* Location Cards Section */}
       {branches.length > 0 && (
-        <LocationCardsSection id="branches-section">
+        <LocationCardsSection id="branches-section" activeLanguage={activeLanguage}>
           <SectionTitle activeLanguage={activeLanguage}>
             {branchesTitle}
           </SectionTitle>
@@ -414,7 +414,7 @@ export default function HomePage({ onExploreClick, categories, setSearchParams, 
 
       {/* Social Media Section */}
       {socialMedia.length > 0 && (
-        <SocialMediaSection id="social-media-section">
+        <SocialMediaSection id="social-media-section" activeLanguage={activeLanguage}>
           <SectionTitle activeLanguage={activeLanguage}>
             {socialTitle}
           </SectionTitle>

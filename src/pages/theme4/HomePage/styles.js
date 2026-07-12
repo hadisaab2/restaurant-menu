@@ -1531,7 +1531,9 @@ export const FooterGrid = styled.div`
   }
 `;
 
-export const FooterBrand = styled.div``;
+export const FooterBrand = styled.div`
+  text-align: start;
+`;
 
 export const FooterLogo = styled.span`
   font-size: 1.25rem;
@@ -1559,12 +1561,14 @@ export const FooterTagline = styled.p`
   line-height: 1.6;
   opacity: 0.7;
   margin: 12px 0 0 0;
+  text-align: start;
 `;
 
 export const FooterSocialWrap = styled.div`
   display: flex;
   gap: 8px;
   margin-top: 20px;
+  flex-wrap: wrap;
 `;
 
 export const FooterSocialLink = styled.a`
@@ -1583,7 +1587,9 @@ export const FooterSocialLink = styled.a`
   }
 `;
 
-export const FooterCol = styled.div``;
+export const FooterCol = styled.div`
+  text-align: start;
+`;
 
 export const FooterBranchesCol = styled.div`
   display: grid;
@@ -1611,6 +1617,7 @@ export const FooterColTitle = styled.h4`
   font-weight: 600;
   color: inherit;
   margin: 0 0 16px 0;
+  text-align: start;
 `;
 
 export const FooterLink = styled.a`
@@ -1624,7 +1631,9 @@ export const FooterLink = styled.a`
   border: none;
   background: none;
   font: inherit;
-  text-align: inherit;
+  text-align: start;
+  color: inherit;
+  padding: 0;
   &:hover {
     opacity: 1;
   }
@@ -1663,6 +1672,7 @@ export const FooterHoursText = styled.p`
   opacity: 0.7;
   margin: 0 0 8px 0;
   line-height: 1.5;
+  text-align: start;
   &:last-child {
     margin-bottom: 0;
   }

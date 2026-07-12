@@ -669,7 +669,8 @@ export const LocationCardsSection = styled.section`
   max-width: 1200px;
   margin: 0 auto;
   background: ${props => props.theme.backgroundColor || "#f8f9fa"};
-  
+  direction: ${props => props.activeLanguage === "ar" ? "rtl" : "ltr"};
+
   @media (min-width: 768px) {
     padding: 40px 5%;
   }
@@ -1093,7 +1094,8 @@ export const SocialMediaSection = styled.section`
   max-width: 1200px;
   margin: 10px auto;
   background: ${props => props.theme.backgroundColor || "#f8f9fa"};
-  
+  direction: ${props => props.activeLanguage === "ar" ? "rtl" : "ltr"};
+
   @media (min-width: 768px) {
     padding: 32px 5%;
   }
