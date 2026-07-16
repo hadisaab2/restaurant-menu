@@ -22,19 +22,19 @@ function formatPaymentDate(value) {
 
 const REMINDER_TEMPLATES = [
   {
+    name: "Post-War",
+    ar: "مرحباً {restaurant_name}،\n\nنظراً للظروف الصعبة التي مرّ بها البلد خلال الفترة الماضية بسبب الحرب، حرص فريق Menugic على عدم مطالبة العملاء بتسديد الاشتراكات خلال هذه المرحلة، تقديراً للظروف التي يمر بها الجميع.\n\nنود تذكيركم بلطف بأن دفعة اشتراك Menugic بقيمة {amount}$، والمستحقة بتاريخ {payment_date}، ما زالت غير مسددة.\n\nيمكن تسديد الدفعة عبر Whish على الرقم:\n70886986\n\nقائمتكم متاحة على:\n{restaurant_url}\n\nيرجى ترتيب عملية الدفع للحفاظ على القائمة فعّالة. نشكركم على تفهّمكم وثقتكم بـ Menugic.",
+    en: "Hi {restaurant_name},\n\nDue to the difficult circumstances the country has experienced because of the war, the Menugic team chose not to follow up on subscription payments during this period, in consideration of the challenges faced by everyone.\n\nThis is a friendly reminder that your Menugic subscription payment of ${amount}, which was due on {payment_date}, is still outstanding.\n\nPayment can be made via Whish to:\n70886986\n\nYour menu is available at:\n{restaurant_url}\n\nPlease arrange the payment to keep your menu active. Thank you for your understanding and continued trust in Menugic.",
+  },
+  {
     name: "Standard",
-    en: "Hi {restaurant_name}! This is a friendly reminder that your Menugic subscription payment of ${amount} is due on {payment_date}. Your menu is live at: {restaurant_url}. Please arrange payment to keep your menu active. Thank you!",
-    ar: "مرحبا {restaurant_name}! هذا تذكير بأن دفعة اشتراك Menugic بقيمة {amount}$ مستحقة بتاريخ {payment_date}. قائمتكم متاحة على: {restaurant_url}. يرجى ترتيب الدفع للحفاظ على القائمة فعالة. شكراً!",
+    ar: "مرحباً {restaurant_name}،\n\nنود تذكيركم بأن دفعة اشتراك Menugic بقيمة {amount}$، مستحقة بتاريخ {payment_date}.\n\nيمكن تسديد الدفعة عبر Whish على الرقم:\n70886986\n\nقائمتكم متاحة على:\n{restaurant_url}\n\nيرجى ترتيب الدفع للحفاظ على القائمة فعّالة. شكراً لثقتكم بـ Menugic!",
+    en: "Hi {restaurant_name},\n\nThis is a friendly reminder that your Menugic subscription payment of ${amount}, is due on {payment_date}.\n\nPayment can be made via Whish to:\n70886986\n\nYour menu is available at:\n{restaurant_url}\n\nPlease arrange the payment to keep your menu active. Thank you for your trust in Menugic!",
   },
   {
     name: "Overdue",
-    en: "Hi {restaurant_name}! Your Menugic subscription (${amount}) was due on {payment_date}. Your menu at {restaurant_url} may be deactivated soon. Please make the payment to avoid service interruption. Contact us if you need help!",
-    ar: "مرحبا {restaurant_name}! دفعة اشتراك Menugic بقيمة {amount}$ كانت مستحقة بتاريخ {payment_date}. قائمتكم على {restaurant_url} قد يتم إيقافها قريباً. يرجى الدفع لتجنب انقطاع الخدمة. تواصلوا معنا اذا بحاجة لمساعدة!",
-  },
-  {
-    name: "Gentle",
-    en: "Hi {restaurant_name}! Just a heads up — your Menugic renewal (${amount}) is coming up on {payment_date}. Your digital menu at {restaurant_url} is performing well! Let us know if you'd like to continue.",
-    ar: "مرحبا {restaurant_name}! تذكير بسيط — تجديد اشتراك Menugic بقيمة {amount}$ بتاريخ {payment_date}. قائمتكم الرقمية على {restaurant_url} شغالة تمام! خبرونا اذا بدكم تكملوا.",
+    ar: "مرحباً {restaurant_name}،\n\nدفعة اشتراك Menugic بقيمة {amount}$، كانت مستحقة بتاريخ {payment_date}، وما زالت غير مسددة.\n\nقائمتكم على {restaurant_url} قد يتم إيقافها قريباً.\n\nيمكن تسديد الدفعة عبر Whish على الرقم:\n70886986\n\nيرجى الدفع لتجنب انقطاع الخدمة. تواصلوا معنا إذا بحاجة لمساعدة!",
+    en: "Hi {restaurant_name},\n\nYour Menugic subscription payment of ${amount}, which was due on {payment_date}, is still outstanding.\n\nYour menu at {restaurant_url} may be deactivated soon.\n\nPayment can be made via Whish to:\n70886986\n\nPlease make the payment to avoid service interruption. Contact us if you need help!",
   },
 ];
 
@@ -92,7 +92,7 @@ export default function TableRestaurants({
   const buildMessage = (restaurant, templateIdx) => {
     const tpl = REMINDER_TEMPLATES[templateIdx];
     const name = restaurant.restaurantName || restaurant.username || "";
-    const url = `menugic.com/${restaurant.restaurantName || restaurant.username || ""}`;
+    const url = `${restaurant.username || restaurant.restaurantName || ""}.menugic.com`;
     const amount = restaurant.amount != null ? restaurant.amount : "—";
     const date = formatPaymentDate(restaurant.payment_date);
 
@@ -122,6 +122,7 @@ export default function TableRestaurants({
             <tr>
               <Th>User name</Th>
               <Th>Restaurant name</Th>
+              <Th>Link</Th>
               <Th>Phone</Th>
               <Th>Payment date</Th>
               <Th>Amount</Th>
@@ -138,6 +139,16 @@ export default function TableRestaurants({
                 <Tr key={restaurant.restaurant_id} $needRenewal={needRenewal}>
                   <Td>{restaurant.username}</Td>
                   <Td>{restaurant.restaurantName}</Td>
+                  <Td>
+                    <a
+                      href={`https://${restaurant.username}.menugic.com`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{ color: "#5eabb1", textDecoration: "none", fontSize: 12, fontWeight: 500 }}
+                    >
+                      {restaurant.username}.menugic.com
+                    </a>
+                  </Td>
                   <Td>{restaurant.phone_number}</Td>
                   <Td>{formatPaymentDate(restaurant.payment_date)}</Td>
                   <Td>{restaurant.amount != null ? restaurant.amount : "\u2014"}</Td>
