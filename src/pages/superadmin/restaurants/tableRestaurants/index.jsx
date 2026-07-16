@@ -6,7 +6,7 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogActions from "@mui/material/DialogActions";
 import { Delete, Edit, EditDeleteIcons, Table, TableWrapper, Td, Th, Tr } from "./styles";
 import { getCookie } from "../../../../utilities/manageCookies";
-import { openWhatsApp } from "../../../../utilities/formatWhatsappNumber";
+
 
 const API = process.env.REACT_APP_BASE_URL;
 
@@ -110,7 +110,8 @@ export default function TableRestaurants({
     const phone = reminderOpen?.phone_number || "";
     const digits = phone.replace(/\D/g, "");
     const intlPhone = digits.startsWith("961") ? digits : "961" + (digits.startsWith("0") ? digits.slice(1) : digits);
-    openWhatsApp(intlPhone, reminderMessage);
+    const encoded = encodeURIComponent(reminderMessage);
+    window.open(`https://web.whatsapp.com/send?phone=${intlPhone}&text=${encoded}`, "_blank");
     setReminderOpen(null);
   };
 
