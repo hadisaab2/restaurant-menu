@@ -69,11 +69,12 @@ export default function RestaurantDash() {
     }).then(({ data }) => {
       try {
         const restaurant = data?.data || data;
+        console.log("[VIP DEBUG] restaurant_name:", restaurantName, "is_vip:", restaurant?.is_vip, "full response keys:", Object.keys(restaurant || {}));
         const features = typeof restaurant?.features === "string" ? JSON.parse(restaurant.features) : restaurant?.features;
         setRestaurantFeatures(features || {});
         setIsVip(!!restaurant?.is_vip);
-      } catch { setRestaurantFeatures({}); }
-    }).catch(() => setRestaurantFeatures({}));
+      } catch (e) { console.log("[VIP DEBUG] catch error:", e); setRestaurantFeatures({}); }
+    }).catch((e) => { console.log("[VIP DEBUG] API error:", e); setRestaurantFeatures({}); });
   }, [userInformation?.restaurant_name]);
 
   const [isVip, setIsVip] = useState(false);
