@@ -60,11 +60,11 @@ export default function RestaurantDash() {
   const [restaurantFeatures, setRestaurantFeatures] = useState(null);
 
   useEffect(() => {
-    const restaurantId = userInformation?.restaurant_id;
-    if (!restaurantId) return;
+    const restaurantName = userInformation?.restaurant_name;
+    if (!restaurantName) return;
     const token = getCookie("accessToken");
     if (!token) return;
-    axios.get(`${process.env.REACT_APP_BASE_URL}/restaurants/${restaurantId}`, {
+    axios.get(`${process.env.REACT_APP_BASE_URL}/restaurants/${restaurantName}`, {
       headers: { Authorization: `Bearer ${token}` },
     }).then(({ data }) => {
       try {
@@ -74,7 +74,7 @@ export default function RestaurantDash() {
         setIsVip(!!restaurant?.is_vip);
       } catch { setRestaurantFeatures({}); }
     }).catch(() => setRestaurantFeatures({}));
-  }, [userInformation?.restaurant_id]);
+  }, [userInformation?.restaurant_name]);
 
   const [isVip, setIsVip] = useState(false);
 
