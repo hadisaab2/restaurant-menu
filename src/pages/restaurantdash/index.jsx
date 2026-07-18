@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import {
   CateogoryIcon,
@@ -70,15 +70,15 @@ export default function RestaurantDash() {
       try {
         const features = typeof data?.data?.features === "string" ? JSON.parse(data.data.features) : data?.data?.features;
         setRestaurantFeatures(features || {});
+        setIsVip(!!data?.data?.is_vip);
       } catch { setRestaurantFeatures({}); }
     }).catch(() => setRestaurantFeatures({}));
   }, [userInformation?.restaurant_id]);
 
-  // VIP features are enabled only if the customer-facing feature is active
-  const isVipEnabled = useMemo(() => {
-    if (!restaurantFeatures) return false;
-    return !!(restaurantFeatures.feedback || restaurantFeatures.user_registration);
-  }, [restaurantFeatures]);
+  const [isVip, setIsVip] = useState(false);
+
+  // VIP features are enabled when is_vip flag is set by superadmin
+  const isVipEnabled = isVip;
 
   const isTheme3Or4 = isVipEnabled;
   const isFeedbacksSection = section === "Feedbacks";

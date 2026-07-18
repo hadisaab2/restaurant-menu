@@ -633,6 +633,7 @@ export default function Restaurants() {
     google_maps_api_key,
     country_code,
     meta_pixel_id,
+    is_vip,
   }) => {
     const theme = JSON.parse(themeString);
     const features = JSON.parse(featureString);
@@ -669,6 +670,7 @@ export default function Restaurants() {
       google_maps_api_key,
       country_code,
       meta_pixel_id,
+      is_vip,
     });
     setIsEditMode(true);
     setTemplate(template_id);
@@ -720,6 +722,7 @@ export default function Restaurants() {
     }
     setValue("amount", amount != null && amount !== "" ? amount : "");
     setValue("is_paid", !!is_paid);
+    setValue("is_vip", !!is_vip);
     setValue("google_maps_api_key", google_maps_api_key || "");
     setValue("country_code", country_code || "961");
     setValue("meta_pixel_id", meta_pixel_id || "");
@@ -794,6 +797,7 @@ export default function Restaurants() {
           payment_date: data.payment_date || null,
           amount: data.amount != null && data.amount !== "" ? data.amount : null,
           is_paid: data.is_paid === true || data.is_paid === "true" || data.is_paid === 1,
+          is_vip: data.is_vip === true || data.is_vip === "true" || data.is_vip === 1,
         };
         console.log("Formatted form data:", formData);
         if (selectedProduct) {
@@ -1587,6 +1591,18 @@ export default function Restaurants() {
                     />
                   }
                   label="Is Paid"
+                />
+              </FormControl>
+              <FormControl component="fieldset" style={{ display: "inline-flex" }}>
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      {...register("is_vip")}
+                      defaultChecked={!!selectedProduct?.is_vip}
+                      onChange={(e) => setValue("is_vip", e.target.checked)}
+                    />
+                  }
+                  label="Is VIP"
                 />
               </FormControl>
             </Box>
