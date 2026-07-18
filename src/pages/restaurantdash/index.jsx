@@ -68,9 +68,10 @@ export default function RestaurantDash() {
       headers: { Authorization: `Bearer ${token}` },
     }).then(({ data }) => {
       try {
-        const features = typeof data?.data?.features === "string" ? JSON.parse(data.data.features) : data?.data?.features;
+        const restaurant = data?.data || data;
+        const features = typeof restaurant?.features === "string" ? JSON.parse(restaurant.features) : restaurant?.features;
         setRestaurantFeatures(features || {});
-        setIsVip(!!data?.data?.is_vip);
+        setIsVip(!!restaurant?.is_vip);
       } catch { setRestaurantFeatures({}); }
     }).catch(() => setRestaurantFeatures({}));
   }, [userInformation?.restaurant_id]);
