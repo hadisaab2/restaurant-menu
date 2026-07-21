@@ -68,6 +68,48 @@ export default function TableRestaurants({
   const [reminderOpen, setReminderOpen] = useState(null); // restaurant object
   const [reminderTemplate, setReminderTemplate] = useState(0);
   const [reminderMessage, setReminderMessage] = useState("");
+  const [selectedIds, setSelectedIds] = useState(new Set());
+  const [bulkDeleteOpen, setBulkDeleteOpen] = useState(false);
+  const [bulkDeleting, setBulkDeleting] = useState(false);
+
+  const allIds = restaurants.map((r) => r.restaurant_id);
+  const allSelected = allIds.length > 0 && allIds.every((id) => selectedIds.has(id));
+
+  const toggleOne = (id) => {
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
+
+  const toggleAll = () => {
+    if (allSelected) {
+      setSelectedIds(new Set());
+    } else {
+      setSelectedIds(new Set(allIds));
+    }
+  };
+
+  const handleBulkDelete = async () => {
+    setBulkDeleting(true);
+    try {
+      const token = getCookie("accessToken");
+      for (const id of selectedIds) {
+        await axios.delete(`${API}/restaurants/${id}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+      }
+      setSelectedIds(new Set());
+      setBulkDeleteOpen(false);
+      if (onRefresh) onRefresh();
+    } catch (err) {
+      console.error("Bulk delete failed:", err);
+    } finally {
+      setBulkDeleting(false);
+    }
+  };
 
   const toggleLanding = async (restaurant) => {
     try {
@@ -117,10 +159,48 @@ export default function TableRestaurants({
 
   return (
     <>
+      {selectedIds.size > 0 && (
+        <div style={{
+          display: "flex", alignItems: "center", gap: 12, padding: "8px 16px",
+          background: "rgba(239,68,68,0.06)", borderRadius: 8, marginBottom: 8,
+        }}>
+          <span style={{ fontSize: 13, fontWeight: 600, color: "#dc2626" }}>
+            {selectedIds.size} selected
+          </span>
+          <button
+            onClick={() => setBulkDeleteOpen(true)}
+            style={{
+              padding: "6px 16px", borderRadius: 8, border: "none",
+              background: "#dc2626", color: "#fff", fontSize: 12,
+              fontWeight: 600, cursor: "pointer",
+            }}
+          >
+            Delete Selected
+          </button>
+          <button
+            onClick={() => setSelectedIds(new Set())}
+            style={{
+              padding: "6px 16px", borderRadius: 8, border: "none",
+              background: "#f1f5f9", color: "#64748b", fontSize: 12,
+              fontWeight: 600, cursor: "pointer",
+            }}
+          >
+            Clear
+          </button>
+        </div>
+      )}
       <TableWrapper>
         <Table>
           <thead>
             <tr>
+              <Th style={{ width: 36 }}>
+                <input
+                  type="checkbox"
+                  checked={allSelected}
+                  onChange={toggleAll}
+                  style={{ cursor: "pointer" }}
+                />
+              </Th>
               <Th>User name</Th>
               <Th>Restaurant name</Th>
               <Th>Link</Th>
@@ -138,6 +218,14 @@ export default function TableRestaurants({
               const onLanding = restaurant.showInMainWebsite === true || restaurant.showInMainWebsite === 1;
               return (
                 <Tr key={restaurant.restaurant_id} $needRenewal={needRenewal}>
+                  <Td>
+                    <input
+                      type="checkbox"
+                      checked={selectedIds.has(restaurant.restaurant_id)}
+                      onChange={() => toggleOne(restaurant.restaurant_id)}
+                      style={{ cursor: "pointer" }}
+                    />
+                  </Td>
                   <Td>{restaurant.username}</Td>
                   <Td>{restaurant.restaurantName}</Td>
                   <Td>
@@ -249,6 +337,26 @@ export default function TableRestaurants({
           <button onClick={() => setReminderOpen(null)} style={{ padding: "8px 18px", borderRadius: 8, border: "none", background: "#f1f5f9", color: "#64748b", fontSize: 13, fontWeight: 600, cursor: "pointer" }}>Cancel</button>
           <button onClick={() => { navigator.clipboard.writeText(reminderMessage); }} style={{ padding: "8px 18px", borderRadius: 8, border: "none", background: "#f1f5f9", color: "#334155", fontSize: 13, fontWeight: 600, cursor: "pointer" }}>Copy</button>
           <button onClick={sendReminder} disabled={!reminderOpen?.phone_number} style={{ padding: "8px 18px", borderRadius: 8, border: "none", background: "#5eabb1", color: "#fff", fontSize: 13, fontWeight: 600, cursor: "pointer", opacity: reminderOpen?.phone_number ? 1 : 0.5 }}>Open WhatsApp</button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Bulk Delete Confirmation Dialog */}
+      <Dialog open={bulkDeleteOpen} onClose={() => setBulkDeleteOpen(false)}>
+        <DialogTitle sx={{ fontWeight: 700, fontSize: 16 }}>Delete {selectedIds.size} Restaurants</DialogTitle>
+        <DialogContent>
+          <div style={{ fontSize: 13, color: "#64748b" }}>
+            Are you sure you want to delete <strong>{selectedIds.size}</strong> restaurants? This action cannot be undone.
+          </div>
+        </DialogContent>
+        <DialogActions sx={{ padding: "12px 24px 20px" }}>
+          <button onClick={() => setBulkDeleteOpen(false)} style={{ padding: "8px 18px", borderRadius: 8, border: "none", background: "#f1f5f9", color: "#64748b", fontSize: 13, fontWeight: 600, cursor: "pointer" }}>Cancel</button>
+          <button
+            onClick={handleBulkDelete}
+            disabled={bulkDeleting}
+            style={{ padding: "8px 18px", borderRadius: 8, border: "none", background: "#dc2626", color: "#fff", fontSize: 13, fontWeight: 600, cursor: "pointer", opacity: bulkDeleting ? 0.6 : 1 }}
+          >
+            {bulkDeleting ? "Deleting..." : "Delete All"}
+          </button>
         </DialogActions>
       </Dialog>
     </>
