@@ -531,6 +531,28 @@ export default function Prospects() {
                         Preview
                       </button>
                     )}
+                    {p.demo_url && (
+                      <button
+                        style={{ ...s.smallBtn, ...(p.screenshot_url ? { color: "#2D7A4E" } : {}) }}
+                        onClick={async () => {
+                          if (p.screenshot_url) {
+                            const imgBase = process.env.REACT_APP_GCP_BASE_URL || "https://storage.googleapis.com/ecommerce-bucket-testing/";
+                            const imgUrl = p.screenshot_url.startsWith("http") ? p.screenshot_url : `${imgBase}${p.screenshot_url}`;
+                            window.open(imgUrl, "_blank");
+                          } else {
+                            showToast("Generating screenshot...");
+                            try {
+                              await axios.post(`${API}/superadmin/prospects/${p.id}/screenshot`, {}, { headers: headers() });
+                              showToast("Screenshot generated!");
+                              fetchProspects();
+                            } catch (e) { showToast("Screenshot failed", "error"); }
+                          }
+                        }}
+                        title={p.screenshot_url ? "View Screenshot" : "Generate Screenshot"}
+                      >
+                        📸 {p.screenshot_url ? "View" : "Generate"}
+                      </button>
+                    )}
                     <button
                       style={s.smallBtn}
                       onClick={() => { setSendProspect(p); setSendOpen(true); }}
@@ -973,6 +995,20 @@ function SendMessageDialog({ open, prospect, onClose, showToast, onSent }) {
         { headers: headers() },
       );
       if (data.data?.whatsapp_url) {
+        // Auto-download screenshot if available (so operator can attach it in WhatsApp)
+        if (prospect.screenshot_url) {
+          const imgBase = process.env.REACT_APP_GCP_BASE_URL || "https://storage.googleapis.com/ecommerce-bucket-testing/";
+          const imgUrl = prospect.screenshot_url.startsWith("http") ? prospect.screenshot_url : `${imgBase}${prospect.screenshot_url}`;
+          try {
+            const resp = await fetch(imgUrl);
+            const blob = await resp.blob();
+            const a = document.createElement("a");
+            a.href = URL.createObjectURL(blob);
+            a.download = `${(prospect.business_name || "demo").replace(/\s+/g, "-")}-screenshot.jpg`;
+            a.click();
+            URL.revokeObjectURL(a.href);
+          } catch (e) { console.warn("Screenshot download failed:", e); }
+        }
         // Use direct WhatsApp deep link (same as cart) instead of opening new tab
         const phone = prospect.business_phone || prospect.whatsapp_number || "";
         const digits = phone.replace(/\D/g, "");
