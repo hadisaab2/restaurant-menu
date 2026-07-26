@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, lazy, Suspense } from "react";
 import axios from "axios";
 import {
   CateogoryIcon,
@@ -40,6 +40,8 @@ import Customers from "./customers";
 import Analytics from "./analytics";
 import Dashboard from "./dashboard";
 
+const ClinicManager = lazy(() => import("../superadmin/clinic"));
+
 
 
 export default function RestaurantDash() {
@@ -73,11 +75,15 @@ export default function RestaurantDash() {
         const features = typeof restaurant?.features === "string" ? JSON.parse(restaurant.features) : restaurant?.features;
         setRestaurantFeatures(features || {});
         setIsVip(!!restaurant?.is_vip);
+        setBusinessType(restaurant?.business_type || "restaurant");
+        setRestaurantId(restaurant?.restaurant_id || restaurant?.id || null);
       } catch (e) { console.log("[VIP DEBUG] catch error:", e); setRestaurantFeatures({}); }
     }).catch((e) => { console.log("[VIP DEBUG] API error:", e); setRestaurantFeatures({}); });
   }, [userInformation?.restaurant_name]);
 
   const [isVip, setIsVip] = useState(false);
+  const [businessType, setBusinessType] = useState("restaurant");
+  const [restaurantId, setRestaurantId] = useState(null);
 
   // VIP features are enabled when is_vip flag is set by superadmin
   const isVipEnabled = isVip;
@@ -144,7 +150,10 @@ export default function RestaurantDash() {
     Customers: "Customers",
     RegisteredCustomers: "Registered customers",
     Analytics: "Analytics",
+    Clinic: "Clinic Management",
   };
+
+  const isClinic = businessType === "clinic";
 
   return (
     <Container>
@@ -207,6 +216,12 @@ export default function RestaurantDash() {
             <CateogoryIcon />
             <TabText>Analytics{!isTheme3Or4 && <span style={{ fontSize: "12px", color: "#999", marginLeft: "8px" }}>(VIP package)</span>}</TabText>
           </Tab>
+          {isClinic && (
+            <Tab $active={section === "Clinic"} onClick={() => handlesection("Clinic")}>
+              <CateogoryIcon />
+              <TabText>Clinic Management</TabText>
+            </Tab>
+          )}
 
         </SidebarContent>
         <SidebarBottom>
@@ -281,6 +296,12 @@ export default function RestaurantDash() {
             <CateogoryIcon />
             <TabText>Analytics{!isTheme3Or4 && <span style={{ fontSize: "12px", color: "#999", marginLeft: "8px" }}>(VIP package)</span>}</TabText>
           </Tab>
+          {isClinic && (
+            <Tab $active={section === "Clinic"} onClick={() => setSection("Clinic")}>
+              <CateogoryIcon />
+              <TabText>Clinic Management</TabText>
+            </Tab>
+          )}
         </SidebarContent>
         <SidebarBottom>
           <ProfileIcon />
@@ -339,6 +360,11 @@ export default function RestaurantDash() {
         {section == "Customers" && isTheme3Or4 && <Customers />}
         {section == "RegisteredCustomers" && isTheme3Or4 && <RegisteredCustomers />}
         {section == "Analytics" && isTheme3Or4 && <Analytics />}
+        {section === "Clinic" && isClinic && restaurantId && (
+          <Suspense fallback={<div style={{ padding: 24, color: "#999" }}>Loading clinic management...</div>}>
+            <ClinicManager restaurantId={restaurantId} />
+          </Suspense>
+        )}
 
       </Content>
     </Container>

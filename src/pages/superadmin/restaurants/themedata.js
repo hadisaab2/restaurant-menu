@@ -192,6 +192,15 @@ export const templates = [
     hasShopMode: false,
     hasSections: false,
   },
+  {
+    id: 9,
+    name: "Beauty Clinic",
+    description: "Clinic / aesthetic center with services, staff, packages, FAQ, and WhatsApp booking",
+    colorGroups: ["general", "categories", "products", "popups"],
+    hasHomePage: true,
+    hasShopMode: false,
+    hasSections: true,
+  },
 ];
 
 // ── Helpers ──

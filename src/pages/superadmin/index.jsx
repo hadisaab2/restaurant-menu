@@ -17,6 +17,7 @@ import Monitoring from "./monitoring";
 import Prospects from "./prospects";
 import Zones from "./zones";
 import Pipeline from "./pipeline";
+import Messages from "./messages";
 
 export default function SuperAdmin() {
   const [activeTab, setActiveTab] = useState("Restaurants");
@@ -94,6 +95,13 @@ export default function SuperAdmin() {
         >
           Pipeline
         </Tab>
+        <Tab
+          onClick={() => setActiveTab("Messages")}
+          activeTab={activeTab}
+          tab="Messages"
+        >
+          Messages
+        </Tab>
       </TabsContainer>
 
       <ContentArea>
@@ -106,6 +114,7 @@ export default function SuperAdmin() {
         {activeTab === "Prospects" && <Prospects />}
         {activeTab === "Zones" && <Zones />}
         {activeTab === "Pipeline" && <Pipeline />}
+        {activeTab === "Messages" && <Messages />}
       </ContentArea>
     </Container>
   );

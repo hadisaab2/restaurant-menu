@@ -153,6 +153,27 @@ export const THREADS_PUBLIC_URL = `${REACT_APP_BASE_URL}/threads`;
 export const GET_FEEDBACKS_URL = (restaurantId) =>
   `${REACT_APP_BASE_URL}/feedback/${restaurantId}`;
 
+// Clinic: Staff Members
+export const GET_STAFF_URL = (rid) => `${REACT_APP_BASE_URL}/staff-members/${rid}`;
+export const ADD_STAFF_URL = `${REACT_APP_BASE_URL}/staff-members`;
+export const EDIT_STAFF_URL = (id) => `${REACT_APP_BASE_URL}/staff-members/${id}`;
+export const DELETE_STAFF_URL = (id) => `${REACT_APP_BASE_URL}/staff-members/${id}`;
+// Clinic: FAQs
+export const GET_FAQS_URL = (rid) => `${REACT_APP_BASE_URL}/faqs/${rid}`;
+export const ADD_FAQ_URL = `${REACT_APP_BASE_URL}/faqs`;
+export const EDIT_FAQ_URL = (id) => `${REACT_APP_BASE_URL}/faqs/${id}`;
+export const DELETE_FAQ_URL = (id) => `${REACT_APP_BASE_URL}/faqs/${id}`;
+// Clinic: Packages
+export const GET_PACKAGES_URL = (rid) => `${REACT_APP_BASE_URL}/packages/${rid}`;
+export const ADD_PACKAGE_URL = `${REACT_APP_BASE_URL}/packages`;
+export const EDIT_PACKAGE_URL = (id) => `${REACT_APP_BASE_URL}/packages/${id}`;
+export const DELETE_PACKAGE_URL = (id) => `${REACT_APP_BASE_URL}/packages/${id}`;
+// Clinic: Gallery
+export const GET_GALLERY_URL = (rid) => `${REACT_APP_BASE_URL}/gallery/${rid}`;
+export const ADD_GALLERY_URL = `${REACT_APP_BASE_URL}/gallery`;
+export const EDIT_GALLERY_URL = (id) => `${REACT_APP_BASE_URL}/gallery/${id}`;
+export const DELETE_GALLERY_URL = (id) => `${REACT_APP_BASE_URL}/gallery/${id}`;
+
 /** All-time visit range for dashboard totals (restaurant menu loads). */
 export const GET_RESTAURANT_VISIT_COUNT_URL = (restaurantId, startDate, toDate) =>
   `${REACT_APP_BASE_URL}/restaurants/logs/get-visit-count?restaurant_id=${encodeURIComponent(

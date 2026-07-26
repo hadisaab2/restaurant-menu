@@ -2156,6 +2156,7 @@ export default function Restaurants() {
                 >
                   <MenuItem value="restaurant">Restaurant (Menu)</MenuItem>
                   <MenuItem value="business">Business (Products)</MenuItem>
+                  <MenuItem value="clinic">Clinic / Aesthetic Center</MenuItem>
                 </Select>
               </FormControl>
             </Box>
@@ -2197,6 +2198,7 @@ export default function Restaurants() {
             >
               {isEditMode ? "Edit Restaurant" : "Add Restaurant"}
             </LoadingButton>
+
           </AddRestaurantForm>
         </>
       )}
