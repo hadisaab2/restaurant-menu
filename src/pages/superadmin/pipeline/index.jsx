@@ -197,6 +197,7 @@ export default function Pipeline() {
       template: tpl,
       colorPreset: "Clean Teal",
       logoFile: null,
+      logoUrl: candidate.profile_pic_url || "",
       ig_handle: candidate.ig_handle || "",
       facebook: candidate.detected_links_summary?.facebook_url || "",
       tiktok: candidate.detected_links_summary?.tiktok_url || "",

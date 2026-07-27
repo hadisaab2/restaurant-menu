@@ -163,6 +163,8 @@ export default function Prospects() {
   const [loading, setLoading] = useState(false);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
+  const [zoneFilter, setZoneFilter] = useState("");
+  const [zones, setZones] = useState([]);
   const [offset, setOffset] = useState(0);
   const LIMIT = 50;
 
@@ -206,6 +208,7 @@ export default function Prospects() {
       const params = new URLSearchParams({ limit: LIMIT, offset });
       if (search) params.set("search", search);
       if (statusFilter) params.set("status", statusFilter);
+      if (zoneFilter) params.set("zone_id", zoneFilter);
       const { data } = await axios.get(`${API}/superadmin/prospects?${params}`, { headers: headers() });
       setProspects(data.data.prospects);
       setTotal(data.data.total);
@@ -214,9 +217,16 @@ export default function Prospects() {
       showToast(e.response?.data?.message || "Failed to load prospects", "error");
     }
     setLoading(false);
-  }, [search, statusFilter, offset, showToast]);
+  }, [search, statusFilter, zoneFilter, offset, showToast]);
 
   useEffect(() => { fetchProspects(); }, [fetchProspects]);
+
+  // Fetch zones for filter dropdown
+  useEffect(() => {
+    axios.get(`${API}/superadmin/zones`, { headers: headers() })
+      .then(({ data }) => setZones(data.data || data || []))
+      .catch(() => {});
+  }, []);
 
   /* ─── Status change ─── */
   const changeStatus = async (id, newStatus) => {
@@ -398,6 +408,16 @@ export default function Prospects() {
           <option value="">All Statuses</option>
           {STATUS_LIST.map((st) => (
             <option key={st} value={st}>{st.charAt(0).toUpperCase() + st.slice(1)}</option>
+          ))}
+        </select>
+        <select
+          value={zoneFilter}
+          onChange={(e) => { setZoneFilter(e.target.value); setOffset(0); }}
+          style={s.select}
+        >
+          <option value="">All Zones</option>
+          {zones.map((z) => (
+            <option key={z.id} value={z.id}>{z.name || z.city || `Zone ${z.id}`}</option>
           ))}
         </select>
         <button onClick={() => setCreateOpen(true)} style={s.primaryBtn}>
