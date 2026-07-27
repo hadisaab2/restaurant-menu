@@ -470,8 +470,11 @@ export default function Prospects() {
                     >
                       {p.logo_uploaded_url ? (
                         <img src={`https://storage.googleapis.com/ecommerce-bucket-testing/${p.logo_uploaded_url}`} alt="" style={s.logo} />
-                      ) : (
-                        <div style={{ ...s.initialsCircle, background: initialsColor(p.business_name) }}>
+                      ) : p.logo_source_url ? (
+                        <img src={p.logo_source_url} alt="" style={s.logo} onError={(e) => { e.target.style.display = "none"; e.target.nextSibling.style.display = "flex"; }} />
+                      ) : null}
+                      {!p.logo_uploaded_url && (
+                        <div style={{ ...s.initialsCircle, background: initialsColor(p.business_name), display: p.logo_source_url ? "none" : "flex" }}>
                           {getInitials(p.business_name)}
                         </div>
                       )}

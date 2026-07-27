@@ -482,7 +482,12 @@ export default function Pipeline() {
                             <span style={{ cursor: "pointer", fontSize: 14 }} onClick={() => setDetailId(c.id)}>{"\uD83D\uDC41"}</span>
                           </Tooltip>
                         </Td>
-                        <Td style={{ fontWeight: 600, maxWidth: 180 }}>{c.display_name}</Td>
+                        <Td style={{ fontWeight: 600, maxWidth: 180, display: "flex", alignItems: "center", gap: 8 }}>
+                          {c.profile_pic_url ? (
+                            <img src={c.profile_pic_url} alt="" style={{ width: 28, height: 28, borderRadius: "50%", objectFit: "cover", flexShrink: 0 }} onError={(e) => { e.target.style.display = "none"; }} />
+                          ) : null}
+                          {c.display_name}
+                        </Td>
                         <Td><Badge $bg="#eff6ff" $color="#3b82f6">{c.mapped_category}</Badge></Td>
                         <Td style={{ fontWeight: 700 }}>
                           {c.score_complete ? c.lead_score : (
