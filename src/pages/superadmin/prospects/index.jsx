@@ -483,22 +483,45 @@ export default function Prospects() {
                       onChange={() => toggleSelect(p.id)}
                       style={{ position: "absolute", top: 0, right: 0, cursor: "pointer", width: 16, height: 16 }}
                     />
-                    <div
-                      onClick={() => handleLogoClick(p.id)}
-                      title="Click to upload logo"
-                      style={{ cursor: "pointer", position: "relative" }}
-                    >
-                      {p.logo_uploaded_url ? (
-                        <img src={`https://storage.googleapis.com/ecommerce-bucket-testing/${p.logo_uploaded_url}`} alt="" style={s.logo} />
-                      ) : p.logo_source_url ? (
-                        <img src={p.logo_source_url} alt="" style={s.logo} onError={(e) => { e.target.style.display = "none"; e.target.nextSibling.style.display = "flex"; }} />
-                      ) : null}
-                      {!p.logo_uploaded_url && (
-                        <div style={{ ...s.initialsCircle, background: initialsColor(p.business_name), display: p.logo_source_url ? "none" : "flex" }}>
-                          {getInitials(p.business_name)}
-                        </div>
-                      )}
-                      <div style={{ position: "absolute", bottom: -2, right: -2, width: 16, height: 16, borderRadius: "50%", background: "#5eabb1", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 10, color: "#fff", border: "2px solid #fff" }}>+</div>
+                    <div style={{ position: "relative" }}>
+                      <div
+                        onClick={async () => {
+                          const imgUrl = p.logo_uploaded_url
+                            ? `https://storage.googleapis.com/ecommerce-bucket-testing/${p.logo_uploaded_url}`
+                            : p.logo_source_url;
+                          if (!imgUrl) return;
+                          try {
+                            const resp = await fetch(imgUrl);
+                            const blob = await resp.blob();
+                            const url = URL.createObjectURL(blob);
+                            const a = document.createElement("a");
+                            a.href = url;
+                            a.download = `${(p.business_name || "logo").replace(/\s+/g, "-")}-logo.jpg`;
+                            a.click();
+                            URL.revokeObjectURL(url);
+                          } catch (e) {
+                            window.open(imgUrl, "_blank");
+                          }
+                        }}
+                        title={p.logo_uploaded_url || p.logo_source_url ? "Click to download logo" : "No logo available"}
+                        style={{ cursor: p.logo_uploaded_url || p.logo_source_url ? "pointer" : "default" }}
+                      >
+                        {p.logo_uploaded_url ? (
+                          <img src={`https://storage.googleapis.com/ecommerce-bucket-testing/${p.logo_uploaded_url}`} alt="" style={s.logo} />
+                        ) : p.logo_source_url ? (
+                          <img src={p.logo_source_url} alt="" style={s.logo} onError={(e) => { e.target.style.display = "none"; e.target.nextSibling.style.display = "flex"; }} />
+                        ) : null}
+                        {!p.logo_uploaded_url && (
+                          <div style={{ ...s.initialsCircle, background: initialsColor(p.business_name), display: p.logo_source_url ? "none" : "flex" }}>
+                            {getInitials(p.business_name)}
+                          </div>
+                        )}
+                      </div>
+                      <div
+                        onClick={(e) => { e.stopPropagation(); handleLogoClick(p.id); }}
+                        title="Upload new logo"
+                        style={{ position: "absolute", bottom: -2, right: -2, width: 16, height: 16, borderRadius: "50%", background: "#5eabb1", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 10, color: "#fff", border: "2px solid #fff", cursor: "pointer" }}
+                      >+</div>
                     </div>
                     <div style={{ flex: 1, minWidth: 0 }}>
                       <p style={s.businessName}>{p.business_name}</p>
