@@ -343,33 +343,36 @@ export default function Prospects() {
     setDeleting(false);
   };
 
-  /* ─── CSV Import ─── */
+  /* ─── CSV Import (2-step: preview → confirm) ─── */
+  const [pendingCsvFile, setPendingCsvFile] = useState(null);
   const handleCsvImport = async (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
     e.target.value = "";
     setImporting(true);
     try {
+      // Step 1: Preview only — parse CSV without creating prospects
       const formData = new FormData();
       formData.append("file", file);
-      const { data } = await axios.post(`${API}/superadmin/prospects/import-csv`, formData, {
+      const { data } = await axios.post(`${API}/superadmin/prospects/import-csv?preview_only=true`, formData, {
         headers: { ...headers(), "Content-Type": "multipart/form-data" },
         timeout: 300000,
       });
-      // Step 1 done — show review popup for rows that need demo building
-      const toBuild = (data.data.results || []).filter(r => r.status === "success" && r.build_demo && !r.has_demo);
-      if (toBuild.length > 0) {
-        setReviewRows(toBuild.map(r => ({
+      const parsed = (data.data.results || []).filter(r => r.status === "success");
+      if (parsed.length > 0) {
+        setPendingCsvFile(file); // Save file for step 2
+        setReviewRows(parsed.map(r => ({
           ...r,
           template: r.suggested_template || "restaurant",
           colorPreset: "Clean Teal",
           logoFile: null,
+          logoUrl: null,
         })));
         setReviewOpen(true);
+        showToast(`Parsed ${parsed.length} rows — review and confirm to create prospects.`);
+      } else {
+        showToast("No valid rows found in CSV", "error");
       }
-      setImportResults(data.data);
-      showToast(`Imported: ${data.data.summary.success} prospects. ${toBuild.length} demos to review.`);
-      fetchProspects();
     } catch (err) {
       showToast(err.response?.data?.message || "Import failed", "error");
     }
@@ -749,17 +752,37 @@ export default function Prospects() {
         open={reviewOpen}
         rows={reviewRows}
         setRows={setReviewRows}
-        onClose={() => { setReviewOpen(false); setReviewRows([]); }}
+        onClose={() => { setReviewOpen(false); setReviewRows([]); setPendingCsvFile(null); }}
         title={`Review & Build Demos (${reviewRows.length} prospects)`}
         onBuild={async (rows) => {
+          // Step 2: Now actually create prospects by re-importing CSV (no preview_only)
+          if (pendingCsvFile) {
+            const fd = new FormData();
+            fd.append("file", pendingCsvFile);
+            const { data: importData } = await axios.post(`${API}/superadmin/prospects/import-csv`, fd, {
+              headers: { ...headers(), "Content-Type": "multipart/form-data" },
+              timeout: 300000,
+            });
+            // Map prospect IDs from the import results to the review rows
+            const importResults = importData.data.results || [];
+            for (const r of rows) {
+              const match = importResults.find(ir => ir.business_name === r.business_name && ir.status === "success");
+              if (match) r.prospect_id = match.prospect_id;
+            }
+            setPendingCsvFile(null);
+          }
+
+          // Step 3: Build demos for rows that have prospect_ids
           const items = [];
           for (const r of rows) {
-            let logoUrl = null;
+            if (!r.prospect_id) continue;
+            let logoUrl = r.logoUrl || null;
             if (r.logoFile) {
               try { logoUrl = await uploadLogo(r.logoFile); } catch (e) { console.error("Logo upload failed for", r.business_name, e); }
             }
             items.push({ prospect_id: r.prospect_id, template: r.template, colorPreset: r.colorPreset || null, logoUrl, socials: { instagram: r.ig_handle || "", facebook: r.facebook || "", tiktok: r.tiktok || "" } });
           }
+          if (items.length === 0) { fetchProspects(); return { summary: { success: 0, errors: 0 }, results: [] }; }
           const { data } = await axios.post(`${API}/superadmin/prospects/build-batch`, { items }, { headers: headers(), timeout: 600000 });
           showToast(`Built: ${data.data.summary.success} demos, ${data.data.summary.errors} errors`);
           fetchProspects();

@@ -232,6 +232,7 @@ export default function Pipeline() {
   const [exportDialogOpen, setExportDialogOpen] = useState(false);
   const [exportFilter, setExportFilter] = useState("enriched"); // "all" | "enriched" | "selected"
   const [exportLimit, setExportLimit] = useState("");
+  const [exportSelected, setExportSelected] = useState(new Set());
 
   const handleExportCsv = async () => {
     setExportDialogOpen(false);
@@ -240,6 +241,7 @@ export default function Pipeline() {
       const { default: axios } = await import("axios");
       const params = new URLSearchParams();
       if (exportFilter === "all") params.set("include_incomplete", "true");
+      if (exportFilter === "selected" && exportSelected.size > 0) params.set("candidate_ids", [...exportSelected].join(","));
       if (exportLimit && parseInt(exportLimit) > 0) params.set("limit", exportLimit);
       const qs = params.toString() ? `?${params.toString()}` : "";
       const res = await axios.get(`${process.env.REACT_APP_BASE_URL}/superadmin/sourcing/zones/${zoneId}/export-csv${qs}`, {
@@ -714,7 +716,7 @@ export default function Pipeline() {
       </Dialog>
 
       {/* Export Options Dialog */}
-      <Dialog open={exportDialogOpen} onClose={() => setExportDialogOpen(false)} maxWidth="xs" fullWidth>
+      <Dialog open={exportDialogOpen} onClose={() => setExportDialogOpen(false)} maxWidth="sm" fullWidth>
         <DialogTitle sx={{ fontWeight: 700, fontSize: 16 }}>Export CSV</DialogTitle>
         <DialogContent>
           <div style={{ fontSize: 13 }}>
@@ -727,22 +729,50 @@ export default function Pipeline() {
                 </label>
                 <label style={{ display: "flex", alignItems: "center", gap: 8, cursor: "pointer" }}>
                   <input type="radio" name="exportFilter" value="all" checked={exportFilter === "all"} onChange={(e) => setExportFilter(e.target.value)} />
-                  All candidates (including un-enriched, {summary.total_candidates || 0} total)
+                  All candidates ({summary.total_candidates || 0} total)
+                </label>
+                <label style={{ display: "flex", alignItems: "center", gap: 8, cursor: "pointer" }}>
+                  <input type="radio" name="exportFilter" value="selected" checked={exportFilter === "selected"} onChange={(e) => setExportFilter(e.target.value)} />
+                  Selected only ({exportSelected.size} selected)
                 </label>
               </div>
             </div>
-            <div style={{ marginTop: 12 }}>
-              <strong>Limit (optional):</strong>
-              <div style={{ marginTop: 6 }}>
-                <TextField size="small" type="number" placeholder="e.g. 5 (leave empty for all)" value={exportLimit} onChange={(e) => setExportLimit(e.target.value)} sx={{ width: 200 }} inputProps={{ min: 1 }} />
-                <div style={{ fontSize: 11, color: "#64748b", marginTop: 4 }}>Leave empty to export all matching. Sorted by score (highest first).</div>
+            {exportFilter === "selected" && (
+              <div style={{ marginTop: 12, maxHeight: 300, overflowY: "auto", border: "1px solid #e2e8f0", borderRadius: 8, padding: 8 }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8, padding: "4px 0", borderBottom: "1px solid #f1f5f9" }}>
+                  <input type="checkbox" checked={candidates.length > 0 && candidates.every(c => exportSelected.has(c.id))} onChange={() => {
+                    if (candidates.every(c => exportSelected.has(c.id))) setExportSelected(new Set());
+                    else setExportSelected(new Set(candidates.map(c => c.id)));
+                  }} />
+                  <span style={{ fontWeight: 600, fontSize: 12 }}>Select All on Page ({candidates.length})</span>
+                </div>
+                {candidates.map(c => (
+                  <label key={c.id} style={{ display: "flex", alignItems: "center", gap: 8, padding: "4px 0", cursor: "pointer", fontSize: 12 }}>
+                    <input type="checkbox" checked={exportSelected.has(c.id)} onChange={() => {
+                      setExportSelected(prev => { const n = new Set(prev); if (n.has(c.id)) n.delete(c.id); else n.add(c.id); return n; });
+                    }} />
+                    {c.profile_pic_url && <img src={c.profile_pic_url} alt="" style={{ width: 20, height: 20, borderRadius: "50%", objectFit: "cover" }} onError={e => e.target.style.display = "none"} />}
+                    <span style={{ fontWeight: 500 }}>{c.display_name}</span>
+                    {c.score_band && <span style={{ fontSize: 10, padding: "1px 6px", borderRadius: 4, background: c.score_band === "build_demo" ? "#fef2f2" : c.score_band === "contact_now" ? "#fffbeb" : "#f0fdf4", color: c.score_band === "build_demo" ? "#dc2626" : c.score_band === "contact_now" ? "#f59e0b" : "#10b981" }}>{c.score_band}</span>}
+                    {c.ig_handle && <span style={{ color: "#8b5cf6", fontSize: 11 }}>@{c.ig_handle}</span>}
+                  </label>
+                ))}
               </div>
-            </div>
+            )}
+            {exportFilter !== "selected" && (
+              <div style={{ marginTop: 12 }}>
+                <strong>Limit (optional):</strong>
+                <div style={{ marginTop: 6 }}>
+                  <TextField size="small" type="number" placeholder="e.g. 5 (leave empty for all)" value={exportLimit} onChange={(e) => setExportLimit(e.target.value)} sx={{ width: 200 }} inputProps={{ min: 1 }} />
+                  <div style={{ fontSize: 11, color: "#64748b", marginTop: 4 }}>Leave empty to export all matching. Sorted by score (highest first).</div>
+                </div>
+              </div>
+            )}
           </div>
         </DialogContent>
         <DialogActions sx={{ padding: "12px 24px 20px" }}>
           <button onClick={() => setExportDialogOpen(false)} style={{ padding: "8px 20px", borderRadius: 8, border: "none", background: "#f1f5f9", color: "#64748b", fontSize: 13, fontWeight: 600, cursor: "pointer" }}>Cancel</button>
-          <button onClick={handleExportCsv} style={{ padding: "8px 20px", borderRadius: 8, border: "none", background: "#8b5cf6", color: "#fff", fontSize: 13, fontWeight: 600, cursor: "pointer" }}>Download CSV</button>
+          <button onClick={handleExportCsv} disabled={exportFilter === "selected" && exportSelected.size === 0} style={{ padding: "8px 20px", borderRadius: 8, border: "none", background: "#8b5cf6", color: "#fff", fontSize: 13, fontWeight: 600, cursor: "pointer", opacity: exportFilter === "selected" && exportSelected.size === 0 ? 0.5 : 1 }}>Download CSV</button>
         </DialogActions>
       </Dialog>
 

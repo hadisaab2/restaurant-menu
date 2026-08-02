@@ -105,7 +105,24 @@ export default function ReviewDialog({ open, rows, setRows, onClose, onBuild, ti
                       </div>
                       <div style={{ fontSize: 10, color: "#64748b", marginTop: 4 }}>{r.colorPreset || "Default"}</div>
                     </td>
-                    <td style={{ padding: "6px", borderBottom: "1px solid #f1f5f9", minWidth: 90 }}>
+                    <td style={{ padding: "6px", borderBottom: "1px solid #f1f5f9", minWidth: 110 }}>
+                      {r.logoUrl && (
+                        <div style={{ display: "flex", alignItems: "center", gap: 4, marginBottom: 4 }}>
+                          <img src={r.logoUrl} alt="" style={{ width: 28, height: 28, borderRadius: 6, objectFit: "cover" }} onError={(e) => { e.target.style.display = "none"; }} />
+                          <button onClick={async () => {
+                            try {
+                              const resp = await fetch(r.logoUrl);
+                              const blob = await resp.blob();
+                              const url = URL.createObjectURL(blob);
+                              const a = document.createElement("a");
+                              a.href = url;
+                              a.download = `${(r.business_name || "logo").replace(/\s+/g, "-")}-logo.jpg`;
+                              a.click();
+                              URL.revokeObjectURL(url);
+                            } catch (e) { window.open(r.logoUrl, "_blank"); }
+                          }} style={{ fontSize: 10, color: "#3b82f6", background: "none", border: "none", cursor: "pointer", textDecoration: "underline" }}>⬇ Save</button>
+                        </div>
+                      )}
                       <input type="file" accept="image/*" onChange={(e) => updateRow(i, "logoFile", e.target.files?.[0] || null)} style={{ fontSize: 10, width: 80 }} />
                       {r.logoFile && <div style={{ fontSize: 10, color: "#10b981", marginTop: 2 }}>{r.logoFile.name}</div>}
                     </td>
