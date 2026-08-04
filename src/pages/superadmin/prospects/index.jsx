@@ -366,7 +366,7 @@ export default function Prospects() {
           template: r.suggested_template || "restaurant",
           colorPreset: "Clean Teal",
           logoFile: null,
-          logoUrl: null,
+          logoUrl: r.logo_source_url || null,
         })));
         setReviewOpen(true);
         showToast(`Parsed ${parsed.length} rows — review and confirm to create prospects.`);

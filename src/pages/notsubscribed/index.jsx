@@ -6,7 +6,6 @@ import {
   TitleArabic,
   Message,
   MessageArabic,
-  CTAButton,
   ContactInfo,
   IconWrapper,
   BilingualContainer,
@@ -16,13 +15,6 @@ import {
 import { FaPhone, FaWhatsapp } from "react-icons/fa";
 
 export default function NotSubscribed() {
-  const handleContact = () => {
-    // You can customize this to open email, phone, or WhatsApp
-    const phoneNumber = "96178911634";
-    const whatsappUrl = `https://wa.me/${phoneNumber}`;
-    window.open(whatsappUrl, "_blank");
-  };
-
   return (
     <Container>
       <Content>
@@ -40,10 +32,6 @@ export default function NotSubscribed() {
             هذه الخدمة غير متاحة حالياً. يرجى الاتصال بنا لتفعيل اشتراكك.
           </MessageArabic>
         </BilingualContainer>
-        <CTAButton onClick={handleContact}>
-          <span>Contact Us</span>
-          <span>اتصل بنا</span>
-        </CTAButton>
         <ContactInfo>
           <div>
             <FaPhone /> <span>+961 78 911 634</span>

@@ -115,7 +115,7 @@ export const MessageArabic = styled.p`
   }
 `;
 
-export const CTAButton = styled.button`
+export const CTAButton = styled.div`
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: #ffffff;
   border: none;
@@ -123,8 +123,7 @@ export const CTAButton = styled.button`
   padding: 16px 40px;
   font-size: 18px;
   font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
+  cursor: default;
   box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
   margin: 20px 60px 20px 60px;
   display: flex;
@@ -132,26 +131,19 @@ export const CTAButton = styled.button`
   gap: 4px;
   align-items: center;
   justify-content: center;
-  
+  pointer-events: none;
+  user-select: none;
+
   span:last-child {
     font-family: "Noto Kufi Arabic", "Arial", sans-serif;
     font-size: 16px;
   }
-  
-  &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
-  }
-  
-  &:active {
-    transform: translateY(0);
-  }
-  
+
   @media (min-width: 768px) {
     padding: 18px 48px;
     font-size: 20px;
     margin-bottom: 48px;
-    
+
     span:last-child {
       font-size: 18px;
     }

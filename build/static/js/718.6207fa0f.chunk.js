@@ -18,7 +18,7 @@
   @media (min-width: 768px) {
     padding: 80px 60px;
   }
-`,s=(t.Ay.div`
+`,o=(t.Ay.div`
   display: flex;
   justify-content: center;
   align-items: center;
@@ -40,14 +40,14 @@
     font-size: 100px;
     margin-bottom: 32px;
   }
-`),o=t.Ay.div`
+`),s=t.Ay.div`
   display: flex;
   flex-direction: column;
   gap: 12px;
   width: 100%;
   margin-top: 20px;
   align-items: center;
-`,x=t.Ay.h1`
+`,d=t.Ay.h1`
   font-size: 32px;
   font-weight: 700;
   color: #1a1a1a;
@@ -58,7 +58,7 @@
   @media (min-width: 768px) {
     font-size: 40px;
   }
-`,p=t.Ay.h1`
+`,x=t.Ay.h1`
   font-size: 32px;
   font-weight: 700;
   color: #1a1a1a;
@@ -70,7 +70,7 @@
   @media (min-width: 768px) {
     font-size: 40px;
   }
-`,d=t.Ay.p`
+`,p=t.Ay.p`
   font-size: 16px;
   color: #666666;
   line-height: 1.6;
@@ -93,7 +93,7 @@
   @media (min-width: 768px) {
     font-size: 18px;
   }
-`,c=t.Ay.button`
+`,c=(t.Ay.div`
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: #ffffff;
   border: none;
@@ -101,8 +101,7 @@
   padding: 16px 40px;
   font-size: 18px;
   font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
+  cursor: default;
   box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
   margin: 20px 60px 20px 60px;
   display: flex;
@@ -110,31 +109,24 @@
   gap: 4px;
   align-items: center;
   justify-content: center;
-  
+  pointer-events: none;
+  user-select: none;
+
   span:last-child {
     font-family: "Noto Kufi Arabic", "Arial", sans-serif;
     font-size: 16px;
   }
-  
-  &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
-  }
-  
-  &:active {
-    transform: translateY(0);
-  }
-  
+
   @media (min-width: 768px) {
     padding: 18px 48px;
     font-size: 20px;
     margin-bottom: 48px;
-    
+
     span:last-child {
       font-size: 18px;
     }
   }
-`,f=t.Ay.div`
+`,t.Ay.div`
   display: flex;
   flex-direction: column;
   gap: 16px;
@@ -169,5 +161,5 @@
       }
     }
   }
-`;var h=n(71481),m=n(56723);function g(){return(0,m.jsx)(a,{children:(0,m.jsxs)(r,{children:[(0,m.jsxs)(o,{children:[(0,m.jsx)(x,{children:"Subscription Not Valid"}),(0,m.jsx)(p,{children:"\u0627\u0644\u0627\u0634\u062a\u0631\u0627\u0643 \u063a\u064a\u0631 \u0635\u0627\u0644\u062d"})]}),(0,m.jsx)(s,{children:"\ud83d\udeab"}),(0,m.jsxs)(o,{children:[(0,m.jsx)(d,{children:"This service is currently unavailable. Please contact us to activate your subscription."}),(0,m.jsx)(l,{children:"\u0647\u0630\u0647 \u0627\u0644\u062e\u062f\u0645\u0629 \u063a\u064a\u0631 \u0645\u062a\u0627\u062d\u0629 \u062d\u0627\u0644\u064a\u0627\u064b. \u064a\u0631\u062c\u0649 \u0627\u0644\u0627\u062a\u0635\u0627\u0644 \u0628\u0646\u0627 \u0644\u062a\u0641\u0639\u064a\u0644 \u0627\u0634\u062a\u0631\u0627\u0643\u0643."})]}),(0,m.jsxs)(c,{onClick:()=>{window.open("https://wa.me/96178911634","_blank")},children:[(0,m.jsx)("span",{children:"Contact Us"}),(0,m.jsx)("span",{children:"\u0627\u062a\u0635\u0644 \u0628\u0646\u0627"})]}),(0,m.jsxs)(f,{children:[(0,m.jsxs)("div",{children:[(0,m.jsx)(h.Cab,{})," ",(0,m.jsx)("span",{children:"+961 78 911 634"})]}),(0,m.jsxs)("div",{children:[(0,m.jsx)(h.EcP,{})," ",(0,m.jsx)("span",{children:"WhatsApp"})]})]})]})})}}}]);
-//# sourceMappingURL=718.cce393da.chunk.js.map
+`);var f=n(71481),h=n(56723);function g(){return(0,h.jsx)(a,{children:(0,h.jsxs)(r,{children:[(0,h.jsxs)(s,{children:[(0,h.jsx)(d,{children:"Subscription Not Valid"}),(0,h.jsx)(x,{children:"\u0627\u0644\u0627\u0634\u062a\u0631\u0627\u0643 \u063a\u064a\u0631 \u0635\u0627\u0644\u062d"})]}),(0,h.jsx)(o,{children:"\ud83d\udeab"}),(0,h.jsxs)(s,{children:[(0,h.jsx)(p,{children:"This service is currently unavailable. Please contact us to activate your subscription."}),(0,h.jsx)(l,{children:"\u0647\u0630\u0647 \u0627\u0644\u062e\u062f\u0645\u0629 \u063a\u064a\u0631 \u0645\u062a\u0627\u062d\u0629 \u062d\u0627\u0644\u064a\u0627\u064b. \u064a\u0631\u062c\u0649 \u0627\u0644\u0627\u062a\u0635\u0627\u0644 \u0628\u0646\u0627 \u0644\u062a\u0641\u0639\u064a\u0644 \u0627\u0634\u062a\u0631\u0627\u0643\u0643."})]}),(0,h.jsxs)(c,{children:[(0,h.jsxs)("div",{children:[(0,h.jsx)(f.Cab,{})," ",(0,h.jsx)("span",{children:"+961 78 911 634"})]}),(0,h.jsxs)("div",{children:[(0,h.jsx)(f.EcP,{})," ",(0,h.jsx)("span",{children:"WhatsApp"})]})]})]})})}}}]);
+//# sourceMappingURL=718.6207fa0f.chunk.js.map
