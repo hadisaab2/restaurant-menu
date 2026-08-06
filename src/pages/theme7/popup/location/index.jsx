@@ -1,45 +1,150 @@
 import React from "react";
-import { motion } from "framer-motion";
-import { FiX, FiMapPin } from "react-icons/fi";
+import { FiX, FiMapPin, FiPhone, FiMessageCircle } from "react-icons/fi";
+import styled from "styled-components";
+import {
+  Overlay,
+  PopupWrap,
+  PopupHeader,
+  PopupTitle,
+  PopupClose,
+  PopupBody,
+} from "../../styles";
 
-export default function LocationPopup({ restaurant, activeLanguage, accentColor, popupHandler }) {
+/* ── local helpers ── */
+const BranchList = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+`;
+
+const BranchCard = styled.div`
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px 16px;
+  border-radius: 12px;
+  border: 1px solid #f0ede7;
+  background: ${(p) => p.theme.searchbackground || "#F4F2ED"};
+  svg {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+    margin-top: 2px;
+    color: ${(p) => p.theme.mainColor || "#9E7C0C"};
+  }
+`;
+
+const BranchInfo = styled.div`
+  flex: 1;
+  min-width: 0;
+`;
+
+const BranchName = styled.h4`
+  font-size: 0.8125rem;
+  font-weight: 600;
+  margin: 0 0 4px;
+  color: ${(p) => p.theme.popupTextColor || "#1A1816"};
+`;
+
+const BranchDetail = styled.p`
+  font-size: 0.75rem;
+  color: #918c86;
+  margin: 0 0 2px;
+  &:last-child {
+    margin-bottom: 0;
+  }
+`;
+
+const BranchLink = styled.a`
+  font-size: 0.75rem;
+  color: #918c86;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 2px;
+  transition: color 150ms;
+  svg {
+    width: 14px;
+    height: 14px;
+    margin: 0;
+    color: inherit;
+  }
+  &:hover {
+    color: ${(p) => p.theme.mainColor || "#9E7C0C"};
+  }
+`;
+
+const EmptyMsg = styled.p`
+  text-align: center;
+  color: #918c86;
+  font-size: 0.8125rem;
+  padding: 32px 0;
+  margin: 0;
+`;
+
+export default function LocationPopup({
+  restaurant,
+  activeLanguage,
+  popupHandler,
+  isRtl,
+}) {
+  const loc = (en, ar) => (isRtl ? ar || en : en);
   const branches = restaurant?.branches || [];
 
   return (
-    <motion.div
-      initial={{ y: "100%" }}
-      animate={{ y: 0 }}
-      exit={{ y: "100%" }}
-      transition={{ type: "spring", damping: 30, stiffness: 300 }}
-      className="fixed inset-x-0 bottom-0 z-[9999] max-h-[70vh] overflow-y-auto rounded-t-3xl border-t border-white/[0.08] bg-[#0f0f0f] shadow-2xl md:inset-x-auto md:left-1/2 md:top-1/2 md:-translate-x-1/2 md:-translate-y-1/2 md:bottom-auto md:max-w-md md:rounded-3xl md:border"
-    >
-      <div className="flex items-center justify-between px-6 py-4 border-b border-white/[0.06]">
-        <h2 className="text-lg font-bold text-white">
-          {activeLanguage === "ar" ? "الفروع" : "Branches"}
-        </h2>
-        <button onClick={() => popupHandler(null)} className="flex h-8 w-8 items-center justify-center rounded-full bg-white/10 text-white/60 hover:text-white">
-          <FiX className="w-4 h-4" />
-        </button>
-      </div>
-      <div className="p-6 space-y-3">
-        {branches.map((branch) => (
-          <div key={branch.id} className="flex items-start gap-3 rounded-xl border border-white/[0.06] bg-white/[0.03] p-4">
-            <FiMapPin className="w-5 h-5 mt-0.5 flex-shrink-0" style={{ color: accentColor }} />
-            <div>
-              <h3 className="text-sm font-semibold text-white/90">
-                {activeLanguage === "ar" && branch.ar_name ? branch.ar_name : branch.en_name || branch.name}
-              </h3>
-              {branch.address && <p className="text-xs text-white/40 mt-1">{branch.address}</p>}
-              {branch.phone && <p className="text-xs text-white/40 mt-0.5">{branch.phone}</p>}
-            </div>
-          </div>
-        ))}
-        {branches.length === 0 && (
-          <p className="text-center text-white/30 text-sm py-8">
-            {activeLanguage === "ar" ? "لا توجد فروع" : "No branches available"}
-          </p>
-        )}
-      </div>
-    </motion.div>
+    <>
+      <Overlay onClick={() => popupHandler(null)} />
+      <PopupWrap>
+        <PopupHeader>
+          <PopupTitle $rtl={isRtl}>{loc("Branches", "الفروع")}</PopupTitle>
+          <PopupClose onClick={() => popupHandler(null)}>
+            <FiX />
+          </PopupClose>
+        </PopupHeader>
+
+        <PopupBody>
+          {branches.length === 0 ? (
+            <EmptyMsg>
+              {loc("No branches available", "لا توجد فروع")}
+            </EmptyMsg>
+          ) : (
+            <BranchList>
+              {branches.map((branch) => (
+                <BranchCard key={branch.id}>
+                  <FiMapPin />
+                  <BranchInfo>
+                    <BranchName>
+                      {isRtl && branch.ar_name
+                        ? branch.ar_name
+                        : branch.name}
+                    </BranchName>
+                    {branch.address && (
+                      <BranchDetail>{branch.address}</BranchDetail>
+                    )}
+                    {branch.phone && (
+                      <BranchLink href={`tel:${branch.phone}`}>
+                        <FiPhone />
+                        {branch.phone}
+                      </BranchLink>
+                    )}
+                    {branch.whatsapp_number && (
+                      <BranchLink
+                        href={`https://wa.me/${branch.whatsapp_number}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <FiMessageCircle />
+                        {loc("WhatsApp", "واتساب")}
+                      </BranchLink>
+                    )}
+                  </BranchInfo>
+                </BranchCard>
+              ))}
+            </BranchList>
+          )}
+        </PopupBody>
+      </PopupWrap>
+    </>
   );
 }

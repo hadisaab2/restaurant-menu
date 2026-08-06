@@ -176,9 +176,9 @@ export const templates = [
   },
   {
     id: 7,
-    name: "Luxury Dark",
-    description: "Dark editorial single-page scroll with hero cover",
-    colorGroups: ["general", "categories", "products", "popups"],
+    name: "Brass & Stone",
+    description: "Warm restaurant menu with category sidebar, search, and cart drawer",
+    colorGroups: ["general", "categories", "products", "navigation", "popups", "bottomBar"],
     hasHomePage: false,
     hasShopMode: false,
     hasSections: false,
