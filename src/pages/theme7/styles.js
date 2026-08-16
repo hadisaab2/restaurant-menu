@@ -8,12 +8,14 @@ export const slideUp = keyframes`from{transform:translateY(20px);opacity:0}to{tr
 export const slideInEnd = keyframes`from{transform:translateX(100%)}to{transform:translateX(0)}`;
 export const slideInStart = keyframes`from{transform:translateX(-100%)}to{transform:translateX(0)}`;
 const shimmer = keyframes`from{background-position:200% 0}to{background-position:-200% 0}`;
+const toastIn = keyframes`from{transform:translateY(12px);opacity:0}to{transform:translateY(0);opacity:1}`;
+const pulse = keyframes`0%{transform:scale(1)}50%{transform:scale(1.15)}100%{transform:scale(1)}`;
 
 /* ═══════════════════════════════════════
    Page Wrapper
    ═══════════════════════════════════════ */
 export const PageWrapper = styled.div`
-  min-height: 100vh;
+  min-height: 100dvh;
   background: ${p => p.theme.backgroundColor || "#FAFAF8"};
   color: ${p => p.theme.textColor || "#1A1816"};
   font-family: ${p => p.theme.font || "'DM Sans'"}, system-ui, -apple-system, sans-serif;
@@ -22,6 +24,7 @@ export const PageWrapper = styled.div`
   direction: ${p => p.$rtl ? "rtl" : "ltr"};
   padding-bottom: calc(56px + env(safe-area-inset-bottom, 0px));
   @media(min-width:1024px){ padding-bottom: 0; }
+  *:focus-visible { outline: 2px solid ${p => p.theme.mainColor || "#9E7C0C"}; outline-offset: 2px; }
 `;
 
 /* ═══════════════════════════════════════
@@ -39,10 +42,10 @@ export const Overlay = styled.div`
 export const HeaderWrap = styled.header`
   position: sticky; top: 0; z-index: 50;
   height: 56px;
-  background: ${p => p.theme.textColor || "#1A1816"};
-  border-bottom: 1px solid rgba(255,255,255,0.06);
+  background: ${p => p.theme.BoxColor || "#fff"};
+  border-bottom: 1px solid #E5E2DB;
   transition: box-shadow 250ms;
-  ${p => p.$scrolled && css`box-shadow: 0 4px 16px rgba(0,0,0,0.12);`}
+  ${p => p.$scrolled && css`box-shadow: 0 4px 16px rgba(0,0,0,0.07);`}
   @media(min-width:1024px){ height: 64px; }
 `;
 
@@ -64,7 +67,7 @@ export const HeaderLogo = styled.div`
 
 export const HeaderBrand = styled.span`
   font-family: 'Literata', Georgia, serif;
-  font-weight: 700; font-size: 1rem; color: #fff; white-space: nowrap;
+  font-weight: 700; font-size: 1rem; color: ${p => p.theme.textColor || "#1A1816"}; white-space: nowrap;
   ${p => p.$rtl && css`font-family: 'Almarai', 'Segoe UI', sans-serif;`}
   @media(min-width:1024px){ font-size: 1.125rem; }
 `;
@@ -76,11 +79,11 @@ export const HeaderSearchDesktop = styled.div`
     margin-inline-start: auto;
   }
   input {
-    width: 100%; height: 36px; border-radius: 999px; border: 1px solid rgba(255,255,255,0.1);
-    background: rgba(255,255,255,0.06); padding: 0 16px; font-size: 0.75rem;
-    color: #fff; outline: none; font-family: inherit;
-    &::placeholder { color: rgba(255,255,255,0.3); }
-    &:focus { border-color: rgba(255,255,255,0.2); background: rgba(255,255,255,0.08); }
+    width: 100%; height: 36px; border-radius: 999px; border: 1px solid #E5E2DB;
+    background: ${p => p.theme.searchbackground || "#F4F2ED"}; padding: 0 16px; font-size: 0.75rem;
+    color: ${p => p.theme.searchTextColor || "#1A1816"}; outline: none; font-family: inherit;
+    &::placeholder { color: #918C86; }
+    &:focus { border-color: ${p => p.theme.mainColor || "#9E7C0C"}; }
   }
 `;
 
@@ -91,21 +94,22 @@ export const HeaderActions = styled.div`
 
 export const HeaderBtn = styled.button`
   position: relative; display: flex; align-items: center; justify-content: center;
-  width: 36px; height: 36px; border-radius: 8px; border: none; cursor: pointer;
-  background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.7);
+  width: 36px; height: 36px; border-radius: 999px; border: none; cursor: pointer;
+  background: transparent; color: ${p => p.theme.textColor || "#1A1816"};
   transition: background 150ms, color 150ms;
-  &:hover { background: rgba(255,255,255,0.1); color: #fff; }
+  &:hover { background: #F4F2ED; }
   svg { width: 18px; height: 18px; }
   @media(min-width:768px){
     &.mobile-only { display: none; }
   }
+  @media(min-width:1024px){ width: 40px; height: 40px; }
 `;
 
 export const HeaderLangBtn = styled.button`
-  height: 32px; padding: 0 10px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.1);
-  background: transparent; color: rgba(255,255,255,0.7); font-size: 0.75rem; font-weight: 700;
+  height: 32px; padding: 0 10px; border-radius: 6px; border: 1px solid #E5E2DB;
+  background: transparent; color: #5C5752; font-size: 0.75rem; font-weight: 700;
   letter-spacing: 0.02em; cursor: pointer; transition: all 150ms;
-  &:hover { border-color: rgba(255,255,255,0.2); color: #fff; }
+  &:hover { border-color: ${p => p.theme.mainColor || "#9E7C0C"}; color: ${p => p.theme.textColor || "#1A1816"}; }
 `;
 
 export const CartBadge = styled.span`
@@ -120,20 +124,24 @@ export const CartBadge = styled.span`
    RESTAURANT INFO
    ═══════════════════════════════════════ */
 export const RestoSection = styled.section`
-  padding: 24px 16px 20px;
+  padding: 20px 16px 16px;
   max-width: 1200px; margin: 0 auto;
-  display: flex; flex-direction: column; align-items: center; text-align: center;
-  @media(min-width:640px){ padding: 32px 24px 24px; }
+  display: flex; gap: 16px; align-items: flex-start;
+  @media(min-width:640px){ padding: 24px 24px 20px; }
+`;
+
+export const RestoBody = styled.div`
+  flex: 1; min-width: 0;
 `;
 
 export const RestoAvatar = styled.div`
-  width: 72px; height: 72px; border-radius: 16px; overflow: hidden; margin-bottom: 12px;
+  width: 64px; height: 64px; border-radius: 10px; overflow: hidden; flex-shrink: 0;
   background: ${p => p.theme.categoryActive || "#F7F1DC"};
   display: flex; align-items: center; justify-content: center;
   img { width: 100%; height: 100%; object-fit: cover; }
   span { font-family: 'Literata', Georgia, serif; font-weight: 700; font-size: 1.5rem;
     color: ${p => p.theme.mainColor || "#9E7C0C"}; }
-  @media(min-width:1024px){ width: 80px; height: 80px; }
+  @media(min-width:1024px){ width: 72px; height: 72px; }
 `;
 
 export const RestoName = styled.h1`
@@ -145,12 +153,11 @@ export const RestoName = styled.h1`
 
 export const RestoTagline = styled.p`
   font-size: 0.75rem; color: #5C5752; margin: 0 0 12px;
-  max-width: 400px;
 `;
 
 export const RestoMeta = styled.div`
-  display: flex; align-items: center; gap: 12px; flex-wrap: wrap; justify-content: center;
-  font-size: 0.6875rem; color: #918C86; margin-bottom: 16px;
+  display: flex; align-items: center; gap: 8px 16px; flex-wrap: wrap;
+  font-size: 0.6875rem; color: #5C5752; margin-bottom: 12px;
   svg { width: 14px; height: 14px; }
 `;
 
@@ -160,7 +167,7 @@ export const MetaDot = styled.span`
 `;
 
 export const RestoActions = styled.div`
-  display: flex; gap: 8px; flex-wrap: wrap; justify-content: center;
+  display: flex; gap: 8px; flex-wrap: wrap;
 `;
 
 export const ActionBtn = styled.button`
@@ -178,33 +185,35 @@ export const ActionBtn = styled.button`
    ═══════════════════════════════════════ */
 export const CatNavWrap = styled.nav`
   position: sticky; top: 56px; z-index: 40;
-  height: 44px; background: ${p => p.theme.backgroundColor || "#FAFAF8"};
-  border-bottom: 1px solid #F0EDE7;
+  background: ${p => p.theme.BoxColor || "#fff"};
+  border-bottom: 1px solid #E5E2DB;
   @media(min-width:1024px){ top: 64px; display: none; }
 `;
 
-export const CatNavList = styled.div`
-  display: flex; gap: 6px; overflow-x: auto; padding: 6px 16px;
-  max-width: 1200px; margin: 0 auto;
+export const CatNavInner = styled.div`
+  overflow-x: auto; -webkit-overflow-scrolling: touch;
   scrollbar-width: none; &::-webkit-scrollbar { display: none; }
-  scroll-snap-type: x mandatory;
-  -webkit-overflow-scrolling: touch;
+  padding: 0 16px;
+  max-width: 1200px; margin: 0 auto;
+`;
+
+export const CatNavList = styled.div`
+  display: flex; gap: 4px; padding: 8px 0;
+  width: max-content;
 `;
 
 export const CatNavItem = styled.button`
   flex-shrink: 0; scroll-snap-align: start;
-  height: 32px; padding: 0 14px; border-radius: 999px; border: 1px solid transparent;
-  font-size: 0.6875rem; font-weight: 600; white-space: nowrap; cursor: pointer;
+  padding: 8px 12px; border-radius: 999px; border: none;
+  font-size: 0.75rem; font-weight: 500; white-space: nowrap; cursor: pointer;
   transition: all 150ms; font-family: inherit;
   background: ${p => p.$active
-    ? (p.theme.categoryActive || "#F7F1DC")
+    ? (p.theme.textColor || "#1A1816")
     : "transparent"};
   color: ${p => p.$active
-    ? (p.theme.categoryActiveText || "#1A1816")
-    : (p.theme.categoryUnactiveText || "#918C86")};
-  border-color: ${p => p.$active
-    ? (p.theme.mainColor || "#9E7C0C")
-    : "transparent"};
+    ? "#fff"
+    : (p.theme.categoryUnactiveText || "#5C5752")};
+  ${p => p.$active && `font-weight: 600;`}
   &:hover {
     background: ${p => p.$active ? undefined : "#F4F2ED"};
   }
@@ -287,7 +296,7 @@ export const ProductGrid = styled.div`
    ═══════════════════════════════════════ */
 export const Card = styled.div`
   position: relative; background: ${p => p.theme.BoxColor || "#fff"};
-  border: 1px solid #F0EDE7; border-radius: 14px; overflow: hidden;
+  border: 1px solid #F0EDE7; border-radius: 10px; overflow: hidden;
   cursor: pointer; transition: border-color 250ms;
   display: flex; flex-direction: row;
   ${p => p.$unavailable && css`opacity: 0.5; pointer-events: none;`}
@@ -303,17 +312,19 @@ export const Card = styled.div`
 
 export const CardImage = styled.div`
   width: 110px; height: 110px; flex-shrink: 0; overflow: hidden;
-  background: #F4F2ED;
-  @media(min-width:480px){ width: 100%; height: 0; padding-bottom: 65%; }
-  img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  background: #F4F2ED; position: relative;
+  @media(min-width:480px){ width: 100%; height: 0; padding-bottom: 75%; }
+  img { width: 100%; height: 100%; object-fit: cover; display: block;
+    @media(min-width:480px){ position: absolute; inset: 0; }
+  }
 `;
 
 export const CardBadge = styled.span`
   position: absolute; top: 8px; inset-inline-start: 8px; z-index: 2;
   padding: 2px 8px; border-radius: 999px; font-size: 9px; font-weight: 700;
   text-transform: uppercase; letter-spacing: 0.06em;
-  background: ${p => p.$type === "new" ? "#E8F5EC" : p.$type === "sale" ? "#FDE8E6" : "#F7F1DC"};
-  color: ${p => p.$type === "new" ? "#1B7A3A" : p.$type === "sale" ? "#B5342A" : (p.theme.mainColor || "#9E7C0C")};
+  background: ${p => p.$type === "new" ? "#E8F5EC" : p.$type === "sale" ? "#FDE8E6" : p.$type === "best" ? (p.theme.mainColor || "#9E7C0C") : p.$type === "featured" ? "#1A1816" : "#F7F1DC"};
+  color: ${p => p.$type === "new" ? "#1B7A3A" : p.$type === "sale" ? "#B5342A" : p.$type === "best" ? "#fff" : p.$type === "featured" ? "#fff" : (p.theme.mainColor || "#9E7C0C")};
 `;
 
 export const CardBody = styled.div`
@@ -347,11 +358,11 @@ export const CardOldPrice = styled.span`
 `;
 
 export const CardAddBtn = styled.button`
-  width: 32px; height: 32px; border-radius: 8px; border: none; cursor: pointer;
+  width: 30px; height: 30px; border-radius: 999px; border: none; cursor: pointer;
   background: ${p => p.theme.textColor || "#1A1816"};
   color: #fff; display: flex; align-items: center; justify-content: center;
   transition: background 150ms; flex-shrink: 0;
-  svg { width: 16px; height: 16px; }
+  svg { width: 14px; height: 14px; }
   &:hover { opacity: 0.85; }
   &:active { transform: scale(0.9); }
 `;
@@ -406,9 +417,9 @@ export const FooterLink = styled.a`
 export const FooterSocials = styled.div`
   display: flex; gap: 8px; margin-top: 16px;
   a {
-    width: 36px; height: 36px; border-radius: 8px; display: flex;
+    width: 36px; height: 36px; border-radius: 999px; display: flex;
     align-items: center; justify-content: center;
-    border: 1px solid rgba(255,255,255,0.15); color: rgba(255,255,255,0.5);
+    border: 1px solid rgba(255,255,255,0.2); color: rgba(255,255,255,0.5);
     text-decoration: none; transition: all 150ms;
     svg { width: 16px; height: 16px; }
     &:hover { background: rgba(255,255,255,0.1); color: #fff; border-color: rgba(255,255,255,0.3); }
@@ -468,8 +479,9 @@ export const CartBarBtn = styled.button`
   width: 100%; height: 52px; border: none; border-radius: 14px; cursor: pointer;
   background: ${p => p.theme.textColor || "#1A1816"};
   color: #fff; display: flex; align-items: center; justify-content: space-between;
-  padding: 0 20px; animation: ${slideUp} 400ms cubic-bezier(0.16,1,0.3,1);
-  font-family: inherit;
+  padding: 0 16px 0 12px; animation: ${slideUp} 400ms cubic-bezier(0.16,1,0.3,1);
+  font-family: inherit; box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+  &:hover { background: #2E2C29; }
 `;
 
 export const CartBarCount = styled.span`
@@ -483,7 +495,7 @@ export const CartBarLabel = styled.span`
 `;
 
 export const CartBarTotal = styled.span`
-  font-size: 0.875rem; font-weight: 700;
+  font-size: 1rem; font-weight: 700;
 `;
 
 /* ═══════════════════════════════════════
@@ -612,9 +624,10 @@ export const PdScroll = styled.div`
 `;
 
 export const PdImageWrap = styled.div`
-  position: relative; width: 100%; padding-bottom: 65%;
+  position: relative; width: 100%; height: 280px;
   background: #F4F2ED; overflow: hidden;
-  img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  img { width: 100%; height: 100%; object-fit: cover; }
+  @media(min-width:1024px){ height: 320px; }
 `;
 
 export const PdNoImage = styled.div`
@@ -632,8 +645,9 @@ export const PdName = styled.h2`
   color: ${p => p.theme.popupTextColor || "#1A1816"};
 `;
 
-export const PdDesc = styled.p`
+export const PdDesc = styled.div`
   font-size: 0.75rem; color: #5C5752; line-height: 1.6; margin: 0 0 12px;
+  p { margin: 0; }
 `;
 
 export const PdPriceRow = styled.div`
@@ -681,7 +695,7 @@ export const PdFooter = styled.div`
 
 export const QtyControl = styled.div`
   display: flex; align-items: center; gap: 4px;
-  border-radius: 10px; border: 1px solid #E5E2DB; overflow: hidden;
+  border-radius: 999px; border: 1px solid #E5E2DB; overflow: hidden;
   button {
     width: 36px; height: 40px; border: none; background: none; cursor: pointer;
     display: flex; align-items: center; justify-content: center;
@@ -694,9 +708,9 @@ export const QtyControl = styled.div`
 `;
 
 export const AddToCartBtn = styled.button`
-  flex: 1; height: 48px; border: none; border-radius: 10px; cursor: pointer;
+  flex: 1; height: 44px; border: none; border-radius: 999px; cursor: pointer;
   background: ${p => p.theme.textColor || "#1A1816"};
-  color: #fff; font-size: 0.875rem; font-weight: 700;
+  color: #fff; font-size: 0.75rem; font-weight: 600;
   transition: opacity 150ms; font-family: inherit;
   &:hover { opacity: 0.9; }
   &:disabled { opacity: 0.4; cursor: not-allowed; }
@@ -716,6 +730,7 @@ export const CartDrawerEl = styled.div`
   background: ${p => p.theme.popupbackgroundColor || "#fff"};
   display: flex; flex-direction: column;
   animation: ${p => p.$rtl ? slideInStart : slideInEnd} 400ms cubic-bezier(0.16,1,0.3,1);
+  box-shadow: -20px 0 50px rgba(0,0,0,0.15);
 `;
 
 export const CartHeader = styled.div`
@@ -815,7 +830,7 @@ export const CartTotalRow = styled.div`
 `;
 
 export const CartCheckoutBtn = styled.button`
-  width: 100%; height: 48px; border: none; border-radius: 10px; cursor: pointer;
+  width: 100%; height: 48px; border: none; border-radius: 999px; cursor: pointer;
   background: ${p => p.theme.textColor || "#1A1816"};
   color: #fff; font-size: 0.875rem; font-weight: 700; font-family: inherit;
   transition: opacity 150ms;
@@ -943,4 +958,272 @@ export const PopupBtn = styled.button`
   &:hover { opacity: 0.9; }
   &:disabled { opacity: 0.4; cursor: not-allowed; }
   & + & { margin-top: 8px; }
+`;
+
+/* ═══════════════════════════════════════
+   ANNOUNCEMENT BAR
+   ═══════════════════════════════════════ */
+export const AnnounceBar = styled.div`
+  background: ${p => p.theme.textColor || "#1A1816"};
+  color: #fff; padding: 8px 16px; font-size: 0.75rem; font-weight: 500;
+  text-align: center; letter-spacing: 0.01em;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  strong { color: ${p => p.theme.categoryActive || "#F7F1DC"}; }
+`;
+
+export const AnnounceClose = styled.button`
+  border: none; background: none; color: rgba(255,255,255,0.5); cursor: pointer;
+  padding: 0; display: flex; align-items: center;
+  svg { width: 14px; height: 14px; }
+  &:hover { color: #fff; }
+`;
+
+/* ═══════════════════════════════════════
+   TOAST NOTIFICATIONS
+   ═══════════════════════════════════════ */
+export const ToastWrap = styled.div`
+  position: fixed; z-index: 300;
+  bottom: calc(56px + env(safe-area-inset-bottom, 0px) + 60px + 16px);
+  left: 16px; right: 16px;
+  display: flex; flex-direction: column; gap: 8px; pointer-events: none;
+  @media(min-width:768px){ left: auto; right: 24px; bottom: 24px; max-width: 360px; }
+`;
+
+export const ToastItem = styled.div`
+  background: ${p => p.$type === "success" ? "#1B7A3A" : p.$type === "error" ? "#B5342A" : "#1A1816"};
+  color: #fff; padding: 12px 16px; border-radius: 10px; font-size: 0.75rem; font-weight: 500;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+  animation: ${toastIn} 300ms ease;
+  pointer-events: auto;
+`;
+
+/* ═══════════════════════════════════════
+   CATEGORY IMAGE (nav pills & sidebar)
+   ═══════════════════════════════════════ */
+export const CatNavImg = styled.img`
+  width: 18px; height: 18px; border-radius: 4px; object-fit: cover;
+  margin-inline-end: 4px; flex-shrink: 0;
+`;
+
+export const SidebarImg = styled.img`
+  width: 22px; height: 22px; border-radius: 5px; object-fit: cover;
+  margin-inline-end: 6px; flex-shrink: 0;
+`;
+
+/* ═══════════════════════════════════════
+   SECTION HEADER WITH COUNT
+   ═══════════════════════════════════════ */
+export const SectionHeader = styled.div`
+  display: flex; align-items: baseline; gap: 8px; margin-bottom: 16px;
+`;
+
+export const SectionCount = styled.span`
+  font-size: 0.6875rem; color: #918C86; font-weight: 500;
+`;
+
+/* ═══════════════════════════════════════
+   FEATURED / BEST-SELLER RAIL
+   ═══════════════════════════════════════ */
+/* ═══════════════════════════════════════
+   PRODUCT RAIL (horizontal scroll for
+   Best Sellers, Offers virtual sections)
+   ═══════════════════════════════════════ */
+export const ProductRail = styled.div`
+  display: flex; gap: 12px; overflow-x: auto; padding-bottom: 8px;
+  scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch;
+  scrollbar-width: none; &::-webkit-scrollbar { display: none; }
+`;
+
+export const RailCard = styled.div`
+  flex: 0 0 160px; scroll-snap-align: start;
+  background: ${p => p.theme.BoxColor || "#fff"}; border: 1px solid #F0EDE7;
+  border-radius: 10px; overflow: hidden; cursor: pointer;
+  transition: border-color 250ms;
+  &:hover { border-color: #E5E2DB; }
+`;
+
+export const RailCardImg = styled.div`
+  width: 100%; height: 120px; background: #F4F2ED; overflow: hidden;
+  img { width: 100%; height: 100%; object-fit: cover; }
+`;
+
+export const RailCardBody = styled.div`
+  padding: 8px 10px;
+`;
+
+export const RailCardName = styled.h4`
+  font-size: 0.6875rem; font-weight: 600; margin: 0 0 2px;
+  color: ${p => p.theme.BoxTextColor || "#1A1816"};
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+`;
+
+export const RailCardPrice = styled.span`
+  font-size: 0.6875rem; font-weight: 700;
+  color: ${p => p.theme.BoxPriceColor || p.theme.mainColor || "#9E7C0C"};
+`;
+
+/* ═══════════════════════════════════════
+   PROMO CARDS (Today's Specials)
+   ═══════════════════════════════════════ */
+export const PromoSection = styled.section`
+  padding: 0 16px 16px;
+  max-width: 1200px; margin: 0 auto;
+  @media(min-width:640px){ padding: 0 24px 16px; }
+`;
+
+export const PromoRail = styled.div`
+  display: flex; gap: 12px; overflow-x: auto;
+  scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch;
+  scrollbar-width: none; &::-webkit-scrollbar { display: none; }
+`;
+
+export const PromoCard = styled.div`
+  flex: 0 0 280px; scroll-snap-align: start; border-radius: 14px;
+  overflow: hidden; cursor: pointer; transition: transform 250ms;
+  &:hover { transform: translateY(-2px); }
+  @media(min-width:640px){ flex: 0 0 320px; }
+`;
+
+export const PromoCardBg = styled.div`
+  padding: 20px; min-height: 140px; display: flex; flex-direction: column;
+  justify-content: flex-end; color: #fff;
+  background: ${p => p.$bg || "linear-gradient(135deg, #1A1816 0%, #3D3A36 100%)"};
+  @media(min-width:640px){ min-height: 160px; }
+`;
+
+export const PromoBadge = styled.span`
+  font-size: 9px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.06em; opacity: 0.8; margin-bottom: 6px;
+`;
+
+export const PromoTitle = styled.h3`
+  font-family: 'Literata', Georgia, serif; font-weight: 700;
+  font-size: 1.125rem; margin: 0 0 4px; line-height: 1.2;
+`;
+
+export const PromoSub = styled.p`
+  font-size: 0.6875rem; opacity: 0.7; margin: 0 0 10px;
+`;
+
+export const PromoCta = styled.span`
+  display: inline-block; padding: 6px 14px; border-radius: 999px;
+  background: rgba(255,255,255,0.2); backdrop-filter: blur(4px);
+  font-size: 0.6875rem; font-weight: 600; width: fit-content;
+`;
+
+export const FeaturedRail = styled.div`
+  display: flex; gap: 12px; overflow-x: auto; padding: 0 16px 20px;
+  max-width: 1200px; margin: 0 auto;
+  scrollbar-width: none; &::-webkit-scrollbar { display: none; }
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+`;
+
+export const FeaturedRailTitle = styled.div`
+  padding: 16px 16px 12px;
+  max-width: 1200px; margin: 0 auto;
+  @media(min-width:640px){ padding: 16px 24px 12px; }
+`;
+
+export const FeaturedCard = styled.div`
+  flex: 0 0 160px; scroll-snap-align: start;
+  background: ${p => p.theme.BoxColor || "#fff"}; border: 1px solid #F0EDE7;
+  border-radius: 14px; overflow: hidden; cursor: pointer;
+  transition: border-color 250ms;
+  &:hover { border-color: #E5E2DB; }
+`;
+
+export const FeaturedCardImg = styled.div`
+  width: 100%; height: 120px; background: #F4F2ED; overflow: hidden;
+  img { width: 100%; height: 100%; object-fit: cover; }
+`;
+
+export const FeaturedCardBody = styled.div`
+  padding: 8px 10px;
+`;
+
+export const FeaturedCardName = styled.h4`
+  font-size: 0.6875rem; font-weight: 600; margin: 0 0 2px;
+  color: ${p => p.theme.BoxTextColor || "#1A1816"};
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+`;
+
+export const FeaturedCardPrice = styled.span`
+  font-size: 0.6875rem; font-weight: 700;
+  color: ${p => p.theme.BoxPriceColor || p.theme.mainColor || "#9E7C0C"};
+`;
+
+/* ═══════════════════════════════════════
+   CARD CUSTOMIZABLE / FROM LABEL
+   ═══════════════════════════════════════ */
+export const CardFromLabel = styled.span`
+  font-size: 0.5625rem; color: #918C86; font-weight: 500;
+  margin-inline-end: 2px;
+`;
+
+export const CardCustomLabel = styled.span`
+  display: block; font-size: 0.5625rem; color: ${p => p.theme.mainColor || "#9E7C0C"};
+  font-weight: 500; margin-top: 2px;
+`;
+
+/* ═══════════════════════════════════════
+   STATUS DOT (open/closed)
+   ═══════════════════════════════════════ */
+export const StatusDot = styled.span`
+  display: inline-flex; align-items: center; gap: 4px;
+  &::before {
+    content: ''; width: 6px; height: 6px; border-radius: 50%;
+    background: ${p => p.$open ? "#1B7A3A" : "#B5342A"};
+  }
+  color: ${p => p.$open ? "#1B7A3A" : "#B5342A"};
+  font-weight: 600;
+`;
+
+/* ═══════════════════════════════════════
+   RELATED PRODUCTS (in product detail)
+   ═══════════════════════════════════════ */
+export const RelatedWrap = styled.div`
+  margin-top: 20px; border-top: 1px solid #F0EDE7; padding-top: 16px;
+`;
+
+export const RelatedTitle = styled.h4`
+  font-size: 0.6875rem; font-weight: 600; color: #918C86;
+  text-transform: uppercase; letter-spacing: 0.06em; margin: 0 0 12px;
+`;
+
+export const RelatedRail = styled.div`
+  display: flex; gap: 10px; overflow-x: auto;
+  scrollbar-width: none; &::-webkit-scrollbar { display: none; }
+`;
+
+export const RelatedItem = styled.div`
+  flex: 0 0 120px; cursor: pointer;
+`;
+
+export const RelatedItemImg = styled.div`
+  width: 100%; height: 80px; border-radius: 10px; overflow: hidden;
+  background: #F4F2ED; margin-bottom: 6px;
+  img { width: 100%; height: 100%; object-fit: cover; }
+`;
+
+export const RelatedItemName = styled.p`
+  font-size: 0.625rem; font-weight: 600; margin: 0 0 2px;
+  color: ${p => p.theme.textColor || "#1A1816"};
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+`;
+
+export const RelatedItemPrice = styled.span`
+  font-size: 0.625rem; font-weight: 700;
+  color: ${p => p.theme.mainColor || "#9E7C0C"};
+`;
+
+/* ═══════════════════════════════════════
+   SEARCH CLEAR BUTTON
+   ═══════════════════════════════════════ */
+export const SearchClearBtn = styled.button`
+  position: absolute; inset-inline-end: 12px; top: 50%; transform: translateY(-50%);
+  border: none; background: none; cursor: pointer; color: #918C86; padding: 4px;
+  display: flex; align-items: center;
+  svg { width: 14px; height: 14px; }
+  &:hover { color: ${p => p.theme.textColor || "#1A1816"}; }
 `;

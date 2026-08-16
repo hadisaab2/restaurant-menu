@@ -16,6 +16,7 @@ export default function ProtectedRoute({ children, role }) {
     const roleId = userInfo.role_id;
     if (role === 1 && roleId !== 1) return <Navigate to={ADMINSIGNIN} replace />;
     if (role === 2 && roleId !== 2) return <Navigate to={ADMINSIGNIN} replace />;
+    if (role === 4 && roleId !== 4) return <Navigate to={ADMINSIGNIN} replace />;
   }
 
   return children;

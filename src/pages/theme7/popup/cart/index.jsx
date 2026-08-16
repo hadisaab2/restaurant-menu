@@ -3,6 +3,7 @@ import { FiX, FiMinus, FiPlus, FiTrash2, FiSend } from "react-icons/fi";
 import { useDispatch } from "react-redux";
 import { removeFromCart, adjustQuantity, clearCart } from "../../../../redux/cart/cartActions";
 import { useAddOrderQuery } from "../../../../apis/restaurants/addOrder";
+import { cartItemFormDataToLines } from "../../../../product-options/cartLabels";
 import { trackOrderPlaced } from "../../../../utilities/analyticsTracking";
 import { convertPrice } from "../../../../utilities/convertPrice";
 import { formatCartItemOptionsForOrderMessage } from "../../../../product-options/cartLabels";
@@ -18,10 +19,17 @@ import {
 
 const STORAGE_URL = "https://storage.googleapis.com/ecommerce-bucket-testing/";
 
+function getCartItemImage(item) {
+  const coverIdx = item.images?.findIndex((img) => img.id === item.new_cover_id);
+  const img = coverIdx >= 0 ? item.images[coverIdx] : item.images?.[0];
+  return img?.url ? `${STORAGE_URL}${img.url}` : null;
+}
+
 function CartItem({ item, restaurantName, currencySymbol, activeLanguage, dispatch }) {
   const name = activeLanguage === "ar" && item.ar_name ? item.ar_name : item.en_name;
-  const imageUrl = item.image_url ? `${STORAGE_URL}${item.image_url}` : null;
+  const imageUrl = getCartItemImage(item);
   const itemTotal = item.price * item.quantity;
+  const optionLines = useMemo(() => cartItemFormDataToLines(item, activeLanguage), [item, activeLanguage]);
 
   return (
     <CartItemRow>
@@ -38,6 +46,13 @@ function CartItem({ item, restaurantName, currencySymbol, activeLanguage, dispat
           </CartItemDelete>
         </div>
         <CartItemPrice>{convertPrice(item.price, currencySymbol)}</CartItemPrice>
+        {optionLines.length > 0 && (
+          <div style={{ fontSize: "0.625rem", color: "#918C86", marginTop: 4 }}>
+            {optionLines.filter(b => b.type === "line").map((b, i) => (
+              <div key={i}>{b.text}</div>
+            ))}
+          </div>
+        )}
         {item.instruction && <CartItemNote>{item.instruction}</CartItemNote>}
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: 8 }}>
           <CartItemQty>

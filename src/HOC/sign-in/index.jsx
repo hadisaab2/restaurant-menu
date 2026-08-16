@@ -12,12 +12,11 @@ export const withRedirection = (WrappedComponent) => {
     //   link.href = `menugicLogo.png`;
   
     // })
-    if (isLoggedIn)
-      return (
-        <Navigate
-          to={userInfo.role_id === 1 ? "/superadmin" : "/restaurant/admin"}
-        />
-      );
+    if (isLoggedIn) {
+      if (userInfo.role_id === 1) return <Navigate to="/superadmin" />;
+      if (userInfo.role_id === 4) return <Navigate to="/sales/dashboard" />;
+      return <Navigate to="/restaurant/admin" />;
+    }
     return <WrappedComponent {...props} />;
   };
 };

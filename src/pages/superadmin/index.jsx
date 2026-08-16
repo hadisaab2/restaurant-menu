@@ -17,6 +17,7 @@ import Monitoring from "./monitoring";
 import Prospects from "./prospects";
 import Zones from "./zones";
 import Pipeline from "./pipeline";
+import SalesTeam from "./salesTeam";
 import Messages from "./messages";
 
 export default function SuperAdmin() {
@@ -96,6 +97,13 @@ export default function SuperAdmin() {
           Pipeline
         </Tab>
         <Tab
+          onClick={() => setActiveTab("Sales Team")}
+          activeTab={activeTab}
+          tab="Sales Team"
+        >
+          Sales Team
+        </Tab>
+        <Tab
           onClick={() => setActiveTab("Messages")}
           activeTab={activeTab}
           tab="Messages"
@@ -114,6 +122,7 @@ export default function SuperAdmin() {
         {activeTab === "Prospects" && <Prospects />}
         {activeTab === "Zones" && <Zones />}
         {activeTab === "Pipeline" && <Pipeline />}
+        {activeTab === "Sales Team" && <SalesTeam />}
         {activeTab === "Messages" && <Messages />}
       </ContentArea>
     </Container>

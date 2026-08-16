@@ -16,7 +16,7 @@ import { useNavigate } from "react-router-dom";
 import { useSignInQuery } from "../../apis/users/sign-in";
 import { getCookie, setCookie } from "../../utilities/manageCookies";
 import { jwtDecode } from "jwt-decode";
-import { RESTAURANTDASH, SUPERADMIN } from "../../routes/URLs";
+import { RESTAURANTDASH, SUPERADMIN, SALESDASH } from "../../routes/URLs";
 import { isNull } from "lodash";
 
 export default function AdminSignin() {
@@ -36,6 +36,8 @@ export default function AdminSignin() {
 
     if (decodedToken.role_id === 2) {
       navigate(RESTAURANTDASH);
+    } else if (decodedToken.role_id === 4) {
+      navigate(SALESDASH);
     } else {
       navigate(SUPERADMIN);
     }

@@ -5,7 +5,7 @@ import {
   Routes as RoutesWrapper,
   Navigate,
 } from "react-router-dom";
-import { ADMINSIGNIN, HOME, HOME_V2, HOME_V3, HOME_V4, NOTFOUND, RESTAURANT, RESTAURANTDASH, SUPERADMIN, NOTSUBSCRIBED } from "./URLs";
+import { ADMINSIGNIN, HOME, HOME_V2, HOME_V3, HOME_V4, NOTFOUND, RESTAURANT, RESTAURANTDASH, SUPERADMIN, NOTSUBSCRIBED, SALESDASH } from "./URLs";
 import Template from "../HOC/Template";
 import SubDomainTemplate from "../HOC/SubDomainTemplate";
 
@@ -43,6 +43,15 @@ const SuperAdminPage = lazy(() =>
   }))
 );
 
+const SalesDashPage = lazy(() =>
+  Promise.all([
+    import("../pages/sales"),
+    import("../HOC/AdminLayout"),
+  ]).then(([salesMod, layoutMod]) => ({
+    default: layoutMod.default(salesMod.default, 4),
+  }))
+);
+
 const SuspenseFallback = () => (
   <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
     <div style={{ width: 40, height: 40, border: "3px solid #e0e0e0", borderTop: "3px solid #333", borderRadius: "50%", animation: "spin 0.8s linear infinite" }} />
@@ -68,6 +77,7 @@ export default function ApplicationRoutes() {
               <Route path={HOME_V3} element={<Navigate to={HOME} replace />} />
               <Route path={HOME_V4} element={<HomeV4 />} />
 
+              <Route path={SALESDASH} element={<SalesDashPage />} />
               <Route path={RESTAURANT} element={<Template />} />
               <Route path={NOTFOUND} element={<NotFound />} />
               <Route path={NOTSUBSCRIBED} element={<NotSubscribed />} />

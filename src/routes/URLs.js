@@ -10,3 +10,4 @@ export const SUPERADMIN = "/superadmin";
 export const RESTAURANT = "/:restaurantName";
 export const NOTFOUND = "/error/notfound";
 export const NOTSUBSCRIBED = "/notsubscribed";
+export const SALESDASH = "/sales/dashboard";

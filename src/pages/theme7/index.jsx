@@ -54,6 +54,29 @@ export default function Theme7() {
   const socialMedia = useMemo(() => { try { return JSON.parse(restaurant?.social_media || "{}"); } catch { return {}; } }, [restaurant?.social_media]);
   const logoUrl = restaurant?.logoURL ? `${STORAGE_URL}${restaurant.logoURL}` : null;
 
+  /* ─── Virtual categories (Best Sellers, Offers) ─── */
+  const bestSellers = useMemo(() => {
+    const list = [];
+    for (const cat of categories) {
+      for (const p of (cat.products || [])) {
+        if (p.is_deleted) continue;
+        if (p.is_best_seller || p.featured) list.push(p);
+      }
+    }
+    return list;
+  }, [categories]);
+
+  const offers = useMemo(() => {
+    const list = [];
+    for (const cat of categories) {
+      for (const p of (cat.products || [])) {
+        if (p.is_deleted) continue;
+        if (Number(p.discount) > 0) list.push(p);
+      }
+    }
+    return list;
+  }, [categories]);
+
   /* ─── State ─── */
   const [showPopup, setShowPopup] = useState(null);
   const [activeCategory, setActiveCategory] = useState(null);
@@ -61,9 +84,33 @@ export default function Theme7() {
   const [showSearch, setShowSearch] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [desktopSearch, setDesktopSearch] = useState("");
+  const [showAnnounce, setShowAnnounce] = useState(true);
+  const [activeNav, setActiveNav] = useState("home");
+  const [toasts, setToasts] = useState([]);
+  const toastIdRef = useRef(0);
   const isScrollingRef = useRef(false);
   const catNavRef = useRef(null);
   const searchInputRef = useRef(null);
+
+  /* ─── Toast helper ─── */
+  const showToast = useCallback((message, type = "default") => {
+    const id = ++toastIdRef.current;
+    setToasts((prev) => [...prev, { id, message, type }]);
+    setTimeout(() => setToasts((prev) => prev.filter((t) => t.id !== id)), 2500);
+  }, []);
+
+  /* ─── Open/Closed status ─── */
+  const isOpen = useMemo(() => {
+    if (!restaurant?.workingHours?.length) return null;
+    const now = new Date();
+    const day = now.toLocaleDateString("en-US", { weekday: "long" });
+    const currentTime = now.getHours() * 60 + now.getMinutes();
+    const todayHours = restaurant.workingHours.find((wh) => wh.en_day?.toLowerCase() === day.toLowerCase());
+    if (!todayHours?.opening_time || !todayHours?.closing_time) return null;
+    const [oh, om] = todayHours.opening_time.split(":").map(Number);
+    const [ch, cm] = todayHours.closing_time.split(":").map(Number);
+    return currentTime >= oh * 60 + om && currentTime <= ch * 60 + cm;
+  }, [restaurant?.workingHours]);
 
   /* ─── Helpers ─── */
   const getName = useCallback((item, enKey = "en_name", arKey = "ar_name") =>
@@ -158,6 +205,19 @@ export default function Theme7() {
     p.delete("productId"); setSearchParams(p);
   }, [searchParams, setSearchParams]);
 
+  /* ─── Escape key to close overlays ─── */
+  useEffect(() => {
+    const h = (e) => {
+      if (e.key === "Escape") {
+        if (showSearch) { setShowSearch(false); setSearchQuery(""); }
+        else if (productId) closeProduct();
+        else if (showPopup) popupHandler(null);
+      }
+    };
+    window.addEventListener("keydown", h);
+    return () => window.removeEventListener("keydown", h);
+  }, [showSearch, productId, showPopup, closeProduct, popupHandler]);
+
   const currentProduct = useMemo(() => {
     if (!productId) return null;
     for (const cat of categories) {
@@ -203,8 +263,10 @@ export default function Theme7() {
   /* ─── Quick add ─── */
   const quickAdd = useCallback((e, product) => {
     e.stopPropagation();
-    dispatch(addToCart(restaurantName, product, 1, {}, Number(product.price) || 0, "", undefined));
-  }, [dispatch, restaurantName]);
+    dispatch(addToCart(restaurantName, product, 1, {}, parseFloat(product.en_price) || 0, "", undefined));
+    const pName = isRtl && product.ar_name ? product.ar_name : product.en_name;
+    showToast(isRtl ? `${pName} أُضيف للسلة` : `${pName} added to cart`, "success");
+  }, [dispatch, restaurantName, isRtl, showToast]);
 
   /* ─── Available languages ─── */
   const languages = useMemo(() => (restaurant?.languages || "en").split("&"), [restaurant?.languages]);
@@ -213,6 +275,14 @@ export default function Theme7() {
 
   return (
     <S.PageWrapper $rtl={isRtl}>
+      {/* ─── ANNOUNCEMENT BAR ─── */}
+      {showAnnounce && (restaurant.en_slogan || restaurant.ar_slogan) && (
+        <S.AnnounceBar>
+          <span>{isRtl && restaurant.ar_slogan ? restaurant.ar_slogan : restaurant.en_slogan}</span>
+          <S.AnnounceClose onClick={() => setShowAnnounce(false)}><FiX /></S.AnnounceClose>
+        </S.AnnounceBar>
+      )}
+
       {/* ─── HEADER ─── */}
       <S.HeaderWrap $scrolled={headerScrolled}>
         <S.HeaderInner>
@@ -261,56 +331,111 @@ export default function Theme7() {
         <S.RestoAvatar>
           {logoUrl ? <img src={logoUrl} alt="" /> : <span>{(restaurant.name || "M")[0]}</span>}
         </S.RestoAvatar>
-        <S.RestoName $rtl={isRtl}>
-          {isRtl && restaurant.ar_name ? restaurant.ar_name : restaurant.name}
-        </S.RestoName>
-        <S.RestoTagline>
-          {isRtl && restaurant.ar_slogan ? restaurant.ar_slogan : restaurant.en_slogan || ""}
-        </S.RestoTagline>
-        <S.RestoMeta>
-          {restaurant.branches?.[0] && (
-            <>
-              <span style={{ display: "flex", alignItems: "center", gap: 4 }}>
-                <FiMapPin /> {isRtl && restaurant.branches[0].ar_name ? restaurant.branches[0].ar_name : restaurant.branches[0].name || restaurant.branches[0].address || ""}
-              </span>
-              {restaurant.branches[0].phone && (
+        <S.RestoBody>
+          <S.RestoName $rtl={isRtl}>
+            {isRtl && restaurant.ar_name ? restaurant.ar_name : restaurant.name}
+          </S.RestoName>
+          <S.RestoTagline>
+            {isRtl && restaurant.ar_slogan ? restaurant.ar_slogan : restaurant.en_slogan || ""}
+          </S.RestoTagline>
+          <S.RestoMeta>
+            {isOpen !== null && (
+              <S.StatusDot $open={isOpen}>{isOpen ? loc("Open", "مفتوح") : loc("Closed", "مغلق")}</S.StatusDot>
+            )}
+            {restaurant.branches?.[0] && (
+              <>
                 <span style={{ display: "flex", alignItems: "center", gap: 4 }}>
-                  <FiPhone /> {restaurant.branches[0].phone}
+                  <FiMapPin /> {isRtl && restaurant.branches[0].ar_name ? restaurant.branches[0].ar_name : restaurant.branches[0].name || restaurant.branches[0].address || ""}
                 </span>
-              )}
-            </>
-          )}
-        </S.RestoMeta>
-        <S.RestoActions>
-          {restaurant.branches?.length > 0 && (
-            <S.ActionBtn onClick={() => popupHandler("location")}>
-              <FiMapPin /> {loc("Branches", "الفروع")}
+                {restaurant.branches[0].phone && (
+                  <span style={{ display: "flex", alignItems: "center", gap: 4 }}>
+                    <FiPhone /> {restaurant.branches[0].phone}
+                  </span>
+                )}
+              </>
+            )}
+          </S.RestoMeta>
+          <S.RestoActions>
+            {restaurant.branches?.length > 0 && (
+              <S.ActionBtn onClick={() => popupHandler("location")}>
+                <FiMapPin /> {loc("Branches", "الفروع")}
+              </S.ActionBtn>
+            )}
+            <S.ActionBtn onClick={() => popupHandler("contact")}>
+              <FiInfo /> {loc("Info", "معلومات")}
             </S.ActionBtn>
-          )}
-          <S.ActionBtn onClick={() => popupHandler("contact")}>
-            <FiInfo /> {loc("Info", "معلومات")}
-          </S.ActionBtn>
-          <S.ActionBtn onClick={() => popupHandler("share")}>
-            <FiShare2 /> {loc("Share", "مشاركة")}
-          </S.ActionBtn>
-        </S.RestoActions>
+            <S.ActionBtn onClick={() => popupHandler("share")}>
+              <FiShare2 /> {loc("Share", "مشاركة")}
+            </S.ActionBtn>
+          </S.RestoActions>
+        </S.RestoBody>
       </S.RestoSection>
 
       {/* ─── CATEGORY NAV (mobile sticky) ─── */}
       <S.CatNavWrap>
-        <S.CatNavList ref={catNavRef}>
-          {categories.map((cat) => (
-            <S.CatNavItem
-              key={cat.id}
-              data-cat={cat.id}
-              $active={activeCategory === cat.id}
-              onClick={() => scrollToCategory(cat.id)}
-            >
-              {getCatName(cat)}
-            </S.CatNavItem>
-          ))}
-        </S.CatNavList>
+        <S.CatNavInner ref={catNavRef}>
+          <S.CatNavList role="tablist">
+            {bestSellers.length > 0 && (
+              <S.CatNavItem
+                data-cat="best-sellers"
+                $active={activeCategory === "best-sellers"}
+                onClick={() => { setActiveCategory("best-sellers"); setActiveNav("menu"); document.getElementById("section-best-sellers")?.scrollIntoView({ behavior: "smooth", block: "start" }); }}
+                role="tab"
+              >
+                {loc("🔥 Best Sellers", "🔥 الأكثر مبيعاً")}
+              </S.CatNavItem>
+            )}
+            {offers.length > 0 && (
+              <S.CatNavItem
+                data-cat="offers"
+                $active={activeCategory === "offers"}
+                onClick={() => { setActiveCategory("offers"); setActiveNav("menu"); document.getElementById("section-offers")?.scrollIntoView({ behavior: "smooth", block: "start" }); }}
+                role="tab"
+              >
+                {loc("🏷️ Offers", "🏷️ عروض")}
+              </S.CatNavItem>
+            )}
+            {categories.map((cat) => (
+              <S.CatNavItem
+                key={cat.id}
+                data-cat={cat.id}
+                $active={activeCategory === cat.id}
+                onClick={() => { scrollToCategory(cat.id); setActiveNav("menu"); }}
+                role="tab"
+              >
+                {getCatName(cat)}
+              </S.CatNavItem>
+            ))}
+          </S.CatNavList>
+        </S.CatNavInner>
       </S.CatNavWrap>
+
+      {/* ─── TODAY'S SPECIALS (promo cards) ─── */}
+      {bestSellers.length > 0 && !desktopSearch.trim() && (
+        <S.PromoSection>
+          <S.SectionTitle $rtl={isRtl} style={{ marginBottom: 12 }}>{loc("Today's Specials", "عروض اليوم")}</S.SectionTitle>
+          <S.PromoRail>
+            {bestSellers.slice(0, 4).map((p, i) => {
+              const gradients = [
+                "linear-gradient(135deg, #8B4513 0%, #D2691E 100%)",
+                "linear-gradient(135deg, #1A1816 0%, #3D3A36 100%)",
+                "linear-gradient(135deg, #B5342A 0%, #D4564C 100%)",
+                "linear-gradient(135deg, #9E7C0C 0%, #C9A84C 100%)",
+              ];
+              return (
+                <S.PromoCard key={p.id} onClick={() => openProduct(p.id)}>
+                  <S.PromoCardBg $bg={gradients[i % gradients.length]}>
+                    <S.PromoBadge>{p.is_best_seller ? loc("BEST SELLER", "الأكثر مبيعاً") : loc("FEATURED", "مميز")}</S.PromoBadge>
+                    <S.PromoTitle>{getName(p)}</S.PromoTitle>
+                    <S.PromoSub>{convertPrice(parseFloat(p.en_price) || 0, currencySymbol)}</S.PromoSub>
+                    <S.PromoCta>{loc("Order Now →", "اطلب الآن ←")}</S.PromoCta>
+                  </S.PromoCardBg>
+                </S.PromoCard>
+              );
+            })}
+          </S.PromoRail>
+        </S.PromoSection>
+      )}
 
       {/* ─── MENU LAYOUT ─── */}
       <S.MenuLayout>
@@ -324,7 +449,10 @@ export default function Theme7() {
                 $active={activeCategory === cat.id}
                 onClick={() => scrollToCategory(cat.id)}
               >
-                <span>{getCatName(cat)}</span>
+                <span style={{ display: "flex", alignItems: "center" }}>
+                  {cat.image_url && <S.SidebarImg src={getImageUrl(cat.image_url)} alt="" onError={(e) => { e.target.style.display = "none"; }} />}
+                  {getCatName(cat)}
+                </span>
                 <S.SidebarCount>{count}</S.SidebarCount>
               </S.SidebarItem>
             );
@@ -349,6 +477,55 @@ export default function Theme7() {
             </div>
           )}
 
+          {/* Best Sellers rail */}
+          {(!desktopSearch.trim()) && bestSellers.length > 0 && (
+            <S.SectionWrap id="section-best-sellers" data-section="best-sellers">
+              <S.SectionHeader>
+                <S.SectionTitle $rtl={isRtl} style={{ margin: 0 }}>{loc("🔥 Best Sellers", "🔥 الأكثر مبيعاً")}</S.SectionTitle>
+                <S.SectionCount>{bestSellers.length} {loc("items", "صنف")}</S.SectionCount>
+              </S.SectionHeader>
+              <S.ProductRail>
+                {bestSellers.map((p) => (
+                  <S.RailCard key={p.id} onClick={() => openProduct(p.id)}>
+                    <S.RailCardImg>{getProductImage(p) && <img src={getProductImage(p)} alt="" />}</S.RailCardImg>
+                    <S.RailCardBody>
+                      <S.RailCardName>{getName(p)}</S.RailCardName>
+                      <S.RailCardPrice>{convertPrice(parseFloat(p.en_price) || 0, currencySymbol)}</S.RailCardPrice>
+                    </S.RailCardBody>
+                  </S.RailCard>
+                ))}
+              </S.ProductRail>
+            </S.SectionWrap>
+          )}
+
+          {/* Offers rail */}
+          {(!desktopSearch.trim()) && offers.length > 0 && (
+            <S.SectionWrap id="section-offers" data-section="offers">
+              <S.SectionHeader>
+                <S.SectionTitle $rtl={isRtl} style={{ margin: 0 }}>{loc("🏷️ Offers", "🏷️ عروض")}</S.SectionTitle>
+                <S.SectionCount>{offers.length} {loc("items", "صنف")}</S.SectionCount>
+              </S.SectionHeader>
+              <S.ProductRail>
+                {offers.map((p) => {
+                  const price = parseFloat(p.en_price) || 0;
+                  const disc = Number(p.discount) || 0;
+                  return (
+                    <S.RailCard key={p.id} onClick={() => openProduct(p.id)}>
+                      <S.RailCardImg>{getProductImage(p) && <img src={getProductImage(p)} alt="" />}</S.RailCardImg>
+                      <S.RailCardBody>
+                        <S.RailCardName>{getName(p)}</S.RailCardName>
+                        <div>
+                          <S.RailCardPrice>{convertPrice(price * (1 - disc / 100), currencySymbol)}</S.RailCardPrice>
+                          <S.CardOldPrice style={{ fontSize: "0.5625rem" }}>{convertPrice(price, currencySymbol)}</S.CardOldPrice>
+                        </div>
+                      </S.RailCardBody>
+                    </S.RailCard>
+                  );
+                })}
+              </S.ProductRail>
+            </S.SectionWrap>
+          )}
+
           {/* Category sections */}
           {(!desktopSearch.trim()) && categories.map((cat) => {
             const products = (cat.products || [])
@@ -357,7 +534,10 @@ export default function Theme7() {
             if (!products.length) return null;
             return (
               <S.SectionWrap key={cat.id} id={`section-${cat.id}`} data-section={cat.id}>
-                <S.SectionTitle $rtl={isRtl}>{getCatName(cat)}</S.SectionTitle>
+                <S.SectionHeader>
+                  <S.SectionTitle $rtl={isRtl} style={{ margin: 0 }}>{getCatName(cat)}</S.SectionTitle>
+                  <S.SectionCount>{products.length} {loc("items", "صنف")}</S.SectionCount>
+                </S.SectionHeader>
                 <S.ProductGrid>
                   {products.map((p) => (
                     <ProductCard
@@ -445,29 +625,30 @@ export default function Theme7() {
 
       {/* ─── BOTTOM NAV (mobile) ─── */}
       <S.BNavWrap>
-        <S.BNavItem $active={false} onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}>
+        <S.BNavItem $active={activeNav === "home"} onClick={() => { setActiveNav("home"); window.scrollTo({ top: 0, behavior: "smooth" }); }}>
           <FiHome />
           <span>{loc("Home", "الرئيسية")}</span>
         </S.BNavItem>
-        <S.BNavItem $active={false} onClick={() => {
+        <S.BNavItem $active={activeNav === "menu"} onClick={() => {
+          setActiveNav("menu");
           const first = document.querySelector("[data-section]");
           if (first) { const top = first.getBoundingClientRect().top + window.scrollY - 110; window.scrollTo({ top, behavior: "smooth" }); }
         }}>
           <FiGrid />
           <span>{loc("Menu", "القائمة")}</span>
         </S.BNavItem>
-        <S.BNavItem $active={false} onClick={() => { setShowSearch(true); setSearchQuery(""); }}>
+        <S.BNavItem $active={activeNav === "search"} onClick={() => { setActiveNav("search"); setShowSearch(true); setSearchQuery(""); }}>
           <FiSearch />
           <span>{loc("Search", "بحث")}</span>
         </S.BNavItem>
         {features?.cart && (
-          <S.BNavItem $active={false} onClick={() => popupHandler("cart")}>
+          <S.BNavItem $active={activeNav === "cart"} onClick={() => { setActiveNav("cart"); popupHandler("cart"); }}>
             <FiShoppingCart />
             {itemCount > 0 && <S.BNavBadge>{itemCount}</S.BNavBadge>}
             <span>{loc("Cart", "السلة")}</span>
           </S.BNavItem>
         )}
-        <S.BNavItem $active={false} onClick={() => popupHandler("more")}>
+        <S.BNavItem $active={activeNav === "more"} onClick={() => { setActiveNav("more"); popupHandler("more"); }}>
           <FiMoreHorizontal />
           <span>{loc("More", "المزيد")}</span>
         </S.BNavItem>
@@ -507,13 +688,13 @@ export default function Theme7() {
                 searchResults.map((p) => (
                   <S.SearchResultItem key={p.id} onClick={() => { setShowSearch(false); setSearchQuery(""); openProduct(p.id); }}>
                     <S.SearchResultImg>
-                      {p.image_url && <img src={getImageUrl(p.image_url)} alt="" />}
+                      {getProductImage(p) && <img src={getProductImage(p)} alt="" />}
                     </S.SearchResultImg>
                     <S.SearchResultInfo>
                       <h4>{getName(p)}</h4>
                       <p>{p._catName}</p>
                     </S.SearchResultInfo>
-                    <S.SearchResultPrice>{convertPrice(Number(p.price) || 0, currencySymbol)}</S.SearchResultPrice>
+                    <S.SearchResultPrice>{convertPrice(parseFloat(p.en_price) || 0, currencySymbol)}</S.SearchResultPrice>
                   </S.SearchResultItem>
                 ))
               ) : (
@@ -541,6 +722,9 @@ export default function Theme7() {
           getDesc={getDesc}
           loc={loc}
           dispatch={dispatch}
+          openProduct={openProduct}
+          categories={categories}
+          showToast={showToast}
         />
       )}
 
@@ -598,6 +782,15 @@ export default function Theme7() {
       {showPopup === "about" && (
         <AboutUsPopup restaurant={restaurant} showPopup={showPopup} popupHandler={popupHandler} />
       )}
+
+      {/* ─── TOAST NOTIFICATIONS ─── */}
+      {toasts.length > 0 && (
+        <S.ToastWrap>
+          {toasts.map((t) => (
+            <S.ToastItem key={t.id} $type={t.type}>{t.message}</S.ToastItem>
+          ))}
+        </S.ToastWrap>
+      )}
     </S.PageWrapper>
   );
 }
@@ -605,16 +798,27 @@ export default function Theme7() {
 /* ═══════════════════════════════════════════
    ProductCard (inline sub-component)
    ═══════════════════════════════════════════ */
+function getProductImage(product) {
+  const coverIdx = product.images?.findIndex((img) => img.id === product.new_cover_id);
+  const img = coverIdx >= 0 ? product.images[coverIdx] : product.images?.[0];
+  return img?.url ? getImageUrl(img.url) : null;
+}
+
+function stripHtml(html) {
+  if (!html) return "";
+  return html.replace(/<[^>]*>/g, "").trim();
+}
+
 function ProductCard({ product, getName, getDesc, currencySymbol, openProduct, quickAdd, features, isRtl, loc }) {
   const name = getName(product);
-  const desc = getDesc(product);
-  const imageUrl = product.image_url ? getImageUrl(product.image_url) : null;
-  const basePrice = Number(product.price) || 0;
+  const desc = stripHtml(getDesc(product));
+  const imageUrl = getProductImage(product);
+  const basePrice = parseFloat(product.en_price) || 0;
   const discount = Number(product.discount) || 0;
   const finalPrice = discount > 0 ? basePrice * (1 - discount / 100) : basePrice;
-  const unavailable = product.is_available === false || product.is_available === 0;
+  const unavailable = product.out_of_stock === 1 || product.out_of_stock === true;
 
-  const hasOptions = product.formSchema?.version === 2 || product.form_schema?.version === 2;
+  const hasOptions = (() => { try { const p = JSON.parse(product.form_json || "{}"); return p && Object.keys(p).length > 0; } catch { return false; } })();
   const canQuickAdd = features?.cart && !unavailable && !hasOptions;
 
   return (
@@ -622,15 +826,21 @@ function ProductCard({ product, getName, getDesc, currencySymbol, openProduct, q
       <S.CardImage>
         {imageUrl && <img src={imageUrl} alt={name} loading="lazy" />}
       </S.CardImage>
-      {product.is_new && <S.CardBadge $type="new">{loc("New", "جديد")}</S.CardBadge>}
-      {discount > 0 && <S.CardBadge $type="sale">-{discount}%</S.CardBadge>}
+      {product.is_best_seller && <S.CardBadge $type="best">{loc("Best Seller", "الأكثر مبيعاً")}</S.CardBadge>}
+      {!product.is_best_seller && product.featured && <S.CardBadge $type="featured">{loc("Featured", "مميز")}</S.CardBadge>}
+      {!product.is_best_seller && !product.featured && discount > 0 && <S.CardBadge $type="sale">-{discount}%</S.CardBadge>}
+      {!product.is_best_seller && !product.featured && !discount && (product.new || product.is_new) && <S.CardBadge $type="new">{loc("New", "جديد")}</S.CardBadge>}
       <S.CardBody>
         <S.CardName>{name}</S.CardName>
         {desc && <S.CardDesc>{desc}</S.CardDesc>}
         <S.CardFooter>
           <div>
-            <S.CardPrice>{convertPrice(finalPrice, currencySymbol)}</S.CardPrice>
+            <span>
+              {hasOptions && <S.CardFromLabel>{loc("From", "من")}</S.CardFromLabel>}
+              <S.CardPrice>{convertPrice(finalPrice, currencySymbol)}</S.CardPrice>
+            </span>
             {discount > 0 && <S.CardOldPrice>{convertPrice(basePrice, currencySymbol)}</S.CardOldPrice>}
+            {hasOptions && <S.CardCustomLabel>{loc("Customizable", "قابل للتخصيص")}</S.CardCustomLabel>}
           </div>
           {unavailable ? (
             <S.UnavailableLabel>{loc("Sold Out", "نفذت الكمية")}</S.UnavailableLabel>
@@ -648,22 +858,48 @@ function ProductCard({ product, getName, getDesc, currencySymbol, openProduct, q
 /* ═══════════════════════════════════════════
    ProductDetail (inline sub-component)
    ═══════════════════════════════════════════ */
-function ProductDetail({ product, restaurant, restaurantName, activeLanguage, isRtl, currencySymbol, features, onClose, getName, getDesc, loc, dispatch }) {
+function ProductDetail({ product, restaurant, restaurantName, activeLanguage, isRtl, currencySymbol, features, onClose, getName, getDesc, loc, dispatch, openProduct, categories, showToast }) {
   const [quantity, setQuantity] = useState(1);
   const [instruction, setInstruction] = useState("");
   const [formData, setFormData] = useState({});
-  const [optionsPrice, setOptionsPrice] = useState(0);
+  const [unitPrice, setUnitPrice] = useState(0);
 
   const name = getName(product);
   const description = getDesc(product);
-  const imageUrl = product.image_url ? getImageUrl(product.image_url) : null;
-  const basePrice = Number(product.price) || 0;
+  const imageUrl = getProductImage(product);
+  const basePrice = parseFloat(product.en_price) || 0;
   const discountPercent = Number(product.discount) || 0;
   const discountedBase = discountPercent > 0 ? basePrice * (1 - discountPercent / 100) : basePrice;
-  const unitPrice = discountedBase + optionsPrice;
+
+  // Parse form_json for product options
+  const parsedOptions = useMemo(() => {
+    try {
+      const parsed = JSON.parse(product.form_json || "{}");
+      if (parsed && Object.keys(parsed).length > 0) return parsed;
+    } catch {}
+    return null;
+  }, [product.form_json]);
+  const isV2 = parsedOptions?.version === 2;
+  const hasOptions = !!parsedOptions;
+
+  // Related products from same category
+  const relatedProducts = useMemo(() => {
+    if (!categories) return [];
+    for (const cat of categories) {
+      const found = (cat.products || []).find((p) => p.id === product.id);
+      if (found) {
+        return (cat.products || [])
+          .filter((p) => p.id !== product.id && !p.is_deleted)
+          .slice(0, 4);
+      }
+    }
+    return [];
+  }, [categories, product.id]);
+
+  // Set initial unit price
+  useEffect(() => { setUnitPrice(discountedBase); }, [discountedBase]);
+
   const totalPrice = unitPrice * quantity;
-  const hasV2Options = product.formSchema?.version === 2 || product.form_schema?.version === 2;
-  const formSchema = product.formSchema || product.form_schema;
 
   useEffect(() => {
     if (restaurant?.id && product?.id) {
@@ -674,6 +910,10 @@ function ProductDetail({ product, restaurant, restaurantName, activeLanguage, is
     }
   }, [product?.id]);
 
+  const handlePriceChange = useCallback((newUnitPrice) => {
+    setUnitPrice(newUnitPrice);
+  }, []);
+
   const handleAdd = () => {
     if (restaurant?.id && product?.id) {
       const bid = restaurant?.branches?.[0]?.id || null;
@@ -682,6 +922,7 @@ function ProductDetail({ product, restaurant, restaurantName, activeLanguage, is
       });
     }
     dispatch(addToCart(restaurantName, product, quantity, formData, unitPrice, instruction, undefined));
+    if (showToast) showToast(isRtl ? `${name} أُضيف للسلة` : `${name} added to cart`, "success");
     onClose();
   };
 
@@ -697,19 +938,19 @@ function ProductDetail({ product, restaurant, restaurantName, activeLanguage, is
           )}
           <S.PdBody>
             <S.PdName $rtl={isRtl}>{name}</S.PdName>
-            {description && <S.PdDesc>{description}</S.PdDesc>}
+            {description && <S.PdDesc dangerouslySetInnerHTML={{ __html: description }} />}
             <S.PdPriceRow>
               <S.PdPrice>{convertPrice(discountedBase, currencySymbol)}</S.PdPrice>
               {discountPercent > 0 && <S.PdOldPrice>{convertPrice(basePrice, currencySymbol)}</S.PdOldPrice>}
               {discountPercent > 0 && <S.PdDiscountBadge>-{discountPercent}%</S.PdDiscountBadge>}
             </S.PdPriceRow>
 
-            {hasV2Options && formSchema && (
+            {isV2 && parsedOptions && (
               <S.PdOptionsWrap>
                 <ProductOptionsPicker
-                  formSchema={formSchema} formData={formData}
-                  setFormData={setFormData} setOptionsPrice={setOptionsPrice}
-                  currencySymbol={currencySymbol} activeLanguage={activeLanguage}
+                  options={parsedOptions} formData={formData}
+                  setFormData={setFormData} activeLanguage={activeLanguage}
+                  basePrice={discountedBase} onPriceChange={handlePriceChange}
                 />
               </S.PdOptionsWrap>
             )}
@@ -720,6 +961,24 @@ function ProductDetail({ product, restaurant, restaurantName, activeLanguage, is
               placeholder={loc("Add your notes here...", "أضف ملاحظاتك هنا...")}
               rows={2}
             />
+
+            {/* Related products */}
+            {relatedProducts.length > 0 && (
+              <S.RelatedWrap>
+                <S.RelatedTitle>{loc("You Might Also Like", "قد يعجبك أيضاً")}</S.RelatedTitle>
+                <S.RelatedRail>
+                  {relatedProducts.map((rp) => (
+                    <S.RelatedItem key={rp.id} onClick={() => { onClose(); setTimeout(() => openProduct(rp.id), 100); }}>
+                      <S.RelatedItemImg>
+                        {getProductImage(rp) && <img src={getProductImage(rp)} alt="" />}
+                      </S.RelatedItemImg>
+                      <S.RelatedItemName>{getName(rp)}</S.RelatedItemName>
+                      <S.RelatedItemPrice>{convertPrice(parseFloat(rp.en_price) || 0, currencySymbol)}</S.RelatedItemPrice>
+                    </S.RelatedItem>
+                  ))}
+                </S.RelatedRail>
+              </S.RelatedWrap>
+            )}
           </S.PdBody>
         </S.PdScroll>
 
