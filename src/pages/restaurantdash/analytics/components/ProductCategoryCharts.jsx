@@ -112,7 +112,7 @@ export const TopCategoriesChart = ({ categories, metric = "views", limit = 10 })
   );
 };
 
-export const ProductsList = ({ products, title = "Top Products", limit = 10 }) => {
+export const ProductsList = ({ products, title = "Top Products", limit = 10, currencySymbol = "$" }) => {
   if (!products || !Array.isArray(products) || products.length === 0) {
     return null;
   }
@@ -137,7 +137,7 @@ export const ProductsList = ({ products, title = "Top Products", limit = 10 }) =
               <div>Views: {product.views || 0}</div>
               <div>Add to Cart: {product.addToCart || 0}</div>
               <div>Orders: {product.orders || 0}</div>
-              <div>Revenue: ${(product.revenue || 0).toFixed(2)}</div>
+              <div>Revenue: {currencySymbol}{(product.revenue || 0).toFixed(2)}</div>
               {product.viewToCartRate !== undefined && (
                 <div>View→Cart: {(product.viewToCartRate || 0).toFixed(1)}%</div>
               )}
@@ -152,7 +152,7 @@ export const ProductsList = ({ products, title = "Top Products", limit = 10 }) =
   );
 };
 
-export const CategoriesList = ({ categories, title = "Top Categories", limit = 10 }) => {
+export const CategoriesList = ({ categories, title = "Top Categories", limit = 10, currencySymbol = "$" }) => {
   if (!categories || !Array.isArray(categories) || categories.length === 0) {
     return null;
   }
@@ -177,7 +177,7 @@ export const CategoriesList = ({ categories, title = "Top Categories", limit = 1
               <div>Views: {category.views || 0}</div>
               <div>Add to Cart: {category.addToCart || 0}</div>
               <div>Orders: {category.orders || 0}</div>
-              <div>Revenue: ${(category.revenue || 0).toFixed(2)}</div>
+              <div>Revenue: {currencySymbol}{(category.revenue || 0).toFixed(2)}</div>
               {category.viewToCartRate !== undefined && (
                 <div>View→Cart: {(category.viewToCartRate || 0).toFixed(1)}%</div>
               )}

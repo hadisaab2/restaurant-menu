@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import { getCookie } from "../../../utilities/manageCookies";
+import { getCurrencySymbol } from "../../../utilities/getCurrencySymbol";
 import {
   LineChart, Line, BarChart, Bar, PieChart, Pie, Cell,
   XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
@@ -18,7 +19,9 @@ const datePresets = [
   { label: "7d", days: 7 },
   { label: "30d", days: 30 },
   { label: "90d", days: 90 },
+  { label: "YTD", special: "ytd" },
   { label: "1y", days: 365 },
+  { label: "All", special: "all" },
 ];
 
 const fmtDate = (d) => d.toISOString().split("T")[0];
@@ -39,6 +42,7 @@ export default function SuperAdminAnalytics() {
   const [actionBreakdown, setActionBreakdown] = useState(null);
   const [liveFeed, setLiveFeed] = useState(null);
   const [heatmap, setHeatmap] = useState(null);
+  const [lastUpdated, setLastUpdated] = useState(null);
 
   const fetchOverview = useCallback(async () => {
     setLoading(true);
@@ -49,6 +53,7 @@ export default function SuperAdminAnalytics() {
         { headers: headers() }
       );
       setOverview(data.data);
+      setLastUpdated(new Date());
     } catch (e) {
       console.error("Overview fetch error:", e);
       setError(e.response?.data?.message || e.message || "Failed to load analytics");
@@ -138,8 +143,14 @@ export default function SuperAdminAnalytics() {
 
   const handlePreset = (idx) => {
     setPreset(idx);
-    const d = datePresets[idx].days;
-    setStartDate(fmtDate(new Date(Date.now() - d * 86400000)));
+    const p = datePresets[idx];
+    if (p.special === "ytd") {
+      setStartDate(fmtDate(new Date(new Date().getFullYear(), 0, 1)));
+    } else if (p.special === "all") {
+      setStartDate("2020-01-01");
+    } else {
+      setStartDate(fmtDate(new Date(Date.now() - p.days * 86400000)));
+    }
     setEndDate(fmtDate(new Date()));
   };
 
@@ -177,6 +188,16 @@ export default function SuperAdminAnalytics() {
 
   return (
     <div style={s.container}>
+      {/* Header with last updated */}
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
+        <h2 style={{ margin: 0, fontSize: 20, fontWeight: 700, color: "#0f172a" }}>Analytics</h2>
+        {lastUpdated && (
+          <span style={{ fontSize: 12, color: "#94a3b8" }}>
+            Last updated: {lastUpdated.toLocaleTimeString()}
+          </span>
+        )}
+      </div>
+
       {/* Date Controls */}
       <div style={s.controlsBar}>
         <div style={s.presets}>
@@ -291,8 +312,8 @@ function OverviewTab({ overview, onSelectRestaurant, onExport, onExportRestauran
         <KpiCard label="Total Visits" value={fmtNum(global.visits)} />
         <KpiCard label="Unique Visitors" value={fmtNum(global.uniqueVisitors)} />
         <KpiCard label="Orders" value={fmtNum(global.orders)} />
-        <KpiCard label="Revenue" value={`$${fmtNum(global.revenue)}`} />
-        <KpiCard label="Avg Order Value" value={`$${fmtNum(global.avgOrderValue)}`} />
+        <KpiCard label="Revenue" value={fmtNum(global.revenue)} />
+        <KpiCard label="Avg Order Value" value={fmtNum(global.avgOrderValue)} />
         <KpiCard label="Conversion Rate" value={fmtPct(global.conversionRate)} />
       </div>
 
@@ -331,8 +352,8 @@ function OverviewTab({ overview, onSelectRestaurant, onExport, onExportRestauran
                   <td style={styles.td}>{r.visits}</td>
                   <td style={styles.td}>{r.unique_visitors}</td>
                   <td style={styles.td}>{r.orders}</td>
-                  <td style={styles.td}>${fmtNum(r.revenue)}</td>
-                  <td style={styles.td}>${fmtNum(r.avg_order_value)}</td>
+                  <td style={styles.td}>{getCurrencySymbol(r.currency)}{fmtNum(r.revenue)}</td>
+                  <td style={styles.td}>{getCurrencySymbol(r.currency)}{fmtNum(r.avg_order_value)}</td>
                   <td style={styles.td}>{fmtPct(r.conversion_rate)}</td>
                   <td style={styles.td}>
                     <button onClick={() => onExportRestaurant(r.restaurant_id)} style={styles.smallBtn}>Excel</button>
@@ -353,6 +374,7 @@ function OverviewTab({ overview, onSelectRestaurant, onExport, onExportRestauran
 // ── Detail Tab ──
 function DetailTab({ detail, restaurant, dateRange, onExport }) {
   const { kpis, funnel, sources, menu, devices, peakHours } = detail;
+  const cs = getCurrencySymbol(restaurant?.currency);
 
   const handleGenerateReport = () => {
     generateMarketingReportPDF({
@@ -373,7 +395,7 @@ function DetailTab({ detail, restaurant, dateRange, onExport }) {
         <KpiCard label="Visits" value={fmtNum(kpis.visits.value)} />
         <KpiCard label="Unique Visitors" value={fmtNum(kpis.uniqueVisitors.value)} />
         <KpiCard label="Orders" value={fmtNum(kpis.orders.value)} />
-        <KpiCard label="Revenue" value={`$${fmtNum(kpis.revenue.value)}`} />
+        <KpiCard label="Revenue" value={`${cs}${fmtNum(kpis.revenue.value)}`} />
         <KpiCard label="Conversion" value={fmtPct(kpis.conversionRate.value)} />
         <KpiCard label="Cart Abandon" value={fmtPct(kpis.cartAbandonmentRate.value)} />
       </div>
@@ -390,6 +412,7 @@ function DetailTab({ detail, restaurant, dateRange, onExport }) {
         detail={detail}
         restaurantName={restaurant.name}
         restaurantPixelId={restaurant.meta_pixel_id}
+        currencySymbol={cs}
       />
 
       {/* Funnel + Devices row */}
@@ -481,7 +504,7 @@ function DetailTab({ detail, restaurant, dateRange, onExport }) {
                   <td style={styles.td}>{p.product_name}</td>
                   <td style={styles.td}>{p.views}</td>
                   <td style={styles.td}>{p.orders}</td>
-                  <td style={styles.td}>${fmtNum(p.revenue)}</td>
+                  <td style={styles.td}>{cs}{fmtNum(p.revenue)}</td>
                 </tr>
               ))}
             </tbody>
@@ -512,7 +535,7 @@ function DetailTab({ detail, restaurant, dateRange, onExport }) {
                     <span style={{ ...styles.badge, background: eventColor(e.event_type) }}>{e.event_type}</span>
                   </td>
                   <td style={styles.td}>{e.product_id || "-"}</td>
-                  <td style={styles.td}>{e.revenue ? `$${e.revenue}` : "-"}</td>
+                  <td style={styles.td}>{e.revenue ? `${cs}${e.revenue}` : "-"}</td>
                 </tr>
               ))}
             </tbody>
@@ -525,6 +548,7 @@ function DetailTab({ detail, restaurant, dateRange, onExport }) {
 
 // ── Customers Tab ──
 function CustomersTab({ customers, restaurant, onExport }) {
+  const cs = getCurrencySymbol(restaurant?.currency);
   return (
     <>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
@@ -555,7 +579,7 @@ function CustomersTab({ customers, restaurant, onExport }) {
                   <td style={{ ...styles.td, fontSize: 11 }}>{(c.visitor_id || "").slice(0, 20)}</td>
                   <td style={styles.td}>{c.sessions}</td>
                   <td style={styles.td}>{c.orders}</td>
-                  <td style={styles.td}>${fmtNum(c.total_spent)}</td>
+                  <td style={styles.td}>{cs}{fmtNum(c.total_spent)}</td>
                   <td style={styles.td}>{c.first_visit ? new Date(c.first_visit).toLocaleDateString() : "-"}</td>
                   <td style={styles.td}>{c.last_visit ? new Date(c.last_visit).toLocaleDateString() : "-"}</td>
                   <td style={styles.td}>{c.device_type || "-"}</td>
@@ -580,7 +604,7 @@ function CustomersTab({ customers, restaurant, onExport }) {
 
 // ── Meta Pixel Section ──
 // Can show global overview data OR per-restaurant detail data
-function MetaPixelSection({ global, detail, restaurantName, restaurantPixelId }) {
+function MetaPixelSection({ global, detail, restaurantName, restaurantPixelId, currencySymbol: cs = "$" }) {
   const isActive = !!PIXEL_ID;
   const hasRestaurantPixel = !!restaurantPixelId;
   const isPerRestaurant = !!detail;
@@ -730,7 +754,7 @@ function MetaPixelSection({ global, detail, restaurantName, restaurantPixelId })
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))", gap: 12, marginBottom: 16 }}>
               <div style={{ background: "#f0fdf4", borderRadius: 10, padding: "12px 16px", border: "1px solid #bbf7d0" }}>
                 <div style={{ fontSize: 11, color: "#166534", fontWeight: 600, marginBottom: 4 }}>Pixel Revenue</div>
-                <div style={{ fontSize: 20, fontWeight: 700, color: "#15803d" }}>${fmtNum(revenue)}</div>
+                <div style={{ fontSize: 20, fontWeight: 700, color: "#15803d" }}>{cs}{fmtNum(revenue)}</div>
               </div>
               <div style={{ background: "#eff6ff", borderRadius: 10, padding: "12px 16px", border: "1px solid #bfdbfe" }}>
                 <div style={{ fontSize: 11, color: "#1e40af", fontWeight: 600, marginBottom: 4 }}>Conversion Rate</div>
@@ -742,7 +766,7 @@ function MetaPixelSection({ global, detail, restaurantName, restaurantPixelId })
               </div>
               <div style={{ background: "#faf5ff", borderRadius: 10, padding: "12px 16px", border: "1px solid #e9d5ff" }}>
                 <div style={{ fontSize: 11, color: "#6b21a8", fontWeight: 600, marginBottom: 4 }}>Avg Order Value</div>
-                <div style={{ fontSize: 20, fontWeight: 700, color: "#7c3aed" }}>{orders > 0 ? `$${(revenue / orders).toFixed(2)}` : "$0"}</div>
+                <div style={{ fontSize: 20, fontWeight: 700, color: "#7c3aed" }}>{orders > 0 ? `${cs}${(revenue / orders).toFixed(2)}` : `${cs}0`}</div>
               </div>
             </div>
           )}
@@ -984,7 +1008,7 @@ function LiveFeedTab({ data, onRefresh }) {
                     ) : (
                       <span>
                         {item.product_name || (item.product_id ? `Product #${item.product_id}` : "")}
-                        {item.revenue ? ` - $${item.revenue}` : ""}
+                        {item.revenue ? ` - ${item.revenue}` : ""}
                         {item.order_id ? ` (Order #${item.order_id})` : ""}
                       </span>
                     )}

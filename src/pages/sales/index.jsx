@@ -4,6 +4,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { getCookie, deleteCookie } from "../../utilities/manageCookies";
 import { breakingPoints } from "../../styles/theme";
+import { BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid, ResponsiveContainer, Legend } from "recharts";
 
 const API = process.env.REACT_APP_BASE_URL;
 const headers = () => ({ Authorization: `Bearer ${getCookie("accessToken")}` });
@@ -533,6 +534,8 @@ function MyProspectsTab() {
   const [statusFilter, setStatusFilter] = useState("");
   const [offset, setOffset] = useState(0);
   const [stats, setStats] = useState({ total: 0, demos_built: 0, messages_sent: 0, conversion_rate: 0 });
+  const [editingPhoneId, setEditingPhoneId] = useState(null);
+  const [editingPhoneValue, setEditingPhoneValue] = useState("");
   const [toast, setToast] = useState(null);
   const toastTimer = useRef(null);
   const csvInputRef = useRef(null);
@@ -789,6 +792,13 @@ function MyProspectsTab() {
                         alt=""
                         style={{ width: 44, height: 44, borderRadius: 12, objectFit: "cover", border: `1px solid ${T.cardBorder}` }}
                       />
+                    ) : p.logo_source_url ? (
+                      <img
+                        src={p.logo_source_url}
+                        alt=""
+                        style={{ width: 44, height: 44, borderRadius: 12, objectFit: "cover", border: `1px solid ${T.cardBorder}` }}
+                        onError={(e) => { e.target.style.display = "none"; }}
+                      />
                     ) : (
                       <div style={{ ...s.initialsCircle, background: initialsColor(p.business_name) }}>
                         {getInitials(p.business_name)}
@@ -796,10 +806,29 @@ function MyProspectsTab() {
                     )}
                     <div style={{ flex: 1, minWidth: 0 }}>
                       <p style={s.businessName}>{p.business_name}</p>
-                      <div style={{ fontSize: 12, color: T.textSub, marginTop: 2 }}>
-                        {p.business_phone && <span>{p.business_phone}</span>}
+                      <div style={{ fontSize: 12, color: T.textSub, marginTop: 2, display: "flex", alignItems: "center", gap: 6 }}>
+                        {editingPhoneId === p.id ? (
+                          <form onSubmit={async (e) => {
+                            e.preventDefault();
+                            try {
+                              await axios.put(`${API}/sales/prospects/${p.id}`, { business_phone: editingPhoneValue }, { headers: headers() });
+                              setProspects(prev => prev.map(pr => pr.id === p.id ? { ...pr, business_phone: editingPhoneValue } : pr));
+                              setEditingPhoneId(null);
+                            } catch (err) { alert(err.response?.data?.message || "Failed to update phone"); }
+                          }} style={{ display: "flex", gap: 4, alignItems: "center" }}>
+                            <input value={editingPhoneValue} onChange={e => setEditingPhoneValue(e.target.value)}
+                              style={{ fontSize: 12, padding: "2px 6px", border: `1px solid ${T.border}`, borderRadius: 4, width: 120, background: T.cardBg, color: T.textPrimary }} autoFocus />
+                            <button type="submit" style={{ fontSize: 10, padding: "2px 6px", background: "#10b981", color: "white", border: "none", borderRadius: 4, cursor: "pointer" }}>OK</button>
+                            <button type="button" onClick={() => setEditingPhoneId(null)} style={{ fontSize: 10, padding: "2px 6px", background: "#ef4444", color: "white", border: "none", borderRadius: 4, cursor: "pointer" }}>X</button>
+                          </form>
+                        ) : (
+                          <span onClick={() => { setEditingPhoneId(p.id); setEditingPhoneValue(p.business_phone || ""); }}
+                            style={{ cursor: "pointer", borderBottom: `1px dashed ${T.textSub}` }} title="Click to edit phone">
+                            {p.business_phone || "Add phone"}
+                          </span>
+                        )}
                         {p.ig_handle && (
-                          <span style={{ marginLeft: p.business_phone ? 10 : 0, color: "#8b5cf6" }}>
+                          <span style={{ color: "#8b5cf6" }}>
                             @{p.ig_handle}
                           </span>
                         )}
@@ -2108,6 +2137,7 @@ function MessageTemplateCard({ tmpl, highlight, isAr }) {
 function MyStatsTab() {
   const [stats, setStats] = useState(null);
   const [activity, setActivity] = useState([]);
+  const [trend, setTrend] = useState([]);
   const [loadingStats, setLoadingStats] = useState(true);
   const [loadingActivity, setLoadingActivity] = useState(true);
 
@@ -2123,6 +2153,11 @@ function MyStatsTab() {
       .then(({ data }) => setActivity(data.data || data || []))
       .catch(() => setActivity([]))
       .finally(() => setLoadingActivity(false));
+
+    axios
+      .get(`${API}/sales/stats/trend?days=30`, { headers: headers() })
+      .then(({ data }) => setTrend(data.data || []))
+      .catch(() => setTrend([]));
   }, []);
 
   const ACTIVITY_ICONS = {
@@ -2172,6 +2207,25 @@ function MyStatsTab() {
         </div>
       )}
 
+      {/* Activity Trend Chart */}
+      {trend.length > 0 && (
+        <div style={{ background: "white", borderRadius: 12, padding: 16, marginTop: 16, marginBottom: 16, border: `1px solid ${T.border}` }}>
+          <h3 style={{ fontSize: 15, fontWeight: 700, color: T.textPrimary, marginBottom: 12 }}>Activity Trend (Last 30 Days)</h3>
+          <ResponsiveContainer width="100%" height={220}>
+            <BarChart data={trend}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
+              <XAxis dataKey="date" tickFormatter={(d) => d?.slice(5)} tick={{ fontSize: 11 }} />
+              <YAxis allowDecimals={false} tick={{ fontSize: 11 }} />
+              <Tooltip labelFormatter={(d) => `Date: ${d}`} />
+              <Legend wrapperStyle={{ fontSize: 12 }} />
+              <Bar dataKey="demo_built" name="Demos Built" fill="#10b981" radius={[4, 4, 0, 0]} />
+              <Bar dataKey="message_sent" name="Messages Sent" fill="#f59e0b" radius={[4, 4, 0, 0]} />
+              <Bar dataKey="prospect_created" name="Prospects Created" fill="#3b82f6" radius={[4, 4, 0, 0]} />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+      )}
+
       {/* Activity Log */}
       <div style={{ marginTop: 8 }}>
         <h3 style={{ fontSize: 15, fontWeight: 700, color: T.textPrimary, marginBottom: 16 }}>Recent Activity</h3>
@@ -2204,7 +2258,7 @@ function MyStatsTab() {
             }}
           >
             {activity.map((item, i) => {
-              const iconCfg = ACTIVITY_ICONS[item.type] || ACTIVITY_ICONS.default;
+              const iconCfg = ACTIVITY_ICONS[item.action || item.type] || ACTIVITY_ICONS.default;
               return (
                 <div
                   key={item.id || i}
@@ -2238,18 +2292,18 @@ function MyStatsTab() {
                   {/* Description */}
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{ fontSize: 13, color: T.textPrimary, fontWeight: 500 }}>
-                      {item.description || item.message || "Activity"}
+                      {item.description || item.message || (item.action || "").replace(/_/g, " ") || "Activity"}
                     </div>
-                    {item.business_name && (
+                    {(item.business_name || item.details?.business_name) && (
                       <div style={{ fontSize: 11, color: T.textSub, marginTop: 2 }}>
-                        {item.business_name}
+                        {item.business_name || item.details?.business_name}
                       </div>
                     )}
                   </div>
 
                   {/* Time */}
                   <div style={{ fontSize: 11, color: T.textSub, whiteSpace: "nowrap", flexShrink: 0 }}>
-                    {timeAgo(item.created_at || item.timestamp)}
+                    {timeAgo(item.createdAt || item.created_at || item.timestamp)}
                   </div>
                 </div>
               );

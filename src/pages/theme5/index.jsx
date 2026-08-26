@@ -25,7 +25,7 @@ import AboutUsPopup from "../theme4/popup/aboutUs";
 import { InstallPrompt } from "./installPrompt";
 import LandingPage from "./LandingPage";
 import MenuModeContext from "./MenuModeContext";
-import { trackVisit, trackPageView } from "../../utilities/analyticsTracking";
+import { trackVisit, trackPageView, trackSearch } from "../../utilities/analyticsTracking";
 
 export default function Theme5() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -64,6 +64,16 @@ export default function Theme5() {
 
   const [showPopup, setshowPopup] = useState(null);
   const [searchText, setSearchText] = useState("");
+
+  // Track search queries (debounced)
+  useEffect(() => {
+    if (!searchText || searchText.length < 2 || !restaurant?.id) return;
+    const timer = setTimeout(() => {
+      trackSearch(restaurant.id, searchText);
+    }, 1500);
+    return () => clearTimeout(timer);
+  }, [searchText, restaurant?.id]);
+
   const [showSidebar, setshowSidebar] = useState(null);
   const [deferredPrompt, setDeferredPrompt] = useState(null);
   const [showInstallPopup, setShowInstallPopup] = useState(true);

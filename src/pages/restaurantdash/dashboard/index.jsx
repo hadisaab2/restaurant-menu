@@ -457,6 +457,34 @@ export default function Dashboard({ userInformation, setSection }) {
     retry: 1,
   });
 
+  const BASE_URL = process.env.REACT_APP_BASE_URL;
+  const goalsQuery = useQuery({
+    queryKey: ["dashboard", "goals", restaurantId],
+    queryFn: async () => {
+      const { data } = await axios.get(`${BASE_URL}/analytics/goals`, authHeaders());
+      return data?.data || {};
+    },
+    enabled: Boolean(restaurantId),
+    staleTime: 60_000,
+    retry: 1,
+  });
+  const [editingGoals, setEditingGoals] = useState(false);
+  const [goalRevInput, setGoalRevInput] = useState("");
+  const [goalOrdInput, setGoalOrdInput] = useState("");
+
+  const saveGoals = async () => {
+    try {
+      await axios.put(`${BASE_URL}/analytics/goals`, {
+        revenueGoal: parseFloat(goalRevInput) || null,
+        ordersGoal: parseInt(goalOrdInput) || null,
+      }, authHeaders());
+      goalsQuery.refetch();
+      setEditingGoals(false);
+    } catch (e) {
+      console.error("Error saving goals:", e);
+    }
+  };
+
   const avgPerCategory = categories.length > 0
     ? (products.length / categories.length).toFixed(1)
     : "0";
@@ -567,6 +595,78 @@ export default function Dashboard({ userInformation, setSection }) {
           </StatCard>
         ))}
       </StatsGrid>
+
+      {/* ── MONTHLY GOALS ── */}
+      {goalsQuery.data && (goalsQuery.data.revenueGoal > 0 || goalsQuery.data.ordersGoal > 0 || editingGoals) && (
+        <>
+          <SectionLabel style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            Monthly Goals — {goalsQuery.data.monthLabel}
+            <button onClick={() => { setEditingGoals(!editingGoals); setGoalRevInput(goalsQuery.data.revenueGoal || ""); setGoalOrdInput(goalsQuery.data.ordersGoal || ""); }}
+              style={{ fontSize: 12, color: "#5eabb1", background: "none", border: "none", cursor: "pointer", fontWeight: 600 }}>
+              {editingGoals ? "Cancel" : "Edit Goals"}
+            </button>
+          </SectionLabel>
+          {editingGoals ? (
+            <div style={{ display: "flex", gap: 12, marginBottom: 16, alignItems: "flex-end" }}>
+              <div>
+                <label style={{ fontSize: 12, color: "#64748b", display: "block", marginBottom: 4 }}>Revenue Goal</label>
+                <input type="number" value={goalRevInput} onChange={e => setGoalRevInput(e.target.value)}
+                  style={{ padding: "6px 10px", borderRadius: 8, border: "1px solid #e2e8f0", fontSize: 14, width: 120 }} />
+              </div>
+              <div>
+                <label style={{ fontSize: 12, color: "#64748b", display: "block", marginBottom: 4 }}>Orders Goal</label>
+                <input type="number" value={goalOrdInput} onChange={e => setGoalOrdInput(e.target.value)}
+                  style={{ padding: "6px 10px", borderRadius: 8, border: "1px solid #e2e8f0", fontSize: 14, width: 120 }} />
+              </div>
+              <button onClick={saveGoals}
+                style={{ padding: "6px 16px", borderRadius: 8, background: "#5eabb1", color: "white", border: "none", cursor: "pointer", fontWeight: 600, fontSize: 13 }}>
+                Save
+              </button>
+            </div>
+          ) : (
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 16 }}>
+              {goalsQuery.data.revenueGoal > 0 && (() => {
+                const pct = Math.min(100, (goalsQuery.data.currentRevenue / goalsQuery.data.revenueGoal) * 100);
+                return (
+                  <div style={{ background: "white", borderRadius: 12, padding: 16, border: "1px solid #e2e8f0" }}>
+                    <div style={{ fontSize: 13, fontWeight: 600, color: "#0f172a", marginBottom: 8 }}>Revenue Progress</div>
+                    <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12, color: "#64748b", marginBottom: 4 }}>
+                      <span>{goalsQuery.data.currentRevenue.toFixed(0)} / {goalsQuery.data.revenueGoal}</span>
+                      <span style={{ fontWeight: 700, color: pct >= 100 ? "#10b981" : "#5eabb1" }}>{pct.toFixed(0)}%</span>
+                    </div>
+                    <div style={{ height: 8, background: "#f1f5f9", borderRadius: 4, overflow: "hidden" }}>
+                      <div style={{ width: `${pct}%`, height: "100%", background: pct >= 100 ? "#10b981" : "#5eabb1", borderRadius: 4, transition: "width 0.5s" }} />
+                    </div>
+                  </div>
+                );
+              })()}
+              {goalsQuery.data.ordersGoal > 0 && (() => {
+                const pct = Math.min(100, (goalsQuery.data.currentOrders / goalsQuery.data.ordersGoal) * 100);
+                return (
+                  <div style={{ background: "white", borderRadius: 12, padding: 16, border: "1px solid #e2e8f0" }}>
+                    <div style={{ fontSize: 13, fontWeight: 600, color: "#0f172a", marginBottom: 8 }}>Orders Progress</div>
+                    <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12, color: "#64748b", marginBottom: 4 }}>
+                      <span>{goalsQuery.data.currentOrders} / {goalsQuery.data.ordersGoal}</span>
+                      <span style={{ fontWeight: 700, color: pct >= 100 ? "#10b981" : "#8b5cf6" }}>{pct.toFixed(0)}%</span>
+                    </div>
+                    <div style={{ height: 8, background: "#f1f5f9", borderRadius: 4, overflow: "hidden" }}>
+                      <div style={{ width: `${pct}%`, height: "100%", background: pct >= 100 ? "#10b981" : "#8b5cf6", borderRadius: 4, transition: "width 0.5s" }} />
+                    </div>
+                  </div>
+                );
+              })()}
+            </div>
+          )}
+        </>
+      )}
+      {goalsQuery.data && !goalsQuery.data.revenueGoal && !goalsQuery.data.ordersGoal && !editingGoals && (
+        <div style={{ textAlign: "center", marginBottom: 16 }}>
+          <button onClick={() => { setEditingGoals(true); setGoalRevInput(""); setGoalOrdInput(""); }}
+            style={{ fontSize: 13, color: "#5eabb1", background: "none", border: "1px dashed #5eabb1", borderRadius: 8, padding: "8px 20px", cursor: "pointer" }}>
+            + Set Monthly Goals
+          </button>
+        </div>
+      )}
 
       {/* ── QUICK ACTIONS ── */}
       <SectionLabel>Quick actions</SectionLabel>

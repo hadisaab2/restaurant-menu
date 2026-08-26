@@ -43,6 +43,7 @@ import {
   InsightSuggestion,
 } from "./styles";
 import { getCookie } from "../../../utilities/manageCookies";
+import { getCurrencySymbol } from "../../../utilities/getCurrencySymbol";
 import axios from "axios";
 import { TrendsChart } from "./components/TrendsChart";
 import {
@@ -52,7 +53,7 @@ import {
   CategoriesList,
 } from "./components/ProductCategoryCharts";
 import jsPDF from "jspdf";
-import html2canvas from "html2canvas";
+
 import { getTranslations } from "./translations";
 
 const BASE_URL = process.env.REACT_APP_BASE_URL;
@@ -222,14 +223,22 @@ export default function Analytics() {
   const restaurantId = userInfo?.restaurant_id;
   const restaurantName = userInfo?.restaurant_name;
   const currentLang = userInfo?.Lang || "en";
+  const currencySymbol = getCurrencySymbol(userInfo?.currency || "dollar");
   const t = getTranslations(currentLang);
   const [logoUrl, setLogoUrl] = useState(null);
   const [exporting, setExporting] = useState(false);
+  const [branchList, setBranchList] = useState([]);
+  const [lastUpdated, setLastUpdated] = useState(null);
+  const [liveFeed, setLiveFeed] = useState([]);
+  const [liveAutoRefresh, setLiveAutoRefresh] = useState(false);
+  const [segments, setSegments] = useState(null);
+  const [searchData, setSearchData] = useState(null);
 
   useEffect(() => {
     if (restaurantId) {
       fetchData();
       fetchRestaurantLogo();
+      fetchBranches();
     }
   }, [restaurantId, dateRange, startDate, endDate, branchId, orderType, source, compare, groupBy]);
 
@@ -250,6 +259,65 @@ export default function Analytics() {
     }
   };
 
+  const fetchBranches = async () => {
+    try {
+      const token = getCookie("accessToken");
+      const response = await axios.get(`${BASE_URL}/branches?restaurantId=${restaurantId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (response.data && Array.isArray(response.data)) {
+        setBranchList(response.data);
+      }
+    } catch (error) {
+      console.error("Error fetching branches:", error);
+    }
+  };
+
+  const fetchLiveFeed = async () => {
+    try {
+      const token = getCookie("accessToken");
+      const response = await axios.get(`${BASE_URL}/analytics/live-feed?limit=100`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (response.data?.data) setLiveFeed(response.data.data);
+    } catch (error) {
+      console.error("Error fetching live feed:", error);
+    }
+  };
+
+  const fetchSegments = async () => {
+    try {
+      const token = getCookie("accessToken");
+      const dates = getDateRange();
+      const response = await axios.get(`${BASE_URL}/analytics/segments?start_date=${dates.start_date}&end_date=${dates.end_date}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (response.data?.data) setSegments(response.data.data);
+    } catch (error) {
+      console.error("Error fetching segments:", error);
+    }
+  };
+
+  const fetchSearchAnalytics = async () => {
+    try {
+      const token = getCookie("accessToken");
+      const dates = getDateRange();
+      const response = await axios.get(`${BASE_URL}/analytics/search-analytics?start_date=${dates.start_date}&end_date=${dates.end_date}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (response.data?.data) setSearchData(response.data.data);
+    } catch (error) {
+      console.error("Error fetching search analytics:", error);
+    }
+  };
+
+  // Auto-refresh live feed every 10 seconds when enabled
+  useEffect(() => {
+    if (!liveAutoRefresh || activeTab !== "live") return;
+    const interval = setInterval(fetchLiveFeed, 10000);
+    return () => clearInterval(interval);
+  }, [liveAutoRefresh, activeTab]);
+
   const getDateRange = () => {
     const end = new Date();
     let start = new Date();
@@ -267,6 +335,15 @@ export default function Analytics() {
         break;
       case "90d":
         start = new Date(end.getTime() - 90 * 24 * 60 * 60 * 1000);
+        break;
+      case "ytd":
+        start = new Date(end.getFullYear(), 0, 1);
+        break;
+      case "1y":
+        start = new Date(end.getTime() - 365 * 24 * 60 * 60 * 1000);
+        break;
+      case "all":
+        start = new Date("2020-01-01");
         break;
       case "custom":
         if (startDate && endDate) {
@@ -317,6 +394,7 @@ export default function Analytics() {
       setMenu(menuData.data);
       setBranches(branchesData.data);
       setInsights(insightsData.data);
+      setLastUpdated(new Date());
     } catch (err) {
       setError("Failed to load analytics data. Please try again.");
       console.error(err);
@@ -327,17 +405,13 @@ export default function Analytics() {
 
   const formatCurrency = (value) => {
     if (value === null || value === undefined || isNaN(value)) {
-      return "$0.00";
+      return `${currencySymbol}0.00`;
     }
     const numValue = typeof value === "number" ? value : parseFloat(value);
     if (isNaN(numValue)) {
-      return "$0.00";
+      return `${currencySymbol}0.00`;
     }
-    return new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: "USD",
-      minimumFractionDigits: 2,
-    }).format(numValue);
+    return `${currencySymbol}${numValue.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
   };
 
   const formatNumber = (value) => {
@@ -512,13 +586,13 @@ export default function Analytics() {
         pdf.setFont("helvetica", "normal");
         const kpiRows = [
           [t.metric, t.value, t.change],
-          [t.totalVisits, formatNumber(kpis.totalVisits || 0), formatChange(kpis.totalVisitsChange)],
-          [t.uniqueVisitors, formatNumber(kpis.uniqueVisitors || 0), formatChange(kpis.uniqueVisitorsChange)],
-          [t.orders, formatNumber(kpis.orders || 0), formatChange(kpis.ordersChange)],
-          [t.revenue, formatCurrency(kpis.revenue || 0), formatChange(kpis.revenueChange)],
-          [t.conversionRate, formatPercent(kpis.conversionRate || 0), formatChange(kpis.conversionRateChange)],
-          [t.avgOrderValue, formatCurrency(kpis.avgOrderValue || 0), formatChange(kpis.avgOrderValueChange)],
-          [t.cartAbandonment, formatPercent(kpis.cartAbandonmentRate || 0), formatChange(kpis.cartAbandonmentRateChange)],
+          [t.totalVisits, formatNumber(kpis.visits?.value || 0), formatChange(kpis.visits?.change)],
+          [t.uniqueVisitors, formatNumber(kpis.uniqueVisitors?.value || 0), formatChange(kpis.uniqueVisitors?.change)],
+          [t.orders, formatNumber(kpis.orders?.value || 0), formatChange(kpis.orders?.change)],
+          [t.revenue, formatCurrency(kpis.revenue?.value || 0), formatChange(kpis.revenue?.change)],
+          [t.conversionRate, formatPercent(kpis.conversionRate?.value || 0), formatChange(kpis.conversionRate?.change)],
+          [t.avgOrderValue, formatCurrency(kpis.avgOrderValue?.value || 0), formatChange(kpis.avgOrderValue?.change)],
+          [t.cartAbandonment, formatPercent(kpis.cartAbandonmentRate?.value || 0), formatChange(kpis.cartAbandonmentRate?.change)],
         ];
 
         kpiRows.forEach((row, index) => {
@@ -920,7 +994,14 @@ export default function Analytics() {
   return (
     <Container>
       <Header>
-        <HeaderTitle>Analytics Dashboard</HeaderTitle>
+        <div>
+          <HeaderTitle>Analytics Dashboard</HeaderTitle>
+          {lastUpdated && (
+            <span style={{ fontSize: 12, color: "#94a3b8", fontWeight: 400 }}>
+              Last updated: {lastUpdated.toLocaleTimeString()}
+            </span>
+          )}
+        </div>
         <HeaderActions>
           <ExportButton onClick={exportToPDF} disabled={exporting || loading}>
             {exporting ? t.exporting : `📄 ${t.exportToPDF}`}
@@ -946,6 +1027,9 @@ export default function Analytics() {
               <option value="7d">Last 7 days</option>
               <option value="30d">Last 30 days</option>
               <option value="90d">Last 90 days</option>
+              <option value="ytd">Year to Date</option>
+              <option value="1y">Last 1 year</option>
+              <option value="all">All Time</option>
               <option value="custom">Custom</option>
             </FilterSelect>
           </FilterGroup>
@@ -978,7 +1062,9 @@ export default function Analytics() {
               onChange={(e) => setBranchId(e.target.value)}
             >
               <option value="">All Branches</option>
-              {/* TODO: Load branches dynamically */}
+              {branchList.map((b) => (
+                <option key={b.id} value={b.id}>{b.en_name || b.ar_name || `Branch #${b.id}`}</option>
+              ))}
             </FilterSelect>
           </FilterGroup>
 
@@ -1091,6 +1177,11 @@ export default function Analytics() {
           </KPICard>
 
           <KPICard>
+            <KPILabel>Return Visitors</KPILabel>
+            <KPIValue>{formatPercent(kpis.returnVisitorRate?.value || 0)}</KPIValue>
+          </KPICard>
+
+          <KPICard>
             <KPILabel>Item Views</KPILabel>
             <KPIValue>{formatNumber(kpis.itemViews?.value || 0)}</KPIValue>
           </KPICard>
@@ -1129,6 +1220,15 @@ export default function Analytics() {
           </Tab>
           <Tab $active={activeTab === "insights"} onClick={() => setActiveTab("insights")}>
             Insights
+          </Tab>
+          <Tab $active={activeTab === "segments"} onClick={() => { setActiveTab("segments"); fetchSegments(); }}>
+            Segments
+          </Tab>
+          <Tab $active={activeTab === "search"} onClick={() => { setActiveTab("search"); fetchSearchAnalytics(); }}>
+            Search
+          </Tab>
+          <Tab $active={activeTab === "live"} onClick={() => { setActiveTab("live"); fetchLiveFeed(); }}>
+            Live
           </Tab>
         </Tabs>
       </TabsContainer>
@@ -1338,6 +1438,7 @@ export default function Analytics() {
                   products={menu.topProducts.byRevenue}
                   title="Top Products by Revenue (Detailed)"
                   limit={20}
+                  currencySymbol={currencySymbol}
                 />
               )}
 
@@ -1347,6 +1448,7 @@ export default function Analytics() {
                   categories={menu.topCategories.byRevenue}
                   title="Top Categories by Revenue (Detailed)"
                   limit={20}
+                  currencySymbol={currencySymbol}
                 />
               )}
 
@@ -1481,6 +1583,165 @@ export default function Analytics() {
           ) : (
             <EmptyState>No insights available. All metrics are performing well!</EmptyState>
           )}
+        </TrendsSection>
+      )}
+
+      {activeTab === "search" && (
+        <TrendsSection>
+          <SectionTitle>Search Analytics</SectionTitle>
+          {searchData ? (
+            <>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 20 }}>
+                <div style={{ background: "white", borderRadius: 12, padding: 16, border: "1px solid #e2e8f0", textAlign: "center" }}>
+                  <div style={{ fontSize: 24, fontWeight: 700, color: "#5eabb1" }}>{searchData.totalSearches}</div>
+                  <div style={{ fontSize: 12, color: "#64748b", marginTop: 4 }}>Total Searches</div>
+                </div>
+                <div style={{ background: "white", borderRadius: 12, padding: 16, border: "1px solid #e2e8f0", textAlign: "center" }}>
+                  <div style={{ fontSize: 24, fontWeight: 700, color: "#8b5cf6" }}>{searchData.uniqueQueries}</div>
+                  <div style={{ fontSize: 12, color: "#64748b", marginTop: 4 }}>Unique Queries</div>
+                </div>
+              </div>
+
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+                <div style={{ background: "white", borderRadius: 12, padding: 16, border: "1px solid #e2e8f0" }}>
+                  <div style={{ fontSize: 14, fontWeight: 600, color: "#0f172a", marginBottom: 12 }}>Top Search Queries</div>
+                  {searchData.topQueries?.length > 0 ? searchData.topQueries.map((q, i) => (
+                    <div key={q.query} style={{ display: "flex", justifyContent: "space-between", padding: "6px 0", borderBottom: "1px solid #f8fafc", fontSize: 13 }}>
+                      <span style={{ color: "#334155" }}>{q.query}</span>
+                      <span style={{ color: "#64748b", fontWeight: 600 }}>{q.count}x ({q.avgResults} results)</span>
+                    </div>
+                  )) : (
+                    <EmptyState>No search data yet. Search tracking is active and will collect data as customers use the search feature.</EmptyState>
+                  )}
+                </div>
+
+                <div style={{ background: "white", borderRadius: 12, padding: 16, border: "1px solid #e2e8f0" }}>
+                  <div style={{ fontSize: 14, fontWeight: 600, color: "#ef4444", marginBottom: 12 }}>Zero-Result Queries</div>
+                  <div style={{ fontSize: 12, color: "#64748b", marginBottom: 12 }}>Customers searched for these but found nothing — consider adding these items to your menu.</div>
+                  {searchData.zeroResultQueries?.length > 0 ? searchData.zeroResultQueries.map((q) => (
+                    <div key={q.query} style={{ display: "flex", justifyContent: "space-between", padding: "6px 0", borderBottom: "1px solid #f8fafc", fontSize: 13 }}>
+                      <span style={{ color: "#334155" }}>{q.query}</span>
+                      <span style={{ color: "#ef4444", fontWeight: 600 }}>{q.count}x</span>
+                    </div>
+                  )) : (
+                    <div style={{ fontSize: 13, color: "#10b981", textAlign: "center", padding: 20 }}>No zero-result queries — great coverage!</div>
+                  )}
+                </div>
+              </div>
+            </>
+          ) : (
+            <EmptyState>Loading search analytics...</EmptyState>
+          )}
+        </TrendsSection>
+      )}
+
+      {activeTab === "segments" && segments && (
+        <TrendsSection>
+          <SectionTitle>Customer Segmentation</SectionTitle>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 16, marginBottom: 20 }}>
+            <div style={{ background: "white", borderRadius: 12, padding: 16, border: "1px solid #e2e8f0", textAlign: "center" }}>
+              <div style={{ fontSize: 24, fontWeight: 700, color: "#3b82f6" }}>{segments.newVisitors}</div>
+              <div style={{ fontSize: 12, color: "#64748b", marginTop: 4 }}>New Visitors ({segments.newRate}%)</div>
+            </div>
+            <div style={{ background: "white", borderRadius: 12, padding: 16, border: "1px solid #e2e8f0", textAlign: "center" }}>
+              <div style={{ fontSize: 24, fontWeight: 700, color: "#10b981" }}>{segments.returningVisitors}</div>
+              <div style={{ fontSize: 12, color: "#64748b", marginTop: 4 }}>Returning ({segments.returningRate}%)</div>
+            </div>
+            <div style={{ background: "white", borderRadius: 12, padding: 16, border: "1px solid #e2e8f0", textAlign: "center" }}>
+              <div style={{ fontSize: 24, fontWeight: 700, color: "#0f172a" }}>{segments.totalVisitors}</div>
+              <div style={{ fontSize: 12, color: "#64748b", marginTop: 4 }}>Total Visitors</div>
+            </div>
+          </div>
+
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+            {/* Frequency Distribution */}
+            <div style={{ background: "white", borderRadius: 12, padding: 16, border: "1px solid #e2e8f0" }}>
+              <div style={{ fontSize: 14, fontWeight: 600, color: "#0f172a", marginBottom: 12 }}>Visit Frequency</div>
+              {segments.frequencyDistribution?.map((f) => (
+                <div key={f.label} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "6px 0", borderBottom: "1px solid #f8fafc" }}>
+                  <span style={{ fontSize: 13, color: "#334155" }}>{f.label}</span>
+                  <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                    <div style={{ width: 80, height: 6, background: "#f1f5f9", borderRadius: 3, overflow: "hidden" }}>
+                      <div style={{ width: `${segments.totalVisitors > 0 ? (f.count / segments.totalVisitors) * 100 : 0}%`, height: "100%", background: "#5eabb1", borderRadius: 3 }} />
+                    </div>
+                    <span style={{ fontSize: 12, fontWeight: 600, color: "#64748b", minWidth: 30, textAlign: "right" }}>{f.count}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* High Value Customers */}
+            <div style={{ background: "white", borderRadius: 12, padding: 16, border: "1px solid #e2e8f0" }}>
+              <div style={{ fontSize: 14, fontWeight: 600, color: "#0f172a", marginBottom: 12 }}>Top Customers (by Spend)</div>
+              {segments.highValueCustomers?.length > 0 ? segments.highValueCustomers.slice(0, 10).map((c, i) => (
+                <div key={c.visitor_id} style={{ display: "flex", justifyContent: "space-between", padding: "6px 0", borderBottom: "1px solid #f8fafc", fontSize: 13 }}>
+                  <span style={{ color: "#334155" }}>#{i + 1} {(c.visitor_id || "").slice(0, 12)}...</span>
+                  <span style={{ color: "#10b981", fontWeight: 600 }}>{c.orders} orders — {currencySymbol}{c.totalSpent.toFixed(2)}</span>
+                </div>
+              )) : (
+                <div style={{ fontSize: 13, color: "#94a3b8", textAlign: "center", padding: 20 }}>No order data for this period</div>
+              )}
+            </div>
+          </div>
+        </TrendsSection>
+      )}
+
+      {activeTab === "live" && (
+        <TrendsSection>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
+            <SectionTitle style={{ margin: 0 }}>Live Activity Feed</SectionTitle>
+            <label style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 13, color: "#64748b", cursor: "pointer" }}>
+              <input
+                type="checkbox"
+                checked={liveAutoRefresh}
+                onChange={(e) => setLiveAutoRefresh(e.target.checked)}
+              />
+              Auto-refresh (10s)
+            </label>
+          </div>
+          <TableWrapper>
+            <Table>
+              <thead>
+                <tr>
+                  <TableHeaderCell>Time</TableHeaderCell>
+                  <TableHeaderCell>Type</TableHeaderCell>
+                  <TableHeaderCell>Visitor</TableHeaderCell>
+                  <TableHeaderCell>Details</TableHeaderCell>
+                  <TableHeaderCell>Source</TableHeaderCell>
+                </tr>
+              </thead>
+              <tbody>
+                {liveFeed.map((item, i) => (
+                  <TableRow key={`${item.type}-${item.id}`}>
+                    <TableCell style={{ fontSize: 12, whiteSpace: "nowrap" }}>
+                      {new Date(item.timestamp).toLocaleString("en-GB", { hour: "2-digit", minute: "2-digit", second: "2-digit", day: "2-digit", month: "short" })}
+                    </TableCell>
+                    <TableCell>
+                      <span style={{
+                        padding: "2px 8px", borderRadius: 12, fontSize: 11, fontWeight: 600, color: "white",
+                        background: item.type === "visit" ? "#3b82f6" : item.event_type === "order_placed" ? "#10b981" : item.event_type === "add_to_cart" ? "#f59e0b" : "#8b5cf6"
+                      }}>
+                        {item.type === "visit" ? "Visit" : item.event_type?.replace("_", " ")}
+                      </span>
+                    </TableCell>
+                    <TableCell style={{ fontSize: 11, color: "#64748b" }}>
+                      {(item.visitor_id || "").slice(0, 16)}...
+                    </TableCell>
+                    <TableCell style={{ fontSize: 12 }}>
+                      {item.type === "visit"
+                        ? `${item.device_type || "?"} - ${item.landing_page || "/"}`
+                        : `${item.product_name || ""}${item.revenue ? ` - ${currencySymbol}${item.revenue}` : ""}${item.order_id ? ` (Order #${item.order_id})` : ""}`
+                      }
+                    </TableCell>
+                    <TableCell style={{ fontSize: 12 }}>{item.source || "-"}</TableCell>
+                  </TableRow>
+                ))}
+                {liveFeed.length === 0 && (
+                  <TableRow><TableCell colSpan={5} style={{ textAlign: "center", color: "#94a3b8" }}>No activity yet</TableCell></TableRow>
+                )}
+              </tbody>
+            </Table>
+          </TableWrapper>
         </TrendsSection>
       )}
     </Container>

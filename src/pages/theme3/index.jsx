@@ -26,7 +26,7 @@ import HomePage from "./HomePage";
 import NavigationBar from "./NavigationBar";
 import BottomTabBar from "./BottomTabBar";
 import CartAnimation from "./CartAnimation";
-import { trackVisit, trackPageView } from "../../utilities/analyticsTracking";
+import { trackVisit, trackPageView, trackSearch } from "../../utilities/analyticsTracking";
 
 export default function Theme3() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -139,6 +139,16 @@ export default function Theme3() {
 
   const [showPopup, setshowPopup] = useState(null);
   const [searchText, setSearchText] = useState("");
+
+  // Track search queries (debounced)
+  useEffect(() => {
+    if (!searchText || searchText.length < 2 || !restaurant?.id) return;
+    const timer = setTimeout(() => {
+      trackSearch(restaurant.id, searchText);
+    }, 1500);
+    return () => clearTimeout(timer);
+  }, [searchText, restaurant?.id]);
+
   const [showSidebar, setshowSidebar] = useState(null);
   const [deferredPrompt, setDeferredPrompt] = useState(null);
   const [showInstallPopup, setShowInstallPopup] = useState(true);

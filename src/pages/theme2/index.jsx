@@ -25,7 +25,7 @@ import AboutUsPopup from "../theme4/popup/aboutUs";
 import { InstallPrompt } from "./installPrompt";
 import BottomTabBar from "../theme3/BottomTabBar";
 import NavigationBar from "../theme3/NavigationBar";
-import { trackVisit, trackPageView } from "../../utilities/analyticsTracking";
+import { trackVisit, trackPageView, trackSearch } from "../../utilities/analyticsTracking";
 
 export default function Theme2() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -56,6 +56,15 @@ export default function Theme2() {
   const [showSidebar, setshowSidebar] = useState(null);
   const [deferredPrompt, setDeferredPrompt] = useState(null);
   const [showInstallPopup, setShowInstallPopup] = useState(true);
+
+  // Track search queries (debounced)
+  useEffect(() => {
+    if (!searchText || searchText.length < 2 || !restaurant?.id) return;
+    const timer = setTimeout(() => {
+      trackSearch(restaurant.id, searchText);
+    }, 1500);
+    return () => clearTimeout(timer);
+  }, [searchText, restaurant?.id]);
 
   const showAllItemsCategory =
     Number(restaurant?.template_id) === 2 &&

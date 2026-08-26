@@ -291,6 +291,14 @@ export const trackCheckoutStart = (restaurantId, branchId = null, orderType = nu
   });
 };
 
+export const trackSearch = (restaurantId, query, resultsCount = 0) => {
+  if (!query || query.trim().length < 2) return; // ignore very short queries
+  trackEvent(restaurantId, "search", {
+    searchQuery: query.trim().toLowerCase(),
+    resultsCount,
+  });
+};
+
 export const trackOrderPlaced = (
   restaurantId,
   orderId,

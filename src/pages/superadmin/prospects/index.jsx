@@ -166,6 +166,8 @@ export default function Prospects() {
   const [zoneFilter, setZoneFilter] = useState("");
   const [zones, setZones] = useState([]);
   const [offset, setOffset] = useState(0);
+  const [editingPhoneId, setEditingPhoneId] = useState(null);
+  const [editingPhoneValue, setEditingPhoneValue] = useState("");
   const LIMIT = 50;
 
   const [createOpen, setCreateOpen] = useState(false);
@@ -536,11 +538,30 @@ export default function Prospects() {
                     </span>
                   </div>
 
-                  {/* Phone / IG */}
-                  <div style={{ fontSize: 12, color: "#64748b" }}>
-                    {p.business_phone && <span>{p.business_phone}</span>}
+                  {/* Phone / IG — click phone to edit */}
+                  <div style={{ fontSize: 12, color: "#64748b", display: "flex", alignItems: "center", gap: 6 }}>
+                    {editingPhoneId === p.id ? (
+                      <form onSubmit={async (e) => {
+                        e.preventDefault();
+                        try {
+                          await axios.put(`${API}/superadmin/prospects/${p.id}`, { business_phone: editingPhoneValue }, { headers: headers() });
+                          setProspects(prev => prev.map(pr => pr.id === p.id ? { ...pr, business_phone: editingPhoneValue } : pr));
+                          setEditingPhoneId(null);
+                        } catch (err) { alert(err.response?.data?.message || "Failed to update phone"); }
+                      }} style={{ display: "flex", gap: 4, alignItems: "center" }}>
+                        <input value={editingPhoneValue} onChange={e => setEditingPhoneValue(e.target.value)}
+                          style={{ fontSize: 12, padding: "2px 6px", border: "1px solid #e2e8f0", borderRadius: 4, width: 130 }} autoFocus />
+                        <button type="submit" style={{ fontSize: 11, padding: "2px 6px", background: "#10b981", color: "white", border: "none", borderRadius: 4, cursor: "pointer" }}>Save</button>
+                        <button type="button" onClick={() => setEditingPhoneId(null)} style={{ fontSize: 11, padding: "2px 6px", background: "#ef4444", color: "white", border: "none", borderRadius: 4, cursor: "pointer" }}>X</button>
+                      </form>
+                    ) : (
+                      <span onClick={() => { setEditingPhoneId(p.id); setEditingPhoneValue(p.business_phone || ""); }}
+                        style={{ cursor: "pointer", borderBottom: "1px dashed #94a3b8" }} title="Click to edit phone">
+                        {p.business_phone || "Add phone"}
+                      </span>
+                    )}
                     {p.ig_handle && (
-                      <span style={{ marginLeft: p.business_phone ? 10 : 0, color: "#8b5cf6" }}>
+                      <span style={{ marginLeft: 4, color: "#8b5cf6" }}>
                         @{p.ig_handle}
                       </span>
                     )}
