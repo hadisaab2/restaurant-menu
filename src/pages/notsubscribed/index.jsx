@@ -1,47 +1,57 @@
 import React from "react";
 import {
   Container,
-  Content,
+  Card,
+  Brand,
+  IconBadge,
   Title,
   TitleArabic,
+  Divider,
   Message,
   MessageArabic,
-  ContactInfo,
-  IconWrapper,
-  BilingualContainer,
-  LogoWrapper,
-  Logo,
+  CTAButton,
+  CTALabels,
 } from "./styles";
-import { FaPhone, FaWhatsapp } from "react-icons/fa";
+import { FiPauseCircle, FiRefreshCw } from "react-icons/fi";
+
+const MENUGIC_CONTACT_URL = "https://www.menugic.com/#contact";
 
 export default function NotSubscribed() {
   return (
     <Container>
-      <Content>
-      <BilingualContainer>
-          <Title>Subscription Not Valid</Title>
-          <TitleArabic>الاشتراك غير صالح</TitleArabic>
-        </BilingualContainer>
-        <IconWrapper>🚫</IconWrapper>
-        <BilingualContainer>
-          <Message>
-            This service is currently unavailable. Please contact us to
-            activate your subscription.
-          </Message>
-          <MessageArabic>
-            هذه الخدمة غير متاحة حالياً. يرجى الاتصال بنا لتفعيل اشتراكك.
-          </MessageArabic>
-        </BilingualContainer>
-        <ContactInfo>
-          <div>
-            <FaPhone /> <span>+961 78 911 634</span>
-          </div>
-          <div>
-            <FaWhatsapp /> <span>WhatsApp</span>
-          </div>
-        </ContactInfo>
-      </Content>
+      <Card>
+        <Brand>MENUGIC</Brand>
+
+        <IconBadge>
+          <FiPauseCircle />
+        </IconBadge>
+
+        <Title>Subscription Expired</Title>
+        <TitleArabic>انتهى الاشتراك</TitleArabic>
+
+        <Divider />
+
+        <Message>
+          This menu is temporarily unavailable. Contact Menugic to renew the
+          subscription and bring it back online.
+        </Message>
+        <MessageArabic>
+          هذه القائمة غير متاحة مؤقتاً. تواصل مع Menugic لتجديد الاشتراك وإعادة
+          تفعيلها.
+        </MessageArabic>
+
+        <CTAButton
+          href={MENUGIC_CONTACT_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <FiRefreshCw />
+          <CTALabels>
+            <span>Contact Menugic to renew</span>
+            <span>تواصل مع Menugic للتجديد</span>
+          </CTALabels>
+        </CTAButton>
+      </Card>
     </Container>
   );
 }
-

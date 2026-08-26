@@ -1,68 +1,68 @@
 import React from "react";
 import {
   Container,
-  Content,
+  Card,
+  LogoWrapper,
+  Logo,
+  RestaurantName,
+  IconBadge,
   Title,
   TitleArabic,
+  Divider,
   Message,
   MessageArabic,
   CTAButton,
-  ContactInfo,
-  IconWrapper,
-  BilingualContainer,
-  LogoWrapper,
-  Logo,
-  Subtitle,
+  CTALabels,
 } from "./styles";
-import { FaPhone, FaWhatsapp } from "react-icons/fa";
+import { FiPauseCircle, FiRefreshCw } from "react-icons/fi";
+
+const MENUGIC_CONTACT_URL = "https://www.menugic.com/#contact";
 
 export default function Theme3NotSubscribed({ restaurant }) {
-  const handleContact = () => {
-    const phoneNumber = "96178911634";
-    const whatsappUrl = `https://wa.me/${phoneNumber}`;
-    window.open(whatsappUrl, "_blank");
-  };
-
   const logoUrl = restaurant?.logoURL
     ? `https://storage.googleapis.com/ecommerce-bucket-testing/${restaurant.logoURL}`
     : null;
 
   return (
     <Container>
-      <Content>
+      <Card>
         {logoUrl && (
           <LogoWrapper>
-            <Logo src={logoUrl} alt={restaurant?.name || "Restaurant Logo"} />
+            <Logo src={logoUrl} alt={restaurant?.name || "Logo"} />
           </LogoWrapper>
         )}
-        {restaurant?.name && <Subtitle>{restaurant.name}</Subtitle>}
-        <BilingualContainer>
-          <Title>Subscription Not Valid</Title>
-          <TitleArabic>الاشتراك غير صالح</TitleArabic>
-        </BilingualContainer>
-        <IconWrapper>🚫</IconWrapper>
-        <BilingualContainer>
-          <Message>
-            This service is currently unavailable. Please contact us to
-            activate your subscription.
-          </Message>
-          <MessageArabic>
-            هذه الخدمة غير متاحة حالياً. يرجى الاتصال بنا لتفعيل اشتراكك.
-          </MessageArabic>
-        </BilingualContainer>
-        <CTAButton onClick={handleContact}>
-          <span>Contact Us</span>
-          <span>اتصل بنا</span>
+        {restaurant?.name && <RestaurantName>{restaurant.name}</RestaurantName>}
+
+        <IconBadge>
+          <FiPauseCircle />
+        </IconBadge>
+
+        <Title>Subscription Expired</Title>
+        <TitleArabic>انتهى الاشتراك</TitleArabic>
+
+        <Divider />
+
+        <Message>
+          This menu is temporarily unavailable. Contact Menugic to renew the
+          subscription and bring it back online.
+        </Message>
+        <MessageArabic>
+          هذه القائمة غير متاحة مؤقتاً. تواصل مع Menugic لتجديد الاشتراك وإعادة
+          تفعيلها.
+        </MessageArabic>
+
+        <CTAButton
+          href={MENUGIC_CONTACT_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <FiRefreshCw />
+          <CTALabels>
+            <span>Contact Menugic to renew</span>
+            <span>تواصل مع Menugic للتجديد</span>
+          </CTALabels>
         </CTAButton>
-        <ContactInfo>
-          <div>
-            <FaPhone /> <span>+961 78 911 634</span>
-          </div>
-          <div>
-            <FaWhatsapp /> <span>WhatsApp</span>
-          </div>
-        </ContactInfo>
-      </Content>
+      </Card>
     </Container>
   );
 }
