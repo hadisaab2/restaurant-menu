@@ -15,8 +15,9 @@ import {
   useEnrichCandidates, useRunStatus, useSetHandle, useBuildDemo, useGetCandidateDetail, useDismissCandidate, useDiscoverHandles, useCostsDashboard, useAddManualCandidate, useCheckConflicts,
   useGetProspectDraft,
 } from "../../../apis/pipeline";
-import { PipelineScopeProvider } from "../../../apis/pipeline/scope";
+import { PipelineScopeProvider, usePipelineScope } from "../../../apis/pipeline/scope";
 import ReviewDialog, { TEMPLATES, COLOR_PRESETS, uploadLogo } from "../../../components/shared/ReviewDialog";
+import { downloadLogo } from "../../../utilities/downloadLogo";
 import {
   PipelineContainer, TopBar, StepperCard, GridContainer, Table, Th, Td, Tr,
   Badge, ActionBtn, LinkChip, Toolbar, SearchInput, Pagination,
@@ -48,6 +49,9 @@ const BAND_LABELS = {
 };
 
 function PipelineInner({ canDiscover = true, onSendToProspects }) {
+  // These two calls bypass the hooks, so they need the scope directly —
+  // otherwise sales would hit /superadmin and get a 403.
+  const scope = usePipelineScope();
   const [zoneId, setZoneId] = useState("");
   const [page, setPage] = useState(1);
   const [sortBy, setSortBy] = useState("lead_score");
@@ -230,7 +234,7 @@ function PipelineInner({ canDiscover = true, onSendToProspects }) {
         const res = await (async () => {
           const { default: axios } = await import("axios");
           const { getCookie } = await import("../../../utilities/manageCookies");
-          const resp = await axios.post(`${process.env.REACT_APP_BASE_URL}/superadmin/sourcing/candidates/${r.id}/build-demo`,
+          const resp = await axios.post(`${process.env.REACT_APP_BASE_URL}${scope.sourcing}/candidates/${r.id}/build-demo`,
             { template: r.template, colorPreset: r.colorPreset, logoUrl, socials: { instagram: r.ig_handle, facebook: r.facebook, tiktok: r.tiktok } },
             { headers: { Authorization: `Bearer ${getCookie("accessToken")}` } }
           );
@@ -260,7 +264,7 @@ function PipelineInner({ canDiscover = true, onSendToProspects }) {
       if (exportFilter === "selected" && exportSelected.size > 0) params.set("candidate_ids", [...exportSelected].join(","));
       if (exportLimit && parseInt(exportLimit) > 0) params.set("limit", exportLimit);
       const qs = params.toString() ? `?${params.toString()}` : "";
-      const res = await axios.get(`${process.env.REACT_APP_BASE_URL}/superadmin/sourcing/zones/${zoneId}/export-csv${qs}`, {
+      const res = await axios.get(`${process.env.REACT_APP_BASE_URL}${scope.sourcing}/zones/${zoneId}/export-csv${qs}`, {
         headers: { Authorization: `Bearer ${getCookie("accessToken")}` },
         responseType: "blob",
       });
@@ -509,7 +513,15 @@ function PipelineInner({ canDiscover = true, onSendToProspects }) {
                         </Td>
                         <Td style={{ fontWeight: 600, maxWidth: 180, display: "flex", alignItems: "center", gap: 8 }}>
                           {c.profile_pic_url ? (
-                            <img src={c.profile_pic_url} alt="" style={{ width: 28, height: 28, borderRadius: "50%", objectFit: "cover", flexShrink: 0 }} onError={(e) => { e.target.style.display = "none"; }} />
+                            <Tooltip title="Click to download logo" arrow>
+                              <img
+                                src={c.profile_pic_url}
+                                alt=""
+                                onClick={(e) => { e.stopPropagation(); downloadLogo(c.profile_pic_url, c.display_name); }}
+                                style={{ width: 28, height: 28, borderRadius: "50%", objectFit: "cover", flexShrink: 0, cursor: "pointer" }}
+                                onError={(e) => { e.target.style.display = "none"; }}
+                              />
+                            </Tooltip>
                           ) : null}
                           {c.display_name}
                         </Td>

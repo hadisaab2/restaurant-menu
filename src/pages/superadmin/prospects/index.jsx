@@ -7,6 +7,7 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogActions from "@mui/material/DialogActions";
 import ReviewDialog, { uploadLogo, TEMPLATES, COLOR_PRESETS } from "../../../components/shared/ReviewDialog";
 import { openWhatsApp } from "../../../utilities/formatWhatsappNumber";
+import { downloadLogo } from "../../../utilities/downloadLogo";
 
 const API = process.env.REACT_APP_BASE_URL;
 const headers = () => ({ Authorization: `Bearer ${getCookie("accessToken")}` });
@@ -516,24 +517,12 @@ export default function Prospects({
                     />
                     <div style={{ position: "relative" }}>
                       <div
-                        onClick={async () => {
-                          const imgUrl = p.logo_uploaded_url
+                        onClick={() => downloadLogo(
+                          p.logo_uploaded_url
                             ? `https://storage.googleapis.com/ecommerce-bucket-testing/${p.logo_uploaded_url}`
-                            : p.logo_source_url;
-                          if (!imgUrl) return;
-                          try {
-                            const resp = await fetch(imgUrl);
-                            const blob = await resp.blob();
-                            const url = URL.createObjectURL(blob);
-                            const a = document.createElement("a");
-                            a.href = url;
-                            a.download = `${(p.business_name || "logo").replace(/\s+/g, "-")}-logo.jpg`;
-                            a.click();
-                            URL.revokeObjectURL(url);
-                          } catch (e) {
-                            window.open(imgUrl, "_blank");
-                          }
-                        }}
+                            : p.logo_source_url,
+                          p.business_name
+                        )}
                         title={p.logo_uploaded_url || p.logo_source_url ? "Click to download logo" : "No logo available"}
                         style={{ cursor: p.logo_uploaded_url || p.logo_source_url ? "pointer" : "default" }}
                       >

@@ -5,6 +5,7 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogActions from "@mui/material/DialogActions";
 import axios from "axios";
 import { getCookie } from "../../utilities/manageCookies";
+import { downloadLogo } from "../../utilities/downloadLogo";
 
 const API = process.env.REACT_APP_BASE_URL;
 const headers = () => ({ Authorization: `Bearer ${getCookie("accessToken")}` });
@@ -109,18 +110,7 @@ export default function ReviewDialog({ open, rows, setRows, onClose, onBuild, ti
                       {r.logoUrl && (
                         <div style={{ display: "flex", alignItems: "center", gap: 4, marginBottom: 4 }}>
                           <img src={r.logoUrl} alt="" style={{ width: 28, height: 28, borderRadius: 6, objectFit: "cover" }} onError={(e) => { e.target.style.display = "none"; }} />
-                          <button onClick={async () => {
-                            try {
-                              const resp = await fetch(r.logoUrl);
-                              const blob = await resp.blob();
-                              const url = URL.createObjectURL(blob);
-                              const a = document.createElement("a");
-                              a.href = url;
-                              a.download = `${(r.business_name || "logo").replace(/\s+/g, "-")}-logo.jpg`;
-                              a.click();
-                              URL.revokeObjectURL(url);
-                            } catch (e) { window.open(r.logoUrl, "_blank"); }
-                          }} style={{ fontSize: 10, color: "#3b82f6", background: "none", border: "none", cursor: "pointer", textDecoration: "underline" }}>⬇ Save</button>
+                          <button onClick={() => downloadLogo(r.logoUrl, r.business_name)} style={{ fontSize: 10, color: "#3b82f6", background: "none", border: "none", cursor: "pointer", textDecoration: "underline" }}>⬇ Save</button>
                         </div>
                       )}
                       <input type="file" accept="image/*" onChange={(e) => updateRow(i, "logoFile", e.target.files?.[0] || null)} style={{ fontSize: 10, width: 80 }} />
