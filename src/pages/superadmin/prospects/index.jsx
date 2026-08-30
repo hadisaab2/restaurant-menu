@@ -5,7 +5,7 @@ import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import DialogActions from "@mui/material/DialogActions";
-import ReviewDialog, { uploadLogo } from "../../../components/shared/ReviewDialog";
+import ReviewDialog, { uploadLogo, TEMPLATES, COLOR_PRESETS } from "../../../components/shared/ReviewDialog";
 import { openWhatsApp } from "../../../utilities/formatWhatsappNumber";
 
 const API = process.env.REACT_APP_BASE_URL;
@@ -116,6 +116,14 @@ const s = {
     fontSize: 11, background: "#fff", cursor: "pointer", outline: "none", color: "#64748b",
   },
   dialogField: { marginBottom: 14 },
+  dialogRow: { display: "flex", gap: 12, flexWrap: "wrap" },
+  // Business already published on Omega/Thrubits — its demo builds from real data
+  providerBadge: {
+    display: "inline-flex", alignItems: "center", gap: 4, marginTop: 4,
+    padding: "2px 8px", borderRadius: 999, fontSize: 10, fontWeight: 700,
+    background: "#fef3c7", color: "#92400e", border: "1px solid #fcd34d",
+    textDecoration: "none", cursor: "pointer",
+  },
   dialogLabel: {
     display: "block", fontSize: 12, fontWeight: 600, color: "#475569", marginBottom: 4,
   },
@@ -157,7 +165,10 @@ const getInitials = (name) => {
 };
 
 /* ─── Main Component ─── */
-export default function Prospects() {
+export default function Prospects({
+  basePath = "/superadmin/prospects",
+  zonesPath = "/superadmin/zones",
+}) {
   const [prospects, setProspects] = useState([]);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -211,7 +222,7 @@ export default function Prospects() {
       if (search) params.set("search", search);
       if (statusFilter) params.set("status", statusFilter);
       if (zoneFilter) params.set("zone_id", zoneFilter);
-      const { data } = await axios.get(`${API}/superadmin/prospects?${params}`, { headers: headers() });
+      const { data } = await axios.get(`${API}${basePath}?${params}`, { headers: headers() });
       setProspects(data.data.prospects);
       setTotal(data.data.total);
     } catch (e) {
@@ -225,7 +236,7 @@ export default function Prospects() {
 
   // Fetch zones for filter dropdown
   useEffect(() => {
-    axios.get(`${API}/superadmin/zones`, { headers: headers() })
+    axios.get(`${API}${zonesPath}`, { headers: headers() })
       .then(({ data }) => setZones(data.data || data || []))
       .catch(() => {});
   }, []);
@@ -233,7 +244,7 @@ export default function Prospects() {
   /* ─── Status change ─── */
   const changeStatus = async (id, newStatus) => {
     try {
-      await axios.put(`${API}/superadmin/prospects/${id}/status`, { status: newStatus }, { headers: headers() });
+      await axios.put(`${API}${basePath}/${id}/status`, { status: newStatus }, { headers: headers() });
       showToast(`Status updated to ${newStatus}`);
       fetchProspects();
     } catch (e) {
@@ -245,7 +256,7 @@ export default function Prospects() {
   const buildDemo = async (id) => {
     try {
       showToast("Building demo...");
-      await axios.post(`${API}/superadmin/prospects/${id}/create-demo`, {}, { headers: headers() });
+      await axios.post(`${API}${basePath}/${id}/create-demo`, {}, { headers: headers() });
       showToast("Demo created successfully");
       fetchProspects();
     } catch (e) {
@@ -257,7 +268,7 @@ export default function Prospects() {
   const activate = async (id) => {
     if (!window.confirm("Activate this prospect as a live restaurant?")) return;
     try {
-      await axios.post(`${API}/superadmin/prospects/${id}/activate`, {}, { headers: headers() });
+      await axios.post(`${API}${basePath}/${id}/activate`, {}, { headers: headers() });
       showToast("Prospect activated!");
       fetchProspects();
     } catch (e) {
@@ -289,7 +300,7 @@ export default function Prospects() {
       if (!fileName) { showToast("Upload failed", "error"); return; }
 
       // Update prospect
-      await axios.put(`${API}/superadmin/prospects/${logoTargetId}`, { logo_uploaded_url: fileName }, { headers: headers() });
+      await axios.put(`${API}${basePath}/${logoTargetId}`, { logo_uploaded_url: fileName }, { headers: headers() });
 
       // If prospect has a demo, update the restaurant logo too
       const prospect = prospects.find(p => p.id === logoTargetId);
@@ -332,7 +343,7 @@ export default function Prospects() {
     setDeleting(true);
     try {
       const { data } = await axios.post(
-        `${API}/superadmin/prospects/delete-batch`,
+        `${API}${basePath}/delete-batch`,
         { ids: Array.from(selected) },
         { headers: headers() }
       );
@@ -356,7 +367,7 @@ export default function Prospects() {
       // Step 1: Preview only — parse CSV without creating prospects
       const formData = new FormData();
       formData.append("file", file);
-      const { data } = await axios.post(`${API}/superadmin/prospects/import-csv?preview_only=true`, formData, {
+      const { data } = await axios.post(`${API}${basePath}/import-csv?preview_only=true`, formData, {
         headers: { ...headers(), "Content-Type": "multipart/form-data" },
         timeout: 300000,
       });
@@ -531,6 +542,17 @@ export default function Prospects() {
                     <div style={{ flex: 1, minWidth: 0 }}>
                       <p style={s.businessName}>{p.business_name}</p>
                       <p style={s.category}>{p.category || "Uncategorized"}</p>
+                      {p.menu_provider && (
+                        <a
+                          href={p.menu_provider_url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          style={s.providerBadge}
+                          title={`Menu already published on ${p.menu_provider_label} — the demo will be built from its real menu data`}
+                        >
+                          🍽 {p.menu_provider_label}
+                        </a>
+                      )}
                     </div>
                     <span style={{ ...s.badge, background: sc.bg, color: sc.color }}>
                       {p.status}
@@ -544,7 +566,7 @@ export default function Prospects() {
                       <form onSubmit={async (e) => {
                         e.preventDefault();
                         try {
-                          await axios.put(`${API}/superadmin/prospects/${p.id}`, { business_phone: editingPhoneValue }, { headers: headers() });
+                          await axios.put(`${API}${basePath}/${p.id}`, { business_phone: editingPhoneValue }, { headers: headers() });
                           setProspects(prev => prev.map(pr => pr.id === p.id ? { ...pr, business_phone: editingPhoneValue } : pr));
                           setEditingPhoneId(null);
                         } catch (err) { alert(err.response?.data?.message || "Failed to update phone"); }
@@ -599,28 +621,6 @@ export default function Prospects() {
                         title="Preview"
                       >
                         Preview
-                      </button>
-                    )}
-                    {p.demo_url && (
-                      <button
-                        style={{ ...s.smallBtn, ...(p.screenshot_url ? { color: "#2D7A4E" } : {}) }}
-                        onClick={async () => {
-                          if (p.screenshot_url) {
-                            const imgBase = process.env.REACT_APP_GCP_BASE_URL || "https://storage.googleapis.com/ecommerce-bucket-testing/";
-                            const imgUrl = p.screenshot_url.startsWith("http") ? p.screenshot_url : `${imgBase}${p.screenshot_url}`;
-                            window.open(imgUrl, "_blank");
-                          } else {
-                            showToast("Generating screenshot...");
-                            try {
-                              await axios.post(`${API}/superadmin/prospects/${p.id}/screenshot`, {}, { headers: headers() });
-                              showToast("Screenshot generated!");
-                              fetchProspects();
-                            } catch (e) { showToast("Screenshot failed", "error"); }
-                          }
-                        }}
-                        title={p.screenshot_url ? "View Screenshot" : "Generate Screenshot"}
-                      >
-                        📸 {p.screenshot_url ? "View" : "Generate"}
                       </button>
                     )}
                     <button
@@ -693,6 +693,7 @@ export default function Prospects() {
         onClose={() => setCreateOpen(false)}
         onCreated={() => { setCreateOpen(false); fetchProspects(); }}
         showToast={showToast}
+        basePath={basePath}
       />
 
       {/* ─── Send Message Dialog ─── */}
@@ -702,6 +703,7 @@ export default function Prospects() {
         onClose={() => { setSendOpen(false); setSendProspect(null); }}
         showToast={showToast}
         onSent={fetchProspects}
+        basePath={basePath}
       />
 
       {/* ─── Import Results Dialog ─── */}
@@ -780,7 +782,7 @@ export default function Prospects() {
           if (pendingCsvFile) {
             const fd = new FormData();
             fd.append("file", pendingCsvFile);
-            const { data: importData } = await axios.post(`${API}/superadmin/prospects/import-csv`, fd, {
+            const { data: importData } = await axios.post(`${API}${basePath}/import-csv`, fd, {
               headers: { ...headers(), "Content-Type": "multipart/form-data" },
               timeout: 300000,
             });
@@ -804,7 +806,7 @@ export default function Prospects() {
             items.push({ prospect_id: r.prospect_id, template: r.template, colorPreset: r.colorPreset || null, logoUrl, socials: { instagram: r.ig_handle || "", facebook: r.facebook || "", tiktok: r.tiktok || "" } });
           }
           if (items.length === 0) { fetchProspects(); return { summary: { success: 0, errors: 0 }, results: [] }; }
-          const { data } = await axios.post(`${API}/superadmin/prospects/build-batch`, { items }, { headers: headers(), timeout: 600000 });
+          const { data } = await axios.post(`${API}${basePath}/build-batch`, { items }, { headers: headers(), timeout: 600000 });
           showToast(`Built: ${data.data.summary.success} demos, ${data.data.summary.errors} errors`);
           fetchProspects();
           return data.data;
@@ -845,13 +847,23 @@ export default function Prospects() {
 /* ═════════════════════════════════════════════
    Create Prospect Dialog
    ═════════════════════════════════════════════ */
+// Visual themes the menu renders with (maps to restaurants.template_id).
+const VISUAL_THEMES = [1, 2, 3, 4, 5, 6, 7, 8, 9].map((n) => ({
+  value: n,
+  label: `Theme ${n}`,
+}));
+
 const EMPTY_FORM = {
   business_name: "", business_phone: "", category: "restaurant",
   country: "", city_zone: "", language: "en",
-  whatsapp_number: "", ig_handle: "", theme: "", outreach_message: "",
+  whatsapp_number: "", ig_handle: "", outreach_message: "",
+  // Demo build options — `template` is the content template, `templateId` the
+  // visual theme, `colorPreset` the palette. Sent to /create-demo, not stored
+  // as prospect columns (colorPreset is persisted via `theme` for reuse).
+  template: "restaurant", templateId: 2, colorPreset: "",
 };
 
-function CreateProspectDialog({ open, onClose, onCreated, showToast }) {
+function CreateProspectDialog({ open, onClose, onCreated, showToast, basePath }) {
   const [form, setForm] = useState({ ...EMPTY_FORM });
   const [logoFile, setLogoFile] = useState(null);
   const [saving, setSaving] = useState(false);
@@ -867,18 +879,27 @@ function CreateProspectDialog({ open, onClose, onCreated, showToast }) {
     }
     setSaving(true);
     try {
+      // template / templateId / colorPreset are demo-build options, not prospect
+      // columns. colorPreset is persisted as `theme` so a later rebuild reuses it.
+      const { template, templateId, colorPreset, ...prospectFields } = form;
+
       const fd = new FormData();
-      Object.entries(form).forEach(([k, v]) => { if (v) fd.append(k, v); });
+      Object.entries(prospectFields).forEach(([k, v]) => { if (v) fd.append(k, v); });
+      if (colorPreset) fd.append("theme", colorPreset);
       if (logoFile) fd.append("logo", logoFile);
 
-      const { data } = await axios.post(`${API}/superadmin/prospects`, fd, {
+      const { data } = await axios.post(`${API}${basePath}`, fd, {
         headers: { ...headers(), "Content-Type": "multipart/form-data" },
       });
 
       if (andBuild && data.data?.id) {
         showToast("Prospect created, building demo...");
         try {
-          await axios.post(`${API}/superadmin/prospects/${data.data.id}/create-demo`, {}, { headers: headers() });
+          await axios.post(
+            `${API}${basePath}/${data.data.id}/create-demo`,
+            { template, templateId, colorPreset: colorPreset || null },
+            { headers: headers() }
+          );
           showToast("Prospect created & demo built!");
         } catch (e) {
           showToast("Prospect created but demo failed: " + (e.response?.data?.message || e.message), "error");
@@ -957,9 +978,47 @@ function CreateProspectDialog({ open, onClose, onCreated, showToast }) {
             placeholder="Personalized message. Use {demo_url} as placeholder for the demo link."
           />
         </div>
+        <div style={s.dialogRow}>
+          <div style={{ ...s.dialogField, flex: 1, minWidth: 150 }}>
+            <label style={s.dialogLabel}>Demo Template</label>
+            <select style={s.dialogSelect} value={form.template} onChange={set("template")}>
+              {TEMPLATES.map((t) => (
+                <option key={t.value} value={t.value}>{t.label}</option>
+              ))}
+            </select>
+          </div>
+          <div style={{ ...s.dialogField, flex: 1, minWidth: 150 }}>
+            <label style={s.dialogLabel}>Visual Theme</label>
+            <select
+              style={s.dialogSelect}
+              value={form.templateId}
+              onChange={(e) => setForm((prev) => ({ ...prev, templateId: Number(e.target.value) }))}
+            >
+              {VISUAL_THEMES.map((t) => (
+                <option key={t.value} value={t.value}>{t.label}</option>
+              ))}
+            </select>
+          </div>
+        </div>
         <div style={s.dialogField}>
-          <label style={s.dialogLabel}>Theme</label>
-          <input style={s.dialogInput} value={form.theme} onChange={set("theme")} placeholder="e.g. theme5" />
+          <label style={s.dialogLabel}>Theme Color</label>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginTop: 4 }}>
+            {COLOR_PRESETS.map((c) => (
+              <div
+                key={c.name}
+                onClick={() => setForm((prev) => ({ ...prev, colorPreset: prev.colorPreset === c.name ? "" : c.name }))}
+                title={c.name}
+                style={{
+                  width: 32, height: 32, borderRadius: 8, background: c.color, cursor: "pointer",
+                  border: form.colorPreset === c.name ? "3px solid #0f172a" : "2px solid transparent",
+                  transition: "border 0.15s", boxSizing: "border-box",
+                }}
+              />
+            ))}
+          </div>
+          <div style={{ fontSize: 11, color: "#64748b", marginTop: 6 }}>
+            {form.colorPreset || "Default (template's own colors)"}
+          </div>
         </div>
         <div style={s.dialogField}>
           <label style={s.dialogLabel}>Logo</label>
@@ -1001,7 +1060,7 @@ function CreateProspectDialog({ open, onClose, onCreated, showToast }) {
 /* ═════════════════════════════════════════════
    Send Message Dialog
    ═════════════════════════════════════════════ */
-function SendMessageDialog({ open, prospect, onClose, showToast, onSent }) {
+function SendMessageDialog({ open, prospect, onClose, showToast, onSent, basePath }) {
   const [templates, setTemplates] = useState([]);
   const [msgHistory, setMsgHistory] = useState({ messages: [], nextStage: "first", sentStages: [] });
   const [stage, setStage] = useState("first");
@@ -1025,12 +1084,12 @@ function SendMessageDialog({ open, prospect, onClose, showToast, onSent }) {
     setBlocked(null);
 
     // Fetch templates
-    axios.get(`${API}/superadmin/prospects/templates`, { headers: headers() })
+    axios.get(`${API}${basePath}/templates`, { headers: headers() })
       .then(({ data }) => setTemplates(data.data || []))
       .catch(() => {});
 
     // Fetch sent history
-    axios.get(`${API}/superadmin/prospects/${prospect.id}/messages`, { headers: headers() })
+    axios.get(`${API}${basePath}/${prospect.id}/messages`, { headers: headers() })
       .then(({ data }) => {
         setMsgHistory(data.data);
         const next = data.data.nextStage || "first";
@@ -1042,7 +1101,7 @@ function SendMessageDialog({ open, prospect, onClose, showToast, onSent }) {
     const phone = prospect.business_phone || prospect.whatsapp_number;
     if (phone) {
       setCheckingDNC(true);
-      axios.get(`${API}/superadmin/prospects/dnc/check/${encodeURIComponent(phone)}`, { headers: headers() })
+      axios.get(`${API}${basePath}/dnc/check/${encodeURIComponent(phone)}`, { headers: headers() })
         .then(({ data }) => setBlocked(data.blocked ? data.record : null))
         .catch(() => setBlocked(null))
         .finally(() => setCheckingDNC(false));
@@ -1080,7 +1139,7 @@ function SendMessageDialog({ open, prospect, onClose, showToast, onSent }) {
     setSending(true);
     try {
       const { data } = await axios.post(
-        `${API}/superadmin/prospects/${prospect.id}/contact`,
+        `${API}${basePath}/${prospect.id}/contact`,
         { message, stage, language },
         { headers: headers() },
       );
@@ -1245,7 +1304,7 @@ function SendMessageDialog({ open, prospect, onClose, showToast, onSent }) {
               .replace(prospect.business_name || "", "{business_name}")
               .replace(prospect.demo_url || "", "{demo_url}");
             try {
-              await axios.post(`${API}/superadmin/prospects/templates`, {
+              await axios.post(`${API}${basePath}/templates`, {
                 stage,
                 language: language === "both" ? "en" : language,
                 body: rawMsg,
