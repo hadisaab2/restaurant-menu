@@ -7,6 +7,8 @@ import { trackVisit, trackPageView, trackItemView, trackAddToCart } from "../../
 import { convertPrice } from "../../utilities/convertPrice";
 import { getImageUrl } from "../../utilities/imageUrl";
 import ProductOptionsPicker from "../../product-options/ProductOptionsPicker";
+import MacrosStrip from "../../product-macros/MacrosStrip";
+import MacroChip from "../../product-macros/MacroChip";
 import CartPopup from "./popup/cart";
 import LocationPopup from "./popup/location";
 import FeedbackPopup from "./popup/feedback";
@@ -830,6 +832,7 @@ function ProductCard({ product, getName, getDesc, currencySymbol, openProduct, q
       {!product.is_best_seller && product.featured && <S.CardBadge $type="featured">{loc("Featured", "مميز")}</S.CardBadge>}
       {!product.is_best_seller && !product.featured && discount > 0 && <S.CardBadge $type="sale">-{discount}%</S.CardBadge>}
       {!product.is_best_seller && !product.featured && !discount && (product.new || product.is_new) && <S.CardBadge $type="new">{loc("New", "جديد")}</S.CardBadge>}
+      <MacroChip macros={product?.macros} activeLanguage={isRtl ? "ar" : "en"} />
       <S.CardBody>
         <S.CardName>{name}</S.CardName>
         {desc && <S.CardDesc>{desc}</S.CardDesc>}
@@ -944,6 +947,8 @@ function ProductDetail({ product, restaurant, restaurantName, activeLanguage, is
               {discountPercent > 0 && <S.PdOldPrice>{convertPrice(basePrice, currencySymbol)}</S.PdOldPrice>}
               {discountPercent > 0 && <S.PdDiscountBadge>-{discountPercent}%</S.PdDiscountBadge>}
             </S.PdPriceRow>
+
+            <MacrosStrip macros={product?.macros} activeLanguage={activeLanguage} />
 
             {isV2 && parsedOptions && (
               <S.PdOptionsWrap>

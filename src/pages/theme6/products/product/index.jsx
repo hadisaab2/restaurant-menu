@@ -23,6 +23,7 @@ import { CUSTOMER_WISHLIST_URL, CUSTOMER_WISHLIST_PRODUCT_URL } from "../../../.
 import { getCustomerAccessToken } from "../../../../utilities/customerAuthStorage";
 import { IoHeartOutline } from "react-icons/io5";
 import { getCurrencySymbol } from "../../../../utilities/getCurrencySymbol";
+import MacroChip from "../../../../product-macros/MacroChip";
 const _ = require('lodash');
 
 const Product = React.forwardRef(
@@ -120,6 +121,7 @@ const imageSrc = hasValidImage
             {plate.new && (
               <NEW>{restaurant?.activeLanguage === "en" ? "NEW !" : "! جديد"}</NEW>
             )}
+            <MacroChip macros={plate?.macros} activeLanguage={restaurant?.activeLanguage} />
             <Image
               ref={ref}
               onLoad={handleImageLoaded}

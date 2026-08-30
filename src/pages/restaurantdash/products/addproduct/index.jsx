@@ -56,6 +56,8 @@ import ProductOptionsEditor, {
   optionsFromFormJsonString,
 } from "../../../../product-options/ProductOptionsEditor";
 import { emptyOptions, serializeOptions } from "../../../../product-options/schema";
+import MacrosEditor, { macrosFromJson } from "../../../../product-macros/MacrosEditor";
+import { emptyMacros, serializeMacros } from "../../../../product-macros/schema";
 import { dashboardColors } from "../../../../styles/theme";
 
 export default function AddProduct({
@@ -78,6 +80,7 @@ export default function AddProduct({
   const [menuVisibility, setMenuVisibility] = useState('both');
 
   const [productOptions, setProductOptions] = useState(() => emptyOptions());
+  const [productMacros, setProductMacros] = useState(() => emptyMacros());
   const [activeTab,setActiveTab]=useState("productinfo")
   const [categories, setCategories] = useState([]);
   const fileInputRef = useRef(null);
@@ -260,6 +263,7 @@ export default function AddProduct({
       setValue("form_json", serializeOptions(opts));
       setCoverId(selectedProduct.cover_id);
       setProductOptions(opts);
+      setProductMacros(macrosFromJson(selectedProduct.macros));
       setValue("new", selectedProduct.new);
       setValue("square_dimension", selectedProduct.square_dimension);
       setValue("hide", selectedProduct.hide);
@@ -307,6 +311,7 @@ export default function AddProduct({
           restaurant_id: userInformation.restaurant_id,
           cover_id: coverId,
           form_json: serializeOptions(productOptions),
+          macros: serializeMacros(productMacros),
           new:isNew,
           square_dimension:squareDimension,
           hide: isHidden,
@@ -323,6 +328,7 @@ export default function AddProduct({
           restaurant_id: userInformation.restaurant_id,
           cover_id: coverId,
           form_json: serializeOptions(productOptions),
+          macros: serializeMacros(productMacros),
           new:isNew,
           square_dimension:squareDimension,
           hide: isHidden,
@@ -459,6 +465,7 @@ export default function AddProduct({
         <Tabs>
           <Tab activeTab={activeTab} tab={"productinfo"} onClick={()=>{setActiveTab("productinfo")}}>Product Details</Tab>
           <Tab activeTab={activeTab} tab={"formbuilder"} onClick={()=>{setActiveTab("formbuilder")}}>Product options</Tab>
+          <Tab activeTab={activeTab} tab={"macros"} onClick={()=>{setActiveTab("macros")}}>Macros</Tab>
         </Tabs>
         {activeTab=="productinfo" ?
         <>
@@ -696,7 +703,11 @@ export default function AddProduct({
                 label="Bestseller"
               />
           </FormControl>
-        </>:<ProductOptionsEditor
+        </>: activeTab=="macros" ? <MacrosEditor
+            value={productMacros}
+            onChange={setProductMacros}
+            languageHint={userInformation.Lang === LANGUAGES.AR ? "ar" : "en"}
+          /> : <ProductOptionsEditor
             value={productOptions}
             onChange={setProductOptions}
             languageHint={userInformation.Lang === LANGUAGES.AR ? "ar" : "en"}

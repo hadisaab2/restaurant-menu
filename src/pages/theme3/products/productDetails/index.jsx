@@ -59,6 +59,7 @@ import { trackAddToCart, trackItemView } from "../../../../utilities/analyticsTr
 import CarouselLoader from "./carouselLoader";
 import ProductForm from "./Form";
 import ProductOptionsPicker from "../../../../product-options/ProductOptionsPicker";
+import MacrosStrip from "../../../../product-macros/MacrosStrip";
 import { emptySelection } from "../../../../product-options/schema";
 import { FaRegCopy } from "react-icons/fa";
 import { TiTick } from "react-icons/ti";
@@ -806,6 +807,10 @@ export default function ProductDetails({
                 </OutOfStockNotice>
               )}
 
+              <MacrosStrip
+                macros={plates[activePlate]?.macros}
+                activeLanguage={restaurant?.activeLanguage}
+              />
               {isV2Options && (
                 <ProductOptionsPicker
                   options={formSchema}

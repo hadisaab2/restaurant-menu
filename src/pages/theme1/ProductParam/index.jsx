@@ -16,6 +16,7 @@ import { addToCart } from '../../../redux/cart/cartActions';
 import CarouselLoader from "./carouselLoader";
 import ProductForm from "./Form";
 import ProductOptionsPicker from "../../../product-options/ProductOptionsPicker";
+import MacrosStrip from "../../../product-macros/MacrosStrip";
 import { emptySelection } from "../../../product-options/schema";
 import { FaRegCopy } from 'react-icons/fa6';
 import { TiTick } from 'react-icons/ti';
@@ -612,6 +613,10 @@ export default function ProductParam({ productId, setSearchParams, searchParams 
                                             : "غير متوفر حالياً"}
                                     </OutOfStockNotice>
                                 )}
+                                <MacrosStrip
+                                  macros={fetchedProduct?.macros}
+                                  activeLanguage={restaurant?.activeLanguage}
+                                />
                                 {isV2Options && (
                                     <ProductOptionsPicker
                                         options={formSchema}

@@ -4,6 +4,8 @@ import { useSelector, useDispatch } from "react-redux";
 import { changelanuage } from "../../redux/restaurant/restaurantActions";
 import { trackVisit, trackPageView } from "../../utilities/analyticsTracking";
 import * as S from "./styles";
+import MacrosStrip from "../../product-macros/MacrosStrip";
+import MacroChip from "../../product-macros/MacroChip";
 
 const CHECK_SVG = <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="20 6 9 17 4 12"/></svg>;
 const CHEV_SVG = <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="6 9 12 15 18 9"/></svg>;
@@ -559,6 +561,8 @@ export default function Theme9() {
                   </div>
                 </div>
 
+                <MacrosStrip macros={detailSvc?.macros} activeLanguage={isAr ? "ar" : "en"} />
+
                 {/* Benefits */}
                 {detailSvc.en_benefits && (
                   <div style={{ marginBottom: 20 }}>
@@ -620,6 +624,7 @@ function ServiceCard({ svc, loc, formatPrice, isAr, onOpen }) {
         {svc.images?.[0]?.url ? <img src={svc.images[0].url} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} /> : "✨"}
         {svc.featured && <S.SvcBadge $type="popular">{isAr ? "مطلوب" : "Popular"}</S.SvcBadge>}
         {svc.new && <S.SvcBadge $type="new">{isAr ? "جديد" : "New"}</S.SvcBadge>}
+        <MacroChip macros={svc?.macros} activeLanguage={isAr ? "ar" : "en"} />
       </S.SvcCardImg>
       <S.SvcCardBody>
         {svc.categoryName && <S.SvcCardCat>{svc.categoryName}</S.SvcCardCat>}
