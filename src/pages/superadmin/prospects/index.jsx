@@ -168,6 +168,10 @@ const getInitials = (name) => {
 export default function Prospects({
   basePath = "/superadmin/prospects",
   zonesPath = "/superadmin/zones",
+  // Set when arriving from the Pipeline "send to prospects" arrow: filters to
+  // the candidate's zone and opens the create dialog pre-filled.
+  prefill = null,
+  onPrefillConsumed,
 }) {
   const [prospects, setProspects] = useState([]);
   const [total, setTotal] = useState(0);
@@ -182,6 +186,17 @@ export default function Prospects({
   const LIMIT = 50;
 
   const [createOpen, setCreateOpen] = useState(false);
+  const [createPrefill, setCreatePrefill] = useState(null);
+
+  // Arriving from the pipeline: scope the list to that candidate's zone and
+  // open the create form with its data already filled in.
+  useEffect(() => {
+    if (!prefill) return;
+    if (prefill.zone_id) setZoneFilter(String(prefill.zone_id));
+    setCreatePrefill(prefill.draft || null);
+    setCreateOpen(true);
+    if (onPrefillConsumed) onPrefillConsumed();
+  }, [prefill, onPrefillConsumed]);
   const [sendOpen, setSendOpen] = useState(false);
   const [sendProspect, setSendProspect] = useState(null);
 
@@ -230,7 +245,7 @@ export default function Prospects({
       showToast(e.response?.data?.message || "Failed to load prospects", "error");
     }
     setLoading(false);
-  }, [search, statusFilter, zoneFilter, offset, showToast]);
+  }, [search, statusFilter, zoneFilter, offset, showToast, basePath]);
 
   useEffect(() => { fetchProspects(); }, [fetchProspects]);
 
@@ -239,7 +254,7 @@ export default function Prospects({
     axios.get(`${API}${zonesPath}`, { headers: headers() })
       .then(({ data }) => setZones(data.data || data || []))
       .catch(() => {});
-  }, []);
+  }, [zonesPath]);
 
   /* ─── Status change ─── */
   const changeStatus = async (id, newStatus) => {
@@ -690,8 +705,9 @@ export default function Prospects({
       {/* ─── Create Prospect Dialog ─── */}
       <CreateProspectDialog
         open={createOpen}
-        onClose={() => setCreateOpen(false)}
-        onCreated={() => { setCreateOpen(false); fetchProspects(); }}
+        initialValues={createPrefill}
+        onClose={() => { setCreateOpen(false); setCreatePrefill(null); }}
+        onCreated={() => { setCreateOpen(false); setCreatePrefill(null); fetchProspects(); }}
         showToast={showToast}
         basePath={basePath}
       />
@@ -863,7 +879,7 @@ const EMPTY_FORM = {
   template: "restaurant", templateId: 2, colorPreset: "",
 };
 
-function CreateProspectDialog({ open, onClose, onCreated, showToast, basePath }) {
+function CreateProspectDialog({ open, onClose, onCreated, showToast, basePath, initialValues }) {
   const [form, setForm] = useState({ ...EMPTY_FORM });
   const [logoFile, setLogoFile] = useState(null);
   const [saving, setSaving] = useState(false);
@@ -871,6 +887,19 @@ function CreateProspectDialog({ open, onClose, onCreated, showToast, basePath })
   const set = (key) => (e) => setForm((prev) => ({ ...prev, [key]: e.target.value }));
 
   const reset = () => { setForm({ ...EMPTY_FORM }); setLogoFile(null); };
+
+  // Apply pipeline pre-fill when the dialog opens. Only keys the form knows
+  // about are copied, and blank values fall back to the empty defaults.
+  useEffect(() => {
+    if (!open) return;
+    if (!initialValues) { setForm({ ...EMPTY_FORM }); return; }
+    const next = { ...EMPTY_FORM };
+    Object.keys(EMPTY_FORM).forEach((k) => {
+      const v = initialValues[k];
+      if (v !== undefined && v !== null && v !== "") next[k] = v;
+    });
+    setForm(next);
+  }, [open, initialValues]);
 
   const submit = async (andBuild) => {
     if (!form.business_name.trim() || !form.business_phone.trim()) {
@@ -1106,7 +1135,7 @@ function SendMessageDialog({ open, prospect, onClose, showToast, onSent, basePat
         .catch(() => setBlocked(null))
         .finally(() => setCheckingDNC(false));
     }
-  }, [open, prospect]);
+  }, [open, prospect, basePath]);
 
   // Build message whenever stage/language/useCustom changes
   useEffect(() => {

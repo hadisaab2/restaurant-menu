@@ -13,7 +13,9 @@ import TextField from "@mui/material/TextField";
 import {
   useGetZones, useGetCandidates, useSourceZone, useSourceEstimate, useDetailsEstimate, useFetchDetails,
   useEnrichCandidates, useRunStatus, useSetHandle, useBuildDemo, useGetCandidateDetail, useDismissCandidate, useDiscoverHandles, useCostsDashboard, useAddManualCandidate, useCheckConflicts,
+  useGetProspectDraft,
 } from "../../../apis/pipeline";
+import { PipelineScopeProvider } from "../../../apis/pipeline/scope";
 import ReviewDialog, { TEMPLATES, COLOR_PRESETS, uploadLogo } from "../../../components/shared/ReviewDialog";
 import {
   PipelineContainer, TopBar, StepperCard, GridContainer, Table, Th, Td, Tr,
@@ -45,7 +47,7 @@ const BAND_LABELS = {
   skip: "Skip",
 };
 
-export default function Pipeline() {
+function PipelineInner({ canDiscover = true, onSendToProspects }) {
   const [zoneId, setZoneId] = useState("");
   const [page, setPage] = useState(1);
   const [sortBy, setSortBy] = useState("lead_score");
@@ -81,6 +83,7 @@ export default function Pipeline() {
   const { mutate: buildDemo } = useBuildDemo();
   const { mutate: dismissCandidate } = useDismissCandidate();
   const { mutate: discoverHandles, isPending: discovering } = useDiscoverHandles();
+  const { mutateAsync: fetchProspectDraft, isPending: draftLoading } = useGetProspectDraft();
   const { mutate: addManual, isPending: addingManual } = useAddManualCandidate();
   const { mutate: checkConflicts, isPending: checkingConflicts } = useCheckConflicts();
   const [manualDialogOpen, setManualDialogOpen] = useState(false);
@@ -139,6 +142,19 @@ export default function Pipeline() {
     setDetailsConfirm(null);
     fetchDetails(zoneId, { onSuccess: (d) => setActiveRunId(d.run_id) });
   };
+  // Arrow action: hand an enriched candidate to Prospects with the create
+  // dialog pre-filled. Only enriched rows qualify — before enrichment there is
+  // no IG data worth carrying over.
+  const handleSendToProspects = async (c) => {
+    if (!onSendToProspects) return;
+    try {
+      const payload = await fetchProspectDraft(c.id);
+      onSendToProspects({ ...payload, candidate: c });
+    } catch (err) {
+      window.alert(err?.response?.data?.message || "Could not prepare this prospect");
+    }
+  };
+
   const handleDiscover = () => {
     setDiscoverConfirm(true);
   };
@@ -381,15 +397,21 @@ export default function Pipeline() {
                   <CircularProgress size={14} /> Running...
                 </div>
               )}
+              {canDiscover && (
               <LoadingButton size="small" variant="outlined" onClick={handleSource} loading={estimating || sourcing || (!!activeRunId && runData?.status === "PROCESSING")} disabled={!!activeRunId} sx={{ textTransform: "none", fontSize: 11 }}>
                 Source Zone
               </LoadingButton>
+              )}
+              {canDiscover && (
+              <>
               <LoadingButton size="small" variant="outlined" onClick={handleDetails} loading={detailsEstimating || detailing || (!!activeRunId && runData?.status === "PROCESSING")} disabled={!!activeRunId || !summary.total_candidates} sx={{ textTransform: "none", fontSize: 11 }}>
                 Fetch Details
               </LoadingButton>
               <LoadingButton size="small" variant="outlined" onClick={handleDiscover} loading={discovering || (!!activeRunId && runData?.status === "PROCESSING")} disabled={!!activeRunId || !summary.with_details} sx={{ textTransform: "none", fontSize: 11 }}>
                 Discover Handles
               </LoadingButton>
+              </>
+              )}
               {summary.with_score_complete > 0 && (
                 <ActionBtn $bg="#8b5cf6" $color="#fff" onClick={() => setExportDialogOpen(true)}>Export CSV</ActionBtn>
               )}
@@ -556,6 +578,15 @@ export default function Pipeline() {
                           ) : (
                             <Tooltip title="Demo already created" arrow>
                               <Badge $bg="#dcfce7" $color="#16a34a">Demo Built</Badge>
+                            </Tooltip>
+                          )}
+                          {onSendToProspects && c.enrichment_status === "enriched" && (
+                            <Tooltip title="Send to Prospects — opens the create form pre-filled" arrow>
+                              <ActionBtn $bg="#eef2ff" $color="#4f46e5" disabled={draftLoading}
+                                style={{ fontSize: 13, padding: "3px 8px", lineHeight: 1 }}
+                                onClick={() => handleSendToProspects(c)}>
+                                &rarr;
+                              </ActionBtn>
                             </Tooltip>
                           )}
                           <Tooltip title="Remove — will not take Menugic" arrow>
@@ -1094,5 +1125,18 @@ export default function Pipeline() {
         </DialogContent>
       </Dialog>
     </PipelineContainer>
+  );
+}
+
+/**
+ * Shared by superadmin and the sales dashboard. Sales passes SALES_SCOPE and
+ * canDiscover={false}, which hides Source Zone / Fetch Details / Discover
+ * Handles; every other action stays available and is zone-scoped server-side.
+ */
+export default function Pipeline({ scope, canDiscover = true, onSendToProspects }) {
+  return (
+    <PipelineScopeProvider scope={scope}>
+      <PipelineInner canDiscover={canDiscover} onSendToProspects={onSendToProspects} />
+    </PipelineScopeProvider>
   );
 }

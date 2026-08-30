@@ -22,6 +22,8 @@ import Messages from "./messages";
 
 export default function SuperAdmin() {
   const [activeTab, setActiveTab] = useState("Restaurants");
+  // Hand-off from Pipeline's "send to prospects" arrow.
+  const [prospectPrefill, setProspectPrefill] = useState(null);
 
   return (
     <Container>
@@ -119,9 +121,21 @@ export default function SuperAdmin() {
         {activeTab === "Templates" && <TemplateManager />}
         {activeTab === "Color Themes" && <ColorThemeManager />}
         {activeTab === "Monitoring" && <Monitoring />}
-        {activeTab === "Prospects" && <Prospects />}
+        {activeTab === "Prospects" && (
+          <Prospects
+            prefill={prospectPrefill}
+            onPrefillConsumed={() => setProspectPrefill(null)}
+          />
+        )}
         {activeTab === "Zones" && <Zones />}
-        {activeTab === "Pipeline" && <Pipeline />}
+        {activeTab === "Pipeline" && (
+          <Pipeline
+            onSendToProspects={(payload) => {
+              setProspectPrefill(payload);
+              setActiveTab("Prospects");
+            }}
+          />
+        )}
         {activeTab === "Sales Team" && <SalesTeam />}
         {activeTab === "Messages" && <Messages />}
       </ContentArea>
