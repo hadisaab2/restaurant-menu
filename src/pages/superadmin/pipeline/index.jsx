@@ -102,6 +102,7 @@ function PipelineInner({ canDiscover = true, onSendToProspects }) {
   const [enrichSelected, setEnrichSelected] = useState(new Set());
   const [enrichDialogOpen, setEnrichDialogOpen] = useState(false);
   const [enrichDryRunData, setEnrichDryRunData] = useState(null);
+  const [enrichError, setEnrichError] = useState(null);
   const [detailsConfirm, setDetailsConfirm] = useState(null);
   const [discoverConfirm, setDiscoverConfirm] = useState(false);
   const [costsOpen, setCostsOpen] = useState(false);
@@ -182,6 +183,7 @@ function PipelineInner({ canDiscover = true, onSendToProspects }) {
 
   const openEnrichDialog = () => {
     setEnrichDryRunData(null);
+    setEnrichError(null);
     setEnrichDryRunLoading(true);
     setEnrichDialogOpen(true);
     // Fire dry-run to get real cached-vs-live split
@@ -190,17 +192,24 @@ function PipelineInner({ canDiscover = true, onSendToProspects }) {
       { zoneId, candidateIds: ids, dryRun: true },
       {
         onSuccess: (d) => { setEnrichDryRunData(d); setEnrichDryRunLoading(false); },
-        onError: () => { setEnrichDryRunLoading(false); },
+        onError: (err) => {
+          setEnrichError(err?.response?.data?.message || err?.message || "Failed to load estimate");
+          setEnrichDryRunLoading(false);
+        },
       }
     );
   };
 
   const handleEnrichConfirm = () => {
     const ids = Array.from(enrichSelected);
-    enrichCandidates({ zoneId, candidateIds: ids }, { onSuccess: (d) => setActiveRunId(d.run_id) });
+    enrichCandidates({ zoneId, candidateIds: ids }, {
+      onSuccess: (d) => setActiveRunId(d.run_id),
+      onError: (err) => window.alert(err?.response?.data?.message || err?.message || "Enrichment failed to start"),
+    });
     setEnrichDialogOpen(false);
     setEnrichSelected(new Set());
     setEnrichDryRunData(null);
+    setEnrichError(null);
   };
 
   const handleBuildDemo = (candidate) => {
@@ -645,7 +654,7 @@ function PipelineInner({ canDiscover = true, onSendToProspects }) {
       </Dialog>
 
       {/* Enrich Dialog with dry-run cost */}
-      <Dialog open={enrichDialogOpen} onClose={() => { setEnrichDialogOpen(false); setEnrichDryRunData(null); }} maxWidth="sm" fullWidth>
+      <Dialog open={enrichDialogOpen} onClose={() => { setEnrichDialogOpen(false); setEnrichDryRunData(null); setEnrichError(null); }} maxWidth="sm" fullWidth>
         <DialogTitle sx={{ fontWeight: 700, fontSize: 16 }}>Enrich Selected Candidates</DialogTitle>
         <DialogContent>
           {enrichDryRunLoading ? (
@@ -676,12 +685,12 @@ function PipelineInner({ canDiscover = true, onSendToProspects }) {
               </div>
             </div>
           ) : (
-            <div style={{ fontSize: 13, color: "#dc2626" }}>Failed to load estimate. Try again.</div>
+            <Alert severity="error" sx={{ fontSize: 12 }}>{enrichError || "Failed to load estimate. Try again."}</Alert>
           )}
           {enrichSelected.size > 5 && <Alert severity="error" sx={{ mt: 1 }}>Max 5 candidates per enrichment run.</Alert>}
         </DialogContent>
         <DialogActions>
-          <button onClick={() => { setEnrichDialogOpen(false); setEnrichDryRunData(null); }} style={{ padding: "6px 16px", borderRadius: 6, border: "none", background: "#f1f5f9", cursor: "pointer" }}>Cancel</button>
+          <button onClick={() => { setEnrichDialogOpen(false); setEnrichDryRunData(null); setEnrichError(null); }} style={{ padding: "6px 16px", borderRadius: 6, border: "none", background: "#f1f5f9", cursor: "pointer" }}>Cancel</button>
           <button onClick={handleEnrichConfirm} disabled={enrichSelected.size > 5 || enrichDryRunLoading || !enrichDryRunData}
             style={{ padding: "6px 16px", borderRadius: 6, border: "none", background: "#8b5cf6", color: "#fff", cursor: "pointer", opacity: (enrichSelected.size > 5 || enrichDryRunLoading) ? 0.5 : 1 }}>
             Enrich ({enrichSelected.size})
