@@ -91,7 +91,10 @@ function PipelineInner({ canDiscover = true, onSendToProspects }) {
   const { mutate: addManual, isPending: addingManual } = useAddManualCandidate();
   const { mutate: checkConflicts, isPending: checkingConflicts } = useCheckConflicts();
   const [manualDialogOpen, setManualDialogOpen] = useState(false);
-  const [manualForm, setManualForm] = useState({ business_name: "", phone: "", ig_handle: "", primary_type: "restaurant", zone_id: "" });
+  // Manual entries always land in the "Manual entries" bucket (zone 0) — the
+  // dialog no longer asks for a zone.
+  const [manualForm, setManualForm] = useState({ business_name: "", phone: "", ig_handle: "", primary_type: "restaurant" });
+  const [manualError, setManualError] = useState(null);
   const [conflictData, setConflictData] = useState(null);
 
   // Dialogs & state
@@ -295,7 +298,7 @@ function PipelineInner({ canDiscover = true, onSendToProspects }) {
           <ActionBtn $bg={costsOpen ? "#8b5cf6" : "#f1f5f9"} $color={costsOpen ? "#fff" : "#64748b"} onClick={() => { setCostsOpen(!costsOpen); if (!costsOpen) refetchCosts(); }} style={{ fontSize: 11 }}>
             {costsOpen ? "Hide Costs" : "API Costs"}
           </ActionBtn>
-          <ActionBtn $bg="#16a34a" $color="#fff" onClick={() => { setManualForm({ business_name: "", phone: "", ig_handle: "", primary_type: "restaurant", zone_id: zoneId || "" }); setConflictData(null); setManualDialogOpen(true); }} style={{ fontSize: 11 }}>
+          <ActionBtn $bg="#16a34a" $color="#fff" onClick={() => { setManualForm({ business_name: "", phone: "", ig_handle: "", primary_type: "restaurant" }); setConflictData(null); setManualError(null); setManualDialogOpen(true); }} style={{ fontSize: 11 }}>
             + Add Manual
           </ActionBtn>
         </div>
@@ -894,28 +897,23 @@ function PipelineInner({ canDiscover = true, onSendToProspects }) {
             <TextField size="small" label="Instagram Handle" placeholder="e.g. royaldonuts.lb (without @)"
               value={manualForm.ig_handle} onChange={(e) => { setManualForm((f) => ({ ...f, ig_handle: e.target.value })); setConflictData(null); }} fullWidth
               InputProps={{ startAdornment: <span style={{ color: "#94a3b8", marginRight: 4 }}>@</span> }} />
-            <div style={{ display: "flex", gap: 8 }}>
-              <FormControl size="small" sx={{ flex: 1 }}>
-                <InputLabel>Category</InputLabel>
-                <Select value={manualForm.primary_type} onChange={(e) => setManualForm((f) => ({ ...f, primary_type: e.target.value }))} label="Category">
-                  <MenuItem value="restaurant">Restaurant</MenuItem>
-                  <MenuItem value="cafe">Cafe</MenuItem>
-                  <MenuItem value="bakery">Bakery</MenuItem>
-                  <MenuItem value="fast_food_restaurant">Fast Food</MenuItem>
-                  <MenuItem value="dessert_shop">Desserts</MenuItem>
-                  <MenuItem value="juice_shop">Juice Shop</MenuItem>
-                  <MenuItem value="florist">Flowers</MenuItem>
-                  <MenuItem value="beauty_salon">Beauty Salon</MenuItem>
-                  <MenuItem value="grocery_store">Grocery</MenuItem>
-                </Select>
-              </FormControl>
-              <FormControl size="small" sx={{ flex: 1 }}>
-                <InputLabel>Zone (optional)</InputLabel>
-                <Select value={manualForm.zone_id} onChange={(e) => setManualForm((f) => ({ ...f, zone_id: e.target.value }))} label="Zone (optional)">
-                  <MenuItem value="">Auto-assign</MenuItem>
-                  {(zones || []).map((z) => <MenuItem key={z.id} value={z.id}>{z.name}</MenuItem>)}
-                </Select>
-              </FormControl>
+            <FormControl size="small" fullWidth>
+              <InputLabel>Category</InputLabel>
+              <Select value={manualForm.primary_type} onChange={(e) => setManualForm((f) => ({ ...f, primary_type: e.target.value }))} label="Category">
+                <MenuItem value="restaurant">Restaurant</MenuItem>
+                <MenuItem value="cafe">Cafe</MenuItem>
+                <MenuItem value="bakery">Bakery</MenuItem>
+                <MenuItem value="fast_food_restaurant">Fast Food</MenuItem>
+                <MenuItem value="dessert_shop">Desserts</MenuItem>
+                <MenuItem value="juice_shop">Juice Shop</MenuItem>
+                <MenuItem value="florist">Flowers</MenuItem>
+                <MenuItem value="beauty_salon">Beauty Salon</MenuItem>
+                <MenuItem value="grocery_store">Grocery</MenuItem>
+              </Select>
+            </FormControl>
+
+            <div style={{ background: "#f8fafc", borderRadius: 8, padding: 10, fontSize: 12, color: "#64748b" }}>
+              Saved under <strong>Manual entries</strong>. The pipeline switches to that view after adding.
             </div>
 
             {manualForm.ig_handle && (
@@ -946,6 +944,7 @@ function PipelineInner({ canDiscover = true, onSendToProspects }) {
                 No conflicts found — safe to add.
               </div>
             )}
+            {manualError && <Alert severity="error" sx={{ fontSize: 12 }}>{manualError}</Alert>}
           </div>
         </DialogContent>
         <DialogActions sx={{ padding: "12px 24px 20px" }}>
@@ -953,8 +952,10 @@ function PipelineInner({ canDiscover = true, onSendToProspects }) {
           <button
             disabled={!manualForm.business_name || checkingConflicts}
             onClick={() => {
+              setManualError(null);
               checkConflicts({ business_name: manualForm.business_name, phone: manualForm.phone, ig_handle: manualForm.ig_handle }, {
                 onSuccess: (data) => setConflictData(data),
+                onError: (err) => setManualError(err?.response?.data?.message || err?.message || "Conflict check failed"),
               });
             }}
             style={{ padding: "8px 20px", borderRadius: 8, border: "none", background: "#f59e0b", color: "#fff", fontSize: 13, fontWeight: 600, cursor: "pointer" }}>
@@ -963,8 +964,20 @@ function PipelineInner({ canDiscover = true, onSendToProspects }) {
           <button
             disabled={!manualForm.business_name || addingManual}
             onClick={() => {
-              addManual({ zone_id: manualForm.zone_id ? parseInt(manualForm.zone_id) : undefined, business_name: manualForm.business_name, phone: manualForm.phone, ig_handle: manualForm.ig_handle, primary_type: manualForm.primary_type }, {
-                onSuccess: () => { setManualDialogOpen(false); setConflictData(null); refetchCandidates(); },
+              setManualError(null);
+              addManual({ business_name: manualForm.business_name, phone: manualForm.phone, ig_handle: manualForm.ig_handle, primary_type: manualForm.primary_type }, {
+                onSuccess: () => {
+                  setManualDialogOpen(false);
+                  setConflictData(null);
+                  // The row is created in the manual bucket, so show that view —
+                  // otherwise it saves into a zone the grid isn't displaying and
+                  // looks like nothing was added.
+                  setZoneId("0");
+                  setPage(1);
+                  setEnrichSelected(new Set());
+                  refetchCandidates();
+                },
+                onError: (err) => setManualError(err?.response?.data?.message || err?.message || "Failed to add business"),
               });
             }}
             style={{ padding: "8px 20px", borderRadius: 8, border: "none", background: "#16a34a", color: "#fff", fontSize: 13, fontWeight: 600, cursor: "pointer", opacity: !manualForm.business_name ? 0.5 : 1 }}>

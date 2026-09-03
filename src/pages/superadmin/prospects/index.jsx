@@ -193,7 +193,8 @@ export default function Prospects({
   // open the create form with its data already filled in.
   useEffect(() => {
     if (!prefill) return;
-    if (prefill.zone_id) setZoneFilter(String(prefill.zone_id));
+    // != null, not truthy — zone 0 is the manual-entries bucket.
+    if (prefill.zone_id != null) setZoneFilter(String(prefill.zone_id));
     setCreatePrefill(prefill.draft || null);
     setCreateOpen(true);
     if (onPrefillConsumed) onPrefillConsumed();
@@ -448,6 +449,7 @@ export default function Prospects({
           style={s.select}
         >
           <option value="">All Zones</option>
+          <option value="0">Manual entries</option>
           {zones.map((z) => (
             <option key={z.id} value={z.id}>{z.name || z.city || `Zone ${z.id}`}</option>
           ))}
@@ -862,6 +864,9 @@ const EMPTY_FORM = {
   business_name: "", business_phone: "", category: "restaurant",
   country: "", city_zone: "", language: "en",
   whatsapp_number: "", ig_handle: "", outreach_message: "",
+  // Not shown in the form — carried through from the pipeline hand-off so the
+  // prospect keeps the zone it came from (0 = manual entries) and its place_id.
+  zone_id: "", place_id: "",
   // Demo build options — `template` is the content template, `templateId` the
   // visual theme, `colorPreset` the palette. Sent to /create-demo, not stored
   // as prospect columns (colorPreset is persisted via `theme` for reuse).
@@ -887,6 +892,8 @@ function CreateProspectDialog({ open, onClose, onCreated, showToast, basePath, i
       const v = initialValues[k];
       if (v !== undefined && v !== null && v !== "") next[k] = v;
     });
+    // zone_id 0 is a real value (manual entries) that the blank check above drops.
+    if (initialValues.zone_id != null) next.zone_id = String(initialValues.zone_id);
     setForm(next);
   }, [open, initialValues]);
 
@@ -902,7 +909,10 @@ function CreateProspectDialog({ open, onClose, onCreated, showToast, basePath, i
       const { template, templateId, colorPreset, ...prospectFields } = form;
 
       const fd = new FormData();
-      Object.entries(prospectFields).forEach(([k, v]) => { if (v) fd.append(k, v); });
+      Object.entries(prospectFields).forEach(([k, v]) => {
+        // "0" is falsy-looking but meaningful for zone_id (manual entries).
+        if (v !== "" && v !== null && v !== undefined) fd.append(k, v);
+      });
       if (colorPreset) fd.append("theme", colorPreset);
       if (logoFile) fd.append("logo", logoFile);
 
