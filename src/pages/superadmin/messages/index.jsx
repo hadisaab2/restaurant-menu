@@ -71,6 +71,16 @@ export default function Messages({ basePath = "/superadmin/prospects", canDelete
       fetchTemplates();
     } catch (err) {
       console.error("Failed to save template:", err);
+      window.alert("Failed to save: " + (err?.response?.data?.message || err?.message || "Unknown error"));
+    }
+  };
+
+  const setDefault = async (id) => {
+    try {
+      await axios.put(`${API}${basePath}/templates/${id}`, { is_default: true }, { headers: headers() });
+      fetchTemplates();
+    } catch (err) {
+      window.alert("Failed to set default: " + (err?.response?.data?.message || err?.message || "Unknown error"));
     }
   };
 
@@ -140,7 +150,7 @@ export default function Messages({ basePath = "/superadmin/prospects", canDelete
                   <div style={{ marginBottom: 12 }}>
                     <div style={{ fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em", color: "#999", marginBottom: 8 }}>English</div>
                     {enTemplates.map((tmpl) => (
-                      <TemplateCard key={tmpl.id} tmpl={tmpl} onEdit={() => openEdit(tmpl)} onDelete={() => remove(tmpl.id)} canDelete={canDelete} stageColor={stage.color} />
+                      <TemplateCard key={tmpl.id} tmpl={tmpl} onEdit={() => openEdit(tmpl)} onDelete={() => remove(tmpl.id)} onSetDefault={() => setDefault(tmpl.id)} canDelete={canDelete} stageColor={stage.color} />
                     ))}
                   </div>
                 )}
@@ -150,7 +160,7 @@ export default function Messages({ basePath = "/superadmin/prospects", canDelete
                   <div style={{ marginBottom: 12 }}>
                     <div style={{ fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em", color: "#999", marginBottom: 8 }}>العربية</div>
                     {arTemplates.map((tmpl) => (
-                      <TemplateCard key={tmpl.id} tmpl={tmpl} onEdit={() => openEdit(tmpl)} onDelete={() => remove(tmpl.id)} canDelete={canDelete} stageColor={stage.color} isAr />
+                      <TemplateCard key={tmpl.id} tmpl={tmpl} onEdit={() => openEdit(tmpl)} onDelete={() => remove(tmpl.id)} onSetDefault={() => setDefault(tmpl.id)} canDelete={canDelete} stageColor={stage.color} isAr />
                     ))}
                   </div>
                 )}
@@ -283,7 +293,7 @@ export default function Messages({ basePath = "/superadmin/prospects", canDelete
 }
 
 // ── Template Card Component ──
-function TemplateCard({ tmpl, onEdit, onDelete, canDelete = true, stageColor, isAr }) {
+function TemplateCard({ tmpl, onEdit, onDelete, onSetDefault, canDelete = true, stageColor, isAr }) {
   const [expanded, setExpanded] = useState(false);
   const body = tmpl.body || "";
   const truncated = body.length > 120 ? body.substring(0, 120) + "..." : body;
@@ -310,6 +320,12 @@ function TemplateCard({ tmpl, onEdit, onDelete, canDelete = true, stageColor, is
           )}
         </div>
         <div style={{ display: "flex", gap: 4 }}>
+          {!tmpl.is_default && (
+            <button onClick={onSetDefault}
+              style={{ padding: "4px 10px", borderRadius: 6, border: "1px solid #d8e0d8", background: "#fff", fontSize: 11, fontWeight: 600, cursor: "pointer", color: "#C8B896" }}>
+              ★ Set Default
+            </button>
+          )}
           <button onClick={onEdit}
             style={{ padding: "4px 10px", borderRadius: 6, border: "1px solid #e0ddd8", background: "#fff", fontSize: 11, fontWeight: 600, cursor: "pointer", color: "#555" }}>
             Edit

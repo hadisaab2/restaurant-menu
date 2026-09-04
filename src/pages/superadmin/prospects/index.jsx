@@ -871,6 +871,9 @@ const EMPTY_FORM = {
   // Not shown in the form — carried through from the pipeline hand-off so the
   // prospect keeps the zone it came from (0 = manual entries) and its place_id.
   zone_id: "", place_id: "",
+  // Enriched logo URL — carried from the pipeline arrow so the prospect gets
+  // the IG logo without the operator re-uploading it by hand.
+  logo_source_url: "",
   // Demo build options — `template` is the content template, `templateId` the
   // visual theme, `colorPreset` the palette. Sent to /create-demo, not stored
   // as prospect columns (colorPreset is persisted via `theme` for reuse).
@@ -919,6 +922,7 @@ function CreateProspectDialog({ open, onClose, onCreated, showToast, basePath, i
       });
       if (colorPreset) fd.append("theme", colorPreset);
       if (logoFile) fd.append("logo", logoFile);
+      else if (form.logo_source_url) fd.append("logo_source_url", form.logo_source_url);
 
       const { data } = await axios.post(`${API}${basePath}`, fd, {
         headers: { ...headers(), "Content-Type": "multipart/form-data" },
@@ -1054,6 +1058,16 @@ function CreateProspectDialog({ open, onClose, onCreated, showToast, basePath, i
         </div>
         <div style={s.dialogField}>
           <label style={s.dialogLabel}>Logo</label>
+          {form.logo_source_url && !logoFile && (
+            <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
+              <img src={form.logo_source_url} alt="" style={{ width: 36, height: 36, borderRadius: 6, objectFit: "cover" }} onError={(e) => { e.target.style.display = "none"; }} />
+              <button type="button" onClick={() => { import("../../../utilities/downloadLogo").then(m => m.downloadLogo(form.logo_source_url, form.business_name)); }}
+                style={{ fontSize: 11, color: "#3b82f6", background: "none", border: "none", cursor: "pointer", textDecoration: "underline" }}>
+                ⬇ Download
+              </button>
+              <span style={{ fontSize: 11, color: "#64748b" }}>Enriched logo (will be used if no file attached)</span>
+            </div>
+          )}
           <input
             type="file"
             accept="image/*"

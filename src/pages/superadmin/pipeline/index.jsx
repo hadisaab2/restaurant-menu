@@ -76,7 +76,10 @@ function PipelineInner({ canDiscover = true, onSendToProspects }) {
       setActiveRunId(null);
       refetchCandidates();
     }
-  }, [runData?.status]);
+  // runData?.status is the meaningful trigger; adding runData itself would fire
+  // on every 2s poll tick (the object reference changes), defeating the guard.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [runData?.status, activeRunId, refetchCandidates]);
 
   const { mutate: sourceZone, isPending: sourcing } = useSourceZone();
   const { mutate: getEstimate, isPending: estimating } = useSourceEstimate();
