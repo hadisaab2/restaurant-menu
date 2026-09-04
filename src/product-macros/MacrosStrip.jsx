@@ -38,9 +38,9 @@ export default function MacrosStrip({ macros, activeLanguage = "en" }) {
       sx={{
         width: "100%",
         display: "grid",
-        gridTemplateColumns: "repeat(auto-fit, minmax(84px, 1fr))",
-        gap: "8px",
-        margin: "12px 0",
+        gridTemplateColumns: "repeat(auto-fit, minmax(68px, 1fr))",
+        gap: "6px",
+        margin: "8px 0",
       }}
     >
       {items.map((item) => (
@@ -49,8 +49,8 @@ export default function MacrosStrip({ macros, activeLanguage = "en" }) {
           sx={{
             background: surface,
             border: `1px solid ${borderColor}`,
-            borderRadius: "10px",
-            padding: "8px 6px",
+            borderRadius: "8px",
+            padding: "6px 4px",
             textAlign: "center",
             minWidth: 0,
           }}
@@ -58,7 +58,7 @@ export default function MacrosStrip({ macros, activeLanguage = "en" }) {
           <Typography
             component="div"
             sx={{
-              fontSize: "14px",
+              fontSize: "12px",
               fontWeight: 700,
               lineHeight: 1.25,
               color: mainColor,
@@ -72,7 +72,7 @@ export default function MacrosStrip({ macros, activeLanguage = "en" }) {
           <Typography
             component="div"
             sx={{
-              fontSize: "10px",
+              fontSize: "9px",
               fontWeight: 600,
               marginTop: "2px",
               letterSpacing: "0.2px",

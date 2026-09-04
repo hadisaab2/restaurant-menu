@@ -806,7 +806,11 @@ export default function Prospects({
           const items = [];
           for (const r of rows) {
             if (!r.prospect_id) continue;
-            let logoUrl = r.logoUrl || null;
+            // r.logoUrl is only the preview thumbnail (a remote IG URL). Sending
+            // it would land a URL in restaurants.logoURL, which readers prefix
+            // with the bucket. Only an actual upload produces an object name;
+            // otherwise the server falls back to its mirrored copy.
+            let logoUrl = null;
             if (r.logoFile) {
               try { logoUrl = await uploadLogo(r.logoFile); } catch (e) { console.error("Logo upload failed for", r.business_name, e); }
             }

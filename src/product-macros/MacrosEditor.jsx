@@ -43,7 +43,7 @@ export default function MacrosEditor({ value, onChange, languageHint = "en" }) {
   const addRow = () =>
     update([
       ...items,
-      { labelEn: "", labelAr: "", value: "", unit: "", showOnCard: items.length === 0 },
+      { labelEn: "", labelAr: "", value: "", unit: "", showOnCard: false },
     ]);
 
   // Exactly one row may drive the card chip; ensureMacroIds keeps the first

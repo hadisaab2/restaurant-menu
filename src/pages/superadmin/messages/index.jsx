@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import {
   Dialog, DialogTitle, DialogContent, DialogActions,
-  TextField, Button, MenuItem, Select, InputLabel, FormControl, FormControlLabel, Checkbox,
+  TextField, Button, MenuItem, Select, InputLabel, FormControl,
 } from "@mui/material";
 import axios from "axios";
 import { getCookie } from "../../../utilities/manageCookies";
@@ -20,7 +20,12 @@ const PLACEHOLDERS = [
   { tag: "{demo_url}", label: "Demo URL", sample: "https://menugic.com/royal-donuts" },
 ];
 
-export default function Messages() {
+/**
+ * Shared by superadmin and sales. Templates are global — both roles edit the
+ * same rows — so the only difference is that sales cannot delete (the DELETE
+ * route is simply not registered under /sales).
+ */
+export default function Messages({ basePath = "/superadmin/prospects", canDelete = true }) {
   const [templates, setTemplates] = useState([]);
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -30,14 +35,14 @@ export default function Messages() {
 
   const fetchTemplates = useCallback(async () => {
     try {
-      const { data } = await axios.get(`${API}/superadmin/prospects/templates`, { headers: headers() });
+      const { data } = await axios.get(`${API}${basePath}/templates`, { headers: headers() });
       setTemplates(data.data || []);
     } catch (err) {
       console.error("Failed to load templates:", err);
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [basePath]);
 
   useEffect(() => { fetchTemplates(); }, [fetchTemplates]);
 
@@ -58,9 +63,9 @@ export default function Messages() {
   const save = async () => {
     try {
       if (editing) {
-        await axios.put(`${API}/superadmin/prospects/templates/${editing.id}`, { body: form.body, active: true }, { headers: headers() });
+        await axios.put(`${API}${basePath}/templates/${editing.id}`, { body: form.body }, { headers: headers() });
       } else {
-        await axios.post(`${API}/superadmin/prospects/templates`, { stage: form.stage, language: form.language, body: form.body }, { headers: headers() });
+        await axios.post(`${API}${basePath}/templates`, { stage: form.stage, language: form.language, body: form.body }, { headers: headers() });
       }
       setDialogOpen(false);
       fetchTemplates();
@@ -72,7 +77,7 @@ export default function Messages() {
   const remove = async (id) => {
     if (!window.confirm("Delete this message template?")) return;
     try {
-      await axios.delete(`${API}/superadmin/prospects/templates/${id}`, { headers: headers() });
+      await axios.delete(`${API}${basePath}/templates/${id}`, { headers: headers() });
       fetchTemplates();
     } catch (err) {
       console.error("Failed to delete template:", err);
@@ -135,7 +140,7 @@ export default function Messages() {
                   <div style={{ marginBottom: 12 }}>
                     <div style={{ fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em", color: "#999", marginBottom: 8 }}>English</div>
                     {enTemplates.map((tmpl) => (
-                      <TemplateCard key={tmpl.id} tmpl={tmpl} onEdit={() => openEdit(tmpl)} onDelete={() => remove(tmpl.id)} stageColor={stage.color} />
+                      <TemplateCard key={tmpl.id} tmpl={tmpl} onEdit={() => openEdit(tmpl)} onDelete={() => remove(tmpl.id)} canDelete={canDelete} stageColor={stage.color} />
                     ))}
                   </div>
                 )}
@@ -145,7 +150,7 @@ export default function Messages() {
                   <div style={{ marginBottom: 12 }}>
                     <div style={{ fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em", color: "#999", marginBottom: 8 }}>العربية</div>
                     {arTemplates.map((tmpl) => (
-                      <TemplateCard key={tmpl.id} tmpl={tmpl} onEdit={() => openEdit(tmpl)} onDelete={() => remove(tmpl.id)} stageColor={stage.color} isAr />
+                      <TemplateCard key={tmpl.id} tmpl={tmpl} onEdit={() => openEdit(tmpl)} onDelete={() => remove(tmpl.id)} canDelete={canDelete} stageColor={stage.color} isAr />
                     ))}
                   </div>
                 )}
@@ -278,7 +283,7 @@ export default function Messages() {
 }
 
 // ── Template Card Component ──
-function TemplateCard({ tmpl, onEdit, onDelete, stageColor, isAr }) {
+function TemplateCard({ tmpl, onEdit, onDelete, canDelete = true, stageColor, isAr }) {
   const [expanded, setExpanded] = useState(false);
   const body = tmpl.body || "";
   const truncated = body.length > 120 ? body.substring(0, 120) + "..." : body;
@@ -309,10 +314,12 @@ function TemplateCard({ tmpl, onEdit, onDelete, stageColor, isAr }) {
             style={{ padding: "4px 10px", borderRadius: 6, border: "1px solid #e0ddd8", background: "#fff", fontSize: 11, fontWeight: 600, cursor: "pointer", color: "#555" }}>
             Edit
           </button>
-          <button onClick={onDelete}
-            style={{ padding: "4px 10px", borderRadius: 6, border: "1px solid #f0ddd8", background: "#fff", fontSize: 11, fontWeight: 600, cursor: "pointer", color: "#c44b3f" }}>
-            Delete
-          </button>
+          {canDelete && (
+            <button onClick={onDelete}
+              style={{ padding: "4px 10px", borderRadius: 6, border: "1px solid #f0ddd8", background: "#fff", fontSize: 11, fontWeight: 600, cursor: "pointer", color: "#c44b3f" }}>
+              Delete
+            </button>
+          )}
         </div>
       </div>
 

@@ -24,6 +24,24 @@ export const useGetCandidates = (zoneId, params = {}) => {
   });
 };
 
+/**
+ * Every candidate in a zone, id/name/handle only — what the CSV export picker
+ * needs so selection is not confined to the page the grid happens to show.
+ * Only fetched while the picker is open.
+ */
+export const useGetCandidateOptions = (zoneId, enabled) => {
+  const scope = usePipelineScope();
+  return useQuery({
+    queryKey: ["candidate-options", zoneId],
+    queryFn: async () => {
+      const res = await axios.get(`${BASE_URL}${scope.sourcing}/zones/${zoneId}/candidate-options`, { headers: headers() });
+      return res.data.data;
+    },
+    enabled: !!zoneId && !!enabled,
+    refetchOnWindowFocus: false,
+  });
+};
+
 export const useGetZones = () => {
   const scope = usePipelineScope();
   return useQuery({

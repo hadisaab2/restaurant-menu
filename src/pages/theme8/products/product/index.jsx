@@ -28,7 +28,6 @@ import { trackAddToCart } from "../../../../utilities/analyticsTracking";
 import { IoHeartOutline } from "react-icons/io5";
 import { FaCartPlus } from "react-icons/fa";
 import { getCurrencySymbol } from "../../../../utilities/getCurrencySymbol";
-import MacroChip from "../../../../product-macros/MacroChip";
 const _ = require('lodash');
 
 const Product = React.forwardRef(
@@ -245,7 +244,6 @@ const imageSrc = hasValidImage
             {plate.new && (
               <NEW>{restaurant?.activeLanguage === "en" ? "NEW !" : "! جديد"}</NEW>
             )}
-            <MacroChip macros={plate?.macros} activeLanguage={restaurant?.activeLanguage} />
             <Image
               ref={ref}
               onLoad={handleImageLoaded}

@@ -6,6 +6,7 @@ import { getCookie, deleteCookie } from "../../utilities/manageCookies";
 import { breakingPoints } from "../../styles/theme";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid, ResponsiveContainer, Legend } from "recharts";
 import Prospects from "../superadmin/prospects";
+import Messages from "../superadmin/messages";
 import Pipeline from "../superadmin/pipeline";
 import { SALES_SCOPE } from "../../apis/pipeline/scope";
 
@@ -407,14 +408,6 @@ const s = {
   },
 };
 
-/* ─── Status config ─── */
-/* ─── Message template stages ─── */
-const STAGES = [
-  { id: "first", label: "Level 1 -- First Contact", color: "#2D7A4E", bg: "#E8F5EC" },
-  { id: "reminder_1", label: "Level 2 -- Reminder 1", color: "#C67F17", bg: "#FEF3D6" },
-  { id: "reminder_2", label: "Level 3 -- Reminder 2 (Final)", color: "#C44B3F", bg: "#FDECEA" },
-];
-
 /* ─── Helpers ─── */
 const timeAgo = (dateStr) => {
   if (!dateStr) return "";
@@ -516,7 +509,8 @@ export default function SalesDashboard() {
             }}
           />
         )}
-        {activeTab === "Messages" && <MessagesTab />}
+        {/* Templates are global — the same rows superadmin edits. Sales cannot delete. */}
+        {activeTab === "Messages" && <Messages basePath="/sales/prospects" canDelete={false} />}
         {activeTab === "My Stats" && <MyStatsTab />}
       </ContentArea>
     </Container>
@@ -527,248 +521,8 @@ export default function SalesDashboard() {
    TAB 1: MY PROSPECTS
    ═══════════════════════════════════════════════ */
 /* ═══════════════════════════════════════════════
-   TAB 2: PIPELINE
-   ═══════════════════════════════════════════════ */
-/* ═══════════════════════════════════════════════
-   TAB 3: MESSAGES (view-only)
-   ═══════════════════════════════════════════════ */
-function MessagesTab() {
-  const [templates, setTemplates] = useState([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    axios
-      .get(`${API}/sales/templates`, { headers: headers() })
-      .then(({ data }) => setTemplates(data.data || []))
-      .catch((err) => console.error("Failed to load templates:", err))
-      .finally(() => setLoading(false));
-  }, []);
-
-  const getTemplatesForStage = (stageId) => templates.filter((t) => t.stage === stageId);
-
-  const highlight = (text) => {
-    return (text || "")
-      .replace(/\{business_name\}/g, '<span style="color:#5eabb1;font-weight:600">{business_name}</span>')
-      .replace(/\{demo_url\}/g, '<span style="color:#5eabb1;font-weight:600">{demo_url}</span>');
-  };
-
-  if (loading) return <div style={s.loading}>Loading templates...</div>;
-
-  return (
-    <div style={{ padding: "0 4px" }}>
-      {/* Header */}
-      <div style={{ marginBottom: 24 }}>
-        <h2 style={{ fontSize: 18, fontWeight: 700, color: T.textPrimary, marginBottom: 4 }}>Message Templates</h2>
-        <p style={{ fontSize: 13, color: T.textSub, lineHeight: 1.5 }}>
-          View the message templates available for prospect outreach. Organized by contact level.
-        </p>
-      </div>
-
-      {/* 3 Columns -- one per stage */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))", gap: 16 }}>
-        {STAGES.map((stage) => {
-          const stageTemplates = getTemplatesForStage(stage.id);
-          const enTemplates = stageTemplates.filter((t) => t.language === "en");
-          const arTemplates = stageTemplates.filter((t) => t.language === "ar");
-
-          return (
-            <div
-              key={stage.id}
-              style={{
-                background: "#fff",
-                borderRadius: 12,
-                border: `1px solid ${T.cardBorder}`,
-                boxShadow: T.shadow,
-                overflow: "hidden",
-              }}
-            >
-              {/* Stage Header */}
-              <div
-                style={{
-                  padding: "14px 16px",
-                  borderBottom: "1px solid #f0edea",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                }}
-              >
-                <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                  <span style={{ width: 8, height: 8, borderRadius: "50%", background: stage.color }} />
-                  <span style={{ fontSize: 13, fontWeight: 700, color: T.textPrimary }}>{stage.label}</span>
-                </div>
-                <span
-                  style={{
-                    fontSize: 11,
-                    color: T.textSub,
-                    background: "#f5f3f0",
-                    padding: "2px 8px",
-                    borderRadius: 12,
-                  }}
-                >
-                  {stageTemplates.length} template{stageTemplates.length !== 1 ? "s" : ""}
-                </span>
-              </div>
-
-              <div style={{ padding: 16 }}>
-                {/* English templates */}
-                {enTemplates.length > 0 && (
-                  <div style={{ marginBottom: 12 }}>
-                    <div
-                      style={{
-                        fontSize: 10,
-                        fontWeight: 700,
-                        textTransform: "uppercase",
-                        letterSpacing: "0.08em",
-                        color: T.textSub,
-                        marginBottom: 8,
-                      }}
-                    >
-                      English
-                    </div>
-                    {enTemplates.map((tmpl) => (
-                      <MessageTemplateCard key={tmpl.id} tmpl={tmpl} highlight={highlight} />
-                    ))}
-                  </div>
-                )}
-
-                {/* Arabic templates */}
-                {arTemplates.length > 0 && (
-                  <div style={{ marginBottom: 12 }}>
-                    <div
-                      style={{
-                        fontSize: 10,
-                        fontWeight: 700,
-                        textTransform: "uppercase",
-                        letterSpacing: "0.08em",
-                        color: T.textSub,
-                        marginBottom: 8,
-                      }}
-                    >
-                      Arabic
-                    </div>
-                    {arTemplates.map((tmpl) => (
-                      <MessageTemplateCard key={tmpl.id} tmpl={tmpl} highlight={highlight} isAr />
-                    ))}
-                  </div>
-                )}
-
-                {stageTemplates.length === 0 && (
-                  <div style={{ textAlign: "center", padding: "20px 0", color: "#bbb", fontSize: 13 }}>
-                    No templates yet
-                  </div>
-                )}
-              </div>
-            </div>
-          );
-        })}
-      </div>
-
-      {/* Placeholder Legend */}
-      <div
-        style={{
-          marginTop: 24,
-          padding: 16,
-          background: "#fff",
-          borderRadius: 12,
-          border: `1px solid ${T.cardBorder}`,
-          boxShadow: T.shadow,
-        }}
-      >
-        <div style={{ fontSize: 12, fontWeight: 700, color: T.textPrimary, marginBottom: 8 }}>
-          Available Placeholders
-        </div>
-        <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
-          {[
-            { tag: "{business_name}", label: "Business Name" },
-            { tag: "{demo_url}", label: "Demo URL" },
-          ].map((p) => (
-            <div
-              key={p.tag}
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: 6,
-                padding: "4px 10px",
-                background: "#f5f3f0",
-                borderRadius: 6,
-                fontSize: 12,
-              }}
-            >
-              <code style={{ fontWeight: 700, color: T.accent }}>{p.tag}</code>
-              <span style={{ color: T.textSub }}>{p.label}</span>
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-}
-
-/* ─── Message Template Card (view-only) ─── */
-function MessageTemplateCard({ tmpl, highlight, isAr }) {
-  const [expanded, setExpanded] = useState(false);
-  const body = tmpl.body || "";
-  const truncated = body.length > 120 ? body.substring(0, 120) + "..." : body;
-
-  return (
-    <div
-      style={{
-        padding: 12,
-        borderRadius: 8,
-        border: "1px solid #f0edea",
-        marginBottom: 8,
-        background: "#fafaf8",
-        direction: isAr ? "rtl" : "ltr",
-      }}
-    >
-      {/* Language badge */}
-      <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 8 }}>
-        <span
-          style={{
-            fontSize: 10,
-            fontWeight: 700,
-            padding: "2px 6px",
-            borderRadius: 4,
-            background: isAr ? "#f0e8f0" : "#e8f0f0",
-            color: isAr ? "#7a5a8a" : "#2d6b6b",
-          }}
-        >
-          {isAr ? "AR" : "EN"}
-        </span>
-        {tmpl.is_default && (
-          <span style={{ fontSize: 10, fontWeight: 600, color: "#C8B896" }}>Default</span>
-        )}
-      </div>
-
-      {/* Body */}
-      <div
-        style={{ fontSize: 12, lineHeight: 1.6, color: "#555", whiteSpace: "pre-wrap" }}
-        dangerouslySetInnerHTML={{ __html: highlight(expanded ? body : truncated) }}
-      />
-
-      {body.length > 120 && (
-        <button
-          onClick={() => setExpanded(!expanded)}
-          style={{
-            background: "none",
-            border: "none",
-            fontSize: 11,
-            color: T.accent,
-            fontWeight: 600,
-            cursor: "pointer",
-            marginTop: 4,
-            padding: 0,
-          }}
-        >
-          {expanded ? "Show less" : "Show more"}
-        </button>
-      )}
-    </div>
-  );
-}
-
-/* ═══════════════════════════════════════════════
    TAB 4: MY STATS
+   (Prospects, Pipeline and Messages all render shared superadmin components.)
    ═══════════════════════════════════════════════ */
 function MyStatsTab() {
   const [stats, setStats] = useState(null);

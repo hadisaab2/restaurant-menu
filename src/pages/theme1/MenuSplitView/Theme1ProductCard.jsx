@@ -34,7 +34,6 @@ import { trackItemView, trackAddToCart } from "../../../utilities/analyticsTrack
 import { productNeedsOptionsDialog } from "../../../product-options/resolveOptions";
 import { getImageUrl } from "../../../utilities/imageUrl";
 import { getCurrencySymbol } from "../../../utilities/getCurrencySymbol";
-import MacroChip from "../../../product-macros/MacroChip";
 
 function Theme1ProductCard({
   plate,
@@ -216,7 +215,6 @@ function Theme1ProductCard({
               {activeLanguage === "en" ? "NEW !" : "! جديد"}
             </T1NEW>
           )}
-          <MacroChip macros={plate?.macros} activeLanguage={activeLanguage} />
           {imageSrc && (
             <T1Image
               src={imageSrc}

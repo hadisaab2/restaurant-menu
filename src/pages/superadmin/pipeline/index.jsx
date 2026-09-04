@@ -13,7 +13,7 @@ import TextField from "@mui/material/TextField";
 import {
   useGetZones, useGetCandidates, useSourceZone, useSourceEstimate, useDetailsEstimate, useFetchDetails,
   useEnrichCandidates, useRunStatus, useSetHandle, useBuildDemo, useGetCandidateDetail, useDismissCandidate, useDiscoverHandles, useCostsDashboard, useAddManualCandidate, useCheckConflicts,
-  useGetProspectDraft,
+  useGetProspectDraft, useGetCandidateOptions,
 } from "../../../apis/pipeline";
 import { PipelineScopeProvider, usePipelineScope } from "../../../apis/pipeline/scope";
 import ReviewDialog, { TEMPLATES, COLOR_PRESETS, uploadLogo } from "../../../components/shared/ReviewDialog";
@@ -265,6 +265,21 @@ function PipelineInner({ canDiscover = true, onSendToProspects }) {
   const [exportFilter, setExportFilter] = useState("enriched"); // "all" | "enriched" | "selected"
   const [exportLimit, setExportLimit] = useState("");
   const [exportSelected, setExportSelected] = useState(new Set());
+  const [exportSearch, setExportSearch] = useState("");
+
+  // The picker lists the whole zone, not just the grid's current page. Only
+  // fetched while "Selected only" is showing.
+  const { data: optionsData, isLoading: optionsLoading } = useGetCandidateOptions(
+    zoneId,
+    exportDialogOpen && exportFilter === "selected"
+  );
+  const exportOptions = optionsData?.candidates || [];
+  const exportVisible = exportSearch.trim()
+    ? exportOptions.filter((c) => {
+        const q = exportSearch.trim().toLowerCase();
+        return (c.display_name || "").toLowerCase().includes(q) || (c.ig_handle || "").toLowerCase().includes(q);
+      })
+    : exportOptions;
 
   const handleExportCsv = async () => {
     setExportDialogOpen(false);
@@ -428,8 +443,14 @@ function PipelineInner({ canDiscover = true, onSendToProspects }) {
               </LoadingButton>
               </>
               )}
-              {summary.with_score_complete > 0 && (
-                <ActionBtn $bg="#8b5cf6" $color="#fff" onClick={() => setExportDialogOpen(true)}>Export CSV</ActionBtn>
+              {summary.total_candidates > 0 && (
+                <ActionBtn $bg="#8b5cf6" $color="#fff" onClick={() => {
+                  // Manual entries are never scored, so the "enriched & scored"
+                  // default would silently download an empty file.
+                  setExportFilter(summary.with_score_complete > 0 ? "enriched" : "all");
+                  setExportSearch("");
+                  setExportDialogOpen(true);
+                }}>Export CSV</ActionBtn>
               )}
             </div>
             {summary.by_band && Object.values(summary.by_band).some(v => v > 0) && (
@@ -604,8 +625,8 @@ function PipelineInner({ canDiscover = true, onSendToProspects }) {
                               <Badge $bg="#dcfce7" $color="#16a34a">Demo Built</Badge>
                             </Tooltip>
                           )}
-                          {onSendToProspects && c.enrichment_status === "enriched" && (
-                            <Tooltip title="Send to Prospects — opens the create form pre-filled" arrow>
+                          {onSendToProspects && (c.domain_groups === "manual" || c.enrichment_status === "enriched") && (
+                            <Tooltip title={c.enrichment_status === "enriched" ? "Send to Prospects — opens the create form pre-filled" : "Send to Prospects — opens the create form with what we have"} arrow>
                               <ActionBtn $bg="#eef2ff" $color="#4f46e5" disabled={draftLoading}
                                 style={{ fontSize: 13, padding: "3px 8px", lineHeight: 1 }}
                                 onClick={() => handleSendToProspects(c)}>
@@ -779,8 +800,10 @@ function PipelineInner({ canDiscover = true, onSendToProspects }) {
               <strong>What to export:</strong>
               <div style={{ marginTop: 8, display: "flex", flexDirection: "column", gap: 6 }}>
                 <label style={{ display: "flex", alignItems: "center", gap: 8, cursor: "pointer" }}>
-                  <input type="radio" name="exportFilter" value="enriched" checked={exportFilter === "enriched"} onChange={(e) => setExportFilter(e.target.value)} />
-                  Only enriched & scored ({summary.with_score_complete || 0} candidates)
+                  <input type="radio" name="exportFilter" value="enriched" checked={exportFilter === "enriched"} onChange={(e) => setExportFilter(e.target.value)} disabled={!summary.with_score_complete} />
+                  <span style={{ opacity: summary.with_score_complete ? 1 : 0.5 }}>
+                    Only enriched & scored ({summary.with_score_complete || 0} candidates)
+                  </span>
                 </label>
                 <label style={{ display: "flex", alignItems: "center", gap: 8, cursor: "pointer" }}>
                   <input type="radio" name="exportFilter" value="all" checked={exportFilter === "all"} onChange={(e) => setExportFilter(e.target.value)} />
@@ -793,15 +816,25 @@ function PipelineInner({ canDiscover = true, onSendToProspects }) {
               </div>
             </div>
             {exportFilter === "selected" && (
-              <div style={{ marginTop: 12, maxHeight: 300, overflowY: "auto", border: "1px solid #e2e8f0", borderRadius: 8, padding: 8 }}>
-                <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8, padding: "4px 0", borderBottom: "1px solid #f1f5f9" }}>
-                  <input type="checkbox" checked={candidates.length > 0 && candidates.every(c => exportSelected.has(c.id))} onChange={() => {
-                    if (candidates.every(c => exportSelected.has(c.id))) setExportSelected(new Set());
-                    else setExportSelected(new Set(candidates.map(c => c.id)));
-                  }} />
-                  <span style={{ fontWeight: 600, fontSize: 12 }}>Select All on Page ({candidates.length})</span>
+              <div style={{ marginTop: 12 }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
+                  <SearchInput placeholder="Search all candidates by name or handle..." value={exportSearch}
+                    onChange={(e) => setExportSearch(e.target.value)} style={{ flex: 1 }} />
+                  <ActionBtn $bg="#eef2ff" $color="#4f46e5" style={{ fontSize: 11 }}
+                    onClick={() => setExportSelected((prev) => new Set([...prev, ...exportVisible.map((c) => c.id)]))}>
+                    Select all {exportSearch.trim() ? "matching" : ""} ({exportVisible.length})
+                  </ActionBtn>
+                  <ActionBtn $bg="#f1f5f9" $color="#64748b" style={{ fontSize: 11 }}
+                    onClick={() => setExportSelected(new Set())}>Clear</ActionBtn>
                 </div>
-                {candidates.map(c => (
+                <div style={{ fontSize: 11, color: "#64748b", marginBottom: 6 }}>
+                  <strong>{exportSelected.size}</strong> selected across the whole zone
+                  {exportSearch.trim() && ` — showing ${exportVisible.length} of ${exportOptions.length}`}
+                </div>
+                <div style={{ maxHeight: 300, overflowY: "auto", border: "1px solid #e2e8f0", borderRadius: 8, padding: 8 }}>
+                {optionsLoading ? <div style={{ fontSize: 12, color: "#94a3b8", padding: 8 }}>Loading candidates...</div>
+                  : exportVisible.length === 0 ? <div style={{ fontSize: 12, color: "#94a3b8", padding: 8 }}>No candidates match.</div>
+                  : exportVisible.map(c => (
                   <label key={c.id} style={{ display: "flex", alignItems: "center", gap: 8, padding: "4px 0", cursor: "pointer", fontSize: 12 }}>
                     <input type="checkbox" checked={exportSelected.has(c.id)} onChange={() => {
                       setExportSelected(prev => { const n = new Set(prev); if (n.has(c.id)) n.delete(c.id); else n.add(c.id); return n; });
@@ -812,6 +845,7 @@ function PipelineInner({ canDiscover = true, onSendToProspects }) {
                     {c.ig_handle && <span style={{ color: "#8b5cf6", fontSize: 11 }}>@{c.ig_handle}</span>}
                   </label>
                 ))}
+                </div>
               </div>
             )}
             {exportFilter !== "selected" && (

@@ -32,7 +32,6 @@ import { FaCartPlus } from "react-icons/fa";
 import { toast } from "react-toastify";
 import { trackItemView, trackAddToCart } from "../../../../utilities/analyticsTracking";
 import { getCurrencySymbol } from "../../../../utilities/getCurrencySymbol";
-import MacroChip from "../../../../product-macros/MacroChip";
 const _ = require('lodash');
 
 const WishlistHeartIcon = IoHeartOutline;
@@ -310,7 +309,6 @@ const Product = React.forwardRef(
             {plate.new && (
               <NEW>{restaurant?.activeLanguage === "en" ? "NEW !" : "! جديد"}</NEW>
             )}
-            <MacroChip macros={plate?.macros} activeLanguage={restaurant?.activeLanguage} />
             <Image
               ref={ref}
               onLoad={handleImageLoaded}
