@@ -913,7 +913,10 @@ function CreateProspectDialog({ open, onClose, onCreated, showToast, basePath, i
     try {
       // template / templateId / colorPreset are demo-build options, not prospect
       // columns. colorPreset is persisted as `theme` so a later rebuild reuses it.
-      const { template, templateId, colorPreset, ...prospectFields } = form;
+      // logo_source_url is handled separately below to avoid appending it twice
+      // (once from the spread, once from the fallback), which multer parses as
+      // an array and Sequelize rejects with "cannot be an array or an object".
+      const { template, templateId, colorPreset, logo_source_url, ...prospectFields } = form;
 
       const fd = new FormData();
       Object.entries(prospectFields).forEach(([k, v]) => {
@@ -922,7 +925,7 @@ function CreateProspectDialog({ open, onClose, onCreated, showToast, basePath, i
       });
       if (colorPreset) fd.append("theme", colorPreset);
       if (logoFile) fd.append("logo", logoFile);
-      else if (form.logo_source_url) fd.append("logo_source_url", form.logo_source_url);
+      else if (logo_source_url) fd.append("logo_source_url", logo_source_url);
 
       const { data } = await axios.post(`${API}${basePath}`, fd, {
         headers: { ...headers(), "Content-Type": "multipart/form-data" },
