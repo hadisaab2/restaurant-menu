@@ -67,7 +67,7 @@ export default function ApplicationRoutes() {
       <Suspense fallback={<SuspenseFallback />}>
         <RoutesWrapper>
           {/* Handle subdomain routing */}
-          {subdomain !== "www" && subdomain !== "menugic" && subdomain != "localhost" ? (
+          {subdomain !== "www" && subdomain !== "menugic" && subdomain !== "localhost" && subdomain !== "api" && subdomain !== "staging-api" ? (
             <Route path="/" element={<SubDomainTemplate restaurantName={subdomain} />} />
           ) : (
             <>
