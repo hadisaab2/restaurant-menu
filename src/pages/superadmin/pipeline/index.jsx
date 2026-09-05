@@ -76,7 +76,7 @@ function PipelineInner({ canDiscover = true, onSendToProspects }) {
   useEffect(() => {
     if (runData && runData.status !== "PROCESSING" && activeRunId) {
       const counts = runData.counts_json;
-      if (runData.status === "COMPLETED") {
+      if (runData.status === "DONE") {
         const parts = [];
         if (counts?.enriched) parts.push(`${counts.enriched} enriched`);
         if (counts?.cacheHits) parts.push(`${counts.cacheHits} cached`);
