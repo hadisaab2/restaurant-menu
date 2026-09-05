@@ -36,7 +36,7 @@ export default function Theme2() {
   const subdomain = hostname.split(".")[0];
   // Determine the restaurant name to use
   const restaurantName =
-    subdomain !== "menugic" && subdomain !== "localhost" && subdomain !== "www"
+    subdomain !== "menugic" && subdomain !== "localhost" && subdomain !== "www" && subdomain !== "api" && subdomain !== "staging-api"
       ? subdomain
       : paramRestaurantName;
 

@@ -18,7 +18,7 @@ export default function Theme9() {
   const { restaurantName: paramName } = useParams();
   const hostname = window.location.hostname;
   const subdomain = hostname.split(".")[0];
-  const restaurantName = subdomain !== "menugic" && subdomain !== "localhost" && subdomain !== "www" ? subdomain : paramName;
+  const restaurantName = subdomain !== "menugic" && subdomain !== "localhost" && subdomain !== "www" && subdomain !== "api" && subdomain !== "staging-api" ? subdomain : paramName;
 
   const restaurant = useSelector((state) => state.restaurant?.[restaurantName]);
   const lang = useSelector((state) => state.restaurant?.[restaurantName]?.activeLanguage || "en");

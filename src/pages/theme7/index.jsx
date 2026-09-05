@@ -36,7 +36,7 @@ export default function Theme7() {
   const hostname = window.location.hostname;
   const subdomain = hostname.split(".")[0];
   const restaurantName =
-    subdomain !== "menugic" && subdomain !== "localhost" && subdomain !== "www"
+    subdomain !== "menugic" && subdomain !== "localhost" && subdomain !== "www" && subdomain !== "api" && subdomain !== "staging-api"
       ? subdomain : paramRestaurantName;
 
   const restaurant = useSelector((s) => s.restaurant?.[restaurantName]);

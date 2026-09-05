@@ -21,7 +21,7 @@ export default function HeaderTop({setshowSidebar,showSidebar}) {
 
   // Determine the restaurant name to use
   const restaurantName =
-    subdomain !== "menugic" && subdomain !== "localhost" && subdomain !== "www"
+    subdomain !== "menugic" && subdomain !== "localhost" && subdomain !== "www" && subdomain !== "api" && subdomain !== "staging-api"
       ? subdomain
       : paramRestaurantName;
 

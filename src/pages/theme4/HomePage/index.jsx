@@ -281,7 +281,7 @@ export default function HomePage({ onExploreClick, categories, setSearchParams, 
   const subdomain = hostname.split(".")[0];
   
   const restaurantName =
-    subdomain !== "menugic" && subdomain !== "localhost" && subdomain !== "www"
+    subdomain !== "menugic" && subdomain !== "localhost" && subdomain !== "www" && subdomain !== "api" && subdomain !== "staging-api"
       ? subdomain
       : paramRestaurantName;
 

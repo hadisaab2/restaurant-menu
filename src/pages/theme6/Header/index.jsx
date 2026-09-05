@@ -27,7 +27,7 @@ export default function Header({
   const subdomain = hostname.split('.')[0];
 
   // Determine the restaurant name to use
-  const restaurantName = (subdomain !== "menugic" && subdomain !== "localhost" && subdomain !== "www")
+  const restaurantName = (subdomain !== "menugic" && subdomain !== "localhost" && subdomain !== "www" && subdomain !== "api" && subdomain !== "staging-api")
     ? subdomain
     : paramRestaurantName;
 
