@@ -9,6 +9,7 @@ import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import DialogActions from "@mui/material/DialogActions";
 import TextField from "@mui/material/TextField";
+import Snackbar from "@mui/material/Snackbar";
 
 import {
   useGetZones, useGetCandidates, useSourceZone, useSourceEstimate, useDetailsEstimate, useFetchDetails,
@@ -70,9 +71,20 @@ function PipelineInner({ canDiscover = true, onSendToProspects }) {
 
   const [activeRunId, setActiveRunId] = useState(null);
   const { data: runData } = useRunStatus(activeRunId);
+  const [toast, setToast] = useState(null); // { message, severity }
 
   useEffect(() => {
     if (runData && runData.status !== "PROCESSING" && activeRunId) {
+      const counts = runData.counts_json;
+      if (runData.status === "COMPLETED") {
+        const parts = [];
+        if (counts?.enriched) parts.push(`${counts.enriched} enriched`);
+        if (counts?.cacheHits) parts.push(`${counts.cacheHits} cached`);
+        if (counts?.failed) parts.push(`${counts.failed} failed`);
+        setToast({ message: `Enrichment complete — ${parts.join(", ") || "done"}`, severity: "success" });
+      } else {
+        setToast({ message: `Enrichment ${runData.status?.toLowerCase() || "ended"}: ${runData.error || "unknown error"}`, severity: "error" });
+      }
       setActiveRunId(null);
       refetchCandidates();
     }
@@ -1195,6 +1207,19 @@ function PipelineInner({ canDiscover = true, onSendToProspects }) {
         )}
         </DialogContent>
       </Dialog>
+      {/* Enrichment result toast */}
+      <Snackbar
+        open={!!toast}
+        autoHideDuration={toast?.severity === "success" ? 5000 : 8000}
+        onClose={() => setToast(null)}
+        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+      >
+        {toast ? (
+          <Alert onClose={() => setToast(null)} severity={toast.severity} sx={{ width: "100%", fontSize: 13 }}>
+            {toast.message}
+          </Alert>
+        ) : undefined}
+      </Snackbar>
     </PipelineContainer>
   );
 }
