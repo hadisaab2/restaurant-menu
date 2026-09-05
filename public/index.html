@@ -16,9 +16,10 @@
           const hostname = window.location.hostname;
           const pathParts = window.location.pathname.split('/');
 
-          if (hostname.includes("menugic.com") && hostname !== "www.menugic.com") {
+          var sub = hostname.split('.')[0];
+          if (hostname.includes("menugic.com") && hostname !== "www.menugic.com" && sub !== "api" && sub !== "staging-api") {
               // Subdomain-based URL: restname.menugic.com
-              restaurantName = hostname.split('.')[0]; 
+              restaurantName = sub;
           } else if (pathParts.length > 1 && pathParts[1]) {
               // Path-based URL: www.menugic.com/restname
               restaurantName = pathParts[1];
