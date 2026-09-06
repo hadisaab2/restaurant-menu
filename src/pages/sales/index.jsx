@@ -8,6 +8,7 @@ import { BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid, ResponsiveContaine
 import Prospects from "../superadmin/prospects";
 import Messages from "../superadmin/messages";
 import Pipeline from "../superadmin/pipeline";
+import Restaurants from "../superadmin/restaurants";
 import { SALES_SCOPE } from "../../apis/pipeline/scope";
 
 const API = process.env.REACT_APP_BASE_URL;
@@ -427,7 +428,7 @@ const timeAgo = (dateStr) => {
    ═══════════════════════════════════════════════ */
 export default function SalesDashboard() {
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState("My Prospects");
+  const [activeTab, setActiveTab] = useState("Restaurants");
   // Hand-off from Pipeline's "send to prospects" arrow.
   const [prospectPrefill, setProspectPrefill] = useState(null);
 
@@ -442,7 +443,7 @@ export default function SalesDashboard() {
     navigate("/login");
   };
 
-  const TABS = ["My Prospects", "Pipeline", "Messages", "My Stats"];
+  const TABS = ["Restaurants", "My Prospects", "Pipeline", "Messages", "My Stats"];
 
   return (
     <Container>
@@ -491,6 +492,7 @@ export default function SalesDashboard() {
 
       {/* Content */}
       <ContentArea>
+        {activeTab === "Restaurants" && <Restaurants readOnly basePath="/sales/restaurants" />}
         {activeTab === "My Prospects" && (
           <Prospects
             basePath="/sales/prospects"

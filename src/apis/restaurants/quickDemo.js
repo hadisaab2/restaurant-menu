@@ -9,11 +9,12 @@ const headers = () => ({
 });
 
 // GET /restaurants/quick-demo/templates
-export const useGetQuickDemoTemplates = () => {
+export const useGetQuickDemoTemplates = (basePath) => {
+  const base = basePath || "/restaurants";
   return useQuery({
-    queryKey: ["quick-demo-templates"],
+    queryKey: ["quick-demo-templates", base],
     queryFn: async () => {
-      const res = await axios.get(`${BASE_URL}/restaurants/quick-demo/templates`, { headers: headers() });
+      const res = await axios.get(`${BASE_URL}${base}/quick-demo/templates`, { headers: headers() });
       return res.data.data;
     },
     refetchOnWindowFocus: false,
@@ -21,10 +22,11 @@ export const useGetQuickDemoTemplates = () => {
 };
 
 // POST /restaurants/quick-demo
-export const useCreateQuickDemo = ({ onSuccess }) => {
+export const useCreateQuickDemo = ({ onSuccess, basePath }) => {
+  const base = basePath || "/restaurants";
   const { error, mutate, isPending } = useMutation({
     mutationFn: async (payload) => {
-      const res = await axios.post(`${BASE_URL}/restaurants/quick-demo`, payload, { headers: headers() });
+      const res = await axios.post(`${BASE_URL}${base}/quick-demo`, payload, { headers: headers() });
       return res.data;
     },
     onSuccess,

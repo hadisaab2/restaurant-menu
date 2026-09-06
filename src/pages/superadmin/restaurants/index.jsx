@@ -79,7 +79,7 @@ import { useAddAboutUsValueQuery } from "../../../apis/aboutUs/addAboutUsValue";
 import { useEditAboutUsValueQuery } from "../../../apis/aboutUs/editAboutUsValue";
 import { useDeleteAboutUsValueQuery } from "../../../apis/aboutUs/deleteAboutUsValue";
 
-export default function Restaurants() {
+export default function Restaurants({ readOnly = false, basePath = "/restaurants" }) {
   const [isEditMode, setIsEditMode] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [showAddComponent, setShowAddComponent] = useState(false);
@@ -153,6 +153,7 @@ export default function Restaurants() {
 
   const { response, isLoading, refetch } = useGetRestaurants({
     onSuccess: () => { },
+    basePath,
     filterParams: {
       ...(gridSearch.trim() && { search: gridSearch.trim() }),
       ...(paymentDateFrom && { paymentDateFrom }),
@@ -857,40 +858,45 @@ export default function Restaurants() {
     <Container>
       {!showAddComponent ? (
         <>
-          <DeleteRestaurantPopup
-            refetchRestaurant={refetchRestaurants}
-            isOpen={isPopupOpen}
-            selectedIdForAction={selectedIdForAction}
-            setIsOpen={setIsPopupOpen}
-          />
+          {!readOnly && (
+            <DeleteRestaurantPopup
+              refetchRestaurant={refetchRestaurants}
+              isOpen={isPopupOpen}
+              selectedIdForAction={selectedIdForAction}
+              setIsOpen={setIsPopupOpen}
+            />
+          )}
           <div style={{ display: "flex", gap: "12px", marginBottom: "20px", flexWrap: "wrap", alignItems: "center" }}>
-            <AddRestaurant onClick={() => {
-              // Set default features for new restaurant
-              setValue("features", { ...DEFAULT_FEATURES });
-              setShowAddComponent(true);
-            }}>
-              Add Restaurant
-            </AddRestaurant>
-            <Button
-              variant="contained"
-              sx={{
-                background: "linear-gradient(135deg, #10b981 0%, #059669 100%)",
-                color: "white",
-                textTransform: "capitalize",
-                borderRadius: "10px",
-                fontWeight: 600,
-                fontSize: "14px",
-                padding: "8px 20px",
-                boxShadow: "0 4px 14px rgba(16,185,129,0.3)",
-                "&:hover": {
-                  boxShadow: "0 6px 20px rgba(16,185,129,0.4)",
-                  transform: "translateY(-1px)",
-                },
-              }}
-              onClick={() => setShowExcelModal(true)}
-            >
-              Add via Excel
-            </Button>
+            {!readOnly && (
+              <AddRestaurant onClick={() => {
+                setValue("features", { ...DEFAULT_FEATURES });
+                setShowAddComponent(true);
+              }}>
+                Add Restaurant
+              </AddRestaurant>
+            )}
+            {!readOnly && (
+              <Button
+                variant="contained"
+                sx={{
+                  background: "linear-gradient(135deg, #10b981 0%, #059669 100%)",
+                  color: "white",
+                  textTransform: "capitalize",
+                  borderRadius: "10px",
+                  fontWeight: 600,
+                  fontSize: "14px",
+                  padding: "8px 20px",
+                  boxShadow: "0 4px 14px rgba(16,185,129,0.3)",
+                  "&:hover": {
+                    boxShadow: "0 6px 20px rgba(16,185,129,0.4)",
+                    transform: "translateY(-1px)",
+                  },
+                }}
+                onClick={() => setShowExcelModal(true)}
+              >
+                Add via Excel
+              </Button>
+            )}
             <Button
               variant="contained"
               sx={{
@@ -911,20 +917,22 @@ export default function Restaurants() {
             >
               Quick Demo
             </Button>
-            <Button
-              variant="outlined"
-              sx={{
-                textTransform: "none",
-                fontWeight: 600,
-                fontSize: 13,
-                borderColor: "#8b5cf6",
-                color: "#8b5cf6",
-                "&:hover": { borderColor: "#7c3aed", background: "rgba(139,92,246,0.05)" },
-              }}
-              onClick={() => setShowDuplicateModal(true)}
-            >
-              Duplicate Restaurant
-            </Button>
+            {!readOnly && (
+              <Button
+                variant="outlined"
+                sx={{
+                  textTransform: "none",
+                  fontWeight: 600,
+                  fontSize: 13,
+                  borderColor: "#8b5cf6",
+                  color: "#8b5cf6",
+                  "&:hover": { borderColor: "#7c3aed", background: "rgba(139,92,246,0.05)" },
+                }}
+                onClick={() => setShowDuplicateModal(true)}
+              >
+                Duplicate Restaurant
+              </Button>
+            )}
           </div>
           <Box sx={{
             display: "flex",
@@ -1012,6 +1020,7 @@ export default function Restaurants() {
             setIsPopupOpen={setIsPopupOpen}
             handleEdit={handleEdit}
             onRefresh={refetch}
+            readOnly={readOnly}
           />
           <Button
             sx={{
@@ -1240,6 +1249,7 @@ export default function Restaurants() {
             open={showQuickDemoModal}
             onClose={() => setShowQuickDemoModal(false)}
             onSuccess={() => { setShowQuickDemoModal(false); refetchRestaurants(); }}
+            basePath={basePath}
           />
 
           {/* Duplicate Restaurant Dialog */}
@@ -2357,9 +2367,9 @@ export default function Restaurants() {
 }
 
 // ── Quick Demo Dialog ──
-function QuickDemoDialog({ open, onClose, onSuccess }) {
-  const { data: demoTemplates, isLoading: loadingTemplates } = useGetQuickDemoTemplates();
-  const { createDemo, isPending } = useCreateQuickDemo({
+function QuickDemoDialog({ open, onClose, onSuccess, basePath = "/restaurants" }) {
+  const { data: demoTemplates, isLoading: loadingTemplates } = useGetQuickDemoTemplates(basePath);
+  const { createDemo, isPending } = useCreateQuickDemo({ basePath,
     onSuccess: (data) => {
       setResult(data);
     },

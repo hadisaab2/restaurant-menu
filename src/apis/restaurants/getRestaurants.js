@@ -3,7 +3,7 @@ import { GET_RESTAURANTS_URL } from "../URLs";
 import { useQuery } from "@tanstack/react-query";
 import { getCookie } from "../../utilities/manageCookies";
 
-const getRestaurants = async (params = {}) => {
+const getRestaurants = async (params = {}, basePath) => {
   try {
     const searchParams = new URLSearchParams();
     if (params.search) searchParams.set("search", params.search);
@@ -11,7 +11,8 @@ const getRestaurants = async (params = {}) => {
     if (params.paymentDateTo) searchParams.set("paymentDateTo", params.paymentDateTo);
     if (params.paymentDatePassed) searchParams.set("paymentDatePassed", params.paymentDatePassed);
     const query = searchParams.toString();
-    const url = query ? `${GET_RESTAURANTS_URL}?${query}` : GET_RESTAURANTS_URL;
+    const base = basePath ? `${process.env.REACT_APP_BASE_URL}${basePath}` : GET_RESTAURANTS_URL;
+    const url = query ? `${base}?${query}` : base;
 
     const response = await axios.get(url, {
       headers: {
@@ -25,11 +26,11 @@ const getRestaurants = async (params = {}) => {
   }
 };
 
-export const useGetRestaurants = ({ onSuccess, filterParams } = {}) => {
+export const useGetRestaurants = ({ onSuccess, filterParams, basePath } = {}) => {
   const { error, isLoading, status, data, refetch } = useQuery({
-    queryFn: () => getRestaurants(filterParams || {}),
+    queryFn: () => getRestaurants(filterParams || {}, basePath),
     retry: false,
-    queryKey: ["restaurants", filterParams || {}],
+    queryKey: ["restaurants", filterParams || {}, basePath],
     onSuccess,
   });
 

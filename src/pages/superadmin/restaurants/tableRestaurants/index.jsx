@@ -64,6 +64,7 @@ export default function TableRestaurants({
   setIsPopupOpen,
   handleEdit,
   onRefresh,
+  readOnly = false,
 }) {
   const [reminderOpen, setReminderOpen] = useState(null); // restaurant object
   const [reminderTemplate, setReminderTemplate] = useState(0);
@@ -159,7 +160,7 @@ export default function TableRestaurants({
 
   return (
     <>
-      {selectedIds.size > 0 && (
+      {!readOnly && selectedIds.size > 0 && (
         <div style={{
           display: "flex", alignItems: "center", gap: 12, padding: "8px 16px",
           background: "rgba(239,68,68,0.06)", borderRadius: 8, marginBottom: 8,
@@ -263,22 +264,24 @@ export default function TableRestaurants({
                     </button>
                   </Td>
                   <Td>
-                    <EditDeleteIcons>
-                      <button
-                        onClick={() => openReminder(restaurant)}
-                        title="Send payment reminder"
-                        style={{ background: "none", border: "none", cursor: "pointer", fontSize: 16, padding: "2px 6px" }}
-                      >
-                        💬
-                      </button>
-                      <Edit onClick={() => handleEdit(restaurant)} />
-                      <Delete
-                        onClick={() => {
-                          setSelectedIdForAction(restaurant.restaurant_id);
-                          setIsPopupOpen(true);
-                        }}
-                      />
-                    </EditDeleteIcons>
+                    {!readOnly && (
+                      <EditDeleteIcons>
+                        <button
+                          onClick={() => openReminder(restaurant)}
+                          title="Send payment reminder"
+                          style={{ background: "none", border: "none", cursor: "pointer", fontSize: 16, padding: "2px 6px" }}
+                        >
+                          💬
+                        </button>
+                        <Edit onClick={() => handleEdit(restaurant)} />
+                        <Delete
+                          onClick={() => {
+                            setSelectedIdForAction(restaurant.restaurant_id);
+                            setIsPopupOpen(true);
+                          }}
+                        />
+                      </EditDeleteIcons>
+                    )}
                   </Td>
                 </Tr>
               );
