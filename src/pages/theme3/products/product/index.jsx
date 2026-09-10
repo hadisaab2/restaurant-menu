@@ -47,7 +47,7 @@ const Product = React.forwardRef(
     const restaurantName =
       subdomain !== "menugic" &&
         subdomain !== "localhost" &&
-        subdomain !== "www"
+        subdomain !== "www" && subdomain !== "api" && subdomain !== "staging-api"
         ? subdomain
         : paramRestaurantName;
 
