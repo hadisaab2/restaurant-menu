@@ -79,7 +79,9 @@ import { useAddAboutUsValueQuery } from "../../../apis/aboutUs/addAboutUsValue";
 import { useEditAboutUsValueQuery } from "../../../apis/aboutUs/editAboutUsValue";
 import { useDeleteAboutUsValueQuery } from "../../../apis/aboutUs/deleteAboutUsValue";
 
-export default function Restaurants({ readOnly = false, basePath = "/restaurants" }) {
+export default function Restaurants({ readOnly = false, salesUserId = null, basePath = "/restaurants" }) {
+  // salesUserId: when set, the user can only edit restaurants they created (created_by === salesUserId)
+  const isSalesMode = !!salesUserId;
   const [isEditMode, setIsEditMode] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [showAddComponent, setShowAddComponent] = useState(false);
@@ -488,6 +490,7 @@ export default function Restaurants({ readOnly = false, basePath = "/restaurants
 
   const { handleApiCall: handleEditApi, isPending: isEditing } =
     useEditRestaurantQuery({
+      basePath,
       onSuccess: (response) => {
         const restaurantId = response?.data?.id;
         if (restaurantId && file) {
@@ -858,7 +861,7 @@ export default function Restaurants({ readOnly = false, basePath = "/restaurants
     <Container>
       {!showAddComponent ? (
         <>
-          {!readOnly && (
+          {!readOnly && !isSalesMode && (
             <DeleteRestaurantPopup
               refetchRestaurant={refetchRestaurants}
               isOpen={isPopupOpen}
@@ -867,7 +870,7 @@ export default function Restaurants({ readOnly = false, basePath = "/restaurants
             />
           )}
           <div style={{ display: "flex", gap: "12px", marginBottom: "20px", flexWrap: "wrap", alignItems: "center" }}>
-            {!readOnly && (
+            {!readOnly && !isSalesMode && (
               <AddRestaurant onClick={() => {
                 setValue("features", { ...DEFAULT_FEATURES });
                 setShowAddComponent(true);
@@ -875,7 +878,7 @@ export default function Restaurants({ readOnly = false, basePath = "/restaurants
                 Add Restaurant
               </AddRestaurant>
             )}
-            {!readOnly && (
+            {!readOnly && !isSalesMode && (
               <Button
                 variant="contained"
                 sx={{
@@ -917,7 +920,7 @@ export default function Restaurants({ readOnly = false, basePath = "/restaurants
             >
               Quick Demo
             </Button>
-            {!readOnly && (
+            {!readOnly && !isSalesMode && (
               <Button
                 variant="outlined"
                 sx={{
@@ -1021,6 +1024,7 @@ export default function Restaurants({ readOnly = false, basePath = "/restaurants
             handleEdit={handleEdit}
             onRefresh={refetch}
             readOnly={readOnly}
+            salesUserId={salesUserId}
           />
           <Button
             sx={{

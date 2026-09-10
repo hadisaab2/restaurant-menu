@@ -492,7 +492,7 @@ export default function SalesDashboard() {
 
       {/* Content */}
       <ContentArea>
-        {activeTab === "Restaurants" && <Restaurants readOnly basePath="/sales/restaurants" />}
+        {activeTab === "Restaurants" && <Restaurants salesUserId={userInfo.id} basePath="/sales/restaurants" />}
         {activeTab === "My Prospects" && (
           <Prospects
             basePath="/sales/prospects"

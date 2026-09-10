@@ -65,6 +65,7 @@ export default function TableRestaurants({
   handleEdit,
   onRefresh,
   readOnly = false,
+  salesUserId = null,
 }) {
   const [reminderOpen, setReminderOpen] = useState(null); // restaurant object
   const [reminderTemplate, setReminderTemplate] = useState(0);
@@ -160,7 +161,7 @@ export default function TableRestaurants({
 
   return (
     <>
-      {!readOnly && selectedIds.size > 0 && (
+      {!readOnly && !salesUserId && selectedIds.size > 0 && (
         <div style={{
           display: "flex", alignItems: "center", gap: 12, padding: "8px 16px",
           background: "rgba(239,68,68,0.06)", borderRadius: 8, marginBottom: 8,
@@ -194,14 +195,16 @@ export default function TableRestaurants({
         <Table>
           <thead>
             <tr>
-              <Th style={{ width: 36 }}>
-                <input
-                  type="checkbox"
-                  checked={allSelected}
-                  onChange={toggleAll}
-                  style={{ cursor: "pointer" }}
-                />
-              </Th>
+              {!salesUserId && (
+                <Th style={{ width: 36 }}>
+                  <input
+                    type="checkbox"
+                    checked={allSelected}
+                    onChange={toggleAll}
+                    style={{ cursor: "pointer" }}
+                  />
+                </Th>
+              )}
               <Th>User name</Th>
               <Th>Restaurant name</Th>
               <Th>Link</Th>
@@ -219,14 +222,16 @@ export default function TableRestaurants({
               const onLanding = restaurant.showInMainWebsite === true || restaurant.showInMainWebsite === 1;
               return (
                 <Tr key={restaurant.restaurant_id} $needRenewal={needRenewal}>
-                  <Td>
-                    <input
-                      type="checkbox"
-                      checked={selectedIds.has(restaurant.restaurant_id)}
-                      onChange={() => toggleOne(restaurant.restaurant_id)}
-                      style={{ cursor: "pointer" }}
-                    />
-                  </Td>
+                  {!salesUserId && (
+                    <Td>
+                      <input
+                        type="checkbox"
+                        checked={selectedIds.has(restaurant.restaurant_id)}
+                        onChange={() => toggleOne(restaurant.restaurant_id)}
+                        style={{ cursor: "pointer" }}
+                      />
+                    </Td>
+                  )}
                   <Td>{restaurant.username}</Td>
                   <Td>{restaurant.restaurantName}</Td>
                   <Td>
@@ -264,7 +269,7 @@ export default function TableRestaurants({
                     </button>
                   </Td>
                   <Td>
-                    {!readOnly && (
+                    {!readOnly && !salesUserId && (
                       <EditDeleteIcons>
                         <button
                           onClick={() => openReminder(restaurant)}
@@ -280,6 +285,11 @@ export default function TableRestaurants({
                             setIsPopupOpen(true);
                           }}
                         />
+                      </EditDeleteIcons>
+                    )}
+                    {salesUserId && restaurant.created_by === salesUserId && (
+                      <EditDeleteIcons>
+                        <Edit onClick={() => handleEdit(restaurant)} />
                       </EditDeleteIcons>
                     )}
                   </Td>
