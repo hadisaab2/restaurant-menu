@@ -1,7 +1,6 @@
 import styled from "styled-components";
 import { breakingPoints } from "../../../../styles/theme";
-import { MdModeEditOutline } from "react-icons/md";
-import { MdDelete } from "react-icons/md";
+import { MdModeEditOutline, MdDelete, MdVisibility } from "react-icons/md";
 
 const T = {
   accent: "#5eabb1",
@@ -104,5 +103,19 @@ export const Edit = styled(MdModeEditOutline)`
   &:hover {
     color: ${T.accent};
     background: rgba(94, 171, 177, 0.08);
+  }
+`;
+
+export const View = styled(MdVisibility)`
+  cursor: pointer;
+  font-size: 18px;
+  color: ${T.textSub};
+  padding: 6px;
+  border-radius: 8px;
+  transition: all 0.15s;
+
+  &:hover {
+    color: #6366f1;
+    background: rgba(99, 102, 241, 0.08);
   }
 `;

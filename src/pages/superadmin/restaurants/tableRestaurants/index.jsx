@@ -4,7 +4,7 @@ import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import DialogActions from "@mui/material/DialogActions";
-import { Delete, Edit, EditDeleteIcons, Table, TableWrapper, Td, Th, Tr } from "./styles";
+import { Delete, Edit, View, EditDeleteIcons, Table, TableWrapper, Td, Th, Tr } from "./styles";
 import { getCookie } from "../../../../utilities/manageCookies";
 
 
@@ -63,6 +63,7 @@ export default function TableRestaurants({
   setSelectedIdForAction,
   setIsPopupOpen,
   handleEdit,
+  handleView,
   onRefresh,
   readOnly = false,
   salesUserId = null,
@@ -287,9 +288,13 @@ export default function TableRestaurants({
                         />
                       </EditDeleteIcons>
                     )}
-                    {salesUserId && restaurant.created_by === salesUserId && (
+                    {salesUserId && (
                       <EditDeleteIcons>
-                        <Edit onClick={() => handleEdit(restaurant)} />
+                        {restaurant.created_by === salesUserId ? (
+                          <Edit onClick={() => handleEdit(restaurant)} title="Edit" />
+                        ) : (
+                          <View onClick={() => handleView(restaurant)} title="View details" />
+                        )}
                       </EditDeleteIcons>
                     )}
                   </Td>

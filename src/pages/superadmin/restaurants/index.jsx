@@ -83,6 +83,7 @@ export default function Restaurants({ readOnly = false, salesUserId = null, base
   // salesUserId: when set, the user can only edit restaurants they created (created_by === salesUserId)
   const isSalesMode = !!salesUserId;
   const [isEditMode, setIsEditMode] = useState(false);
+  const [isViewOnly, setIsViewOnly] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [showAddComponent, setShowAddComponent] = useState(false);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
@@ -568,7 +569,8 @@ export default function Restaurants({ readOnly = false, salesUserId = null, base
     setSelectedProduct(null);
     setShowAddComponent(false);
     handleOnDeleteImage();
-    setIsEditMode(false)
+    setIsEditMode(false);
+    setIsViewOnly(false);
   }
 
   const handleSquareDimension = (event) => {
@@ -755,6 +757,11 @@ export default function Restaurants({ readOnly = false, salesUserId = null, base
 
     // Add restaurant ID to URL
     setSearchParams({ id: restaurant_id });
+  };
+
+  const handleView = (restaurant) => {
+    handleEdit(restaurant);
+    setIsViewOnly(true);
   };
 
   const handleAddRestaurant = () => {
@@ -1022,6 +1029,7 @@ export default function Restaurants({ readOnly = false, salesUserId = null, base
             setSelectedIdForAction={setSelectedIdForAction}
             setIsPopupOpen={setIsPopupOpen}
             handleEdit={handleEdit}
+            handleView={handleView}
             onRefresh={refetch}
             readOnly={readOnly}
             salesUserId={salesUserId}
@@ -1355,11 +1363,24 @@ export default function Restaurants({ readOnly = false, salesUserId = null, base
                 setShowAddComponent(false);
                 handleOnDeleteImage();
                 setIsEditMode(false);
+                setIsViewOnly(false);
                 // Remove restaurant ID from URL when closing
                 setSearchParams({});
               }}
             />
-
+            {isViewOnly && (
+              <div style={{
+                background: "rgba(99,102,241,0.08)",
+                color: "#6366f1",
+                padding: "8px 16px",
+                borderRadius: "8px",
+                fontWeight: 600,
+                fontSize: "13px",
+                marginBottom: "8px",
+              }}>
+                View Only
+              </div>
+            )}
 
             {mainFields.map(({ label, name, required }) => (
               <TextField
@@ -2192,26 +2213,28 @@ export default function Restaurants({ readOnly = false, salesUserId = null, base
                 </FormControl>
               </Box>
             )}
-            <LoadingButton
-              onClick={handleAddRestaurant}
-              sx={{
-                background: "linear-gradient(135deg, #5eabb1 0%, #4a9ba0 100%)",
-                color: "white",
-                borderRadius: "10px",
-                fontWeight: 600,
-                fontSize: "14px",
-                padding: "10px 32px",
-                boxShadow: "0 4px 14px rgba(94,171,177,0.3)",
-                textTransform: "capitalize",
-                "&:hover": {
-                  boxShadow: "0 6px 20px rgba(94,171,177,0.4)",
-                  transform: "translateY(-1px)",
-                },
-              }}
-              loading={isPending || isEditing}
-            >
-              {isEditMode ? "Edit Restaurant" : "Add Restaurant"}
-            </LoadingButton>
+            {!isViewOnly && (
+              <LoadingButton
+                onClick={handleAddRestaurant}
+                sx={{
+                  background: "linear-gradient(135deg, #5eabb1 0%, #4a9ba0 100%)",
+                  color: "white",
+                  borderRadius: "10px",
+                  fontWeight: 600,
+                  fontSize: "14px",
+                  padding: "10px 32px",
+                  boxShadow: "0 4px 14px rgba(94,171,177,0.3)",
+                  textTransform: "capitalize",
+                  "&:hover": {
+                    boxShadow: "0 6px 20px rgba(94,171,177,0.4)",
+                    transform: "translateY(-1px)",
+                  },
+                }}
+                loading={isPending || isEditing}
+              >
+                {isEditMode ? "Edit Restaurant" : "Add Restaurant"}
+              </LoadingButton>
+            )}
 
           </AddRestaurantForm>
         </>
