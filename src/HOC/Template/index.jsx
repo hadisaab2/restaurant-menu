@@ -86,7 +86,7 @@ export default function Template() {
         link.rel = 'icon';
         document.getElementsByTagName('head')[0].appendChild(link);
       }
-      link.href = `https://storage.googleapis.com/ecommerce-bucket-testing/${response.data.logoURL}`;
+      link.href = `https://storage.googleapis.com/menugic-images/${response.data.logoURL}`;
 
       dispatch(
         changelanuage({

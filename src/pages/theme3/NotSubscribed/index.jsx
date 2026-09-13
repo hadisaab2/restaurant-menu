@@ -20,7 +20,7 @@ const MENUGIC_CONTACT_URL = "https://www.menugic.com/#contact";
 
 export default function Theme3NotSubscribed({ restaurant }) {
   const logoUrl = restaurant?.logoURL
-    ? `https://storage.googleapis.com/ecommerce-bucket-testing/${restaurant.logoURL}`
+    ? `https://storage.googleapis.com/menugic-images/${restaurant.logoURL}`
     : null;
 
   return (

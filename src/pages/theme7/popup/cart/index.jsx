@@ -17,7 +17,7 @@ import {
   OrderTypeRow, OrderTypeBtn, CheckoutActions, CheckoutBackBtn, WhatsAppBtn,
 } from "../../styles";
 
-const STORAGE_URL = "https://storage.googleapis.com/ecommerce-bucket-testing/";
+const STORAGE_URL = "https://storage.googleapis.com/menugic-images/";
 
 function getCartItemImage(item) {
   const coverIdx = item.images?.findIndex((img) => img.id === item.new_cover_id);

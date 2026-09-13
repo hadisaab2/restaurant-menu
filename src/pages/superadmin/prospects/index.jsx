@@ -521,7 +521,7 @@ export default function Prospects({
                       <div
                         onClick={() => downloadLogo(
                           p.logo_uploaded_url
-                            ? `https://storage.googleapis.com/ecommerce-bucket-testing/${p.logo_uploaded_url}`
+                            ? `https://storage.googleapis.com/menugic-images/${p.logo_uploaded_url}`
                             : p.logo_source_url,
                           p.business_name
                         )}
@@ -529,7 +529,7 @@ export default function Prospects({
                         style={{ cursor: p.logo_uploaded_url || p.logo_source_url ? "pointer" : "default" }}
                       >
                         {p.logo_uploaded_url ? (
-                          <img src={`https://storage.googleapis.com/ecommerce-bucket-testing/${p.logo_uploaded_url}`} alt="" style={s.logo} />
+                          <img src={`https://storage.googleapis.com/menugic-images/${p.logo_uploaded_url}`} alt="" style={s.logo} />
                         ) : p.logo_source_url ? (
                           <img src={p.logo_source_url} alt="" style={s.logo} onError={(e) => { e.target.style.display = "none"; e.target.nextSibling.style.display = "flex"; }} />
                         ) : null}
@@ -1195,7 +1195,7 @@ function SendMessageDialog({ open, prospect, onClose, showToast, onSent, basePat
       if (data.data?.whatsapp_url) {
         // Auto-download screenshot if available (so operator can attach it in WhatsApp)
         if (prospect.screenshot_url) {
-          const imgBase = process.env.REACT_APP_GCP_BASE_URL || "https://storage.googleapis.com/ecommerce-bucket-testing/";
+          const imgBase = process.env.REACT_APP_GCP_BASE_URL || "https://storage.googleapis.com/menugic-images/";
           const imgUrl = prospect.screenshot_url.startsWith("http") ? prospect.screenshot_url : `${imgBase}${prospect.screenshot_url}`;
           try {
             const resp = await fetch(imgUrl);

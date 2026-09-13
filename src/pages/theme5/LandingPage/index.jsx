@@ -53,7 +53,7 @@ export default function LandingPage({
   const logoUrl = restaurant?.logoURL
     ? restaurant.logoURL.startsWith("http")
       ? restaurant.logoURL
-      : `https://storage.googleapis.com/ecommerce-bucket-testing/${restaurant.logoURL}`
+      : `https://storage.googleapis.com/menugic-images/${restaurant.logoURL}`
     : null;
 
   const displayName =

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Container } from "./styles";
 import "./styles.css";
 
-const STORAGE_URL = "https://storage.googleapis.com/ecommerce-bucket-testing/";
+const STORAGE_URL = "https://storage.googleapis.com/menugic-images/";
 
 const backgroundColors = [
   { name: "kacodoner", color: "rgb(255 233 226)" },

@@ -243,7 +243,7 @@ export default function NavigationBar({
           >
             {restaurant?.logoURL && (
               <Logo
-                src={`https://storage.googleapis.com/ecommerce-bucket-testing/${restaurant.logoURL}`}
+                src={`https://storage.googleapis.com/menugic-images/${restaurant.logoURL}`}
                 alt={restaurant?.name || "Restaurant Logo"}
               />
             )}
@@ -395,7 +395,7 @@ export default function NavigationBar({
                 style={{ cursor: onHomeClick ? "pointer" : "default" }}
               >
                 <MobileMenuLogo
-                  src={`https://storage.googleapis.com/ecommerce-bucket-testing/${restaurant.logoURL}`}
+                  src={`https://storage.googleapis.com/menugic-images/${restaurant.logoURL}`}
                   alt={restaurant?.name || "Restaurant Logo"}
                 />
               </MobileMenuLogoContainer>

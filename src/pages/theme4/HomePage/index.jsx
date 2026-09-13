@@ -471,7 +471,7 @@ export default function HomePage({ onExploreClick, categories, setSearchParams, 
           </WelcomeText>
           {restaurant?.logoURL && (
             <WelcomeLogo
-              src={`https://storage.googleapis.com/ecommerce-bucket-testing/${restaurant.logoURL}`}
+              src={`https://storage.googleapis.com/menugic-images/${restaurant.logoURL}`}
               alt={restaurant?.name || restaurantName}
               activeLanguage={activeLanguage}
             />
@@ -532,7 +532,7 @@ export default function HomePage({ onExploreClick, categories, setSearchParams, 
                     activeLanguage={activeLanguage}
                     onExploreClick={onExploreClick}
                     logoURL={restaurant?.logoURL
-                      ? `https://storage.googleapis.com/ecommerce-bucket-testing/${restaurant.logoURL}`
+                      ? `https://storage.googleapis.com/menugic-images/${restaurant.logoURL}`
                       : null}
                   />
                 ))}
@@ -739,7 +739,7 @@ export default function HomePage({ onExploreClick, categories, setSearchParams, 
             <FooterBrand>
               {restaurant?.logoURL ? (
                 <FooterLogoImg
-                  src={`https://storage.googleapis.com/ecommerce-bucket-testing/${restaurant.logoURL}`}
+                  src={`https://storage.googleapis.com/menugic-images/${restaurant.logoURL}`}
                   alt={restaurant?.name || restaurantName}
                 />
               ) : (

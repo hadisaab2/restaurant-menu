@@ -1477,7 +1477,7 @@ function Customers() {
               logo:
                 r?.logo ||
                 (r?.logoURL
-                  ? `https://storage.googleapis.com/ecommerce-bucket-testing/${r.logoURL}`
+                  ? `https://storage.googleapis.com/menugic-images/${r.logoURL}`
                   : ""),
               category: (r?.business_type || r?.category || "Business").toString(),
             };

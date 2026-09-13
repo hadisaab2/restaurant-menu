@@ -109,7 +109,7 @@ export default function SideBar({
             showSidebar={showSidebar}
             src={
               restaurant?.logoURL &&
-              `https://storage.googleapis.com/ecommerce-bucket-testing/${restaurant.logoURL}`
+              `https://storage.googleapis.com/menugic-images/${restaurant.logoURL}`
             }
           />
         </BrandContainer>
@@ -140,7 +140,7 @@ export default function SideBar({
                           category.image_url
                             ? getImageUrl(category.image_url)
                             : category.isAllItems && restaurant?.logoURL
-                            ? `https://storage.googleapis.com/ecommerce-bucket-testing/${restaurant.logoURL}`
+                            ? `https://storage.googleapis.com/menugic-images/${restaurant.logoURL}`
                             : ""
                         }
                       />

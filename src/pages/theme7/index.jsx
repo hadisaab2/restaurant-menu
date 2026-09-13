@@ -22,7 +22,7 @@ import {
 import { FaInstagram, FaFacebook, FaTiktok } from "react-icons/fa";
 import * as S from "./styles";
 
-const STORAGE_URL = "https://storage.googleapis.com/ecommerce-bucket-testing/";
+const STORAGE_URL = "https://storage.googleapis.com/menugic-images/";
 
 /* ───────────────────────────────────────────
    Google Fonts loader

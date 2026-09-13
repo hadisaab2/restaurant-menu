@@ -133,7 +133,7 @@ export default function SocialProof() {
           return {
             name: (r?.name || r?.restaurant_name || "").toString().trim() || subdomain,
             subdomain,
-            logo: r?.logo || (r?.logoURL ? `https://storage.googleapis.com/ecommerce-bucket-testing/${r.logoURL}` : ""),
+            logo: r?.logo || (r?.logoURL ? `https://storage.googleapis.com/menugic-images/${r.logoURL}` : ""),
             category: (r?.business_type || r?.category || "Business").toString(),
           };
         }).filter(Boolean);

@@ -20,7 +20,7 @@ import {
   HeroImagePopupClose,
 } from "./HeroBannerStyles";
 
-const IMAGE_BASE = "https://storage.googleapis.com/ecommerce-bucket-testing";
+const IMAGE_BASE = "https://storage.googleapis.com/menugic-images";
 const ROTATE_INTERVAL_MS = 5000;
 
 export default function HeroBanner({

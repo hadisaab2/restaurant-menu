@@ -252,7 +252,7 @@ export default function Analytics() {
         },
       });
       if (response.data?.logoURL) {
-        setLogoUrl(`https://storage.googleapis.com/ecommerce-bucket-testing/${response.data.logoURL}`);
+        setLogoUrl(`https://storage.googleapis.com/menugic-images/${response.data.logoURL}`);
       }
     } catch (error) {
       console.error("Error fetching restaurant logo:", error);

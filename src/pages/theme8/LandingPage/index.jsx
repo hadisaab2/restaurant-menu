@@ -19,7 +19,7 @@ import {
   PoweredBy,
 } from "./styles";
 
-const GCS_BASE = "https://storage.googleapis.com/ecommerce-bucket-testing/";
+const GCS_BASE = "https://storage.googleapis.com/menugic-images/";
 
 export default function LandingPage({
   restaurant,

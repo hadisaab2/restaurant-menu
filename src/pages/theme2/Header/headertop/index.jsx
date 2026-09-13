@@ -44,7 +44,7 @@ export default function HeaderTop({ setshowSidebar, showSidebar }) {
       <Brand
         src={
           restaurant?.logoURL &&
-          `https://storage.googleapis.com/ecommerce-bucket-testing/${restaurant.logoURL}`
+          `https://storage.googleapis.com/menugic-images/${restaurant.logoURL}`
         }
       />
       <HeaderWrapper>

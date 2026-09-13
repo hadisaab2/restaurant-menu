@@ -488,7 +488,7 @@ export default function AddProduct({
           {images.map(({ url, isDeleted, id }) => {
             const imageUrl = url.includes("blob")
               ? url
-              : `https://storage.googleapis.com/ecommerce-bucket-testing/${url}`;
+              : `https://storage.googleapis.com/menugic-images/${url}`;
             if (!isDeleted) {
               return (
                 <UploadedImageContainer>

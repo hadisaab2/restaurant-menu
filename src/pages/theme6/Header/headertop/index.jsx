@@ -36,7 +36,7 @@ export default function HeaderTop({ setshowSidebar, showSidebar }) {
   const isRtl = restaurant?.activeLanguage === "ar";
 
   const logoUrl = restaurant?.logoURL
-    ? `https://storage.googleapis.com/ecommerce-bucket-testing/${restaurant.logoURL}`
+    ? `https://storage.googleapis.com/menugic-images/${restaurant.logoURL}`
     : null;
 
   const displayName = isRtl

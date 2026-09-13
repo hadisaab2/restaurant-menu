@@ -749,7 +749,7 @@ export default function Restaurants({ readOnly = false, salesUserId = null, base
     
     if (cover_url) {
       setImageUrl(
-        `https://storage.googleapis.com/ecommerce-bucket-testing/${cover_url}`
+        `https://storage.googleapis.com/menugic-images/${cover_url}`
       );
     }
     setShowAddComponent(true);

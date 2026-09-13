@@ -324,7 +324,7 @@ export default function ProductParam({ productId, setSearchParams, searchParams 
     };
 
     const restaurantLogoUrl = restaurant?.logoURL
-        ? `https://storage.googleapis.com/ecommerce-bucket-testing/${restaurant.logoURL}`
+        ? `https://storage.googleapis.com/menugic-images/${restaurant.logoURL}`
         : null;
 
     let images = [...(fetchedProduct?.images ?? [])];

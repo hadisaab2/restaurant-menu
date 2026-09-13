@@ -141,7 +141,7 @@ export default function SliderImages() {
     setSelectedIdForAction(sliderImage.id);
     setPriority(sliderImage.priority || 0);
     setCurrentImageType(sliderImage.type || 1);
-    setImageUrl(`https://storage.googleapis.com/ecommerce-bucket-testing/${sliderImage.url}`);
+    setImageUrl(`https://storage.googleapis.com/menugic-images/${sliderImage.url}`);
     setShowAddComponent(true);
   };
 
@@ -252,7 +252,7 @@ export default function SliderImages() {
             {homepageCoverImage ? (
               <ImageCard>
                 <ImagePreview
-                  src={`https://storage.googleapis.com/ecommerce-bucket-testing/${homepageCoverImage.url}`}
+                  src={`https://storage.googleapis.com/menugic-images/${homepageCoverImage.url}`}
                   alt="Homepage Cover"
                 />
                 <ImageActions>
@@ -293,7 +293,7 @@ export default function SliderImages() {
               {sliderImages.map((sliderImage) => (
                 <ImageCard key={sliderImage.id}>
                   <ImagePreview
-                    src={`https://storage.googleapis.com/ecommerce-bucket-testing/${sliderImage.url}`}
+                    src={`https://storage.googleapis.com/menugic-images/${sliderImage.url}`}
                     alt={`Slider ${sliderImage.id}`}
                   />
                   <PriorityInput

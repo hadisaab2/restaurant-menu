@@ -63,7 +63,7 @@ export default function CategoriesGrid({ categories, onCategoryClick }) {
 
   // Get restaurant logo URL for fallback
   const logoURL = restaurant?.logoURL 
-    ? `https://storage.googleapis.com/ecommerce-bucket-testing/${restaurant.logoURL}`
+    ? `https://storage.googleapis.com/menugic-images/${restaurant.logoURL}`
     : null;
 
   return (

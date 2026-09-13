@@ -194,7 +194,7 @@ export default function ProductParam({ productId, setSearchParams, searchParams 
     };
 
     const restaurantLogoUrl = restaurant?.logoURL
-        ? `https://storage.googleapis.com/ecommerce-bucket-testing/${restaurant.logoURL}`
+        ? `https://storage.googleapis.com/menugic-images/${restaurant.logoURL}`
         : null;
 
     const getZoomImageUrl = () => {

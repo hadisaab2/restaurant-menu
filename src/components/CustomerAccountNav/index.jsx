@@ -1227,7 +1227,7 @@ const CustomerAccountNav = forwardRef(function CustomerAccountNav(
                         <OrderMeta style={{ alignItems: "center", gap: 12 }}>
                           {p.logoURL ? (
                             <img
-                              src={`https://storage.googleapis.com/ecommerce-bucket-testing/${p.logoURL}`}
+                              src={`https://storage.googleapis.com/menugic-images/${p.logoURL}`}
                               alt=""
                               style={{
                                 width: 52,

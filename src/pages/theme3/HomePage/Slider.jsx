@@ -16,7 +16,7 @@ import {
 } from "./SliderStyles";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 
-const IMAGE_BASE = "https://storage.googleapis.com/ecommerce-bucket-testing";
+const IMAGE_BASE = "https://storage.googleapis.com/menugic-images";
 
 export default function Slider({ images, activeLanguage }) {
   const swiperRef = useRef(null);

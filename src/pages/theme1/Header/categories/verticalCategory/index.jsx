@@ -105,9 +105,9 @@ export default function VerticalCategory({
                           category.image_url
                             ? getImageUrl(category.image_url)
                             : category.isAllItems && restaurant?.logoURL
-                            ? `https://storage.googleapis.com/ecommerce-bucket-testing/${restaurant.logoURL}`
+                            ? `https://storage.googleapis.com/menugic-images/${restaurant.logoURL}`
                             : category.isAllItems && restaurant?.cover_url
-                            ? `https://storage.googleapis.com/ecommerce-bucket-testing/${restaurant.cover_url}`
+                            ? `https://storage.googleapis.com/menugic-images/${restaurant.cover_url}`
                             : ""
                         } 
                       />

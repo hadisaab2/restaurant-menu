@@ -22,7 +22,7 @@ import { LoadingButton } from "@mui/lab";
 import { IoCloudUploadOutline } from "react-icons/io5";
 
 const LOGO_IMAGE_BASE =
-  "https://storage.googleapis.com/ecommerce-bucket-testing/";
+  "https://storage.googleapis.com/menugic-images/";
 
 export default function Logo({ setSection }) {
   const fileInputRef = useRef(null);

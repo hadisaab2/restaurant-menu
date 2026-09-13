@@ -82,7 +82,7 @@ export default function VerticalCategory({
 
   // Get restaurant logo URL for fallback
   const logoURL = restaurant?.logoURL 
-    ? `https://storage.googleapis.com/ecommerce-bucket-testing/${restaurant.logoURL}`
+    ? `https://storage.googleapis.com/menugic-images/${restaurant.logoURL}`
     : null;
 
   const handleArrow = () => {

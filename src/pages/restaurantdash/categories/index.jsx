@@ -55,7 +55,7 @@ import ProductOptionsEditor, {
 import { emptyOptions, serializeOptions } from "../../../product-options/schema";
 
 const CATEGORY_IMAGE_BASE =
-  "https://storage.googleapis.com/ecommerce-bucket-testing/";
+  "https://storage.googleapis.com/menugic-images/";
 
 export default function Categories({ setProducts }) {
   const [showAddComponent, setShowAddComponent] = useState(false);

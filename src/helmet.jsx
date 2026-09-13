@@ -20,8 +20,8 @@ export default function HelmetFn() {
             {/* Open Graph Meta Tags */}
             <meta property="og:title" content={"sdsda"} />
             <meta property="og:description" content={"sadsda"} />
-            <meta property="og:image" content={`https://storage.googleapis.com/ecommerce-bucket-testing/${restaurant?.logoURL}`} />
-            <meta property="og:url" content={`https://storage.googleapis.com/ecommerce-bucket-testing/${restaurant?.logoURL}`} />
+            <meta property="og:image" content={`https://storage.googleapis.com/menugic-images/${restaurant?.logoURL}`} />
+            <meta property="og:url" content={`https://storage.googleapis.com/menugic-images/${restaurant?.logoURL}`} />
         </Helmet>
     );
 };
