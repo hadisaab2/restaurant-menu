@@ -56,7 +56,7 @@ export default function Theme3() {
     return () => document.documentElement.removeAttribute("dir");
   }, [activeLanguage]);
   const showAllItemsCategory =
-    Number(restaurant?.template_id) === 3 &&
+    Number(restaurant?.template_id) === 4 &&
     (restaurant?.show_all_items_category === true ||
       restaurant?.show_all_items_category === 1 ||
       restaurant?.show_all_items_category === "1");

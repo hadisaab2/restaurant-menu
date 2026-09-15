@@ -131,6 +131,8 @@ export default function Restaurants({ readOnly = false, salesUserId = null, base
     phone_number: "",
     template_id: "",
   });
+  const [duplicateLogoFile, setDuplicateLogoFile] = useState(null);
+  const [duplicateLogoPreview, setDuplicateLogoPreview] = useState(null);
   const [excelRestaurantId, setExcelRestaurantId] = useState("");
   const [excelUploading, setExcelUploading] = useState(false);
   const [excelMessage, setExcelMessage] = useState(null);
@@ -1265,7 +1267,7 @@ export default function Restaurants({ readOnly = false, salesUserId = null, base
           />
 
           {/* Duplicate Restaurant Dialog */}
-          <Dialog open={showDuplicateModal} onClose={() => setShowDuplicateModal(false)} maxWidth="sm" fullWidth>
+          <Dialog open={showDuplicateModal} onClose={() => { setShowDuplicateModal(false); setDuplicateLogoFile(null); setDuplicateLogoPreview(null); }} maxWidth="sm" fullWidth>
             <DialogTitle sx={{ fontWeight: 700 }}>Duplicate Restaurant</DialogTitle>
             <DialogContent>
               <Box sx={{ display: "flex", flexDirection: "column", gap: 2, mt: 1 }}>
@@ -1326,6 +1328,29 @@ export default function Restaurants({ readOnly = false, salesUserId = null, base
                     ))}
                   </Select>
                 </FormControl>
+                <Box>
+                  <Button variant="outlined" component="label" sx={{ textTransform: "none" }}>
+                    {duplicateLogoFile ? "Change Logo" : "Upload Logo (optional)"}
+                    <input
+                      type="file"
+                      hidden
+                      accept="image/*"
+                      onChange={(e) => {
+                        const file = e.target.files[0];
+                        if (file) {
+                          setDuplicateLogoFile(file);
+                          setDuplicateLogoPreview(URL.createObjectURL(file));
+                        }
+                      }}
+                    />
+                  </Button>
+                  {duplicateLogoPreview && (
+                    <Box sx={{ mt: 1, display: "flex", alignItems: "center", gap: 1 }}>
+                      <img src={duplicateLogoPreview} alt="Logo preview" style={{ width: 60, height: 60, objectFit: "contain", borderRadius: 8, border: "1px solid #e2e8f0" }} />
+                      <Button size="small" color="error" onClick={() => { setDuplicateLogoFile(null); setDuplicateLogoPreview(null); }}>Remove</Button>
+                    </Box>
+                  )}
+                </Box>
                 <div style={{ fontSize: 12, color: "#64748b", background: "#f8fafc", padding: 10, borderRadius: 8 }}>
                   Duplicates: all settings, categories, products (with images), branches, social media, slider images, badges, slogans.
                 </div>
@@ -1341,8 +1366,11 @@ export default function Restaurants({ readOnly = false, salesUserId = null, base
                   handleDuplicateRestaurant({
                     source_restaurant_id: parseInt(duplicateSourceId),
                     ...duplicateFormData,
+                    ...(duplicateLogoFile ? { logoFile: duplicateLogoFile } : {}),
                   });
                   setShowDuplicateModal(false);
+                  setDuplicateLogoFile(null);
+                  setDuplicateLogoPreview(null);
                 }}
                 sx={{ textTransform: "none", background: "#8b5cf6" }}
               >
@@ -2118,10 +2146,10 @@ export default function Restaurants({ readOnly = false, salesUserId = null, base
                 />
               </FormControl>
             )}
-            {(Number(template) === 1 || Number(template) === 2 || Number(template) === 3) && (
+            {(Number(template) === 1 || Number(template) === 2 || Number(template) === 3 || Number(template) === 4) && (
               <>
                 <FormControl component="fieldset" style={{ display: "flex", flexDirection: "row" }}>
-                  <FormLabel component="legend">Theme 1, 2 & 3</FormLabel>
+                  <FormLabel component="legend">Theme 1, 2, 3 & 4</FormLabel>
                   <FormControlLabel
                     control={
                       <Checkbox
