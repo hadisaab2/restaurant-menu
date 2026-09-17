@@ -23,7 +23,7 @@ const STATUS_COLORS = {
 };
 
 const CATEGORIES = [
-  "restaurant", "cafe", "pizza", "burger", "bakery", "sushi",
+  "restaurant", "cafe", "pizza", "burger", "bakery", "dessert", "sushi",
   "flower-shop", "balloon-shop", "cosmetics", "grocery",
   "gym-supplements", "jewelry",
 ];
@@ -181,7 +181,9 @@ export default function Prospects({
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
   const [zoneFilter, setZoneFilter] = useState("");
+  const [userFilter, setUserFilter] = useState("");
   const [zones, setZones] = useState([]);
+  const [salesUsers, setSalesUsers] = useState([]);
   const [offset, setOffset] = useState(0);
   const [editingPhoneId, setEditingPhoneId] = useState(null);
   const [editingPhoneValue, setEditingPhoneValue] = useState("");
@@ -240,6 +242,7 @@ export default function Prospects({
       if (search) params.set("search", search);
       if (statusFilter) params.set("status", statusFilter);
       if (zoneFilter) params.set("zone_id", zoneFilter);
+      if (userFilter) params.set("assigned_to", userFilter);
       const { data } = await axios.get(`${API}${basePath}?${params}`, { headers: headers() });
       setProspects(data.data.prospects);
       setTotal(data.data.total);
@@ -248,7 +251,7 @@ export default function Prospects({
       showToast(e.response?.data?.message || "Failed to load prospects", "error");
     }
     setLoading(false);
-  }, [search, statusFilter, zoneFilter, offset, showToast, basePath]);
+  }, [search, statusFilter, zoneFilter, userFilter, offset, showToast, basePath]);
 
   useEffect(() => { fetchProspects(); }, [fetchProspects]);
 
@@ -258,6 +261,14 @@ export default function Prospects({
       .then(({ data }) => setZones(data.data || data || []))
       .catch(() => {});
   }, [zonesPath]);
+
+  // Fetch sales users for filter dropdown (superadmin only)
+  useEffect(() => {
+    if (basePath.startsWith("/sales")) return; // sales users don't need this filter
+    axios.get(`${API}/superadmin/sales-users`, { headers: headers() })
+      .then(({ data }) => setSalesUsers(data.data || data || []))
+      .catch(() => {});
+  }, [basePath]);
 
   /* ─── Status change ─── */
   const changeStatus = async (id, newStatus) => {
@@ -455,6 +466,18 @@ export default function Prospects({
             <option key={z.id} value={z.id}>{z.name || z.city || `Zone ${z.id}`}</option>
           ))}
         </select>
+        {salesUsers.length > 0 && (
+          <select
+            value={userFilter}
+            onChange={(e) => { setUserFilter(e.target.value); setOffset(0); }}
+            style={s.select}
+          >
+            <option value="">All Users</option>
+            {salesUsers.map((u) => (
+              <option key={u.id} value={u.id}>{u.username || u.email || `User ${u.id}`}</option>
+            ))}
+          </select>
+        )}
         <button onClick={() => setCreateOpen(true)} style={s.primaryBtn}>
           + Create Prospect
         </button>
@@ -815,7 +838,7 @@ export default function Prospects({
             if (r.logoFile) {
               try { logoUrl = await uploadLogo(r.logoFile); } catch (e) { console.error("Logo upload failed for", r.business_name, e); }
             }
-            items.push({ prospect_id: r.prospect_id, template: r.template, colorPreset: r.colorPreset || null, logoUrl, socials: { instagram: r.ig_handle || "", facebook: r.facebook || "", tiktok: r.tiktok || "" } });
+            items.push({ prospect_id: r.prospect_id, template: r.template, templateId: r.templateId || 2, colorPreset: r.colorPreset || null, logoUrl, socials: { instagram: r.ig_handle || "", facebook: r.facebook || "", tiktok: r.tiktok || "" } });
           }
           if (items.length === 0) { fetchProspects(); return { summary: { success: 0, errors: 0 }, results: [] }; }
           const { data } = await axios.post(`${API}${basePath}/build-batch`, { items }, { headers: headers(), timeout: 600000 });
@@ -860,7 +883,7 @@ export default function Prospects({
    Create Prospect Dialog
    ═════════════════════════════════════════════ */
 // Visual themes the menu renders with (maps to restaurants.template_id).
-const VISUAL_THEMES = [1, 2, 3, 4, 5, 6, 7, 8, 9].map((n) => ({
+const VISUAL_THEMES = [1, 2, 3, 4].map((n) => ({
   value: n,
   label: `Theme ${n}`,
 }));
@@ -1023,7 +1046,7 @@ function CreateProspectDialog({ open, onClose, onCreated, showToast, basePath, i
             <label style={s.dialogLabel}>Demo Template</label>
             <select style={s.dialogSelect} value={form.template} onChange={(e) => {
               const val = e.target.value;
-              setForm((prev) => ({ ...prev, template: val, category: val === "custom" ? prev.category : val }));
+              setForm((prev) => ({ ...prev, template: val }));
             }}>
               {TEMPLATES.map((t) => (
                 <option key={t.value} value={t.value}>{t.label}</option>

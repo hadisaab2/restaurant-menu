@@ -16,6 +16,7 @@ export const TEMPLATES = [
   { value: "pizza", label: "Pizza Shop" },
   { value: "burger", label: "Burger Restaurant" },
   { value: "bakery", label: "Bakery" },
+  { value: "dessert", label: "Dessert Shop" },
   { value: "flower-shop", label: "Flower Shop" },
   { value: "balloon-shop", label: "Balloon Shop" },
   { value: "cosmetics", label: "Cosmetics" },
@@ -79,7 +80,7 @@ export default function ReviewDialog({ open, rows, setRows, onClose, onBuild, ti
             <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 12 }}>
               <thead>
                 <tr>
-                  {["", "Business", "Category", "Template", "Colors", "Logo", "IG", "Links"].map((h) => (
+                  {["", "Business", "Category", "Template", "Theme", "Colors", "Logo", "IG", "Links"].map((h) => (
                     <th key={h || "_exclude"} style={{ padding: "8px 6px", textAlign: "left", borderBottom: "2px solid #e2e8f0", fontSize: 11, fontWeight: 700, color: "#475569" }}>{h}</th>
                   ))}
                 </tr>
@@ -95,6 +96,11 @@ export default function ReviewDialog({ open, rows, setRows, onClose, onBuild, ti
                     <td style={{ padding: "6px", borderBottom: "1px solid #f1f5f9", minWidth: 130 }}>
                       <select value={r.template} onChange={(e) => updateRow(i, "template", e.target.value)} style={{ padding: "4px 6px", borderRadius: 6, border: "1px solid #e2e8f0", fontSize: 11, width: "100%" }}>
                         {TEMPLATES.map((t) => <option key={t.value} value={t.value}>{t.label}</option>)}
+                      </select>
+                    </td>
+                    <td style={{ padding: "6px", borderBottom: "1px solid #f1f5f9", minWidth: 80 }}>
+                      <select value={r.templateId || 2} onChange={(e) => updateRow(i, "templateId", Number(e.target.value))} style={{ padding: "4px 6px", borderRadius: 6, border: "1px solid #e2e8f0", fontSize: 11, width: "100%" }}>
+                        {[1, 2, 3, 4].map((n) => <option key={n} value={n}>Theme {n}</option>)}
                       </select>
                     </td>
                     <td style={{ padding: "6px", borderBottom: "1px solid #f1f5f9", minWidth: 160 }}>

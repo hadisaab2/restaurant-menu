@@ -165,9 +165,25 @@ export default function Zones() {
     map.on("draw.update", updateReadout);
     map.on("draw.delete", updateReadout);
 
-    // If editing, load existing polygon
-    if (mode === "edit" && selectedZone?.boundary_geojson) {
-      map.on("load", () => {
+    map.on("load", () => {
+      // Show existing zones as read-only background layers
+      if (zones?.length) {
+        zones.forEach((z, i) => {
+          if (!z.boundary_geojson) return;
+          const color = ZONE_COLORS[i % ZONE_COLORS.length];
+          const sourceId = `existing-zone-${z.id}`;
+          map.addSource(sourceId, { type: "geojson", data: { type: "Feature", geometry: z.boundary_geojson, properties: {} } });
+          map.addLayer({ id: `${sourceId}-fill`, type: "fill", source: sourceId, paint: { "fill-color": color, "fill-opacity": 0.1 } });
+          map.addLayer({ id: `${sourceId}-line`, type: "line", source: sourceId, paint: { "line-color": color, "line-width": 1.5, "line-dasharray": [2, 2] } });
+          // Zone name label
+          const centroid = turf.centroid({ type: "Feature", geometry: z.boundary_geojson });
+          map.addSource(`${sourceId}-label`, { type: "geojson", data: { type: "Feature", geometry: centroid.geometry, properties: { name: z.name } } });
+          map.addLayer({ id: `${sourceId}-label`, type: "symbol", source: `${sourceId}-label`, layout: { "text-field": ["get", "name"], "text-size": 11 }, paint: { "text-color": color, "text-halo-color": "#fff", "text-halo-width": 1 } });
+        });
+      }
+
+      // If editing, load existing polygon into draw tool
+      if (mode === "edit" && selectedZone?.boundary_geojson) {
         draw.add({
           type: "Feature",
           geometry: selectedZone.boundary_geojson,
@@ -180,15 +196,15 @@ export default function Zones() {
         if (selectedZone.centroid?.coordinates) {
           map.flyTo({ center: selectedZone.centroid.coordinates, zoom: 13 });
         }
-      });
-    }
+      }
+    });
 
     return () => {
       map.remove();
       mapRef.current = null;
       drawRef.current = null;
     };
-  }, [mode, selectedZone?.id]);
+  }, [mode, selectedZone?.id, zones]);
 
   // ── Grid preview circles on map ──
   useEffect(() => {
