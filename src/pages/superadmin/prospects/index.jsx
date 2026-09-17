@@ -23,8 +23,9 @@ const STATUS_COLORS = {
 };
 
 const CATEGORIES = [
-  "restaurant", "cafe", "pizza", "burger", "bakery",
-  "flower-shop", "cosmetics", "grocery",
+  "restaurant", "cafe", "pizza", "burger", "bakery", "sushi",
+  "flower-shop", "balloon-shop", "cosmetics", "grocery",
+  "gym-supplements", "jewelry",
 ];
 
 const LANGUAGES = [
@@ -1020,7 +1021,10 @@ function CreateProspectDialog({ open, onClose, onCreated, showToast, basePath, i
         <div style={s.dialogRow}>
           <div style={{ ...s.dialogField, flex: 1, minWidth: 150 }}>
             <label style={s.dialogLabel}>Demo Template</label>
-            <select style={s.dialogSelect} value={form.template} onChange={set("template")}>
+            <select style={s.dialogSelect} value={form.template} onChange={(e) => {
+              const val = e.target.value;
+              setForm((prev) => ({ ...prev, template: val, category: val === "custom" ? prev.category : val }));
+            }}>
               {TEMPLATES.map((t) => (
                 <option key={t.value} value={t.value}>{t.label}</option>
               ))}
