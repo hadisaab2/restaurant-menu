@@ -30,12 +30,11 @@ import {
   CategoriesSectionHeader,
   CategoriesSectionLabel,
   CategoriesSectionTitle,
-  CategoriesPillsWrap,
-  CategoryPill,
-  CategoryPillIcon,
-  CategoryPillName,
-  CategoriesBrowseAllWrap,
-  BrowseAllButton,
+  CategoriesGridWrap,
+  CategoryCard,
+  CategoryCardImageWrap,
+  CategoryCardFallback,
+  CategoryCardName,
   LocationCardsSection,
   LocationCard,
   LocationName,
@@ -107,8 +106,8 @@ import { CUSTOMER_WISHLIST_URL } from "../../../apis/URLs";
 import { getCustomerAccessToken } from "../../../utilities/customerAuthStorage";
 import { getImageUrl } from "../../../utilities/imageUrl";
 
-// Category pill for theme4 (new 37 style): icon + name, rounded pill
-const CategoryPillItem = ({ category, activeLanguage, onExploreClick, logoURL }) => {
+// Category card for theme4: image card with name overlay
+const CategoryCardItem = ({ category, activeLanguage, onExploreClick, logoURL }) => {
   const [imageError, setImageError] = useState(false);
   const categoryName = activeLanguage === "en" ? category.en_category : category.ar_category;
   const categoryImageUrl = category.image_url
@@ -117,24 +116,32 @@ const CategoryPillItem = ({ category, activeLanguage, onExploreClick, logoURL })
   const showImage = categoryImageUrl && !imageError;
 
   return (
-    <CategoryPill
+    <CategoryCard
       type="button"
       onClick={() => onExploreClick(category.id)}
       $activeLanguage={activeLanguage}
     >
-      <CategoryPillIcon>
+      <CategoryCardImageWrap>
         {showImage ? (
           <img
             src={categoryImageUrl}
-            alt=""
+            alt={categoryName}
+            onError={() => setImageError(true)}
+          />
+        ) : logoURL && !imageError ? (
+          <img
+            src={logoURL}
+            alt={categoryName}
             onError={() => setImageError(true)}
           />
         ) : (
-          <FaThLarge size={20} />
+          <CategoryCardFallback>
+            <FaThLarge size={32} />
+          </CategoryCardFallback>
         )}
-      </CategoryPillIcon>
-      <CategoryPillName>{categoryName}</CategoryPillName>
-    </CategoryPill>
+      </CategoryCardImageWrap>
+      <CategoryCardName>{categoryName}</CategoryCardName>
+    </CategoryCard>
   );
 };
 
@@ -512,8 +519,8 @@ export default function HomePage({ onExploreClick, categories, setSearchParams, 
         </ValueCardsSectionWrap>
       )}
 
-      {/* Categories Section - new 37 style: centered pills + Browse All */}
-      {categories && categories.length > 0 && (
+      {/* Categories Section - card grid: 3 cols desktop, 2 mobile */}
+      {categories && categories.filter((c) => !c.isAllItems).length > 0 && (
         <CategoriesSectionWrap $activeLanguage={activeLanguage}>
           <CategoriesSectionContainer>
             <CategoriesSectionHeader>
@@ -521,12 +528,12 @@ export default function HomePage({ onExploreClick, categories, setSearchParams, 
                 {activeLanguage === "en" ? "Categories" : "الفئات"}
               </CategoriesSectionLabel>
             </CategoriesSectionHeader>
-            <CategoriesPillsWrap>
+            <CategoriesGridWrap>
               {categories
+                .filter((c) => !c.isAllItems)
                 .sort((a, b) => (b.priority || 0) - (a.priority || 0))
-                .slice(0, 6)
                 .map((category) => (
-                  <CategoryPillItem
+                  <CategoryCardItem
                     key={category.id}
                     category={category}
                     activeLanguage={activeLanguage}
@@ -536,17 +543,7 @@ export default function HomePage({ onExploreClick, categories, setSearchParams, 
                       : null}
                   />
                 ))}
-            </CategoriesPillsWrap>
-            <CategoriesBrowseAllWrap>
-              <BrowseAllButton
-                type="button"
-                onClick={() => onExploreClick()}
-                $activeLanguage={activeLanguage}
-              >
-                {activeLanguage === "en" ? "Browse All" : "عرض الكل"}
-                <FaChevronRight size={16} style={activeLanguage === "ar" ? { transform: "rotate(180deg)" } : undefined} />
-              </BrowseAllButton>
-            </CategoriesBrowseAllWrap>
+            </CategoriesGridWrap>
           </CategoriesSectionContainer>
         </CategoriesSectionWrap>
       )}

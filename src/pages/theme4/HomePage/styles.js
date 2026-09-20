@@ -897,104 +897,73 @@ export const CategoriesSectionTitle = styled.h2`
   }
 `;
 
-export const CategoriesPillsWrap = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 16px;
-  max-width: 672px;
-  margin: 0 auto;
+export const CategoriesGridWrap = styled.div`
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
   @media (min-width: 768px) {
+    grid-template-columns: repeat(3, 1fr);
     gap: 20px;
   }
 `;
 
-export const CategoryPill = styled.button`
-  display: inline-flex;
+export const CategoryCard = styled.button`
+  display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 12px;
-  padding: 16px 24px;
-  border-radius: 9999px;
+  padding: 0;
+  border-radius: 16px;
   background: ${(props) => props.theme?.BoxColor || props.theme?.categoryUnActive || "#ffffff"};
-  border: 1px solid ${(props) => (props.theme?.mainColor ? `${props.theme.mainColor}20` : "rgba(0, 123, 255, 0.12)")};
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  border: 1px solid ${(props) => (props.theme?.mainColor ? `${props.theme.mainColor}15` : "rgba(0, 123, 255, 0.08)")};
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
   cursor: pointer;
   transition: all 0.3s ease;
   font-family: inherit;
+  overflow: hidden;
   &:hover {
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
-    border-color: ${(props) => (props.theme?.mainColor ? `${props.theme.mainColor}40` : "rgba(0, 123, 255, 0.2)")};
-    transform: translateY(-2px);
+    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.12);
+    border-color: ${(props) => (props.theme?.mainColor ? `${props.theme.mainColor}40` : "rgba(0, 123, 255, 0.25)")};
+    transform: translateY(-4px);
   }
 `;
 
-export const CategoryPillIcon = styled.span`
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  color: ${(props) => props.theme?.textColor ? `${props.theme.textColor}99` : "#666"};
-  transition: color 0.3s ease;
-  ${CategoryPill}:hover & {
-    color: ${(props) => props.theme?.mainColor || "#007bff"};
-  }
+export const CategoryCardImageWrap = styled.div`
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  background: ${(props) => props.theme?.mainColor ? `${props.theme.mainColor}0a` : "rgba(0, 123, 255, 0.04)"};
   img {
-    width: 20px;
-    height: 20px;
-    object-fit: contain;
-    border-radius: 4px;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+  }
+  ${CategoryCard}:hover & img {
+    transform: scale(1.06);
   }
 `;
 
-export const CategoryPillName = styled.span`
-  font-size: 14px;
-  font-weight: 600;
-  color: ${(props) => props.theme?.textColor || "#1a1a1a"};
-`;
-
-export const CategoriesBrowseAllWrap = styled.div`
-  text-align: center;
-  margin-top: 48px;
-`;
-
-export const BrowseAllButton = styled.button`
-  width: 55%;
-  max-width: 280px;
-  height: 48px;
-  margin: 18px auto 0;
+export const CategoryCardFallback = styled.div`
+  width: 100%;
+  height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
-  font-size: 15px;
+  color: ${(props) => props.theme?.mainColor || "#007bff"};
+  opacity: 0.4;
+`;
+
+export const CategoryCardName = styled.span`
+  display: block;
+  width: 100%;
+  padding: 12px 10px;
+  font-size: 13px;
   font-weight: 600;
-  color: ${(props) => props.theme?.slidingButtonTextColor || "#ffffff"};
-  background: ${(props) => props.theme?.slidingButtonBackgroundColor || props.theme?.mainColor || "#007bff"};
-  border: none;
-  border-radius: 12px;
-  cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  direction: ${(props) => (props.$activeLanguage === "ar" ? "rtl" : "ltr")};
-  font-family: inherit;
-  box-shadow: 0 4px 16px ${(props) => {
-    const bgColor = props.theme?.slidingButtonBackgroundColor || props.theme?.mainColor || "#007bff";
-    return bgColor ? `${bgColor}40` : "rgba(0, 123, 255, 0.4)";
-  }};
-  &:hover {
-    background: ${(props) => props.theme?.slidingButtonBackgroundColor || props.theme?.mainColor || "#0056b3"};
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px ${(props) => {
-      const bgColor = props.theme?.slidingButtonBackgroundColor || props.theme?.mainColor || "#007bff";
-      return bgColor ? `${bgColor}50` : "rgba(0, 123, 255, 0.5)";
-    }};
-  }
-  &:active {
-    transform: translateY(0);
-  }
+  color: ${(props) => props.theme?.textColor || "#1a1a1a"};
+  text-align: center;
   @media (min-width: 768px) {
-    max-width: 320px;
-    height: 52px;
-    font-size: 16px;
-    margin: 24px auto 0;
+    padding: 14px 12px;
+    font-size: 15px;
   }
 `;
 
