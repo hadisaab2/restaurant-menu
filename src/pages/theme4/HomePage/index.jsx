@@ -607,8 +607,8 @@ export default function HomePage({ onExploreClick, categories, setSearchParams, 
         />
       )}
 
-      {/* Location Cards Section */}
-      {branches.length > 0 && (
+      {/* Location Cards Section — only show when multiple branches or at least one has a physical location */}
+      {branches.length > 1 || branches.some(b => b.location || b.mapLink) ? (
         <LocationCardsSection id="branches-section" activeLanguage={activeLanguage}>
           <CategoriesSectionHeader>
             <CategoriesSectionLabel>
@@ -641,7 +641,7 @@ export default function HomePage({ onExploreClick, categories, setSearchParams, 
             </LocationCard>
           ))}
         </LocationCardsSection>
-      )}
+      ) : null}
 
       {/* Branch Details Popup */}
       {selectedBranch && popupType && (
@@ -802,12 +802,14 @@ export default function HomePage({ onExploreClick, categories, setSearchParams, 
               </FooterLink>
             </FooterCol>
             <FooterCol>
-              <FooterColTitle>{activeLanguage === "en" ? "Branches" : "الفروع"}</FooterColTitle>
+              <FooterColTitle>{activeLanguage === "en" ? (branches.length > 1 ? "Branches" : "Contact") : (branches.length > 1 ? "الفروع" : "تواصل")}</FooterColTitle>
               {branches.length > 0 ? (
                 <FooterBranchesCol>
                   {branches.map((branch) => (
                     <FooterBranchBlock key={branch.id || branch.name}>
-                      <FooterBranchName>{branch.name || (activeLanguage === "en" ? "Branch" : "فرع")}</FooterBranchName>
+                      {branches.length > 1 && (
+                        <FooterBranchName>{branch.name || (activeLanguage === "en" ? "Branch" : "فرع")}</FooterBranchName>
+                      )}
                       {branch.phone_number && (
                         <FooterContactItem>
                           <FooterContactIcon><FaPhone size={14} /></FooterContactIcon>
