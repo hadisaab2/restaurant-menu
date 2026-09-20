@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkrestaurant_menu=self.webpackChunkrestaurant_menu||[]).push([[2404],{70023:(e,r,a)=>{a.d(r,{default:()=>s.A});var s=a(57720);const{Axios:t,AxiosError:o,CanceledError:n,isCancel:u,CancelToken:l,VERSION:c,all:i,Cancel:C,isAxiosError:d,spread:A,toFormData:p,AxiosHeaders:f,HttpStatusCode:k,formToJSON:m,getAdapter:x,mergeConfig:E}=s.A}}]);

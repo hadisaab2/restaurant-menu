@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkrestaurant_menu=self.webpackChunkrestaurant_menu||[]).push([[6240],{86240:(e,u,n)=>{n.r(u),n.d(u,{default:()=>t});n(88094);var r=n(15678);function t(){return(0,r.jsx)("div",{children:"Not Found"})}}}]);
