@@ -929,18 +929,13 @@ export const CategoryCard = styled.button`
 
 export const CategoryCardImageWrap = styled.div`
   width: 100%;
-  height: 160px;
+  aspect-ratio: 4 / 3;
   overflow: hidden;
   background: ${(props) => props.theme?.mainColor ? `${props.theme.mainColor}0a` : "rgba(0, 123, 255, 0.04)"};
-  @media (min-width: 768px) {
-    height: 200px;
-  }
   img {
     width: 100%;
     height: 100%;
-    display: block;
-    object-fit: contain;
-    padding: 8px;
+    object-fit: cover;
     transition: transform 0.4s ease;
   }
   ${CategoryCard}:hover & img {
