@@ -35,6 +35,7 @@ import {
   CategoryCardImageWrap,
   CategoryCardFallback,
   CategoryCardName,
+  OnlineBadge,
   LocationCardsSection,
   LocationCard,
   LocationName,
@@ -607,6 +608,40 @@ export default function HomePage({ onExploreClick, categories, setSearchParams, 
       )}
 
       {/* Location Cards Section */}
+      {branches.length > 0 && (
+        <LocationCardsSection id="branches-section" activeLanguage={activeLanguage}>
+          <CategoriesSectionHeader>
+            <CategoriesSectionLabel>
+              {activeLanguage === "en" ? "Branches" : "الفروع"}
+            </CategoriesSectionLabel>
+          </CategoriesSectionHeader>
+          {branches.map((branch) => (
+            <LocationCard key={branch.id} activeLanguage={activeLanguage}>
+              <LocationName activeLanguage={activeLanguage}>
+                {branch.name}
+                {branch.is_online && <OnlineBadge>{activeLanguage === "en" ? "Online" : "أونلاين"}</OnlineBadge>}
+              </LocationName>
+              <LocationIconsContainer activeLanguage={activeLanguage}>
+                {branch.phone_number && (
+                  <LocationIconButton onClick={() => handleIconClick(branch, 'phone')} phone activeLanguage={activeLanguage}>
+                    <FaPhone />
+                  </LocationIconButton>
+                )}
+                {branch.whatsapp_number && (
+                  <LocationIconButton onClick={() => handleIconClick(branch, 'whatsapp')} whatsapp activeLanguage={activeLanguage}>
+                    <FaWhatsapp />
+                  </LocationIconButton>
+                )}
+                {(branch.location || branch.mapLink) && (
+                  <LocationIconButton onClick={() => handleIconClick(branch, 'location')} location activeLanguage={activeLanguage}>
+                    <IoLocationOutline />
+                  </LocationIconButton>
+                )}
+              </LocationIconsContainer>
+            </LocationCard>
+          ))}
+        </LocationCardsSection>
+      )}
 
       {/* Branch Details Popup */}
       {selectedBranch && popupType && (

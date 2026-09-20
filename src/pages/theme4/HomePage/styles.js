@@ -929,7 +929,7 @@ export const CategoryCard = styled.button`
 
 export const CategoryCardImageWrap = styled.div`
   width: 100%;
-  aspect-ratio: 4 / 3;
+  aspect-ratio: 1 / 1;
   overflow: hidden;
   background: ${(props) => props.theme?.mainColor ? `${props.theme.mainColor}0a` : "rgba(0, 123, 255, 0.04)"};
   img {
@@ -965,6 +965,19 @@ export const CategoryCardName = styled.span`
     padding: 14px 12px;
     font-size: 15px;
   }
+`;
+
+export const OnlineBadge = styled.span`
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  margin-inline-start: 8px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #16a34a;
+  background: #dcfce7;
+  border-radius: 9999px;
+  line-height: 1.4;
 `;
 
 // Location Cards Section
