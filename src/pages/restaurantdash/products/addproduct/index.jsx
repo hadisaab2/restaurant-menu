@@ -106,8 +106,9 @@ export default function AddProduct({
   useLayoutEffect(() => {
     if (!images || !Array.isArray(images) || images.length === 0) return;
     const visible = images.filter((img) => !img.isDeleted);
-    if (visible.length !== 1 || !visible[0]?.id) return;
-    const onlyId = visible[0].id;
+    if (visible.length === 0) return;
+    const firstId = visible[0]?.id;
+    if (!firstId) return;
     setCoverId((prev) => {
       if (prev != null && prev !== "") {
         const matchById = visible.some((img) => img.id === prev);
@@ -116,7 +117,7 @@ export default function AddProduct({
           visible.some((img) => String(img.url).includes(String(prev)));
         if (matchById || matchByUrl) return prev;
       }
-      return onlyId;
+      return firstId;
     });
   }, [images]);
 
