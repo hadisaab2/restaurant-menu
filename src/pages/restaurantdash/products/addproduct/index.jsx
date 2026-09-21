@@ -115,8 +115,12 @@ export default function AddProduct({
         const matchByUrl =
           typeof prev === "string" &&
           visible.some((img) => String(img.url).includes(String(prev)));
-        if (matchById || matchByUrl) return prev;
+        if (matchById || matchByUrl) {
+          setValue("cover_id", prev);
+          return prev;
+        }
       }
+      setValue("cover_id", firstId);
       return firstId;
     });
   }, [images]);
