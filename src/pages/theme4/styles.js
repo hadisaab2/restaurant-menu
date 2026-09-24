@@ -4,6 +4,7 @@ import { IoBag } from "react-icons/io5";
 
 export const Container = styled.div`
 min-height: 100vh;
+min-height: 100dvh;
 width: 100%;
 position: relative;
 background-color: ${props=>props.theme.backgroundColor};

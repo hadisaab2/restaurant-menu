@@ -31,10 +31,8 @@ export default function useBrowserBottomOffset() {
 
     update();
     vv.addEventListener("resize", update);
-    vv.addEventListener("scroll", update);
     return () => {
       vv.removeEventListener("resize", update);
-      vv.removeEventListener("scroll", update);
       if (timerRef.current) clearTimeout(timerRef.current);
     };
   }, []);

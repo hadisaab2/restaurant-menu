@@ -35,12 +35,6 @@ import {
   CategoryCardImageWrap,
   CategoryCardFallback,
   CategoryCardName,
-  OnlineBadge,
-  LocationCardsSection,
-  LocationCard,
-  LocationName,
-  LocationIconsContainer,
-  LocationIconButton,
   BranchPopup,
   BranchPopupOverlay,
   BranchPopupContent,
@@ -607,41 +601,6 @@ export default function HomePage({ onExploreClick, categories, setSearchParams, 
         />
       )}
 
-      {/* Location Cards Section — only show when multiple branches or at least one has a physical location */}
-      {branches.length > 1 || branches.some(b => b.location || b.mapLink) ? (
-        <LocationCardsSection id="branches-section" activeLanguage={activeLanguage}>
-          <CategoriesSectionHeader>
-            <CategoriesSectionLabel>
-              {activeLanguage === "en" ? "Branches" : "الفروع"}
-            </CategoriesSectionLabel>
-          </CategoriesSectionHeader>
-          {branches.map((branch) => (
-            <LocationCard key={branch.id} activeLanguage={activeLanguage}>
-              <LocationName activeLanguage={activeLanguage}>
-                {branch.name}
-                {branch.is_online && <OnlineBadge>{activeLanguage === "en" ? "Online" : "أونلاين"}</OnlineBadge>}
-              </LocationName>
-              <LocationIconsContainer activeLanguage={activeLanguage}>
-                {branch.phone_number && (
-                  <LocationIconButton onClick={() => handleIconClick(branch, 'phone')} phone activeLanguage={activeLanguage}>
-                    <FaPhone />
-                  </LocationIconButton>
-                )}
-                {branch.whatsapp_number && (
-                  <LocationIconButton onClick={() => handleIconClick(branch, 'whatsapp')} whatsapp activeLanguage={activeLanguage}>
-                    <FaWhatsapp />
-                  </LocationIconButton>
-                )}
-                {(branch.location || branch.mapLink) && (
-                  <LocationIconButton onClick={() => handleIconClick(branch, 'location')} location activeLanguage={activeLanguage}>
-                    <IoLocationOutline />
-                  </LocationIconButton>
-                )}
-              </LocationIconsContainer>
-            </LocationCard>
-          ))}
-        </LocationCardsSection>
-      ) : null}
 
       {/* Branch Details Popup */}
       {selectedBranch && popupType && (

@@ -17,7 +17,7 @@ export const TabBarContainer = styled.nav`
   z-index: 1600;
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  transition: opacity 0.4s ease, transform 0.4s ease;
+  transition: ${(props) => props.$isProductDetailsOpen ? "opacity 0.4s ease, transform 0.4s ease" : "none"};
   opacity: ${(props) => (props.$isProductDetailsOpen ? 0 : 1)};
   transform: ${(props) => (props.$isProductDetailsOpen ? "translateY(20px)" : "translateY(0)")};
   pointer-events: ${(props) => (props.$isProductDetailsOpen ? "none" : "auto")};
