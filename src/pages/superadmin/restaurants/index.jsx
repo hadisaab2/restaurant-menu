@@ -137,6 +137,7 @@ export default function Restaurants({ readOnly = false, salesUserId = null, base
   const [excelUploading, setExcelUploading] = useState(false);
   const [excelMessage, setExcelMessage] = useState(null);
   const [gridSearch, setGridSearch] = useState("");
+  const [liveTab, setLiveTab] = useState(0);
   const [paymentDateFrom, setPaymentDateFrom] = useState("");
   const [paymentDateTo, setPaymentDateTo] = useState("");
   const [paymentDatePassedOnly, setPaymentDatePassedOnly] = useState(false);
@@ -160,6 +161,7 @@ export default function Restaurants({ readOnly = false, salesUserId = null, base
     onSuccess: () => { },
     basePath,
     filterParams: {
+      is_live: liveTab === 0 ? "1" : "0",
       ...(gridSearch.trim() && { search: gridSearch.trim() }),
       ...(paymentDateFrom && { paymentDateFrom }),
       ...(paymentDateTo && { paymentDateTo }),
@@ -946,6 +948,19 @@ export default function Restaurants({ readOnly = false, salesUserId = null, base
               </Button>
             )}
           </div>
+          <Tabs
+            value={liveTab}
+            onChange={(e, v) => setLiveTab(v)}
+            sx={{
+              mb: 2,
+              "& .MuiTab-root": { textTransform: "none", fontWeight: 600, fontSize: 14 },
+              "& .Mui-selected": { color: "#5eabb1" },
+              "& .MuiTabs-indicator": { backgroundColor: "#5eabb1" },
+            }}
+          >
+            <Tab label="Live" />
+            <Tab label="Not Live" />
+          </Tabs>
           <Box sx={{
             display: "flex",
             flexWrap: "wrap",

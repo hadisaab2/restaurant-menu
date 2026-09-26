@@ -10,6 +10,7 @@ const getRestaurants = async (params = {}, basePath) => {
     if (params.paymentDateFrom) searchParams.set("paymentDateFrom", params.paymentDateFrom);
     if (params.paymentDateTo) searchParams.set("paymentDateTo", params.paymentDateTo);
     if (params.paymentDatePassed) searchParams.set("paymentDatePassed", params.paymentDatePassed);
+    if (params.is_live !== undefined) searchParams.set("is_live", params.is_live);
     const query = searchParams.toString();
     const base = basePath ? `${process.env.REACT_APP_BASE_URL}${basePath}` : GET_RESTAURANTS_URL;
     const url = query ? `${base}?${query}` : base;

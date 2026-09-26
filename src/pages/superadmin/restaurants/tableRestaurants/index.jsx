@@ -128,6 +128,19 @@ export default function TableRestaurants({
     }
   };
 
+  const toggleLive = async (restaurant) => {
+    try {
+      await axios.put(
+        `${API}/restaurants/${restaurant.restaurant_id}`,
+        { is_live: !restaurant.is_live },
+        { headers: { Authorization: `Bearer ${getCookie("accessToken")}` } }
+      );
+      if (onRefresh) onRefresh();
+    } catch (err) {
+      console.error("Failed to toggle live status:", err);
+    }
+  };
+
   const openReminder = (restaurant) => {
     setReminderOpen(restaurant);
     setReminderTemplate(0);
@@ -272,6 +285,13 @@ export default function TableRestaurants({
                   <Td>
                     {!readOnly && !salesUserId && (
                       <EditDeleteIcons>
+                        <button
+                          onClick={() => toggleLive(restaurant)}
+                          title={restaurant.is_live ? "Take Offline" : "Go Live"}
+                          style={toggleStyle(restaurant.is_live)}
+                        >
+                          {restaurant.is_live ? "Offline" : "Go Live"}
+                        </button>
                         <button
                           onClick={() => openReminder(restaurant)}
                           title="Send payment reminder"
