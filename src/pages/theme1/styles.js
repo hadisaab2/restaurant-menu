@@ -18,7 +18,7 @@ display: flex;
 flex-direction: column;
 height: 100%;
 position: relative;
-padding-bottom: 70px;
+padding-bottom: calc(92px + env(safe-area-inset-bottom));
 `;
 
 

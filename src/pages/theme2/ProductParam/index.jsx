@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { Backdrop, SearchProductContainer } from '../../../product-detail/floatingProductShell.styles'
 import {
     BackBtn,
@@ -10,7 +10,9 @@ import {
 import { AddToCart, ButtonWrapper, Carousel, CarouselBack, CarouselForward, CarouselItem, DiscountPrice, FakeContainer, Image, ImagesContainer, ImageWrapper, InfoContainer, Instruction, InstructionContainer, InstructionLabel, ItemDescription, ItemInfo, ItemInfoWrapper, ItemName, ItemPrice, Loader, LoaderWrapper, Minus, Plus, PriceContainer, Quantity, QuantityPrice, QuantityWrapper, OutOfStockNotice, SwiperWrapper, MagnifyBtn, ZoomOverlay, ZoomCloseBtn, ZoomImage } from './styles'
 import { useGetProduct } from '../../../apis/products/getProduct';
 import { useDispatch, useSelector } from 'react-redux';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
+import useDialogFocus from '../../../utilities/useDialogFocus';
+import { enabled, parseFeatures, localized } from '../../theme1/menuHelpers';
 import _ from 'lodash';
 import { addToCart } from '../../../redux/cart/cartActions';
 import { trackItemView, trackAddToCart } from '../../../utilities/analyticsTracking';
@@ -18,6 +20,7 @@ import CarouselLoader from "./carouselLoader";
 import ProductForm from "./Form";
 import ProductOptionsPicker from "../../../product-options/ProductOptionsPicker";
 import MacrosStrip from "../../../product-macros/MacrosStrip";
+import { resolveCustomerForm } from '../../../product-options/resolveOptions';
 import { emptySelection } from "../../../product-options/schema";
 import { FaRegCopy } from 'react-icons/fa6';
 import { TiTick } from 'react-icons/ti';
@@ -33,7 +36,12 @@ import 'swiper/css/effect-cards';
 import 'swiper/css/pagination';
 import { getCurrencySymbol } from "../../../utilities/getCurrencySymbol";
 
-export default function ProductParam({ productId, setSearchParams, searchParams }) {
+export default function ProductParam({ productId, setSearchParams, searchParams, variant }) {
+    const isTheme1 = variant === "theme1";
+    const navigate = useNavigate();
+    const location = useLocation();
+    const dialogRef = useRef(null);
+    const zoomDialogRef = useRef(null);
     const { restaurantName: paramRestaurantName } = useParams();
 
     const hostname = window.location.hostname;
@@ -47,7 +55,7 @@ export default function ProductParam({ productId, setSearchParams, searchParams 
     let formJson = null;
 
 
-    const { response: fetchedProduct, isLoading: productLoading } = useGetProduct({
+    const { response: fetchedProduct, isLoading: productLoading, error: productError, refetch: retryProduct } = useGetProduct({
         productId: productId,
         onSuccess: () => {
         }
@@ -78,7 +86,14 @@ export default function ProductParam({ productId, setSearchParams, searchParams 
 
 
 
-    if (!_.isEmpty(fetchedProduct?.form_json)) {//la etjanab json.parse la undefined
+    const resolvedTheme1Form = useMemo(() => {
+        if (!isTheme1) return null;
+        const resolved = resolveCustomerForm(fetchedProduct?.form_json, fetchedProduct?.category?.form_json);
+        return JSON.stringify(resolved.mode === "v2" ? resolved.options : resolved.legacyForm);
+    }, [isTheme1, fetchedProduct?.form_json, fetchedProduct?.category?.form_json]);
+    if (isTheme1) {
+        formJson = resolvedTheme1Form;
+    } else if (!_.isEmpty(fetchedProduct?.form_json)) {//la etjanab json.parse la undefined
         if (!_.isEmpty(JSON.parse(fetchedProduct?.form_json))) {
             formJson = fetchedProduct?.form_json
         } else {
@@ -121,9 +136,7 @@ export default function ProductParam({ productId, setSearchParams, searchParams 
     const [totalPrice, setTotalPrice] = useState(parseFloat(fetchedProduct?.en_price) || 0);
     const [instruction, setInstruction] = useState(""); // Example base price
     const [finalDiscount, setfinalDiscount] = useState(0); // Example base price
-    const isOutOfStock =
-        Boolean(fetchedProduct?.out_of_stock) ||
-        Number(fetchedProduct?.out_of_stock) === 1;
+    const isOutOfStock = isTheme1 ? enabled(fetchedProduct?.out_of_stock) : Boolean(fetchedProduct?.out_of_stock) || Number(fetchedProduct?.out_of_stock) === 1;
 
 
     const handlePriceChange = (newPrice) => {
@@ -134,6 +147,15 @@ export default function ProductParam({ productId, setSearchParams, searchParams 
     const [CloseAnimation, setCloseAnimation] = useState(true);
     const [carouselIndex, setcarouselIndex] = useState(0);
     const handleBack = () => {
+        if (isTheme1) {
+            if (location.state?.theme1Product) navigate(-1);
+            else {
+                const next = new URLSearchParams(searchParams);
+                next.delete("productId");
+                setSearchParams(next, { replace: true });
+            }
+            return;
+        }
         setCloseAnimation(false);
         setcarouselIndex(0);
         setTimeout(() => {
@@ -143,6 +165,7 @@ export default function ProductParam({ productId, setSearchParams, searchParams 
             document.body.style.overflow = "auto";
         }, 800);
     };
+    useDialogFocus(dialogRef, isTheme1 && !zoomOpen, handleBack);
     const [copied, setCopied] = useState(false);
 
     const handleCopy = () => {
@@ -252,8 +275,10 @@ export default function ProductParam({ productId, setSearchParams, searchParams 
     };
 
     const closeZoom = () => setZoomOpen(false);
+    useDialogFocus(zoomDialogRef, isTheme1 && zoomOpen, closeZoom);
 
     useEffect(() => {
+        if (isTheme1) return undefined;
         const handlePopState = () => {
             handleBack();
         };
@@ -289,6 +314,7 @@ export default function ProductParam({ productId, setSearchParams, searchParams 
     }
 
     const handleAddToCart = () => {
+        if (isTheme1 && (isOutOfStock || !enabled(parseFeatures(restaurant?.features).cart))) return;
         if (isV2Options) {
             const errors = {};
             if (formSchema.sizes?.length > 0 && !formData?.sizeId) {
@@ -310,7 +336,8 @@ export default function ProductParam({ productId, setSearchParams, searchParams 
     }
 
         let discountedPrice = (totalPrice * (1 - parseFloat(finalDiscount) / 100))
-        setTimeout(() => {
+        if (isTheme1) handleBack();
+        else setTimeout(() => {
             const next = new URLSearchParams(searchParams);
             next.delete("productId");
             setSearchParams(next);
@@ -341,7 +368,7 @@ export default function ProductParam({ productId, setSearchParams, searchParams 
 
     let images = [...(fetchedProduct?.images ?? [])];
     // Find the index of the image that should be first
-  const index = images.findIndex((image) => image.id === fetchedProduct.new_cover_id);
+  const index = images.findIndex((image) => image.id === fetchedProduct?.new_cover_id);
 
     // If the image is found and it's not already the first element, move it to the front
     if (index > 0) {
@@ -357,7 +384,7 @@ export default function ProductParam({ productId, setSearchParams, searchParams 
             [index]: true,
         }));
     };
-    const description =
+    const description = isTheme1 ? localized(fetchedProduct, "description", restaurant?.activeLanguage) :
         restaurant?.activeLanguage === "en"
             ? fetchedProduct?.en_description
             : fetchedProduct?.ar_description;
@@ -371,12 +398,22 @@ export default function ProductParam({ productId, setSearchParams, searchParams 
         <>
             <Backdrop CloseAnimation={CloseAnimation} onClick={handleBack} />
             <SearchProductContainer
+                ref={dialogRef}
+                role={isTheme1 ? "dialog" : undefined}
+                aria-modal={isTheme1 ? "true" : undefined}
+                aria-label={isTheme1 ? (restaurant?.activeLanguage === "ar" ? "تفاصيل الصنف" : "Product details") : undefined}
+                tabIndex={isTheme1 ? -1 : undefined}
                 CloseAnimation={CloseAnimation}
                 $premiumMobile={!productLoading}
             >
-                {!productLoading && <>
+                {isTheme1 && (productLoading || productError) && <div style={{ padding: 24, width: "100%" }}>
+                    <button type="button" onClick={handleBack}>{restaurant?.activeLanguage === "ar" ? "إغلاق" : "Close"}</button>
+                    <p role={productError ? "alert" : "status"}>{productError ? (restaurant?.activeLanguage === "ar" ? "تعذر تحميل الصنف" : "This item couldn’t load.") : (restaurant?.activeLanguage === "ar" ? "جاري التحميل…" : "Loading item…")}</p>
+                    {productError && <button type="button" onClick={() => retryProduct()}>{restaurant?.activeLanguage === "ar" ? "حاول مجدداً" : "Try again"}</button>}
+                </div>}
+                {!productLoading && (!isTheme1 || !productError) && <>
                     <ProductHeader CloseAnimation={CloseAnimation}>
-                        <BackBtn onClick={handleBack} CloseAnimation={CloseAnimation} type="button">
+                        <BackBtn aria-label={restaurant?.activeLanguage === "ar" ? "إغلاق" : "Close product details"} onClick={handleBack} CloseAnimation={CloseAnimation} type="button">
                             <BackIcon />
                         </BackBtn>
                         <ProductHeaderTitle activeLanguage={restaurant?.activeLanguage}>
@@ -384,7 +421,7 @@ export default function ProductParam({ productId, setSearchParams, searchParams 
                                 ? fetchedProduct?.category?.en_category
                                 : fetchedProduct?.category?.ar_category}
                         </ProductHeaderTitle>
-                        <CopyButton onClick={handleCopy} CloseAnimation={CloseAnimation}>
+                        <CopyButton as={isTheme1 ? "button" : undefined} type={isTheme1 ? "button" : undefined} aria-label={restaurant?.activeLanguage === "ar" ? "نسخ رابط الصنف" : "Copy product link"} onClick={handleCopy} CloseAnimation={CloseAnimation}>
                             {!copied ? <FaRegCopy /> : <TiTick />}
                         </CopyButton>
                     </ProductHeader>
@@ -598,7 +635,7 @@ export default function ProductParam({ productId, setSearchParams, searchParams 
 
                             <ItemInfo CloseAnimation={CloseAnimation} activeLanguage={restaurant.activeLanguage}>
                                 <ItemName activeLanguage={restaurant.activeLanguage} >
-                                    {restaurant.activeLanguage == "en"
+                                    {isTheme1 ? localized(fetchedProduct, "name", restaurant?.activeLanguage) : restaurant.activeLanguage == "en"
                                         ? fetchedProduct?.en_name
                                         : fetchedProduct?.ar_name}
                                 </ItemName>
@@ -643,7 +680,7 @@ export default function ProductParam({ productId, setSearchParams, searchParams 
                                 {!isV2Options && formSchema?.components && <ProductForm formSchema={formSchema} onPriceChange={handlePriceChange} formData={formData} setFormData={setFormData} basePrice={fetchedProduct?.en_price} formErrors={formErrors} />}
                                 <InstructionContainer activeLanguage={restaurant.activeLanguage}>
                                     <InstructionLabel>{restaurant.activeLanguage == "en"
-                                        ? "Any Special Instuction ?"
+                                        ? "Special instructions"
                                         : "أي تعليمات خاصة؟"}</InstructionLabel>
                                     <Instruction activeLanguage={restaurant.activeLanguage} onChange={(e) => setInstruction(e.target.value)} placeholder={restaurant.activeLanguage == "en"
                                         ? "Special Instruction"
@@ -654,12 +691,12 @@ export default function ProductParam({ productId, setSearchParams, searchParams 
                             </ItemInfo>
                         </InfoContainer>
                     </ItemInfoWrapper>
-                    {!isOutOfStock && (
+                    {!isOutOfStock && (!isTheme1 || enabled(parseFeatures(restaurant?.features).cart)) && (
                     <ButtonWrapper CloseAnimation={CloseAnimation}>
                         <QuantityWrapper CloseAnimation={CloseAnimation}>
-                            <Plus onClick={handleIncrement}>+</Plus>
+                            <Plus as={isTheme1 ? "button" : undefined} type={isTheme1 ? "button" : undefined} aria-label={restaurant?.activeLanguage === "ar" ? "زيادة الكمية" : "Increase quantity"} onClick={handleIncrement}>+</Plus>
                             <Quantity>{quantity}</Quantity>
-                            <Minus onClick={handleDecrement}>-</Minus>
+                            <Minus as={isTheme1 ? "button" : undefined} type={isTheme1 ? "button" : undefined} aria-label={restaurant?.activeLanguage === "ar" ? "تقليل الكمية" : "Decrease quantity"} onClick={handleDecrement}>-</Minus>
                         </QuantityWrapper>
                         <AddToCart onClick={handleAddToCart}>{restaurant.activeLanguage == "en"
                             ? "Add To Cart"
@@ -677,6 +714,11 @@ export default function ProductParam({ productId, setSearchParams, searchParams 
             </SearchProductContainer>
             {zoomOpen && (
                 <ZoomOverlay
+                    ref={zoomDialogRef}
+                    role={isTheme1 ? "dialog" : undefined}
+                    aria-modal={isTheme1 ? "true" : undefined}
+                    aria-label={isTheme1 ? (restaurant?.activeLanguage === "ar" ? "تكبير الصورة" : "Image zoom") : undefined}
+                    tabIndex={isTheme1 ? -1 : undefined}
                     onTouchStart={handleZoomTouchStart}
                     onTouchMove={handleZoomTouchMove}
                     onTouchEnd={handleZoomTouchEnd}

@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState, useCallback } from "react";
 import axios from "axios";
-import { Container, ProductWrapper } from "./styles";
+import { Container, ProductWrapper, SortBar, SortSelect } from "./styles";
 import * as AllStyles from "./allItemsStyles";
 import Product from "./product";
 import ProductDetails from "./productDetails";
@@ -46,6 +46,7 @@ export default function Products({
   );
   const dispatch = useDispatch();
 
+  const [sortBy, setSortBy] = useState("default");
   const [wishlistIds, setWishlistIds] = useState(() => new Set());
 
   const refreshWishlist = useCallback(async () => {
@@ -162,7 +163,7 @@ export default function Products({
   }, [fetchNextPageAll, hasNextPageAll, isAllItemsCategory, isFetchingNextPageAll]);
 
   // filtering products based on search
-const filteredProducts =
+const filteredProductsUnsorted =
   data?.pages
     ?.flat()
     ?.filter((plate) => {
@@ -172,6 +173,26 @@ const filteredProducts =
         .toLowerCase()
         .includes(searchText.toLowerCase());
     }) || [];
+
+const filteredProducts = React.useMemo(() => {
+  const items = [...filteredProductsUnsorted];
+  switch (sortBy) {
+    case "price_asc":
+      return items.sort((a, b) => parseFloat(a.en_price || 0) - parseFloat(b.en_price || 0));
+    case "price_desc":
+      return items.sort((a, b) => parseFloat(b.en_price || 0) - parseFloat(a.en_price || 0));
+    case "name_asc":
+      return items.sort((a, b) => {
+        const nameA = (activeLanguage === "en" ? a.en_name : a.ar_name) || a.en_name || "";
+        const nameB = (activeLanguage === "en" ? b.en_name : b.ar_name) || b.en_name || "";
+        return nameA.localeCompare(nameB);
+      });
+    case "newest":
+      return items.sort((a, b) => (b.id || 0) - (a.id || 0));
+    default:
+      return items;
+  }
+}, [filteredProductsUnsorted, sortBy, activeLanguage]);
 
 const allItemsSections = React.useMemo(() => {
   if (!isAllItemsCategory) return [];
@@ -298,6 +319,23 @@ console.log(filteredProducts)
     // onTouchMove={handleTouchMove}
     // onTouchEnd={handleTouchEnd}
     >
+      {/* Sort dropdown */}
+      {!isAllItemsCategory && (
+        <SortBar $rtl={activeLanguage === "ar"}>
+          <SortSelect
+            value={sortBy}
+            onChange={(e) => setSortBy(e.target.value)}
+            $rtl={activeLanguage === "ar"}
+          >
+            <option value="default">{activeLanguage === "en" ? "Default" : "الافتراضي"}</option>
+            <option value="price_asc">{activeLanguage === "en" ? "Price: Low to High" : "السعر: من الأقل"}</option>
+            <option value="price_desc">{activeLanguage === "en" ? "Price: High to Low" : "السعر: من الأعلى"}</option>
+            <option value="name_asc">{activeLanguage === "en" ? "Name: A-Z" : "الاسم: أ-ي"}</option>
+            <option value="newest">{activeLanguage === "en" ? "Newest" : "الأحدث"}</option>
+          </SortSelect>
+        </SortBar>
+      )}
+
       {isAllItemsCategory ? (
         <AllStyles.AllItemsWrapper>
           {allItemsSections.map((section) => (

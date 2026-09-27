@@ -27,7 +27,9 @@ import { getCustomerAccessToken } from "../../../../utilities/customerAuthStorag
 import { trackAddToCart } from "../../../../utilities/analyticsTracking";
 import { IoHeartOutline } from "react-icons/io5";
 import { FaCartPlus } from "react-icons/fa";
+import { toast } from "react-toastify";
 import { getCurrencySymbol } from "../../../../utilities/getCurrencySymbol";
+import MacrosStrip from "../../../../product-macros/MacrosStrip";
 const _ = require('lodash');
 
 const Product = React.forwardRef(
@@ -174,6 +176,7 @@ const Product = React.forwardRef(
         trackAddToCart(restaurant.id, plate.id, activeCategoryId, 1, restaurant?.branches?.[0]?.id || null);
       }
       flyToCart(e);
+      toast.success(activeLanguage === "en" ? "Added to cart" : "تمت الإضافة إلى السلة");
     };
 
     const plateHandle = () => {
@@ -293,6 +296,7 @@ const imageSrc = hasValidImage
                 </DiscountPrice>
               </PriceContainer>
             )}
+            <MacrosStrip macros={plate?.macros} activeLanguage={activeLanguage} />
           </TextContainer>
         </Wrapper>
       </Container>

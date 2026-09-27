@@ -72,6 +72,35 @@ export const GoToTopButton = styled.button`
   }
 `;
 
+export const SortBar = styled.div`
+  width: 95%;
+  display: flex;
+  justify-content: ${(p) => (p.$rtl ? "flex-start" : "flex-end")};
+  padding: 4px 0 8px;
+`;
+
+export const SortSelect = styled.select`
+  appearance: none;
+  -webkit-appearance: none;
+  background: ${(p) => p.theme.BoxColor || p.theme.popupbackgroundColor || "#fff"};
+  color: ${(p) => p.theme.textColor || p.theme.BoxTextColor || "#334155"};
+  border: 1px solid ${(p) => p.theme.categoryUnActive || "rgba(0,0,0,0.1)"};
+  border-radius: 8px;
+  padding: 6px 28px 6px 10px;
+  font-size: 12px;
+  font-family: inherit;
+  cursor: pointer;
+  outline: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' fill='none'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%2394a3b8' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: ${(p) => (p.$rtl ? "left 10px center" : "right 10px center")};
+  direction: ${(p) => (p.$rtl ? "rtl" : "ltr")};
+
+  &:focus {
+    border-color: ${(p) => p.theme.mainColor};
+  }
+`;
+
 export const AllItemsLoaderWrap = styled.div`
   width: 100%;
   display: flex;

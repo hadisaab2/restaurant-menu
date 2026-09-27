@@ -137,7 +137,7 @@ export default function Restaurants({ readOnly = false, salesUserId = null, base
   const [excelUploading, setExcelUploading] = useState(false);
   const [excelMessage, setExcelMessage] = useState(null);
   const [gridSearch, setGridSearch] = useState("");
-  const [liveTab, setLiveTab] = useState(0);
+  const [liveTab, setLiveTab] = useState(1);
   const [paymentDateFrom, setPaymentDateFrom] = useState("");
   const [paymentDateTo, setPaymentDateTo] = useState("");
   const [paymentDatePassedOnly, setPaymentDatePassedOnly] = useState(false);

@@ -17,15 +17,17 @@ export default function OrderTypeStep({
   restaurant,
   errors,
   setErrors,
+  activeLanguage = "en",
 }) {
   const theme = useTheme();
+  const t = (en, ar) => activeLanguage === "ar" ? ar : en;
   const hasOnlineBranch = () => {
     return restaurant?.branches?.some((branch) => branch.is_online);
   };
 
   let features = {};
   try {
-    features = JSON.parse(restaurant?.features || "{}");
+    features = typeof restaurant?.features === "string" ? JSON.parse(restaurant.features) : restaurant?.features || {};
   } catch (e) {
     features = {};
   }
@@ -40,9 +42,9 @@ export default function OrderTypeStep({
   };
 
   const deliveryOptions = [
-    features.delivery_order && { value: "Delivery", label: "Delivery" },
-    features.takeaway_order && { value: "TakeAway", label: "Take Away" },
-    features.dinein_order && { value: "DineIn", label: "Dine In" },
+    features.delivery_order && { value: "Delivery", label: t("Delivery", "توصيل") },
+    features.takeaway_order && { value: "TakeAway", label: t("Take Away", "استلام") },
+    features.dinein_order && { value: "DineIn", label: t("Dine In", "داخل المطعم") },
   ].filter(Boolean);
 
   const selectStyles = {
@@ -119,9 +121,9 @@ export default function OrderTypeStep({
 
   return (
     <OrderTypeContainer>
-      <SectionTitle>Select Order Type</SectionTitle>
+      <SectionTitle>{t("Select Order Type", "اختر نوع الطلب")}</SectionTitle>
       <SectionDescription>
-        Choose how you would like to receive your order
+        {t("Choose how you would like to receive your order", "اختر طريقة استلام طلبك")}
       </SectionDescription>
 
       <DropdownWrapper>
@@ -131,7 +133,9 @@ export default function OrderTypeStep({
           )}
           onChange={handleDeliveryTypeChange}
           options={deliveryOptions}
-          placeholder="Select Order Type"
+          placeholder={t("Select Order Type", "اختر نوع الطلب")}
+          aria-label={t("Order type", "نوع الطلب")}
+          isRtl={activeLanguage === "ar"}
           isSearchable={false}
           styles={selectStyles}
           menuPortalTarget={typeof document !== "undefined" ? document.body : null}

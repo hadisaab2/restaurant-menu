@@ -18,6 +18,7 @@ import {
   CategoryName,
   PoweredBy,
 } from "./styles";
+import Footer from "../Footer";
 
 const GCS_BASE = "https://storage.googleapis.com/menugic-images/";
 
@@ -161,6 +162,14 @@ export default function LandingPage({
             );
           })}
       </CategoryGrid>
+
+      {/* Footer */}
+      <Footer
+        restaurant={restaurant}
+        restaurantName={restaurantName}
+        activeLanguage={activeLanguage}
+        onExploreClick={() => onCategorySelect(categories?.[0]?.id)}
+      />
 
       {/* Bottom Tab Bar */}
       <BottomTabBar

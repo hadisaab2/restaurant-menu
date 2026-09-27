@@ -19,7 +19,8 @@ import {
   ReviewItemImage,
 } from "./ReviewStepStyles";
 
-export default function ReviewStep({ formData, restaurant, activeLanguage }) {
+export default function ReviewStep({ formData, restaurant, activeLanguage, variant }) {
+  const t = (en, ar) => variant === "theme1" && activeLanguage === "ar" ? ar : en;
   const { restaurantName: paramRestaurantName } = useParams();
   const hostname = window.location.hostname;
   const subdomain = hostname.split(".")[0];
@@ -38,11 +39,11 @@ export default function ReviewStep({ formData, restaurant, activeLanguage }) {
 
   return (
     <ReviewContainer>
-      <SectionTitle>Review Your Order</SectionTitle>
+      <SectionTitle>{t("Review Your Order", "مراجعة الطلب")}</SectionTitle>
 
       <ReviewSection>
         <SectionTitle style={{ fontSize: "18px", marginBottom: "15px" }}>
-          Order Items
+          {t("Order Items", "الأصناف")}
         </SectionTitle>
         <ItemsList>
           {cart.map((item) => (
@@ -67,7 +68,7 @@ export default function ReviewStep({ formData, restaurant, activeLanguage }) {
         </ItemsList>
         <Divider />
         <ReviewItem>
-          <ReviewLabel>Total:</ReviewLabel>
+          <ReviewLabel>{t("Total:", "الإجمالي:")}</ReviewLabel>
           <TotalValue>
             {convertPrice(totalPrice, currencySymbol)}
           </TotalValue>
@@ -76,21 +77,21 @@ export default function ReviewStep({ formData, restaurant, activeLanguage }) {
 
       <ReviewSection>
         <SectionTitle style={{ fontSize: "18px", marginBottom: "15px" }}>
-          Order Details
+          {t("Order Details", "تفاصيل الطلب")}
         </SectionTitle>
         <ReviewItem>
-          <ReviewLabel>Order Type:</ReviewLabel>
+          <ReviewLabel>{t("Order Type:", "نوع الطلب:")}</ReviewLabel>
           <ReviewValue>{formData.deliveryType}</ReviewValue>
         </ReviewItem>
         {formData.selectedBranch && (
           <ReviewItem>
-            <ReviewLabel>Branch:</ReviewLabel>
+            <ReviewLabel>{t("Branch:", "الفرع:")}</ReviewLabel>
             <ReviewValue>{formData.selectedBranch.name}</ReviewValue>
           </ReviewItem>
         )}
         {formData.selectedRegion && (
           <ReviewItem>
-            <ReviewLabel>Region:</ReviewLabel>
+            <ReviewLabel>{t("Region:", "المنطقة:")}</ReviewLabel>
             <ReviewValue>{formData.selectedRegion}</ReviewValue>
           </ReviewItem>
         )}
@@ -98,31 +99,31 @@ export default function ReviewStep({ formData, restaurant, activeLanguage }) {
 
       <ReviewSection>
         <SectionTitle style={{ fontSize: "18px", marginBottom: "15px" }}>
-          Contact Information
+          {t("Contact Information", "معلومات التواصل")}
         </SectionTitle>
         <ReviewItem>
-          <ReviewLabel>Name:</ReviewLabel>
+          <ReviewLabel>{t("Name:", "الاسم:")}</ReviewLabel>
           <ReviewValue>{formData.fullName}</ReviewValue>
         </ReviewItem>
         <ReviewItem>
-          <ReviewLabel>Phone:</ReviewLabel>
+          <ReviewLabel>{t("Phone:", "الهاتف:")}</ReviewLabel>
           <ReviewValue>{formData.phoneNumber}</ReviewValue>
         </ReviewItem>
         {formData.deliveryType === "Delivery" && formData.fullAddress && (
           <ReviewItem>
-            <ReviewLabel>Address:</ReviewLabel>
+            <ReviewLabel>{t("Address:", "العنوان:")}</ReviewLabel>
             <ReviewValue>{formData.fullAddress}</ReviewValue>
           </ReviewItem>
         )}
         {formData.deliveryType === "DineIn" && formData.tableNumber && (
           <ReviewItem>
-            <ReviewLabel>Table Number:</ReviewLabel>
+            <ReviewLabel>{t("Table Number:", "رقم الطاولة:")}</ReviewLabel>
             <ReviewValue>{formData.tableNumber}</ReviewValue>
           </ReviewItem>
         )}
         {formData.note && (
           <ReviewItem>
-            <ReviewLabel>Notes:</ReviewLabel>
+            <ReviewLabel>{t("Notes:", "ملاحظات:")}</ReviewLabel>
             <ReviewValue>{formData.note}</ReviewValue>
           </ReviewItem>
         )}

@@ -1,116 +1,163 @@
 import styled from "styled-components";
-import { CiSearch } from "react-icons/ci";
-import { IoMdShare } from "react-icons/io";
-import { IoShareSocialSharp } from "react-icons/io5";
 
-export const Container = styled.div`
-width: 100%;
-display: flex;
-flex-direction: column;
-align-items: center;
+export const HeaderWrap = styled.header`
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: var(--c-surface);
+  border-bottom: 1px solid var(--c-border);
+  height: var(--header-h);
+  transition: box-shadow var(--dur-normal) var(--ease-in-out);
+  &.scrolled { box-shadow: var(--shadow-sm); }
 `;
 
-export const TextContainer = styled.div`
-width: 90%;
-display: flex;
-align-items: ${props=>props.activeLanuguage=="en"?"flex-start":"flex-end"};
-flex-direction: column;
-margin-top: 8px;
-margin-bottom: 8px;
-font-weight: 600;
-color:${props=>props.theme.textColor}
-`;
-export const Text = styled.div`
-font-size: 27px;
-
-
+export const HeaderInner = styled.div`
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  height: 100%;
+  max-width: var(--container-max);
+  margin: 0 auto;
+  padding: 0 var(--sp-4);
 `;
 
-export const SearchWapper = styled.div`
-width: 90%;
-display: flex;
-align-items: center;
-margin-top: 16px;
-color:${props=>props.theme.searchTextColor};
-height: 40px;
-border-radius: 10px;
-overflow: hidden;
-position: relative;
-flex-direction: row;
-gap:5px
-
-`;
-export const SearchContainer = styled.div`
-width: 90%;
-display: flex;
-align-items: center;
-color:${props=>props.theme.searchTextColor};
-height: 40px;
-border-radius: 10px;
-overflow: hidden;
-position: relative;
-
+export const HeaderStart = styled.div`
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  min-width: 0;
+  flex-shrink: 0;
 `;
 
-export const Search = styled.input`
-width: 100%;
-height:100%;
-background-color: ${props=>props.theme.searchbackground};
-border: 0;
-outline: none;
-padding-left: ${props=>props.activeLanguage=="en"?"30px":"0px"};
-padding-right: ${props=>props.activeLanguage=="en"?"0px":"30px"};
-color:${props=>props.theme.searchTextColor};
-&::placeholder{
-    color:${props=>props.theme.searchTextColor};
-    opacity: 0.5;
-}
-
+export const HeaderBrand = styled.a`
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  text-decoration: none;
+  min-width: 0;
+  cursor: pointer;
 `;
 
-export const SearchIcon = styled(CiSearch)`
-position: absolute;
-left: ${props=>props.activeLanguage=="en"?"10px":null};
-right: ${props=>props.activeLanguage=="en"?null:"10px"};
-
+export const HeaderLogo = styled.div`
+  width: 32px;
+  height: 32px;
+  border-radius: var(--r-sm);
+  background: var(--c-accent-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: var(--text-base);
+  color: var(--c-accent);
+  flex-shrink: 0;
+  overflow: hidden;
+  img { width: 100%; height: 100%; object-fit: cover; }
 `;
 
-export const SidebarAction = styled.div`
-width: 90%;
-display: flex;
-align-items: center;
-justify-content: flex-start;
-margin-top: 10px;
-margin-left: 10px;
-
-font-weight: 600;
-color:${props=>props.theme.searchTextColor};
-height: 40px;
-font-size: 13px;
-
+export const HeaderName = styled.span`
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: var(--text-md);
+  color: var(--c-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  [dir="rtl"] & { font-family: var(--font-ar); }
 `;
 
+export const HeaderSearch = styled.div`
+  flex: 1;
+  max-width: 400px;
+  position: relative;
+  display: none;
+  @media (min-width: 768px) { display: flex; align-items: center; }
+`;
 
+export const HeaderSearchIcon = styled.div`
+  position: absolute;
+  inset-inline-start: var(--sp-3);
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--c-text-3);
+  pointer-events: none;
+  display: flex;
+`;
 
+export const HeaderSearchInput = styled.input`
+  width: 100%;
+  height: 36px;
+  padding: 0 var(--sp-8) 0 var(--sp-10);
+  border: 1px solid var(--c-border);
+  border-radius: var(--r-full);
+  background: var(--c-bg);
+  font-size: var(--text-sm);
+  color: var(--c-text);
+  font-family: inherit;
+  transition: border-color var(--dur-fast), background var(--dur-fast);
+  &::placeholder { color: var(--c-text-3); }
+  &:focus { outline: none; border-color: var(--c-accent); background: var(--c-surface); }
+`;
 
-export const ShareIcon = styled.div`
-height: 100%;
-font-size: 14px;
-padding-left: 10px;
-padding-right: 10px;
-border-radius: 10px;
-font-weight: 300;
-gap:5px;
-flex-direction: row;
-display: flex;
-align-items:center;
-justify-content: center;
-background-color:${props=>props.theme.searchbackground};
-color:${props=>props.theme.searchTextColor};
-`
-export const ShareIconLogo = styled(IoShareSocialSharp)`
-color:${props=>props.theme.searchTextColor};
-font-size: 14px;
+export const HeaderSearchClear = styled.button`
+  position: absolute;
+  inset-inline-end: var(--sp-2);
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--c-text-3);
+  padding: var(--sp-1);
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+`;
 
+export const HeaderEnd = styled.div`
+  display: flex;
+  align-items: center;
+  gap: var(--sp-1);
+  margin-inline-start: auto;
+`;
 
+export const HeaderIconBtn = styled.button`
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--r-full);
+  color: var(--c-text);
+  transition: background var(--dur-fast);
+  position: relative;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: var(--text-sm);
+  font-weight: 700;
+  &:hover { background: var(--c-surface-alt); }
+`;
+
+export const MobileSearchBtn = styled(HeaderIconBtn)`
+  display: flex;
+  @media (min-width: 768px) { display: none; }
+`;
+
+export const CartButton = styled(HeaderIconBtn)``;
+
+export const HeaderCartBadge = styled.span`
+  position: absolute;
+  top: 2px;
+  inset-inline-end: 2px;
+  min-width: 16px;
+  height: 16px;
+  border-radius: var(--r-full);
+  background: var(--c-accent);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 4px;
+  line-height: 1;
 `;
