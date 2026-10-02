@@ -555,7 +555,7 @@ export const InstructionLabel = styled.span`
 export const Instruction = styled.input`
 background-color: transparent;
 border: 1px solid ${(props) => {
-    let color = props?.theme?.formColor || props?.theme?.popupTextColor || props?.theme?.textColor || "#333333"; // Get the color
+    let color = props?.theme?.formColor; // Get the color
     const opacity = 0.8; // Desired opacity (e.g., 50%)
 
     if (color.startsWith("#")) {

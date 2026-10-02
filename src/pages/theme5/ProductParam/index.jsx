@@ -13,6 +13,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import _ from 'lodash';
 import { addToCart } from '../../../redux/cart/cartActions';
+import { computeUnitPrice } from "../../../product-options/pricing";
 import { trackItemView, trackAddToCart } from '../../../utilities/analyticsTracking';
 import CarouselLoader from "./carouselLoader";
 import ProductForm from "./Form";
@@ -133,8 +134,16 @@ export default function ProductParam({ productId, setSearchParams, searchParams 
         Number(fetchedProduct?.out_of_stock) === 1;
 
 
+    const userChangedOptions = useRef(false);
+
     const handlePriceChange = (newPrice) => {
-        setTotalPrice(parseFloat(newPrice) || 0);
+        if (userChangedOptions.current || !isV2Options) {
+            setTotalPrice(parseFloat(newPrice) || 0);
+        }
+    };
+
+    const handleUserSizeChange = () => {
+        userChangedOptions.current = true;
     };
 
 
@@ -316,7 +325,10 @@ export default function ProductParam({ productId, setSearchParams, searchParams 
         }
     }
 
-        let discountedPrice = (totalPrice * (1 - parseFloat(finalDiscount) / 100))
+        const cartPrice = isV2Options
+            ? parseFloat(computeUnitPrice(String(getEffectivePrice(fetchedProduct, menuMode)), formSchema, formData))
+            : totalPrice;
+        let discountedPrice = (cartPrice * (1 - parseFloat(finalDiscount) / 100))
         setTimeout(() => {
             const next = new URLSearchParams(searchParams);
             next.delete("productId");
@@ -645,6 +657,7 @@ export default function ProductParam({ productId, setSearchParams, searchParams 
                                         activeLanguage={restaurant.activeLanguage}
                                         basePrice={String(getEffectivePrice(fetchedProduct, menuMode))}
                                         onPriceChange={handlePriceChange}
+                                        onUserSizeChange={handleUserSizeChange}
                                     />
                                 )}
                                 {!isV2Options && formSchema?.components && <ProductForm formSchema={formSchema} onPriceChange={handlePriceChange} formData={formData} setFormData={setFormData} basePrice={String(getEffectivePrice(fetchedProduct, menuMode))} formErrors={formErrors} />}
@@ -672,7 +685,7 @@ export default function ProductParam({ productId, setSearchParams, searchParams 
                             ? "Add To Cart"
                             : "أضف إلى السلة"}
                             <QuantityPrice>
-                                {convertPrice(quantity * (totalPrice * (1 - parseFloat(finalDiscount) / 100)), currencySymbol)}
+                                {convertPrice(quantity * ((isV2Options ? parseFloat(computeUnitPrice(String(getEffectivePrice(fetchedProduct, menuMode)), formSchema, formData)) : totalPrice) * (1 - parseFloat(finalDiscount) / 100)), currencySymbol)}
                             </QuantityPrice>
 
                         </AddToCart>

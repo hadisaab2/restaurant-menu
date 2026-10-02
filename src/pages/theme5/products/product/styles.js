@@ -150,6 +150,30 @@ export const NEW = styled.div`
   line-height: 1.2;
 `;
 
+export const OutOfStockBadge = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 4;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.45);
+  border-radius: 10px;
+  span {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #fff;
+    background: rgba(0, 0, 0, 0.6);
+    padding: 4px 12px;
+    border-radius: 4px;
+  }
+`;
+
 export const WishlistHeartBtn = styled.button`
   position: absolute;
   bottom: 8px;

@@ -47,6 +47,7 @@ import { addToCart } from "../../../../redux/cart/cartActions";
 import CarouselLoader from "./carouselLoader";
 import ProductForm from "./Form";
 import ProductOptionsPicker from "../../../../product-options/ProductOptionsPicker";
+import { computeUnitPrice } from "../../../../product-options/pricing";
 import MacrosStrip from "../../../../product-macros/MacrosStrip";
 import { emptySelection } from "../../../../product-options/schema";
 import { FaRegCopy } from "react-icons/fa";
@@ -155,11 +156,18 @@ export default function ProductDetails({
 
   const enPrice = plates[activePlate]?.en_price || "0";
   const basePrice = enPrice.includes(".") ? parseFloat(enPrice).toFixed(2) : parseFloat(enPrice).toFixed(0);
-  const [totalPrice, setTotalPrice] = useState(basePrice); // Example base price
+  const [totalPrice, setTotalPrice] = useState(basePrice);
   const [instruction, setInstruction] = useState("");
+  const userChangedOptions = useRef(false);
 
   const handlePriceChange = (newPrice) => {
-    setTotalPrice(newPrice);
+    if (userChangedOptions.current || !isV2Options) {
+      setTotalPrice(newPrice);
+    }
+  };
+
+  const handleUserSizeChange = () => {
+    userChangedOptions.current = true;
   };
 
   const [CloseAnimation, setCloseAnimation] = useState(true);
@@ -337,7 +345,11 @@ export default function ProductDetails({
     }
 
 
-    let discountedPrice = (totalPrice * (1 - parseFloat(finalDiscount) / 100))
+    // Use computed price (accounts for size/addons) even if user didn't manually change options
+    const cartPrice = isV2Options
+      ? parseFloat(computeUnitPrice(basePrice, formSchema, formData))
+      : parseFloat(totalPrice);
+    let discountedPrice = (cartPrice * (1 - parseFloat(finalDiscount) / 100))
     setTimeout(() => {
       setactivePlate(null);
       document.body.style.overflow = "auto";
@@ -686,6 +698,7 @@ export default function ProductDetails({
                   activeLanguage={restaurant.activeLanguage}
                   basePrice={basePrice}
                   onPriceChange={handlePriceChange}
+                  onUserSizeChange={handleUserSizeChange}
                 />
               )}
               {!isV2Options && formSchema?.components && <ProductForm formSchema={formSchema} onPriceChange={handlePriceChange} formData={formData} setFormData={setFormData} basePrice={basePrice} formErrors={formErrors} />}
@@ -712,7 +725,7 @@ export default function ProductDetails({
               ? "Add To Cart"
               : "أضف إلى السلة"}
               <QuantityPrice>
-                {convertPrice(quantity * (totalPrice * (1 - parseFloat(finalDiscount) / 100)), currencySymbol)}
+                {convertPrice(quantity * ((isV2Options ? parseFloat(computeUnitPrice(basePrice, formSchema, formData)) : totalPrice) * (1 - parseFloat(finalDiscount) / 100)), currencySymbol)}
               </QuantityPrice>
             </AddToCart>
           </ButtonWrapper>

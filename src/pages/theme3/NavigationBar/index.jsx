@@ -67,7 +67,6 @@ export default function NavigationBar({
   restaurant: restaurantProp,
   popupHandler,
   isProductDetailsOpen = false,
-  variant,
 }) {
   // Features gating is resolved after restaurant is loaded from Redux (below)
   const { restaurantName: paramRestaurantName } = useParams();
@@ -244,11 +243,10 @@ export default function NavigationBar({
           >
             {restaurant?.logoURL && (
               <Logo
-                src={variant === "theme1" ? getImageUrl(restaurant.logoURL) : `https://storage.googleapis.com/menugic-images/${restaurant.logoURL}`}
+                src={`https://storage.googleapis.com/menugic-images/${restaurant.logoURL}`}
                 alt={restaurant?.name || "Restaurant Logo"}
               />
             )}
-            {variant === "theme1" && !restaurant?.logoURL && <strong style={{ fontSize: 18 }}>{restaurant?.display_name || restaurant?.name}</strong>}
           </LogoContainer>
 
           <NavLinks activeLanguage={activeLanguage}>
@@ -267,7 +265,7 @@ export default function NavigationBar({
               activeLanguage={activeLanguage}
             >
               <NavLinkText activeLanguage={activeLanguage}>
-                {variant === "theme1" ? (activeLanguage === "en" ? "Menu" : "القائمة") : (activeLanguage === "en" ? "Categories" : "الفئات")}
+                {activeLanguage === "en" ? "Categories" : "الفئات"}
               </NavLinkText>
             </NavLink>
             {showFeedback && (

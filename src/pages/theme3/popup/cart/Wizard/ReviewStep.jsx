@@ -19,8 +19,7 @@ import {
   ReviewItemImage,
 } from "./ReviewStepStyles";
 
-export default function ReviewStep({ formData, restaurant, activeLanguage, variant }) {
-  const t = (en, ar) => variant === "theme1" && activeLanguage === "ar" ? ar : en;
+export default function ReviewStep({ formData, restaurant, activeLanguage }) {
   const { restaurantName: paramRestaurantName } = useParams();
   const hostname = window.location.hostname;
   const subdomain = hostname.split(".")[0];
@@ -39,11 +38,11 @@ export default function ReviewStep({ formData, restaurant, activeLanguage, varia
 
   return (
     <ReviewContainer>
-      <SectionTitle>{t("Review Your Order", "مراجعة الطلب")}</SectionTitle>
+      <SectionTitle>Review Your Order</SectionTitle>
 
       <ReviewSection>
         <SectionTitle style={{ fontSize: "18px", marginBottom: "15px" }}>
-          {t("Order Items", "الأصناف")}
+          Order Items
         </SectionTitle>
         <ItemsList>
           {cart.map((item) => (
@@ -68,7 +67,7 @@ export default function ReviewStep({ formData, restaurant, activeLanguage, varia
         </ItemsList>
         <Divider />
         <ReviewItem>
-          <ReviewLabel>{t("Total:", "الإجمالي:")}</ReviewLabel>
+          <ReviewLabel>Total:</ReviewLabel>
           <TotalValue>
             {convertPrice(totalPrice, currencySymbol)}
           </TotalValue>
@@ -77,21 +76,21 @@ export default function ReviewStep({ formData, restaurant, activeLanguage, varia
 
       <ReviewSection>
         <SectionTitle style={{ fontSize: "18px", marginBottom: "15px" }}>
-          {t("Order Details", "تفاصيل الطلب")}
+          Order Details
         </SectionTitle>
         <ReviewItem>
-          <ReviewLabel>{t("Order Type:", "نوع الطلب:")}</ReviewLabel>
+          <ReviewLabel>Order Type:</ReviewLabel>
           <ReviewValue>{formData.deliveryType}</ReviewValue>
         </ReviewItem>
         {formData.selectedBranch && (
           <ReviewItem>
-            <ReviewLabel>{t("Branch:", "الفرع:")}</ReviewLabel>
+            <ReviewLabel>Branch:</ReviewLabel>
             <ReviewValue>{formData.selectedBranch.name}</ReviewValue>
           </ReviewItem>
         )}
         {formData.selectedRegion && (
           <ReviewItem>
-            <ReviewLabel>{t("Region:", "المنطقة:")}</ReviewLabel>
+            <ReviewLabel>Region:</ReviewLabel>
             <ReviewValue>{formData.selectedRegion}</ReviewValue>
           </ReviewItem>
         )}
@@ -99,31 +98,31 @@ export default function ReviewStep({ formData, restaurant, activeLanguage, varia
 
       <ReviewSection>
         <SectionTitle style={{ fontSize: "18px", marginBottom: "15px" }}>
-          {t("Contact Information", "معلومات التواصل")}
+          Contact Information
         </SectionTitle>
         <ReviewItem>
-          <ReviewLabel>{t("Name:", "الاسم:")}</ReviewLabel>
+          <ReviewLabel>Name:</ReviewLabel>
           <ReviewValue>{formData.fullName}</ReviewValue>
         </ReviewItem>
         <ReviewItem>
-          <ReviewLabel>{t("Phone:", "الهاتف:")}</ReviewLabel>
+          <ReviewLabel>Phone:</ReviewLabel>
           <ReviewValue>{formData.phoneNumber}</ReviewValue>
         </ReviewItem>
         {formData.deliveryType === "Delivery" && formData.fullAddress && (
           <ReviewItem>
-            <ReviewLabel>{t("Address:", "العنوان:")}</ReviewLabel>
+            <ReviewLabel>Address:</ReviewLabel>
             <ReviewValue>{formData.fullAddress}</ReviewValue>
           </ReviewItem>
         )}
         {formData.deliveryType === "DineIn" && formData.tableNumber && (
           <ReviewItem>
-            <ReviewLabel>{t("Table Number:", "رقم الطاولة:")}</ReviewLabel>
+            <ReviewLabel>Table Number:</ReviewLabel>
             <ReviewValue>{formData.tableNumber}</ReviewValue>
           </ReviewItem>
         )}
         {formData.note && (
           <ReviewItem>
-            <ReviewLabel>{t("Notes:", "ملاحظات:")}</ReviewLabel>
+            <ReviewLabel>Notes:</ReviewLabel>
             <ReviewValue>{formData.note}</ReviewValue>
           </ReviewItem>
         )}

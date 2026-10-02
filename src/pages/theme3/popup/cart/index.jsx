@@ -1,17 +1,15 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect } from "react";
 import {
   Container,
   Close,
   NoItems,
 } from "./styles";
 import Wizard from "./Wizard";
-import useDialogFocus from "../../../../utilities/useDialogFocus";
 import { useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 
 export default function CartPopup({
   restaurant,
-  variant,
   showPopup,
   popupHandler = () => {},
 }) {
@@ -28,8 +26,6 @@ export default function CartPopup({
     (state) => state.restaurant?.[restaurantName]?.activeLanguage || "en"
   );
   const isCartEmpty = cart.length === 0;
-  const dialogRef = useRef(null);
-  useDialogFocus(dialogRef, variant === "theme1" && showPopup === "cart", () => popupHandler(null));
 
   useEffect(() => {
     const handlePopState = () => {
@@ -51,8 +47,8 @@ export default function CartPopup({
   };
 
   return (
-    <Container ref={dialogRef} showPopup={showPopup} role={variant === "theme1" ? "dialog" : undefined} aria-modal={variant === "theme1" ? "true" : undefined} aria-label={activeLanguage === "ar" ? "السلة" : "Your cart"} tabIndex={variant === "theme1" ? -1 : undefined}>
-      {variant === "theme1" && isCartEmpty && <button type="button" onClick={handleClose} style={{ minHeight: 44, padding: "12px 24px", margin: 20, borderRadius: 12 }}>{activeLanguage === "ar" ? "متابعة التسوق" : "Continue browsing"}</button>}
+    <Container showPopup={showPopup}>
+      
       {isCartEmpty ? (
         <NoItems>
           {activeLanguage === "en"
@@ -60,7 +56,7 @@ export default function CartPopup({
             : "سلة المشتريات فارغة"}
         </NoItems>
       ) : (
-        <Wizard popupHandler={popupHandler} restaurant={restaurant} variant={variant} />
+        <Wizard popupHandler={popupHandler} restaurant={restaurant} />
       )}
     </Container>
   );

@@ -28,6 +28,7 @@ import NavigationBar from "./NavigationBar";
 import BottomTabBar from "./BottomTabBar";
 import CartAnimation from "./CartAnimation";
 import { trackVisit, trackPageView } from "../../utilities/analyticsTracking";
+import BackToParent from "../../components/BackToParent";
 
 export default function Theme3() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -449,7 +450,16 @@ export default function Theme3() {
     return () => window.removeEventListener("popstate", handlePopState);
   }, [showPopup]);
 
+  // Parse accent color for BackToParent
+  let accentColor = "#8b6f4e";
+  try {
+    const themeObj = typeof restaurant?.theme === "string" ? JSON.parse(restaurant.theme) : restaurant?.theme;
+    if (themeObj?.mainColor || themeObj?.maincolor) accentColor = themeObj.mainColor || themeObj.maincolor;
+  } catch (_) {}
+
   return (
+    <>
+    <BackToParent parent={restaurant?.parent} activeLanguage={activeLanguage} accentColor={accentColor} />
     <Container id="wrapper">
       {/* Navigation Bar - Hidden when product details or About Us popup is open */}
       <NavigationBar
@@ -658,5 +668,6 @@ export default function Theme3() {
       />
 
     </Container>
+    </>
   );
 }

@@ -36,7 +36,7 @@ const STEPS = [
   { id: "review", label: "Review", number: 4 },
 ];
 
-export default function Wizard({ popupHandler, restaurant, variant }) {
+export default function Wizard({ popupHandler, restaurant }) {
   const { restaurantName: paramRestaurantName } = useParams();
   const hostname = window.location.hostname;
   const subdomain = hostname.split(".")[0];
@@ -50,8 +50,6 @@ export default function Wizard({ popupHandler, restaurant, variant }) {
     (state) => state.restaurant?.[restaurantName]?.activeLanguage || "en"
   );
   const dispatch = useDispatch();
-  const theme1Arabic = variant === "theme1" && activeLanguage === "ar";
-  const stepLabels = theme1Arabic ? ["السلة", "نوع الطلب", "التفاصيل", "المراجعة"] : STEPS.map((step) => step.label);
 
   const [currentStep, setCurrentStep] = useState(0);
   const [formData, setFormData] = useState({
@@ -98,7 +96,7 @@ export default function Wizard({ popupHandler, restaurant, variant }) {
 
   useEffect(() => {
     if (restaurant?.features) {
-      const features = typeof restaurant.features === "string" ? JSON.parse(restaurant.features) : restaurant.features;
+      const features = JSON.parse(restaurant.features);
       const enabledTypes = Object.entries(features)
         .filter(([key, value]) => value === true)
         .map(([key]) => {
@@ -134,14 +132,14 @@ export default function Wizard({ popupHandler, restaurant, variant }) {
     if (stepIndex === 1) {
       // Validate Order Type step
       if (!formData.deliveryType) {
-        newErrors.deliveryType = theme1Arabic ? "نوع الطلب مطلوب." : "Order Type is required.";
+        newErrors.deliveryType = "Order Type is required.";
       }
       if (!formData.selectedBranch && restaurant?.branches?.length > 0) {
         const hasOnlineBranch = restaurant?.branches?.some(
           (branch) => branch.is_online
         );
         if (!hasOnlineBranch) {
-          newErrors.branch = theme1Arabic ? "يرجى اختيار الفرع." : "Branch is required.";
+          newErrors.branch = "Branch is required.";
         }
       }
       if (
@@ -151,21 +149,21 @@ export default function Wizard({ popupHandler, restaurant, variant }) {
         formData.regions.length > 0 &&
         !formData.selectedRegion
       ) {
-        newErrors.region = theme1Arabic ? "يرجى اختيار المنطقة." : "Region is required.";
+        newErrors.region = "Region is required.";
       }
     } else if (stepIndex === 2) {
       // Validate Details step
       if (!formData.fullName) {
-        newErrors.fullName = theme1Arabic ? "الاسم الكامل مطلوب." : "Full Name is required.";
+        newErrors.fullName = "Full Name is required.";
       }
       if (!formData.phoneNumber) {
-        newErrors.phoneNumber = theme1Arabic ? "رقم الهاتف مطلوب." : "Phone Number is required.";
+        newErrors.phoneNumber = "Phone Number is required.";
       }
       if (formData.deliveryType === "Delivery" && !formData.fullAddress) {
-        newErrors.fullAddress = theme1Arabic ? "العنوان الكامل مطلوب للتوصيل." : "Full Address is required for delivery.";
+        newErrors.fullAddress = "Full Address is required for delivery.";
       }
       if (formData.deliveryType === "DineIn" && !formData.tableNumber) {
-        newErrors.tableNumber = theme1Arabic ? "رقم الطاولة مطلوب." : "Table Number is required.";
+        newErrors.tableNumber = "Table Number is required.";
       }
     }
 
@@ -342,7 +340,6 @@ export default function Wizard({ popupHandler, restaurant, variant }) {
             restaurant={restaurant}
             errors={errors}
             setErrors={setErrors}
-            activeLanguage={variant === "theme1" ? activeLanguage : "en"}
           />
         );
       case 2:
@@ -359,7 +356,6 @@ export default function Wizard({ popupHandler, restaurant, variant }) {
       case 3:
         return (
           <ReviewStep
-            variant={variant}
             formData={formData}
             restaurant={restaurant}
             activeLanguage={activeLanguage}
@@ -373,7 +369,7 @@ export default function Wizard({ popupHandler, restaurant, variant }) {
   return (
     <WizardContainer>
       <StepHeader>
-        <StepTitleText>{stepLabels[currentStep]}</StepTitleText>
+        <StepTitleText>{STEPS[currentStep].label}</StepTitleText>
         <StepCloseButton
           onClick={() => popupHandler(null)}
           aria-label="Close cart"
@@ -390,7 +386,7 @@ export default function Wizard({ popupHandler, restaurant, variant }) {
             >
               {index < currentStep ? "✓" : step.number}
             </StepIndicator>
-            <span>{stepLabels[index]}</span>
+            <span>{step.label}</span>
           </ProgressStep>
         ))}
       </ProgressBar>
@@ -400,12 +396,12 @@ export default function Wizard({ popupHandler, restaurant, variant }) {
       <NavigationButtons>
         {currentStep > 0 && (
           <NavButton onClick={handleBack} variant="secondary">
-            {theme1Arabic ? "السابق" : "Back"}
+            Back
           </NavButton>
         )}
         {currentStep < STEPS.length - 1 ? (
           <NavButton onClick={handleNext} variant="primary">
-            {theme1Arabic ? "التالي" : "Next"}
+            Next
           </NavButton>
         ) : (
           <NavButton
@@ -413,7 +409,7 @@ export default function Wizard({ popupHandler, restaurant, variant }) {
             variant="primary"
             disabled={isPending}
           >
-            {isPending ? (theme1Arabic ? "جاري الإرسال…" : "Submitting...") : variant === "theme1" ? (theme1Arabic ? "متابعة عبر واتساب" : "Continue to WhatsApp") : "Submit Order"}
+            {isPending ? "Submitting..." : "Submit Order"}
           </NavButton>
         )}
       </NavigationButtons>

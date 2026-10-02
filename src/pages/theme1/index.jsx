@@ -17,12 +17,10 @@ import ProductParam from "../theme2/ProductParam";
 import Share from "../theme3/popup/share";
 import { InstallPrompt } from "./installPrompt";
 import NavigationBar from "../theme3/NavigationBar";
+import BottomTabBar from "../theme3/BottomTabBar";
 import CartAnimation from "../theme3/CartAnimation";
 import MenuSplitView from "./MenuSplitView";
 import Theme12MenuSlider from "../../components/Theme12MenuSlider";
-import { enabled, parseFeatures } from "./menuHelpers";
-import { Theme1Polish } from "./polish.styles";
-import Theme1BottomNav from "./BottomNav";
 import { trackVisit, trackPageView, trackSearch } from "../../utilities/analyticsTracking";
 
 export default function Theme1() {
@@ -44,8 +42,12 @@ export default function Theme1() {
     (state) => state.restaurant?.[restaurantName]?.activeLanguage || "en"
   );
 
-  const rawFeatures = parseFeatures(restaurant?.features);
-  const features = Object.fromEntries(Object.entries(rawFeatures).map(([key, value]) => [key, enabled(value)]));
+  let features = {};
+  try {
+    features = JSON.parse(restaurant?.features || "{}");
+  } catch (_) {
+    features = {};
+  }
 
   useEffect(() => {
     document.documentElement.setAttribute(
@@ -114,18 +116,22 @@ export default function Theme1() {
   };
 
   const handleBranchesClick = () => {
+    window.history.pushState({}, "");
     popupHandler("location");
   };
 
   const handleFeedbackClick = () => {
+    window.history.pushState({}, "");
     popupHandler("feedback");
   };
 
   const handleContactClick = () => {
+    window.history.pushState({}, "");
     popupHandler("contactForm");
   };
 
   const handleAboutClick = () => {
+    window.history.pushState({}, "");
     popupHandler("about");
   };
 
@@ -165,10 +171,16 @@ export default function Theme1() {
     const next = new URLSearchParams(searchParams);
     next.set("categoryId", String(id));
     setSearchParams(next);
-    requestAnimationFrame(() => document.getElementById("theme1-menu")?.scrollIntoView({ block: "start" }));
   };
 
-  const popupHandler = (type) => setshowPopup(type);
+  const popupHandler = (type) => {
+    if (type == null) {
+      document.body.style.overflow = "auto";
+    } else {
+      document.body.style.overflow = "hidden";
+    }
+    setshowPopup(type);
+  };
 
   const handleClickOutside = () => {
     if (showPopup != null) popupHandler(null);
@@ -272,15 +284,28 @@ export default function Theme1() {
   }, [showSidebar]);
 
   useEffect(() => {
-    setIsProductDetailsOpen(Boolean(productId));
-  }, [productId]);
-
-  useEffect(() => {
-    if (!productId && !showPopup && !showSidebar) return undefined;
-    const previous = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    return () => { document.body.style.overflow = previous; };
-  }, [productId, showPopup, showSidebar]);
+    const checkProductDetails = () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      setIsProductDetailsOpen(urlParams.get("productId") !== null);
+    };
+    checkProductDetails();
+    const originalPushState = window.history.pushState;
+    const originalReplaceState = window.history.replaceState;
+    window.history.pushState = function (...args) {
+      originalPushState.apply(window.history, args);
+      setTimeout(checkProductDetails, 0);
+    };
+    window.history.replaceState = function (...args) {
+      originalReplaceState.apply(window.history, args);
+      setTimeout(checkProductDetails, 0);
+    };
+    window.addEventListener("popstate", checkProductDetails);
+    return () => {
+      window.history.pushState = originalPushState;
+      window.history.replaceState = originalReplaceState;
+      window.removeEventListener("popstate", checkProductDetails);
+    };
+  }, [searchParams]);
 
   useEffect(() => {
     const handlePopState = (event) => {
@@ -311,16 +336,18 @@ export default function Theme1() {
   if (!restaurant) return null;
 
   const sliderImages = restaurant?.sliderImages || [];
-  const showMenuSlider = enabled(restaurant?.show_slider_image) && sliderImages.length > 0;
+  const showMenuSlider =
+    (restaurant?.show_slider_image === true ||
+      restaurant?.show_slider_image === 1 ||
+      restaurant?.show_slider_image === "1") &&
+    sliderImages.length > 0;
 
   return (
-    <Container id="wrapper" data-theme-one dir={activeLanguage === "ar" ? "rtl" : "ltr"}>
-      <Theme1Polish />
+    <Container id="wrapper">
       <NavigationBar
-        variant="theme1"
         onProductsClick={handleProductsClick}
         onSocialMediaClick={handleSocialMediaClick}
-        onBranchesClick={restaurant?.branches?.length ? handleBranchesClick : undefined}
+        onBranchesClick={handleBranchesClick}
         onContactFormClick={handleContactClick}
         onFeedbackClick={handleFeedbackClick}
         onAboutClick={
@@ -349,67 +376,55 @@ export default function Theme1() {
 
       <MenuWrapper onClick={handleClickOutside}>
         <BlurOverlay showPopup={showPopup} />
-        {(
+        {activeCategory && theme1Categories.length > 0 && (
           <MenuSplitView
             categories={theme1Categories}
             activeCategory={activeCategory}
             onCategoryChange={setactiveCategoryWithUrl}
             searchText={searchText}
             setSearchText={setSearchText}
-            restaurant={restaurant}
-            restaurantName={restaurantName}
+            menu={restaurant?.categories || []}
             showPopup={showPopup}
           />
         )}
       </MenuWrapper>
 
-      {showPopup === "location" && (
       <LocationPopup
         restaurant={restaurant}
         showPopup={showPopup}
         popupHandler={popupHandler}
       />
-      )}
-      {features?.cart && showPopup === "cart" && (
+      {features?.cart && (
         <CartPopup
           restaurant={restaurant}
           showPopup={showPopup}
           popupHandler={popupHandler}
-          variant="theme1"
         />
       )}
-      {showPopup === "share" && (
       <Share
         showPopup={showPopup}
         popupHandler={popupHandler}
         activeCategory={activeCategory}
       />
-      )}
-      {showPopup === "contact" && (
       <ContactPopup
         restaurant={restaurant}
         showPopup={showPopup}
         popupHandler={popupHandler}
       />
-      )}
-      {showPopup === "feedback" && (
       <FeedbackPopup
         restaurant={restaurant}
         showPopup={showPopup}
         popupHandler={popupHandler}
         isPage={false}
       />
-      )}
-      {showPopup === "contactForm" && (
       <ContactFormPopup
         restaurant={restaurant}
         showPopup={showPopup}
         popupHandler={popupHandler}
         isPage={false}
       />
-      )}
-      {showPopup === "about" && <AboutUsPopup showPopup={showPopup} popupHandler={popupHandler} />}
-      {showSidebar && <SideBar
+      <AboutUsPopup showPopup={showPopup} popupHandler={popupHandler} />
+      <SideBar
         categories={theme1Categories}
         activeCategory={activeCategory}
         setactiveCategory={setactiveCategory}
@@ -423,13 +438,13 @@ export default function Theme1() {
         onFeedbackClick={handleFeedbackClick}
         onContactClick={handleContactClick}
         onBranchesClick={() => {
+          window.history.pushState({}, "");
           popupHandler("location");
         }}
         branches={restaurant?.branches || []}
-      />}
+      />
       {productId && (
         <ProductParam
-          variant="theme1"
           productId={productId}
           searchParams={searchParams}
           setSearchParams={setSearchParams}
@@ -444,14 +459,27 @@ export default function Theme1() {
         />
       )}
 
-      <Theme1BottomNav
-        hidden={Boolean(productId) || Boolean(showPopup)}
-        restaurant={restaurant}
+      <BottomTabBar
+        isProductDetailsOpen={isProductDetailsOpen || showPopup === "about"}
+        activeView={"products"}
+        showPopup={showPopup}
+        onHomeClick={handleBackToHome}
+        hideHome
+        onCategoriesClick={() => {
+          // Theme1 does not have a separate categories page.
+          handleBackToHome();
+        }}
+        onCartClick={() => {
+          if (features?.cart) popupHandler("cart");
+        }}
+        onBranchesClick={() => {
+          window.history.pushState({}, "");
+          popupHandler("location");
+        }}
+        onContactClick={handleContactClick}
+        onFeedbackClick={handleFeedbackClick}
         restaurantName={restaurantName}
-        onMenu={handleBackToHome}
-        onCart={() => popupHandler("cart")}
-        onBranches={() => popupHandler("location")}
-        onFeedback={() => popupHandler("feedback")}
+        branches={restaurant?.branches || []}
       />
 
       <CartAnimation

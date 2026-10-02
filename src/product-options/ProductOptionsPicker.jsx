@@ -13,6 +13,7 @@ export default function ProductOptionsPicker({
   activeLanguage,
   basePrice,
   onPriceChange,
+  onUserSizeChange,
 }) {
   const theme = useTheme();
   const sel = isV2Selection(formData) ? formData : emptySelection();
@@ -72,12 +73,13 @@ export default function ProductOptionsPicker({
               return (
                 <Box
                   key={s.id}
-                  onClick={() =>
+                  onClick={() => {
+                    onUserSizeChange?.();
                     setFormData((prev) => {
                       const base = isV2Selection(prev) ? prev : emptySelection();
                       return { ...base, sizeId: s.id };
-                    })
-                  }
+                    });
+                  }}
                   sx={{
                     display: "flex",
                     alignItems: "center",
@@ -124,6 +126,7 @@ export default function ProductOptionsPicker({
                 <Box
                   key={a.id}
                   onClick={() => {
+                    onUserSizeChange?.();
                     setFormData((prev) => {
                       const p = isV2Selection(prev) ? prev : emptySelection();
                       const ids = new Set(p.addonIds || []);
@@ -203,6 +206,7 @@ export default function ProductOptionsPicker({
                 <Box
                   key={r.id}
                   onClick={() => {
+                    onUserSizeChange?.();
                     setFormData((prev) => {
                       const p = isV2Selection(prev) ? prev : emptySelection();
                       const ids = new Set(p.removalIds || []);

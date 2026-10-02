@@ -644,6 +644,7 @@ export default function Restaurants({ readOnly = false, salesUserId = null, base
     country_code,
     meta_pixel_id,
     is_vip,
+    parent_id,
   }) => {
     const theme = JSON.parse(themeString);
     const features = JSON.parse(featureString);
@@ -681,6 +682,7 @@ export default function Restaurants({ readOnly = false, salesUserId = null, base
       country_code,
       meta_pixel_id,
       is_vip,
+      parent_id,
     });
     setIsEditMode(true);
     setTemplate(template_id);
@@ -736,6 +738,7 @@ export default function Restaurants({ readOnly = false, salesUserId = null, base
     setValue("google_maps_api_key", google_maps_api_key || "");
     setValue("country_code", country_code || "961");
     setValue("meta_pixel_id", meta_pixel_id || "");
+    setValue("parent_id", parent_id || "");
 
     // Set theme colors in form: use getColorKeysForTemplate to get all expected color keys
     const colorKeys = getColorKeysForTemplate(template_id);
@@ -813,6 +816,7 @@ export default function Restaurants({ readOnly = false, salesUserId = null, base
           amount: data.amount != null && data.amount !== "" ? data.amount : null,
           is_paid: data.is_paid === true || data.is_paid === "true" || data.is_paid === 1,
           is_vip: data.is_vip === true || data.is_vip === "true" || data.is_vip === 1,
+          parent_id: data.parent_id || null,
         };
         console.log("Formatted form data:", formData);
         if (selectedProduct) {
@@ -2049,7 +2053,18 @@ export default function Restaurants({ readOnly = false, salesUserId = null, base
               )}
 
               {/* Color groups — organized by purpose, with color pickers */}
-              {getColorGroupsForTemplate(Number(template)).map((group) => (
+              {/* Parent restaurants (with children) only need general colors for the landing page */}
+              {selectedProduct && restaurants.some(r => r.parent_id === selectedProduct.restaurant_id) && (
+                <Box sx={{ mt: 1, mb: 1, p: 1.5, bgcolor: "#e3f2fd", borderRadius: 1, fontSize: 12, color: "#1565c0" }}>
+                  This is a parent restaurant. Only general colors apply to the landing page. Each child restaurant manages its own theme independently.
+                </Box>
+              )}
+              {getColorGroupsForTemplate(Number(template))
+                .filter(group => {
+                  const isParent = selectedProduct && restaurants.some(r => r.parent_id === selectedProduct.restaurant_id);
+                  return !isParent || group.key === "general";
+                })
+                .map((group) => (
                 <Box key={group.key} sx={{ width: "100%", mt: 2 }}>
                   <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 700, color: "#555", textTransform: "uppercase", fontSize: 11, letterSpacing: 1 }}>
                     {group.title}
@@ -2235,6 +2250,27 @@ export default function Restaurants({ readOnly = false, salesUserId = null, base
                   <MenuItem value="restaurant">Restaurant (Menu)</MenuItem>
                   <MenuItem value="business">Business (Products)</MenuItem>
                   <MenuItem value="clinic">Clinic / Aesthetic Center</MenuItem>
+                </Select>
+              </FormControl>
+            </Box>
+            <Box sx={{ width: "30%" }}>
+              <FormControl fullWidth>
+                <InputLabel>Parent Restaurant</InputLabel>
+                <Select
+                  label="Parent Restaurant"
+                  value={getValues("parent_id") || selectedProduct?.parent_id || ""}
+                  onChange={(e) => {
+                    setValue("parent_id", e.target.value, { shouldValidate: true });
+                  }}
+                >
+                  <MenuItem value="">None (Independent)</MenuItem>
+                  {restaurants
+                    .filter((r) => r.restaurant_id !== selectedProduct?.restaurant_id)
+                    .map((r) => (
+                      <MenuItem key={r.restaurant_id} value={r.restaurant_id}>
+                        {r.restaurantName} (ID: {r.restaurant_id})
+                      </MenuItem>
+                    ))}
                 </Select>
               </FormControl>
             </Box>

@@ -1,5 +1,4 @@
 import React from "react";
-import Theme1Carousel from "./Theme1Carousel";
 import Slider from "../../pages/theme3/HomePage/Slider";
 import {
   SectionRoot,
@@ -17,7 +16,6 @@ export default function Theme12MenuSlider({
   variant = "theme1",
 }) {
   if (!images?.length) return null;
-  if (variant === "theme1") return <Theme1Carousel images={images} activeLanguage={activeLanguage} />;
 
   return (
     <SectionRoot $variant={variant} data-theme12-slider>

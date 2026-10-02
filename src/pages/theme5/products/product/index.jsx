@@ -8,6 +8,7 @@ import {
   Loader,
   LoaderWrapper,
   NEW,
+  OutOfStockBadge,
   PlateName,
   PlatePrice,
   PriceContainer,
@@ -100,6 +101,8 @@ const Product = React.forwardRef(
       finalDiscount = parseFloat(activeCategory.discount);
     }
 
+    const isOutOfStock = Boolean(plate?.out_of_stock) || Number(plate?.out_of_stock) === 1;
+
 const coverIndex = plate.images?.findIndex((image) => image.id === plate.new_cover_id) ?? -1;
 const hasValidImage = coverIndex >= 0 && plate.images?.[coverIndex]?.url;
 const restaurantLogoUrl = restaurant?.logoURL
@@ -118,8 +121,13 @@ const imageSrc = hasValidImage
             </LoaderWrapper>
           )}
           <ImageContainer onClick={plateHandle}>
-            {plate.new && (
+            {plate.new && !isOutOfStock && (
               <NEW>{restaurant?.activeLanguage === "en" ? "NEW !" : "! جديد"}</NEW>
+            )}
+            {isOutOfStock && (
+              <OutOfStockBadge>
+                <span>{restaurant?.activeLanguage === "en" ? "Out of stock" : "غير متوفر"}</span>
+              </OutOfStockBadge>
             )}
             <Image
               ref={ref}

@@ -24,6 +24,8 @@ import ContactFormPopup from "../theme3/popup/contactForm";
 import AboutUsPopup from "../theme4/popup/aboutUs";
 import { InstallPrompt } from "./installPrompt";
 import LandingPage from "./LandingPage";
+import MultiBusinessLanding from "./MultiBusinessLanding";
+import BackToParent from "../../components/BackToParent";
 import MenuModeContext from "./MenuModeContext";
 import { trackVisit, trackPageView, trackSearch } from "../../utilities/analyticsTracking";
 
@@ -196,20 +198,44 @@ export default function Theme5() {
       restaurant?.show_slider_image === 1 ||
       restaurant?.show_slider_image === "1") &&
     sliderImages.length > 0;
-  // Show landing page if no mode chosen yet
-  if (!menuMode) {
+  // Multi-business parent: show brand landing instead of menu
+  const childRestaurants = restaurant?.children || [];
+  if (childRestaurants.length > 0) {
     return (
-      <LandingPage
+      <MultiBusinessLanding
         restaurant={restaurant}
         restaurantName={restaurantName}
         activeLanguage={activeLanguage}
-        onSelect={handleModeSelect}
+        children={childRestaurants}
       />
+    );
+  }
+
+  // Parse accent color for BackToParent
+  let accentColor = "#8b6f4e";
+  try {
+    const themeObj = typeof restaurant?.theme === "string" ? JSON.parse(restaurant.theme) : restaurant?.theme;
+    if (themeObj?.mainColor) accentColor = themeObj.mainColor;
+  } catch (_) {}
+
+  // Show landing page if no mode chosen yet
+  if (!menuMode) {
+    return (
+      <>
+        <BackToParent parent={restaurant?.parent} activeLanguage={activeLanguage} accentColor={accentColor} />
+        <LandingPage
+          restaurant={restaurant}
+          restaurantName={restaurantName}
+          activeLanguage={activeLanguage}
+          onSelect={handleModeSelect}
+        />
+      </>
     );
   }
 
   return (
     <MenuModeContext.Provider value={{ menuMode, setMenuMode: handleModeSelect }}>
+      <BackToParent parent={restaurant?.parent} activeLanguage={activeLanguage} accentColor={accentColor} />
       <Container id="wrapper">
         <MenuWrapper onClick={handleClickOutside} >
           <BlurOverlay showPopup={showPopup} />
