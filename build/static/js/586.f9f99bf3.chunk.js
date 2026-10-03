@@ -1,4 +1,4 @@
-/*! For license information please see 586.1def951f.chunk.js.LICENSE.txt */
+/*! For license information please see 586.f9f99bf3.chunk.js.LICENSE.txt */
 (self.webpackChunkrestaurant_menu=self.webpackChunkrestaurant_menu||[]).push([[586],{22139:(e,t,o)=>{"use strict";o.d(t,{c:()=>r});var i=o(11222),n=o(81132);function r(e){if(null==e||""===e)return;if("all-items"===e)return;const t="string"===typeof e?e.trim():String(e);t&&"all-items"!==t&&i.A.put((0,n.O8)(t)).catch((()=>{}))}},9328:(e,t,o)=>{"use strict";o.d(t,{w:()=>d});var i=o(11222),n=o(81132),r=o(62205),a=o(22139);const l=new Set;const s=async function(e){let t=arguments.length>1&&void 0!==arguments[1]?arguments[1]:0,o=arguments.length>2?arguments[2]:void 0;try{0===t&&function(e){if(!e||"all-items"===e)return;const t=String(e);l.has(t)||(l.add(t),(0,a.c)(e))}(e);const r=(0,n.cI)(e,t,o);return(await i.A.get(r)).data}catch(r){throw r}},d=(e,t)=>{const o=null!=e?String(e):null;return(0,r.q)({queryKey:["products",o,t||"all"],queryFn:e=>{let{pageParam:i=0}=e;return s(o,i,t)},getNextPageParam:(e,t)=>{if(!(e.length<10))return t.length},keepPreviousData:!0,retry:!1,refetchOnWindowFocus:!1,staleTime:0,enabled:!!o})}},32415:(e,t,o)=>{"use strict";o.d(t,{u:()=>a});var i=o(11222),n=o(81132),r=o(62205);const a=(e,t)=>(0,r.q)({queryKey:["products-by-restaurant",e,t||"all"],queryFn:o=>{let{pageParam:r=0}=o;return async function(e){let t=arguments.length>1&&void 0!==arguments[1]?arguments[1]:0,o=arguments.length>2?arguments[2]:void 0;if(!e)return[];const r=(0,n.qw)(e,t,o);return(await i.A.get(r)).data||[]}(e,r,t)},getNextPageParam:(e,t)=>{if(!(e.length<10))return t.length},enabled:!!e,refetchOnWindowFocus:!1,retry:!1})},82436:(e,t,o)=>{"use strict";o.d(t,{A:()=>p});o(82483);var i=o(41190),n=o(58821),r=o(56723);const a=i.Ay.div`
   display: flex;
   align-items: center;
@@ -19,7 +19,7 @@
   height: 24px;
   border-radius: 50%;
   object-fit: cover;
-  border: 1.5px solid ${e=>e.$accent+"40"};
+  border: none;
 `,s=i.Ay.div`
   width: 24px;
   height: 24px;
@@ -5004,6 +5004,7 @@ right: 10px;
   min-height: 100vh;
   background: var(--c-bg);
   position: relative;
+  overflow-x: hidden;
   direction: ${e=>e.dir||"ltr"};
   &[dir="rtl"] { font-family: var(--font-ar); }
 `,As=n.Ay.button`
@@ -5014,8 +5015,8 @@ right: 10px;
   display: flex;
   align-items: center;
   gap: 8px;
-  background: var(--c-surface);
-  border: 1px solid var(--c-border);
+  background: transparent;
+  border: none;
   border-radius: 100px;
   padding: 6px 14px;
   font-size: 13px;
@@ -5023,11 +5024,8 @@ right: 10px;
   color: var(--c-text-2);
   cursor: pointer;
   transition: all 0.2s ease;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.04);
   &:hover {
-    border-color: var(--c-accent-light);
     color: var(--c-accent);
-    box-shadow: 0 4px 16px rgba(0,0,0,0.06);
   }
   svg { width: 16px; height: 16px; }
   [dir="rtl"] & { right: auto; left: 20px; }
@@ -5043,7 +5041,7 @@ right: 10px;
   flex-direction: column;
   align-items: center;
   text-align: center;
-  padding: 64px 24px 40px;
+  padding: 48px 24px 32px;
   position: relative;
   &::before {
     content: '';
@@ -5063,19 +5061,19 @@ right: 10px;
     padding: 40px 12px 24px;
   }
 `,zs=n.Ay.img`
-  width: 180px;
-  height: 180px;
+  width: 220px;
+  height: 220px;
   object-fit: contain;
   animation: ${ws} 0.8s cubic-bezier(0.16,1,0.3,1) both;
   position: relative;
   z-index: 1;
   @media (min-width: 375px) and (max-width: 639px) {
-    width: 130px;
-    height: 130px;
+    width: 150px;
+    height: 150px;
   }
   @media (max-width: 374px) {
-    width: 100px;
-    height: 100px;
+    width: 120px;
+    height: 120px;
   }
 `,Ss=n.Ay.div`
   width: 120px;
@@ -5107,18 +5105,18 @@ right: 10px;
   font-size: 38px;
   font-weight: 700;
   color: var(--c-text);
-  margin-top: 24px;
+  margin-top: 12px;
   letter-spacing: -0.02em;
   line-height: 1.15;
   animation: ${js} 0.7s cubic-bezier(0.16,1,0.3,1) 0.15s both;
   [dir="rtl"] & { font-family: var(--font-ar); letter-spacing: 0; }
   @media (min-width: 375px) and (max-width: 639px) {
     font-size: 26px;
-    margin-top: 20px;
+    margin-top: 10px;
   }
   @media (max-width: 374px) {
     font-size: 22px;
-    margin-top: 16px;
+    margin-top: 8px;
   }
 `,_s=n.Ay.p`
   font-size: 16px;
@@ -5262,6 +5260,8 @@ right: 10px;
   background: var(--c-accent-bg);
   transition: color 0.2s ease, background 0.2s ease, transform 0.2s ease;
   text-decoration: none;
+  position: relative;
+  z-index: 2;
   &:hover {
     color: var(--c-accent);
     background: var(--c-border);
@@ -5295,7 +5295,7 @@ right: 10px;
   @media (max-width: 374px) { font-size: ${e=>e.$single?"10px":"9px"}; gap: 3px; svg { width: 11px; height: 11px; } }
 `,Hs=n.Ay.footer`
   text-align: center;
-  padding: 32px 24px;
+  padding: 16px 24px;
   border-top: 1px solid var(--c-border-light);
   margin-top: auto;
   animation: ${js} 0.7s cubic-bezier(0.16,1,0.3,1) 0.8s both;
@@ -5491,4 +5491,4 @@ right: 10px;
     border-radius: 32px;
   }
 `},20965:(e,t,o)=>{"use strict";o(42564).default},34848:e=>{"use strict";function t(e,t){if("function"!==typeof e)throw new TypeError("argument fn must be a function");return e}function o(e,t,o){if(!e||"object"!==typeof e&&"function"!==typeof e)throw new TypeError("argument obj must be object");var i=Object.getOwnPropertyDescriptor(e,t);if(!i)throw new TypeError("must call property on owner object");if(!i.configurable)throw new TypeError("property must be configurable")}e.exports=function(e){if(!e)throw new TypeError("argument namespace is required");function i(e){}return i._file=void 0,i._ignored=!0,i._namespace=e,i._traced=!1,i._warned=Object.create(null),i.function=t,i.property=o,i}},26340:(e,t,o)=>{"use strict";var i,n=o(34848)("http-errors"),r=o(40203),a=o(53910),l=o(61033),s=o(51798);function d(e){return Number(String(e).charAt(0)+"00")}function c(e,t){var o=Object.getOwnPropertyDescriptor(e,"name");o&&o.configurable&&(o.value=t,Object.defineProperty(e,"name",o))}function p(e){return"Error"!==e.substr(-5)?e+"Error":e}e.exports=function e(){for(var t,o,i=500,r={},l=0;l<arguments.length;l++){var s=arguments[l],c=typeof s;if("object"===c&&s instanceof Error)i=(t=s).status||t.statusCode||i;else if("number"===c&&0===l)i=s;else if("string"===c)o=s;else{if("object"!==c)throw new TypeError("argument #"+(l+1)+" unsupported type "+c);r=s}}"number"===typeof i&&(i<400||i>=600)&&n("non-error status code; use only 4xx or 5xx status codes");("number"!==typeof i||!a.message[i]&&(i<400||i>=600))&&(i=500);var p=e[i]||e[d(i)];t||(t=p?new p(o):new Error(o||a.message[i]),Error.captureStackTrace(t,e));p&&t instanceof p&&t.status===i||(t.expose=i<500,t.status=t.statusCode=i);for(var u in r)"status"!==u&&"statusCode"!==u&&(t[u]=r[u]);return t},e.exports.HttpError=function(){function e(){throw new TypeError("cannot construct abstract class")}return l(e,Error),e}(),e.exports.isHttpError=(i=e.exports.HttpError,function(e){return!(!e||"object"!==typeof e)&&(e instanceof i||e instanceof Error&&"boolean"===typeof e.expose&&"number"===typeof e.statusCode&&e.status===e.statusCode)}),function(e,t,o){t.forEach((function(t){var i,n=s(a.message[t]);switch(d(t)){case 400:i=function(e,t,o){var i=p(t);function n(e){var t=null!=e?e:a.message[o],l=new Error(t);return Error.captureStackTrace(l,n),r(l,n.prototype),Object.defineProperty(l,"message",{enumerable:!0,configurable:!0,value:t,writable:!0}),Object.defineProperty(l,"name",{enumerable:!1,configurable:!0,value:i,writable:!0}),l}return l(n,e),c(n,i),n.prototype.status=o,n.prototype.statusCode=o,n.prototype.expose=!0,n}(o,n,t);break;case 500:i=function(e,t,o){var i=p(t);function n(e){var t=null!=e?e:a.message[o],l=new Error(t);return Error.captureStackTrace(l,n),r(l,n.prototype),Object.defineProperty(l,"message",{enumerable:!0,configurable:!0,value:t,writable:!0}),Object.defineProperty(l,"name",{enumerable:!1,configurable:!0,value:i,writable:!0}),l}return l(n,e),c(n,i),n.prototype.status=o,n.prototype.statusCode=o,n.prototype.expose=!1,n}(o,n,t)}i&&(e[t]=i,e[n]=i)}))}(e.exports,a.codes,e.exports.HttpError)},61033:e=>{"function"===typeof Object.create?e.exports=function(e,t){t&&(e.super_=t,e.prototype=Object.create(t.prototype,{constructor:{value:e,enumerable:!1,writable:!0,configurable:!0}}))}:e.exports=function(e,t){if(t){e.super_=t;var o=function(){};o.prototype=t.prototype,e.prototype=new o,e.prototype.constructor=e}}},29477:(e,t,o)=>{"use strict";var i=function(){if("undefined"!==typeof self)return self;if("undefined"!==typeof window)return window;if("undefined"!==typeof o.g)return o.g;throw new Error("unable to locate global object")}();e.exports=t=i.fetch,i.fetch&&(t.default=i.fetch.bind(i)),t.Headers=i.Headers,t.Request=i.Request,t.Response=i.Response},40203:e=>{"use strict";e.exports=Object.setPrototypeOf||({__proto__:[]}instanceof Array?function(e,t){return e.__proto__=t,e}:function(e,t){for(var o in t)Object.prototype.hasOwnProperty.call(e,o)||(e[o]=t[o]);return e})},53910:(e,t,o)=>{"use strict";var i=o(17662);function n(e){if(!Object.prototype.hasOwnProperty.call(r.message,e))throw new Error("invalid status code: "+e);return r.message[e]}function r(e){if("number"===typeof e)return n(e);if("string"!==typeof e)throw new TypeError("code must be a number or string");var t=parseInt(e,10);return isNaN(t)?function(e){var t=e.toLowerCase();if(!Object.prototype.hasOwnProperty.call(r.code,t))throw new Error('invalid status message: "'+e+'"');return r.code[t]}(e):n(t)}e.exports=r,r.message=i,r.code=function(e){var t={};return Object.keys(e).forEach((function(o){var i=e[o],n=Number(o);t[i.toLowerCase()]=n})),t}(i),r.codes=function(e){return Object.keys(e).map((function(e){return Number(e)}))}(i),r.redirect={300:!0,301:!0,302:!0,303:!0,305:!0,307:!0,308:!0},r.empty={204:!0,205:!0,304:!0},r.retry={502:!0,503:!0,504:!0}},51798:e=>{"use strict";e.exports=function(e){return e.split(" ").map((function(e){return e.slice(0,1).toUpperCase()+e.slice(1)})).join("").replace(/[^ _0-9a-z]/gi,"")}},42564:(e,t,o)=>{"use strict";o(29477),o(26340)},17662:e=>{"use strict";e.exports=JSON.parse('{"100":"Continue","101":"Switching Protocols","102":"Processing","103":"Early Hints","200":"OK","201":"Created","202":"Accepted","203":"Non-Authoritative Information","204":"No Content","205":"Reset Content","206":"Partial Content","207":"Multi-Status","208":"Already Reported","226":"IM Used","300":"Multiple Choices","301":"Moved Permanently","302":"Found","303":"See Other","304":"Not Modified","305":"Use Proxy","307":"Temporary Redirect","308":"Permanent Redirect","400":"Bad Request","401":"Unauthorized","402":"Payment Required","403":"Forbidden","404":"Not Found","405":"Method Not Allowed","406":"Not Acceptable","407":"Proxy Authentication Required","408":"Request Timeout","409":"Conflict","410":"Gone","411":"Length Required","412":"Precondition Failed","413":"Payload Too Large","414":"URI Too Long","415":"Unsupported Media Type","416":"Range Not Satisfiable","417":"Expectation Failed","418":"I\'m a Teapot","421":"Misdirected Request","422":"Unprocessable Entity","423":"Locked","424":"Failed Dependency","425":"Too Early","426":"Upgrade Required","428":"Precondition Required","429":"Too Many Requests","431":"Request Header Fields Too Large","451":"Unavailable For Legal Reasons","500":"Internal Server Error","501":"Not Implemented","502":"Bad Gateway","503":"Service Unavailable","504":"Gateway Timeout","505":"HTTP Version Not Supported","506":"Variant Also Negotiates","507":"Insufficient Storage","508":"Loop Detected","509":"Bandwidth Limit Exceeded","510":"Not Extended","511":"Network Authentication Required"}')}}]);
-//# sourceMappingURL=586.1def951f.chunk.js.map
+//# sourceMappingURL=586.f9f99bf3.chunk.js.map

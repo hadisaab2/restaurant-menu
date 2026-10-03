@@ -59,6 +59,7 @@ export const LandingWrapper = styled.div`
   min-height: 100vh;
   background: var(--c-bg);
   position: relative;
+  overflow-x: hidden;
   direction: ${p => p.dir || "ltr"};
   &[dir="rtl"] { font-family: var(--font-ar); }
 `;
@@ -72,8 +73,8 @@ export const LangToggle = styled.button`
   display: flex;
   align-items: center;
   gap: 8px;
-  background: var(--c-surface);
-  border: 1px solid var(--c-border);
+  background: transparent;
+  border: none;
   border-radius: 100px;
   padding: 6px 14px;
   font-size: 13px;
@@ -81,11 +82,8 @@ export const LangToggle = styled.button`
   color: var(--c-text-2);
   cursor: pointer;
   transition: all 0.2s ease;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.04);
   &:hover {
-    border-color: var(--c-accent-light);
     color: var(--c-accent);
-    box-shadow: 0 4px 16px rgba(0,0,0,0.06);
   }
   svg { width: 16px; height: 16px; }
   [dir="rtl"] & { right: auto; left: 20px; }
@@ -104,7 +102,7 @@ export const Hero = styled.section`
   flex-direction: column;
   align-items: center;
   text-align: center;
-  padding: 64px 24px 40px;
+  padding: 48px 24px 32px;
   position: relative;
   &::before {
     content: '';
@@ -126,19 +124,19 @@ export const Hero = styled.section`
 `;
 
 export const HeroLogo = styled.img`
-  width: 180px;
-  height: 180px;
+  width: 220px;
+  height: 220px;
   object-fit: contain;
   animation: ${logoEntrance} 0.8s cubic-bezier(0.16,1,0.3,1) both;
   position: relative;
   z-index: 1;
   @media (min-width: 375px) and (max-width: 639px) {
-    width: 130px;
-    height: 130px;
+    width: 150px;
+    height: 150px;
   }
   @media (max-width: 374px) {
-    width: 100px;
-    height: 100px;
+    width: 120px;
+    height: 120px;
   }
 `;
 
@@ -174,18 +172,18 @@ export const HeroName = styled.h1`
   font-size: 38px;
   font-weight: 700;
   color: var(--c-text);
-  margin-top: 24px;
+  margin-top: 12px;
   letter-spacing: -0.02em;
   line-height: 1.15;
   animation: ${fadeUp} 0.7s cubic-bezier(0.16,1,0.3,1) 0.15s both;
   [dir="rtl"] & { font-family: var(--font-ar); letter-spacing: 0; }
   @media (min-width: 375px) and (max-width: 639px) {
     font-size: 26px;
-    margin-top: 20px;
+    margin-top: 10px;
   }
   @media (max-width: 374px) {
     font-size: 22px;
-    margin-top: 16px;
+    margin-top: 8px;
   }
 `;
 
@@ -363,6 +361,8 @@ export const SocialLink = styled.a`
   background: var(--c-accent-bg);
   transition: color 0.2s ease, background 0.2s ease, transform 0.2s ease;
   text-decoration: none;
+  position: relative;
+  z-index: 2;
   &:hover {
     color: var(--c-accent);
     background: var(--c-border);
@@ -401,7 +401,7 @@ export const CardCta = styled.span`
 /* ─── Footer ─── */
 export const LandingFooter = styled.footer`
   text-align: center;
-  padding: 32px 24px;
+  padding: 16px 24px;
   border-top: 1px solid var(--c-border-light);
   margin-top: auto;
   animation: ${fadeUp} 0.7s cubic-bezier(0.16,1,0.3,1) 0.8s both;

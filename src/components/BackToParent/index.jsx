@@ -24,7 +24,7 @@ const ParentLogo = styled.img`
   height: 24px;
   border-radius: 50%;
   object-fit: cover;
-  border: 1.5px solid ${(p) => p.$accent + "40"};
+  border: none;
 `;
 
 const ParentLogoFallback = styled.div`
