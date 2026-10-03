@@ -197,20 +197,23 @@ export default function MultiBusinessLanding({ restaurant, restaurantName, activ
                   </CardOverlay>
                 </CardCover>
                 <CardFooter $single={single}>
-                  {child.socialMedia?.length > 0 && (
+                  {child.socialMedia?.filter(sm => sm.platform?.toLowerCase() !== "whatsapp").length > 0 && (
                     <CardSocials>
-                      {child.socialMedia.map((sm, i) => (
-                        <SocialLink
-                          key={i}
-                          href={sm.link}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          title={sm.platform}
-                          onClick={(e) => e.stopPropagation()}
-                        >
-                          <SocialIcon platform={sm.platform} />
-                        </SocialLink>
-                      ))}
+                      {child.socialMedia.filter(sm => sm.platform?.toLowerCase() !== "whatsapp").map((sm, i) => {
+                        const href = sm.link && !/^https?:\/\//i.test(sm.link) ? `https://${sm.link}` : sm.link;
+                        return (
+                          <SocialLink
+                            key={i}
+                            href={href}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            title={sm.platform}
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            <SocialIcon platform={sm.platform} />
+                          </SocialLink>
+                        );
+                      })}
                     </CardSocials>
                   )}
                   <CardCta className="card-cta" $single={single}>
