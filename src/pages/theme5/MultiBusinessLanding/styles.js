@@ -102,7 +102,7 @@ export const Hero = styled.section`
   flex-direction: column;
   align-items: center;
   text-align: center;
-  padding: 48px 24px 32px;
+  padding: 32px 24px 20px;
   position: relative;
   &::before {
     content: '';
@@ -116,10 +116,10 @@ export const Hero = styled.section`
     pointer-events: none;
   }
   @media (min-width: 375px) and (max-width: 639px) {
-    padding: 48px 16px 32px;
+    padding: 0 0 10px;
   }
   @media (max-width: 374px) {
-    padding: 40px 12px 24px;
+    padding: 0 0 8px;
   }
 `;
 
