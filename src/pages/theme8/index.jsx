@@ -257,6 +257,16 @@ export default function Theme8() {
     setShowPopup(type);
   };
 
+  useEffect(() => {
+    const popup = searchParams.get("popup");
+    if (popup === "feedback" || popup === "contactForm") {
+      popupHandler(popup);
+      const next = new URLSearchParams(searchParams);
+      next.delete("popup");
+      setSearchParams(next, { replace: true });
+    }
+  }, []);
+
   const handleCategoryClick = (catId) => {
     setActiveCategory(catId);
     const el = sectionRefs.current[catId];

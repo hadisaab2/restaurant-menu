@@ -10,6 +10,7 @@ import { convertPrice } from "../../../../../utilities/convertPrice";
 import { formatWhatsappNumber, openWhatsApp } from "../../../../../utilities/formatWhatsappNumber";
 import { formatCartItemOptionsForOrderMessage } from "../../../../../product-options/cartLabels";
 import { trackCheckoutStart, trackOrderPlaced } from "../../../../../utilities/analyticsTracking";
+import { buildStyledMessage } from "../../../../../utilities/whatsappTemplates";
 import CartStep from "./CartStep";
 import OrderTypeStep from "./OrderTypeStep";
 import DetailsStep from "./DetailsStep";
@@ -298,57 +299,20 @@ export default function Wizard({ popupHandler, restaurant }) {
     }
 
     // Default: WhatsApp flow
-    let whatsappTotalPrice = 0;
-    let message = ``;
-    message += `*New Order - ${formData.deliveryType}*\n`;
-    message += `--------------------\n\n`;
-
-    message += `*Items:*\n`;
-    cart.forEach((item, idx) => {
-      const name = (activeLanguage === "ar" ? item.ar_name : item.en_name || "").trim();
-      const category = (activeLanguage === "ar" ? item.category.ar_category : item.category.en_category || "").trim();
-      const itemTotal = item.price * item.quantity;
-      whatsappTotalPrice += itemTotal;
-
-      message += `${idx + 1}. *${name}*\n`;
-      message += `    ${category}\n`;
-      message += `    ${item.quantity}x ${item.price} ${currencySymbol} = *${itemTotal} ${currencySymbol}*\n`;
-
-      if (item.formData) {
-        message += formatCartItemOptionsForOrderMessage(item, activeLanguage === "ar" ? "ar" : "en");
-      }
-      if (item.instruction) {
-        message += `    > _${item.instruction}_\n`;
-      }
-      message += `\n`;
+    const message = buildStyledMessage(restaurant?.whatsapp_template_id, {
+      restaurantName: restaurant?.en_slogan || restaurantName,
+      orderType: formData.deliveryType,
+      cart,
+      currencySymbol,
+      activeLanguage,
+      customerName: formData.fullName,
+      customerPhone: formData.phoneNumber,
+      fullAddress: formData.deliveryType === "Delivery" ? formData.fullAddress : null,
+      selectedLocation: formData.selectedLocation,
+      tableNumber: formData.deliveryType === "DineIn" ? formData.tableNumber : null,
+      note: formData.note,
+      selectedRegion: formData.selectedRegion,
     });
-
-    message += `--------------------\n`;
-    message += `*Total: ${convertPrice(whatsappTotalPrice, currencySymbol)}*\n\n`;
-
-    message += `*Customer:*\n`;
-    message += `- ${formData.fullName}\n`;
-    message += `- ${formData.phoneNumber}\n`;
-    if (formData.selectedRegion) {
-      message += `- Region: ${formData.selectedRegion}\n`;
-    }
-    let mapLink = "";
-    if (formData.deliveryType === "Delivery") {
-      message += `\n*Delivery Address:*\n`;
-      message += `${formData.fullAddress}\n`;
-      if (formData.selectedLocation) {
-        mapLink = `https://www.google.com/maps?q=${formData.selectedLocation.latitude},${formData.selectedLocation.longitude}`;
-      }
-    }
-    if (formData.deliveryType === "DineIn") {
-      message += `- Table: #${formData.tableNumber}\n`;
-    }
-    if (formData.note) {
-      message += `\n*Note:* _${formData.note}_\n`;
-    }
-    if (mapLink) {
-      message += `\n${mapLink}\n`;
-    }
 
     const whatsappPhone = formData.selectedBranch?.whatsapp_number
       ? formatWhatsappNumber(formData.selectedBranch.whatsapp_number, restaurant?.country_code)
@@ -364,7 +328,7 @@ export default function Wizard({ popupHandler, restaurant }) {
           restaurant.id,
           orderResponse?.data?.order?.id || null,
           formData.deliveryType,
-          whatsappTotalPrice,
+          totalPrice,
           formData.selectedBranch?.id || null,
           { items: fullOrderItems, customerName: formData.fullName }
         );

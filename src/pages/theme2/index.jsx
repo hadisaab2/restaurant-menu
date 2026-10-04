@@ -139,6 +139,16 @@ export default function Theme2() {
     }, [restaurant?.id]);
 
     useEffect(() => {
+      const popup = searchParams.get("popup");
+      if (popup === "feedback" || popup === "contactForm") {
+        popupHandler(popup);
+        const next = new URLSearchParams(searchParams);
+        next.delete("popup");
+        setSearchParams(next, { replace: true });
+      }
+    }, []);
+
+    useEffect(() => {
       // Log PWA requirements
       console.log('🔍 PWA Debug Info:');
       console.log('- Protocol:', window.location.protocol);

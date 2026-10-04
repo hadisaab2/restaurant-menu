@@ -237,7 +237,7 @@ useEffect(() => {
 
       </Select>
       {errors.deliveryType && <Error>{errors.deliveryType}</Error>}
-      {(restaurant?.branches.length != 0 && !hasOnlineBranch()) && <BranchSelect deliveryType={deliveryType} branches={restaurant?.branches} selectedBranch={selectedBranch} setSelectedBranch={setSelectedBranch} setErrors={setErrors} errors={errors} />}
+      {(restaurant?.branches.length > 1 && !hasOnlineBranch()) && <BranchSelect deliveryType={deliveryType} branches={restaurant?.branches} selectedBranch={selectedBranch} setSelectedBranch={setSelectedBranch} setErrors={setErrors} errors={errors} />}
       {errors.branch && <Error>{errors.branch}</Error>}
 
       {(selectedBranch && deliveryType === "Delivery" && regions.length > 0) && (

@@ -75,6 +75,7 @@ import { useEditStatItem } from "../../../apis/statsSection/editStatItem";
 import { useDeleteStatItem } from "../../../apis/statsSection/deleteStatItem";
 import { useGetAboutUs } from "../../../apis/aboutUs/getAboutUs";
 import { useUpdateAboutUsSectionQuery } from "../../../apis/aboutUs/updateAboutUsSection";
+import { WHATSAPP_TEMPLATES, buildTemplatePreview } from "../../../utilities/whatsappTemplates";
 import { useAddAboutUsValueQuery } from "../../../apis/aboutUs/addAboutUsValue";
 import { useEditAboutUsValueQuery } from "../../../apis/aboutUs/editAboutUsValue";
 import { useDeleteAboutUsValueQuery } from "../../../apis/aboutUs/deleteAboutUsValue";
@@ -645,6 +646,7 @@ export default function Restaurants({ readOnly = false, salesUserId = null, base
     meta_pixel_id,
     is_vip,
     parent_id,
+    whatsapp_template_id,
   }) => {
     const theme = JSON.parse(themeString);
     const features = JSON.parse(featureString);
@@ -683,6 +685,7 @@ export default function Restaurants({ readOnly = false, salesUserId = null, base
       meta_pixel_id,
       is_vip,
       parent_id,
+      whatsapp_template_id,
     });
     setIsEditMode(true);
     setTemplate(template_id);
@@ -739,6 +742,7 @@ export default function Restaurants({ readOnly = false, salesUserId = null, base
     setValue("country_code", country_code || "961");
     setValue("meta_pixel_id", meta_pixel_id || "");
     setValue("parent_id", parent_id || "");
+    setValue("whatsapp_template_id", whatsapp_template_id || "");
 
     // Set theme colors in form: use getColorKeysForTemplate to get all expected color keys
     const colorKeys = getColorKeysForTemplate(template_id);
@@ -1509,6 +1513,26 @@ export default function Restaurants({ readOnly = false, salesUserId = null, base
                   <MenuItem value="20">Egypt (+20)</MenuItem>
                 </Select>
               </FormControl>
+            </Box>
+            <Box sx={{ mb: 2 }}>
+              <FormControl fullWidth>
+                <InputLabel>WhatsApp Message Style</InputLabel>
+                <Select
+                  label="WhatsApp Message Style"
+                  {...register("whatsapp_template_id")}
+                  defaultValue={selectedProduct?.whatsapp_template_id || ""}
+                >
+                  <MenuItem value="">Default (Classic)</MenuItem>
+                  {WHATSAPP_TEMPLATES.map((t) => (
+                    <MenuItem key={t.id} value={t.id}>{t.name} — {t.description}</MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+              {watch("whatsapp_template_id") && (
+                <Box sx={{ mt: 1, p: 1.5, bgcolor: "#f5f5f5", borderRadius: 1, fontFamily: "monospace", fontSize: 12, whiteSpace: "pre-wrap", maxHeight: 300, overflowY: "auto" }}>
+                  {buildTemplatePreview(watch("whatsapp_template_id"), watch("name") || "Restaurant")}
+                </Box>
+              )}
             </Box>
             {Number(getValues("template_id")) === 8 && (
               <Box sx={{ mb: 2 }}>

@@ -116,30 +116,24 @@ export const Description = styled.p`
 `;
 
 export const FormContainer = styled.div`
-  width: 99%;
-  max-width: 600px;
-  background: ${(props) => props.theme?.backgroundColor || "#f8f9fa"};
-  border-radius: 12px;
+  width: 90%;
+  max-width: 500px;
   direction: ${(props) => (props.activeLanguage === "ar" ? "rtl" : "ltr")};
-  
-  @media (min-width: 768px) {
-    padding: 40px;
-  }
 `;
 
 export const Form = styled.form`
   display: flex;
   flex-direction: column;
-  gap: 5px;
+  gap: 8px;
 `;
 
 export const FormGroup = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 2px;
   flex: ${(props) => (props.$fullWidth ? "1 1 100%" : "1 1 calc(50% - 6px)")};
   min-width: 0;
-  
+
   @media (max-width: 280px) {
     flex: 1 1 100%;
   }
@@ -169,89 +163,87 @@ export const Label = styled.label`
 
 export const Input = styled.input`
   width: 100%;
-  padding: 14px 16px;
-  border: 1px solid ${(props) => props.theme?.borderColor || "rgba(0, 0, 0, 0.1)"};
+  padding: 10px 14px;
+  border: 1px solid ${(props) => props.theme?.mainColor || "#007bff"}30;
   border-radius: 8px;
-  font-size: 15px;
-  background: #ffffff;
+  font-size: 14px;
+  background-color: ${(props) => props.theme?.backgroundColor || "#ffffff"};
   color: ${(props) => props.theme?.textColor || "#333333"};
   direction: ${(props) => (props.activeLanguage === "ar" ? "rtl" : "ltr")};
+  outline: none;
   transition: all 0.3s ease;
 
   &:focus {
-    outline: none;
     border-color: ${(props) => props.theme?.mainColor || "#007bff"};
-    box-shadow: 0 0 0 3px ${(props) => props.theme?.mainColor ? `${props.theme.mainColor}20` : "rgba(0, 123, 255, 0.2)"};
+    box-shadow: 0 0 0 3px ${(props) => props.theme?.mainColor || "#007bff"}15;
   }
 
   &::placeholder {
-    color: ${(props) => props.theme?.textColor || "#999999"};
-    opacity: 0.6;
+    color: ${(props) => props.theme?.textColor || "#666666"}50;
   }
 `;
 
 export const Select = styled.select`
   width: 100%;
-  padding: 14px 16px;
-  border: 1px solid ${(props) => props.theme?.borderColor || "rgba(0, 0, 0, 0.1)"};
+  padding: 10px 14px;
+  border: 1px solid ${(props) => props.theme?.mainColor || "#007bff"}30;
   border-radius: 8px;
-  font-size: 15px;
-  background: #ffffff;
+  font-size: 14px;
+  background-color: ${(props) => props.theme?.backgroundColor || "#ffffff"};
   color: ${(props) => props.theme?.textColor || "#333333"};
   direction: ${(props) => (props.activeLanguage === "ar" ? "rtl" : "ltr")};
+  outline: none;
   transition: all 0.3s ease;
 
   &:focus {
-    outline: none;
     border-color: ${(props) => props.theme?.mainColor || "#007bff"};
-    box-shadow: 0 0 0 3px ${(props) => props.theme?.mainColor ? `${props.theme.mainColor}20` : "rgba(0, 123, 255, 0.2)"};
+    box-shadow: 0 0 0 3px ${(props) => props.theme?.mainColor || "#007bff"}15;
   }
 `;
 
 export const TextArea = styled.textarea`
   width: 100%;
-  padding: 14px 16px;
-  border: 1px solid ${(props) => props.theme?.borderColor || "rgba(0, 0, 0, 0.1)"};
+  padding: 10px 14px;
+  border: 1px solid ${(props) => props.theme?.mainColor || "#007bff"}30;
   border-radius: 8px;
-  font-size: 15px;
-  background: #ffffff;
+  font-size: 14px;
+  background-color: ${(props) => props.theme?.backgroundColor || "#ffffff"};
   color: ${(props) => props.theme?.textColor || "#333333"};
   direction: ${(props) => (props.activeLanguage === "ar" ? "rtl" : "ltr")};
   font-family: inherit;
   resize: vertical;
-  min-height: 120px;
+  min-height: 80px;
+  outline: none;
   transition: all 0.3s ease;
 
   &:focus {
-    outline: none;
     border-color: ${(props) => props.theme?.mainColor || "#007bff"};
-    box-shadow: 0 0 0 3px ${(props) => props.theme?.mainColor ? `${props.theme.mainColor}20` : "rgba(0, 123, 255, 0.2)"};
+    box-shadow: 0 0 0 3px ${(props) => props.theme?.mainColor || "#007bff"}15;
   }
 
   &::placeholder {
-    color: ${(props) => props.theme?.textColor || "#999999"};
-    opacity: 0.6;
+    color: ${(props) => props.theme?.textColor || "#666666"}50;
   }
 `;
 
 export const SubmitButton = styled.button`
   width: 100%;
-  padding: 16px;
-  background: ${(props) => props.theme?.mainColor || "#007bff"};
-  color: #ffffff;
+  padding: 12px;
+  background-color: ${(props) => props.theme?.mainColor || "#007bff"};
+  color: ${(props) => props.theme?.backgroundColor || "#ffffff"};
   border: none;
   border-radius: 8px;
   font-size: 16px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
-  margin-top: 10px;
+  margin-top: 6px;
   direction: ${(props) => (props.activeLanguage === "ar" ? "rtl" : "ltr")};
 
   &:hover:not(:disabled) {
-    background: ${(props) => props.theme?.mainColor || "#0056b3"};
+    background-color: ${(props) => props.theme?.mainColor || "#007bff"}dd;
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px ${(props) => props.theme?.mainColor ? `${props.theme.mainColor}40` : "rgba(0, 123, 255, 0.4)"};
+    box-shadow: 0 4px 12px ${(props) => props.theme?.mainColor || "#007bff"}40;
   }
 
   &:active:not(:disabled) {

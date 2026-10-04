@@ -75,7 +75,7 @@ export const FormContainer = styled.form`
   max-width: 500px;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
   margin-bottom:60px;
   direction: ${(props) => (props.activeLanguage === "ar" ? "rtl" : "ltr")};
 `;

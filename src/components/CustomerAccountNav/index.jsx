@@ -33,6 +33,8 @@ import {
   GET_ONEPRODUCT_URL,
 } from "../../apis/URLs";
 import { addToCart } from "../../redux/cart/cartActions";
+import { computeUnitPrice } from "../../product-options/pricing";
+import { parseFormJsonString, isV2Selection } from "../../product-options/schema";
 import {
   getCustomerAccessToken,
   setCustomerAccessToken,
@@ -387,7 +389,13 @@ const CustomerAccountNav = forwardRef(function CustomerAccountNav(
     try {
       for (const line of lines) {
         const { data: product } = await axios.get(GET_ONEPRODUCT_URL(line.product_id));
-        const price = getDiscountedUnitPrice(product);
+        let price = getDiscountedUnitPrice(product);
+        if (line.form_data && isV2Selection(line.form_data)) {
+          const parsed = parseFormJsonString(product.form_json);
+          if (parsed.kind === "v2") {
+            price = parseFloat(computeUnitPrice(price, parsed.data, line.form_data));
+          }
+        }
         dispatch(
           addToCart(
             restaurantName,

@@ -195,6 +195,16 @@ export default function Theme7() {
     dispatch(changelanuage({ name: restaurantName, activeLanguage: lang }));
   }, [dispatch, restaurantName]);
 
+  useEffect(() => {
+    const popup = searchParams.get("popup");
+    if (popup === "feedback" || popup === "contactForm") {
+      popupHandler(popup);
+      const next = new URLSearchParams(searchParams);
+      next.delete("popup");
+      setSearchParams(next, { replace: true });
+    }
+  }, []);
+
   /* ─── Product detail (URL param) ─── */
   const openProduct = useCallback((id) => {
     const p = new URLSearchParams(searchParams);

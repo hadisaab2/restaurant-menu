@@ -153,6 +153,16 @@ export default function Theme5() {
     }, [restaurant?.id]);
 
     useEffect(() => {
+      const popup = searchParams.get("popup");
+      if (popup === "feedback" || popup === "contactForm") {
+        popupHandler(popup);
+        const next = new URLSearchParams(searchParams);
+        next.delete("popup");
+        setSearchParams(next, { replace: true });
+      }
+    }, []);
+
+    useEffect(() => {
       const handleBeforeInstallPrompt = (event) => {
         event.preventDefault();
         setDeferredPrompt(event);

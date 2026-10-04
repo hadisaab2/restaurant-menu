@@ -8,6 +8,7 @@ import { trackOrderPlaced } from "../../../../utilities/analyticsTracking";
 import { convertPrice } from "../../../../utilities/convertPrice";
 import { formatCartItemOptionsForOrderMessage } from "../../../../product-options/cartLabels";
 import { openWhatsApp } from "../../../../utilities/formatWhatsappNumber";
+import { buildStyledMessage } from "../../../../utilities/whatsappTemplates";
 import {
   CartOvWrap, CartDrawerEl, CartHeader, CartTitle, CartCloseBtn,
   CartBody, CartEmpty, CartItemRow, CartItemImg, CartItemInfo,
@@ -117,44 +118,18 @@ export default function CartPopup({
   const whatsappNumber = restaurant?.branches?.[0]?.whatsapp_number || "";
 
   const buildWhatsAppMessage = () => {
-    let msg = `*New Order - ${orderType}*\n`;
-    msg += `----------------------------\n\n`;
-
-    cart.forEach((item, idx) => {
-      const name = activeLanguage === "ar" && item.ar_name ? item.ar_name : item.en_name;
-      const catName = item.category
-        ? (activeLanguage === "ar" && item.category.ar_category ? item.category.ar_category : item.category.en_category)
-        : "";
-      const itemTotal = item.price * item.quantity;
-
-      msg += `${idx + 1}. *${(name || "").trim()}*\n`;
-      if (catName) msg += `    ${catName.trim()}\n`;
-      msg += `    ${item.quantity}x ${convertPrice(item.price, currencySymbol)} = *${convertPrice(itemTotal, currencySymbol)}*\n`;
-
-      // Format options
-      if (item.formData && Object.keys(item.formData).length > 0) {
-        try {
-          const optionsText = formatCartItemOptionsForOrderMessage(item, activeLanguage);
-          if (optionsText) msg += `    ${optionsText}\n`;
-        } catch (e) {}
-      }
-
-      if (item.instruction) {
-        msg += `    > _${item.instruction}_\n`;
-      }
-      msg += `\n`;
+    return buildStyledMessage(restaurant?.whatsapp_template_id, {
+      restaurantName: restaurant?.en_slogan || restaurantName,
+      orderType,
+      cart,
+      currencySymbol,
+      activeLanguage,
+      customerName,
+      customerPhone,
+      fullAddress: orderType === "Delivery" ? customerAddress : null,
+      tableNumber: orderType === "DineIn" ? tableNumber : null,
+      note: orderNotes,
     });
-
-    msg += `----------------------------\n`;
-    msg += `*Total: ${convertPrice(total, currencySymbol)}*\n\n`;
-
-    if (customerName) msg += `*Name:* ${customerName}\n`;
-    if (customerPhone) msg += `*Phone:* ${customerPhone}\n`;
-    if (orderType === "Delivery" && customerAddress) msg += `*Address:* ${customerAddress}\n`;
-    if (orderType === "DineIn" && tableNumber) msg += `*Table:* ${tableNumber}\n`;
-    if (orderNotes) msg += `*Notes:* ${orderNotes}\n`;
-
-    return msg;
   };
 
   const sendWhatsApp = async () => {

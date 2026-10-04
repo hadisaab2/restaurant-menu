@@ -276,25 +276,35 @@ export default function Theme3() {
         trackPageView(restaurant.id, branchId);
       }
     }, [restaurant?.id]);
-  
+
+    useEffect(() => {
+      const popup = searchParams.get("popup");
+      if (popup === "feedback" || popup === "contactForm") {
+        popupHandler(popup);
+        const next = new URLSearchParams(searchParams);
+        next.delete("popup");
+        setSearchParams(next, { replace: true });
+      }
+    }, []);
+
     const handleInstallClick = async () => {
       if (!deferredPrompt) return;
-  
+
       deferredPrompt.prompt();
       const choiceResult = await deferredPrompt.userChoice;
-  
+
       if (choiceResult.outcome === "accepted") {
         console.log("User accepted the install");
       } else {
         console.log("User dismissed the install");
       }
-  
+
       setDeferredPrompt(null);
       setShowInstallPopup(false);
     };
-  
+
   let features=JSON.parse(restaurant?.features || "{}")
-  
+
   // Handle URL categoryId changes
   useEffect(() => {
     if (categoryId) {

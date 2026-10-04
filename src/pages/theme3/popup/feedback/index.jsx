@@ -150,7 +150,7 @@ export default function FeedbackPopup({
         </StarContainer>
 
         <InputRow activeLanguage={activeLanguage}>
-          <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: "4px", minWidth: 0 }}>
+          <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: "2px", minWidth: 0 }}>
             <Label activeLanguage={activeLanguage}>
               {activeLanguage === "en" ? "Name" : "الاسم"}
             </Label>
@@ -163,7 +163,7 @@ export default function FeedbackPopup({
               onChange={(e) => setName(e.target.value)}
             />
           </div>
-          <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: "4px", minWidth: 0 }}>
+          <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: "2px", minWidth: 0 }}>
             <Label activeLanguage={activeLanguage}>
               {activeLanguage === "en" ? "Phone Number" : "رقم الهاتف"}
             </Label>
