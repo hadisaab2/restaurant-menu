@@ -140,7 +140,7 @@ export default function OrderTypeStep({
         {errors.deliveryType && <Error>{errors.deliveryType}</Error>}
       </DropdownWrapper>
 
-      {restaurant?.branches?.length > 0 && !hasOnlineBranch() && (
+      {restaurant?.branches?.length > 1 && !hasOnlineBranch() && (
         <DropdownWrapper>
           <BranchSelect
             deliveryType={formData.deliveryType}

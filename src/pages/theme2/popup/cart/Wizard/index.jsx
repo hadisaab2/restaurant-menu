@@ -153,7 +153,7 @@ export default function Wizard({ popupHandler, restaurant }) {
       if (!formData.deliveryType) {
         newErrors.deliveryType = "Order Type is required.";
       }
-      if (!formData.selectedBranch && restaurant?.branches?.length > 0) {
+      if (!formData.selectedBranch && restaurant?.branches?.length > 1) {
         const hasOnlineBranch = restaurant?.branches?.some(
           (branch) => branch.is_online
         );
