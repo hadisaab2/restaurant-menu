@@ -236,6 +236,48 @@ export const WHATSAPP_TEMPLATES = [
 ];
 
 /**
+ * Build a message from a custom template string by replacing {{variables}}.
+ */
+function buildCustomMessage(templateStr, data) {
+  const { addressBlock, mapLink, tableBlock, noteBlock } = buildBlocks(data);
+  const ts = getTimestamp();
+
+  let msg = templateStr;
+  msg = msg.replace(/\{\{restaurantName\}\}/g, data.restaurantName || "");
+  msg = msg.replace(/\{\{orderType\}\}/g, data.orderType || "");
+  msg = msg.replace(/\{\{timestamp\}\}/g, ts);
+  msg = msg.replace(/\{\{items\}\}/g, data.items || "");
+  msg = msg.replace(/\{\{total\}\}/g, data.total || "");
+  msg = msg.replace(/\{\{customerName\}\}/g, data.customerName || "");
+  msg = msg.replace(/\{\{customerPhone\}\}/g, data.customerPhone || "");
+  msg = msg.replace(/\{\{addressBlock\}\}/g, addressBlock);
+  msg = msg.replace(/\{\{mapLink\}\}/g, mapLink);
+  msg = msg.replace(/\{\{tableBlock\}\}/g, tableBlock);
+  msg = msg.replace(/\{\{noteBlock\}\}/g, noteBlock);
+
+  // Clean up empty lines from conditional blocks that didn't render
+  msg = msg.replace(/\n{3,}/g, "\n\n");
+  return msg.trim();
+}
+
+/**
+ * Available template variables for the custom template builder.
+ */
+export const TEMPLATE_VARIABLES = [
+  { key: "{{restaurantName}}", label: "Restaurant Name" },
+  { key: "{{orderType}}", label: "Order Type (Delivery/TakeAway/DineIn)" },
+  { key: "{{timestamp}}", label: "Order Time" },
+  { key: "{{items}}", label: "Order Items (auto-formatted list)" },
+  { key: "{{total}}", label: "Total Price" },
+  { key: "{{customerName}}", label: "Customer Name" },
+  { key: "{{customerPhone}}", label: "Customer Phone" },
+  { key: "{{addressBlock}}", label: "Delivery Address (only shows for Delivery)" },
+  { key: "{{mapLink}}", label: "Google Maps Link (only shows for Delivery)" },
+  { key: "{{tableBlock}}", label: "Table Number (only shows for DineIn)" },
+  { key: "{{noteBlock}}", label: "Customer Note (only shows if provided)" },
+];
+
+/**
  * Build a styled WhatsApp order message using the selected template.
  *
  * @param {string|null} templateId - Template ID from restaurant settings (null = classic)
@@ -252,6 +294,7 @@ export const WHATSAPP_TEMPLATES = [
  * @param {string} [params.tableNumber]
  * @param {string} [params.note]
  * @param {string} [params.selectedRegion]
+ * @param {string} [params.customWhatsappTemplate] - Custom template string
  * @returns {string} Formatted WhatsApp message
  */
 export function buildStyledMessage(templateId, params) {
@@ -259,6 +302,7 @@ export function buildStyledMessage(templateId, params) {
     cart,
     currencySymbol,
     activeLanguage,
+    customWhatsappTemplate,
     ...rest
   } = params;
 
@@ -273,31 +317,42 @@ export function buildStyledMessage(templateId, params) {
     deliveryType: rest.orderType,
   };
 
+  if (templateId === "custom" && customWhatsappTemplate) {
+    return buildCustomMessage(customWhatsappTemplate, data);
+  }
+
   const template = WHATSAPP_TEMPLATES.find((t) => t.id === templateId);
   const buildFn = template ? template.build : classicClear;
   return buildFn(data);
 }
 
 /**
+ * Sample data used for previews.
+ */
+export const SAMPLE_PREVIEW_DATA = {
+  restaurantName: "My Restaurant",
+  orderType: "Delivery",
+  items:
+    `1. *Chicken Burger*\n    Burgers\n    2x 12.00$ = *24.00$*\n\n` +
+    `2. *Caesar Salad*\n    Salads\n    1x 8.50$ = *8.50$*`,
+  total: "32.50$",
+  customerName: "John Doe",
+  customerPhone: "+961 71 123 456",
+  deliveryType: "Delivery",
+  fullAddress: "Beirut, Hamra Street, Building 42",
+  selectedLocation: { latitude: 33.8938, longitude: 35.5018 },
+  note: "Extra sauce please",
+};
+
+/**
  * Generate a preview message with sample data for superadmin template selector.
  */
-export function buildTemplatePreview(templateId, restaurantName = "My Restaurant") {
-  const sampleItems =
-    `1. *Chicken Burger*\n    Burgers\n    2x 12.00$ = *24.00$*\n\n` +
-    `2. *Caesar Salad*\n    Salads\n    1x 8.50$ = *8.50$*`;
+export function buildTemplatePreview(templateId, restaurantName = "My Restaurant", customTemplateStr = "") {
+  const data = { ...SAMPLE_PREVIEW_DATA, restaurantName };
 
-  const data = {
-    restaurantName,
-    orderType: "Delivery",
-    items: sampleItems,
-    total: "32.50$",
-    customerName: "John Doe",
-    customerPhone: "+961 71 123 456",
-    deliveryType: "Delivery",
-    fullAddress: "Beirut, Hamra Street, Building 42",
-    selectedLocation: { latitude: 33.8938, longitude: 35.5018 },
-    note: "Extra sauce please",
-  };
+  if (templateId === "custom" && customTemplateStr) {
+    return buildCustomMessage(customTemplateStr, data);
+  }
 
   const template = WHATSAPP_TEMPLATES.find((t) => t.id === templateId);
   const buildFn = template ? template.build : classicClear;

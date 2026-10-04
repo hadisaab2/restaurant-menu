@@ -75,7 +75,7 @@ import { useEditStatItem } from "../../../apis/statsSection/editStatItem";
 import { useDeleteStatItem } from "../../../apis/statsSection/deleteStatItem";
 import { useGetAboutUs } from "../../../apis/aboutUs/getAboutUs";
 import { useUpdateAboutUsSectionQuery } from "../../../apis/aboutUs/updateAboutUsSection";
-import { WHATSAPP_TEMPLATES, buildTemplatePreview } from "../../../utilities/whatsappTemplates";
+import { WHATSAPP_TEMPLATES, buildTemplatePreview, TEMPLATE_VARIABLES } from "../../../utilities/whatsappTemplates";
 import { useAddAboutUsValueQuery } from "../../../apis/aboutUs/addAboutUsValue";
 import { useEditAboutUsValueQuery } from "../../../apis/aboutUs/editAboutUsValue";
 import { useDeleteAboutUsValueQuery } from "../../../apis/aboutUs/deleteAboutUsValue";
@@ -698,6 +698,7 @@ export default function Restaurants({ readOnly = false, salesUserId = null, base
     features.stripe_publishable_key = features.stripe_publishable_key || "";
     features.stripe_secret_key = features.stripe_secret_key || "";
     features.payment_methods = features.payment_methods || ["whatsapp"];
+    features.custom_whatsapp_template = features.custom_whatsapp_template || "";
     setValue("features", features);
 
     setValue("phone_number", phone_number);
@@ -1514,25 +1515,157 @@ export default function Restaurants({ readOnly = false, salesUserId = null, base
                 </Select>
               </FormControl>
             </Box>
-            <Box sx={{ mb: 2 }}>
-              <FormControl fullWidth>
-                <InputLabel>WhatsApp Message Style</InputLabel>
-                <Select
-                  label="WhatsApp Message Style"
-                  {...register("whatsapp_template_id")}
-                  defaultValue={selectedProduct?.whatsapp_template_id || ""}
-                >
-                  <MenuItem value="">Default (Classic)</MenuItem>
-                  {WHATSAPP_TEMPLATES.map((t) => (
-                    <MenuItem key={t.id} value={t.id}>{t.name} — {t.description}</MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-              {watch("whatsapp_template_id") && (
-                <Box sx={{ mt: 1, p: 1.5, bgcolor: "#f5f5f5", borderRadius: 1, fontFamily: "monospace", fontSize: 12, whiteSpace: "pre-wrap", maxHeight: 300, overflowY: "auto" }}>
-                  {buildTemplatePreview(watch("whatsapp_template_id"), watch("name") || "Restaurant")}
-                </Box>
-              )}
+            {/* ── WhatsApp Order Message ── */}
+            <Box sx={{ mb: 2, p: 2, border: "1px solid #e2e8f0", borderRadius: 2 }}>
+              <Typography variant="subtitle2" sx={{ mb: 1.5, fontWeight: 700, color: "#0f172a" }}>
+                WhatsApp Order Message
+              </Typography>
+              <Typography variant="caption" sx={{ display: "block", mb: 2, color: "#64748b" }}>
+                Choose a message template that will be sent via WhatsApp when a customer places an order.
+              </Typography>
+
+              {/* Template Cards */}
+              <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5, mb: 2 }}>
+                {[{ id: "", name: "Classic Clear (Default)", description: "Structured and easy to read — great default for most restaurants" }, ...WHATSAPP_TEMPLATES.filter(t => t.id !== "classic")].map((t) => {
+                  const currentVal = watch("whatsapp_template_id") || "";
+                  const isSelected = currentVal === t.id;
+                  return (
+                    <Box
+                      key={t.id}
+                      onClick={() => setValue("whatsapp_template_id", t.id)}
+                      sx={{
+                        p: 1.5,
+                        border: isSelected ? "2px solid #3b82f6" : "1px solid #e2e8f0",
+                        borderRadius: 1.5,
+                        cursor: "pointer",
+                        bgcolor: isSelected ? "#eff6ff" : "#fff",
+                        transition: "all 0.15s",
+                        "&:hover": { borderColor: "#93c5fd", bgcolor: isSelected ? "#eff6ff" : "#f8fafc" },
+                      }}
+                    >
+                      <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 0.5 }}>
+                        <Box sx={{
+                          width: 16, height: 16, borderRadius: "50%",
+                          border: isSelected ? "5px solid #3b82f6" : "2px solid #cbd5e1",
+                          bgcolor: isSelected ? "#fff" : "transparent",
+                          flexShrink: 0,
+                        }} />
+                        <Typography variant="body2" sx={{ fontWeight: 600, color: "#0f172a" }}>
+                          {t.name}
+                        </Typography>
+                      </Box>
+                      <Typography variant="caption" sx={{ color: "#64748b", ml: 3 }}>
+                        {t.description}
+                      </Typography>
+                      {isSelected && (
+                        <Box sx={{ mt: 1.5, p: 1.5, bgcolor: "#f1f5f9", borderRadius: 1, fontFamily: "monospace", fontSize: 11, whiteSpace: "pre-wrap", maxHeight: 220, overflowY: "auto", lineHeight: 1.5, color: "#334155" }}>
+                          {buildTemplatePreview(t.id || "classic", watch("name") || "Restaurant")}
+                        </Box>
+                      )}
+                    </Box>
+                  );
+                })}
+
+                {/* Custom Template Card */}
+                {(() => {
+                  const isCustom = watch("whatsapp_template_id") === "custom";
+                  return (
+                    <Box
+                      onClick={() => setValue("whatsapp_template_id", "custom")}
+                      sx={{
+                        p: 1.5,
+                        border: isCustom ? "2px solid #8b5cf6" : "1px solid #e2e8f0",
+                        borderRadius: 1.5,
+                        cursor: "pointer",
+                        bgcolor: isCustom ? "#f5f3ff" : "#fff",
+                        transition: "all 0.15s",
+                        "&:hover": { borderColor: "#a78bfa", bgcolor: isCustom ? "#f5f3ff" : "#f8fafc" },
+                      }}
+                    >
+                      <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 0.5 }}>
+                        <Box sx={{
+                          width: 16, height: 16, borderRadius: "50%",
+                          border: isCustom ? "5px solid #8b5cf6" : "2px solid #cbd5e1",
+                          bgcolor: isCustom ? "#fff" : "transparent",
+                          flexShrink: 0,
+                        }} />
+                        <Typography variant="body2" sx={{ fontWeight: 600, color: "#0f172a" }}>
+                          Custom Template
+                        </Typography>
+                        <Typography variant="caption" sx={{ px: 0.8, py: 0.2, bgcolor: "#8b5cf6", color: "#fff", borderRadius: 0.5, fontSize: 10, fontWeight: 600 }}>
+                          ADVANCED
+                        </Typography>
+                      </Box>
+                      <Typography variant="caption" sx={{ color: "#64748b", ml: 3 }}>
+                        Build your own message template with variables
+                      </Typography>
+
+                      {isCustom && (
+                        <Box sx={{ mt: 1.5 }}>
+                          <Typography variant="caption" sx={{ display: "block", mb: 1, color: "#6d28d9", fontWeight: 600 }}>
+                            Available Variables (click to insert):
+                          </Typography>
+                          <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5, mb: 1.5 }}>
+                            {TEMPLATE_VARIABLES.map((v) => (
+                              <Box
+                                key={v.key}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  const ta = document.getElementById("custom-whatsapp-textarea");
+                                  if (ta) {
+                                    const start = ta.selectionStart;
+                                    const end = ta.selectionEnd;
+                                    const current = getValues("features.custom_whatsapp_template") || "";
+                                    const updated = current.substring(0, start) + v.key + current.substring(end);
+                                    setValue("features.custom_whatsapp_template", updated);
+                                    setTimeout(() => { ta.focus(); ta.selectionStart = ta.selectionEnd = start + v.key.length; }, 0);
+                                  } else {
+                                    const current = getValues("features.custom_whatsapp_template") || "";
+                                    setValue("features.custom_whatsapp_template", current + v.key);
+                                  }
+                                }}
+                                title={v.label}
+                                sx={{
+                                  px: 0.8, py: 0.3, bgcolor: "#ede9fe", color: "#6d28d9", borderRadius: 0.5,
+                                  fontSize: 11, fontFamily: "monospace", cursor: "pointer", userSelect: "none",
+                                  "&:hover": { bgcolor: "#ddd6fe" },
+                                }}
+                              >
+                                {v.key}
+                              </Box>
+                            ))}
+                          </Box>
+
+                          <textarea
+                            id="custom-whatsapp-textarea"
+                            value={watch("features.custom_whatsapp_template") || ""}
+                            onChange={(e) => { e.stopPropagation(); setValue("features.custom_whatsapp_template", e.target.value); }}
+                            onClick={(e) => e.stopPropagation()}
+                            placeholder={"Example:\n📋 *{{restaurantName}} — New Order*\n━━━━━━━━━━━━━━━━━━\n\n📌 *Type:* {{orderType}}\n🕐 *Time:* {{timestamp}}\n\n*Items:*\n{{items}}\n\n━━━━━━━━━━━━━━━━━━\n💰 *Total: {{total}}*\n\n👤 {{customerName}}\n📞 {{customerPhone}}\n{{addressBlock}}\n{{tableBlock}}\n{{noteBlock}}\n{{mapLink}}"}
+                            style={{
+                              width: "100%", minHeight: 180, padding: 12, fontFamily: "monospace", fontSize: 12,
+                              border: "1px solid #c4b5fd", borderRadius: 6, resize: "vertical",
+                              backgroundColor: "#faf5ff", color: "#1e1b4b", lineHeight: 1.6,
+                              outline: "none",
+                            }}
+                          />
+
+                          {watch("features.custom_whatsapp_template") && (
+                            <Box sx={{ mt: 1.5 }}>
+                              <Typography variant="caption" sx={{ display: "block", mb: 0.5, color: "#6d28d9", fontWeight: 600 }}>
+                                Live Preview:
+                              </Typography>
+                              <Box sx={{ p: 1.5, bgcolor: "#f1f5f9", borderRadius: 1, fontFamily: "monospace", fontSize: 11, whiteSpace: "pre-wrap", maxHeight: 250, overflowY: "auto", lineHeight: 1.5, color: "#334155" }}>
+                                {buildTemplatePreview("custom", watch("name") || "Restaurant", watch("features.custom_whatsapp_template"))}
+                              </Box>
+                            </Box>
+                          )}
+                        </Box>
+                      )}
+                    </Box>
+                  );
+                })()}
+              </Box>
             </Box>
             {Number(getValues("template_id")) === 8 && (
               <Box sx={{ mb: 2 }}>

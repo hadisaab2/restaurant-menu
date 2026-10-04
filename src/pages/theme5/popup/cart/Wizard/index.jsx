@@ -198,6 +198,7 @@ export default function Wizard({ popupHandler, restaurant }) {
     // Generate WhatsApp message
     const currencySymbol = getCurrencySymbol(restaurant?.currency);
 
+    const parsedFeatures = (() => { try { return JSON.parse(restaurant.features || "{}"); } catch { return {}; } })();
     const message = buildStyledMessage(restaurant?.whatsapp_template_id, {
       restaurantName: restaurant?.en_slogan || restaurantName,
       orderType: formData.deliveryType,
@@ -211,6 +212,7 @@ export default function Wizard({ popupHandler, restaurant }) {
       tableNumber: formData.deliveryType === "DineIn" ? formData.tableNumber : null,
       note: formData.note,
       selectedRegion: formData.selectedRegion,
+      customWhatsappTemplate: parsedFeatures.custom_whatsapp_template || "",
     });
 
     let totalPrice = 0;

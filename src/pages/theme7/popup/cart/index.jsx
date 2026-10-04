@@ -118,6 +118,7 @@ export default function CartPopup({
   const whatsappNumber = restaurant?.branches?.[0]?.whatsapp_number || "";
 
   const buildWhatsAppMessage = () => {
+    const parsedFeatures = (() => { try { return JSON.parse(restaurant.features || "{}"); } catch { return {}; } })();
     return buildStyledMessage(restaurant?.whatsapp_template_id, {
       restaurantName: restaurant?.en_slogan || restaurantName,
       orderType,
@@ -129,6 +130,7 @@ export default function CartPopup({
       fullAddress: orderType === "Delivery" ? customerAddress : null,
       tableNumber: orderType === "DineIn" ? tableNumber : null,
       note: orderNotes,
+      customWhatsappTemplate: parsedFeatures.custom_whatsapp_template || "",
     });
   };
 
