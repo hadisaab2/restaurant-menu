@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { AddToCart, BackBtn, BackIcon, Backdrop, ButtonWrapper, Carousel, CarouselBack, CarouselForward, CarouselItem, Category, CopyButton, DiscountPrice, FakeContainer, Image, ImagesContainer, ImageWrapper, InfoContainer, Instruction, InstructionContainer, InstructionLabel, ItemCategory, ItemDescription, ItemInfo, ItemInfoWrapper, ItemName, ItemPrice, Loader, LoaderWrapper, MagnifyBtn, Minus, Plus, PriceContainer, ProductDetailSkeleton, ProductHeader, ProductHeaderTitle, Quantity, QuantityPrice, QuantityWrapper, SearchProductContainer, SkeletonBox, SwiperWrapper, TitlePriceRow, ZoomCloseBtn, ZoomImage, ZoomOverlay } from './styles'
+import { AddToCart, BackBtn, BackIcon, Backdrop, ButtonWrapper, Carousel, CarouselBack, CarouselForward, CarouselItem, Category, CopyButton, DiscountPrice, FakeContainer, Image, ImagesContainer, ImageWrapper, InfoContainer, Instruction, InstructionContainer, InstructionLabel, ItemCategory, ItemDescription, ItemInfo, ItemInfoWrapper, ItemName, ItemPrice, Loader, LoaderWrapper, MagnifyBtn, Minus, Plus, PriceContainer, ProductDetailSkeleton, ProductHeader, ProductHeaderTitle, Quantity, QuantityPrice, QuantityWrapper, SearchProductContainer, SkeletonBox, SwiperWrapper, TitlePriceRow, ZoomCloseBtn, ZoomImage, ZoomOverlay, OutOfStockNotice } from './styles'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import { EffectCards, Pagination } from 'swiper/modules'
 import 'swiper/css'
@@ -89,6 +89,9 @@ export default function ProductParam({ productId, setSearchParams, searchParams 
 
     const [formData, setFormData] = useState({});
     const [formErrors, setFormErrors] = useState({});
+    const isOutOfStock =
+        Boolean(fetchedProduct?.out_of_stock) ||
+        Number(fetchedProduct?.out_of_stock) === 1;
 
     const [zoomOpen, setZoomOpen] = useState(false);
     const [zoomScale, setZoomScale] = useState(1);
@@ -630,6 +633,13 @@ export default function ProductParam({ productId, setSearchParams, searchParams 
                                 <ItemDescription activeLanguage={restaurant.activeLanguage}
                                     dangerouslySetInnerHTML={{ __html: description }}
                                 />
+                                {isOutOfStock && (
+                                    <OutOfStockNotice>
+                                        {restaurant.activeLanguage === "en"
+                                            ? "Out of stock"
+                                            : "غير متوفر حالياً"}
+                                    </OutOfStockNotice>
+                                )}
                                 <MacrosStrip
                                   macros={fetchedProduct?.macros}
                                   activeLanguage={restaurant?.activeLanguage}
@@ -659,6 +669,7 @@ export default function ProductParam({ productId, setSearchParams, searchParams 
                             </ItemInfo>
                         </InfoContainer>
                     </ItemInfoWrapper>
+                    {!isOutOfStock && (
                     <ButtonWrapper CloseAnimation={CloseAnimation}>
                         <QuantityWrapper CloseAnimation={CloseAnimation}>
                             <Plus onClick={handleIncrement}>+</Plus>
@@ -674,6 +685,7 @@ export default function ProductParam({ productId, setSearchParams, searchParams 
 
                         </AddToCart>
                     </ButtonWrapper>
+                    )}
                     </React.Fragment>
                 )}
             </SearchProductContainer>

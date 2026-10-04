@@ -875,6 +875,17 @@ export const ZoomCloseBtn = styled.button`
   backdrop-filter: blur(4px);
 `;
 
+export const OutOfStockNotice = styled.div`
+  margin-top: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  color: ${(props) => props.theme.mainColor};
+  background: ${(props) => props.theme.backgroundColor};
+  border: 0;
+  padding: 4px 10px;
+  border-radius: 999px;
+`;
+
 export const ZoomImage = styled.img`
   max-width: none;
   max-height: none;

@@ -956,6 +956,12 @@ function ProductDetail({ product, restaurant, restaurantName, activeLanguage, is
               {discountPercent > 0 && <S.PdDiscountBadge>-{discountPercent}%</S.PdDiscountBadge>}
             </S.PdPriceRow>
 
+            {(product.out_of_stock === 1 || product.out_of_stock === true) && (
+              <div style={{ marginTop: 8, fontSize: 13, fontWeight: 600, color: '#dc3545', textAlign: isRtl ? 'right' : 'left' }}>
+                {loc("Out of stock", "غير متوفر حالياً")}
+              </div>
+            )}
+
             <MacrosStrip macros={product?.macros} activeLanguage={activeLanguage} />
 
             {isV2 && parsedOptions && (
@@ -995,7 +1001,7 @@ function ProductDetail({ product, restaurant, restaurantName, activeLanguage, is
           </S.PdBody>
         </S.PdScroll>
 
-        {features?.cart && (
+        {features?.cart && !(product.out_of_stock === 1 || product.out_of_stock === true) && (
           <S.PdFooter>
             <S.QtyControl>
               <button onClick={() => setQuantity(Math.max(1, quantity - 1))}><FiMinus /></button>
