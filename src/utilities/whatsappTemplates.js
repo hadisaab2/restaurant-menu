@@ -2,9 +2,68 @@ import { convertPrice } from "./convertPrice";
 import { formatCartItemOptionsForOrderMessage } from "../product-options/cartLabels";
 
 /**
+ * Item format styles for WhatsApp messages.
+ */
+export const ITEM_FORMATS = [
+  {
+    id: "default",
+    name: "Numbered Bold",
+    example: '1. *Chicken Burger*\n    Burgers\n    2x 12.00$ = *24.00$*',
+  },
+  {
+    id: "bullet",
+    name: "Bullet Compact",
+    example: '▪️ (2) - Chicken Burger\n    2x 12.00$ = 24.00$',
+  },
+  {
+    id: "dash",
+    name: "Dash Simple",
+    example: '- Chicken Burger x2 — 24.00$',
+  },
+  {
+    id: "minimal",
+    name: "Minimal",
+    example: 'Chicken Burger (x2) = 24.00$',
+  },
+];
+
+function formatItemDefault(item, idx, name, category, modeLabel, currencySymbol) {
+  const itemTotal = item.price * item.quantity;
+  let text = `${idx + 1}. *${name}*${modeLabel}\n`;
+  if (category) text += `    ${category}\n`;
+  text += `    ${item.quantity}x ${convertPrice(item.price, currencySymbol)} = *${convertPrice(itemTotal, currencySymbol)}*\n`;
+  return text;
+}
+
+function formatItemBullet(item, idx, name, category, modeLabel, currencySymbol) {
+  const itemTotal = item.price * item.quantity;
+  let text = `▪️ (${item.quantity}) - ${name}${modeLabel}\n`;
+  text += `    ${item.quantity}x ${convertPrice(item.price, currencySymbol)} = ${convertPrice(itemTotal, currencySymbol)}\n`;
+  return text;
+}
+
+function formatItemDash(item, idx, name, category, modeLabel, currencySymbol) {
+  const itemTotal = item.price * item.quantity;
+  return `- ${name} x${item.quantity} — ${convertPrice(itemTotal, currencySymbol)}${modeLabel}\n`;
+}
+
+function formatItemMinimal(item, idx, name, category, modeLabel, currencySymbol) {
+  const itemTotal = item.price * item.quantity;
+  return `${name} (x${item.quantity}) = ${convertPrice(itemTotal, currencySymbol)}${modeLabel}\n`;
+}
+
+const ITEM_FORMATTERS = {
+  default: formatItemDefault,
+  bullet: formatItemBullet,
+  dash: formatItemDash,
+  minimal: formatItemMinimal,
+};
+
+/**
  * Format cart items into a text block for WhatsApp messages.
  */
-function formatItems(cart, currencySymbol, activeLanguage) {
+function formatItems(cart, currencySymbol, activeLanguage, itemFormat = "default") {
+  const formatter = ITEM_FORMATTERS[itemFormat] || formatItemDefault;
   let text = "";
   cart.forEach((item, idx) => {
     const modeLabel =
@@ -23,11 +82,8 @@ function formatItems(cart, currencySymbol, activeLanguage) {
             : item.category.en_category || ""
         ).trim()
       : "";
-    const itemTotal = item.price * item.quantity;
 
-    text += `${idx + 1}. *${name}*${modeLabel}\n`;
-    if (category) text += `    ${category}\n`;
-    text += `    ${item.quantity}x ${convertPrice(item.price, currencySymbol)} = *${convertPrice(itemTotal, currencySymbol)}*\n`;
+    text += formatter(item, idx, name, category, modeLabel, currencySymbol);
 
     if (item.formData) {
       const optionsText = formatCartItemOptionsForOrderMessage(
@@ -303,10 +359,11 @@ export function buildStyledMessage(templateId, params) {
     currencySymbol,
     activeLanguage,
     customWhatsappTemplate,
+    itemFormat,
     ...rest
   } = params;
 
-  const items = formatItems(cart, currencySymbol, activeLanguage);
+  const items = formatItems(cart, currencySymbol, activeLanguage, itemFormat || "default");
   const totalNum = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
   const total = convertPrice(totalNum, currencySymbol);
 
@@ -327,28 +384,30 @@ export function buildStyledMessage(templateId, params) {
 }
 
 /**
- * Sample data used for previews.
+ * Sample cart for previews.
  */
-export const SAMPLE_PREVIEW_DATA = {
-  restaurantName: "My Restaurant",
-  orderType: "Delivery",
-  items:
-    `1. *Chicken Burger*\n    Burgers\n    2x 12.00$ = *24.00$*\n\n` +
-    `2. *Caesar Salad*\n    Salads\n    1x 8.50$ = *8.50$*`,
-  total: "32.50$",
-  customerName: "John Doe",
-  customerPhone: "+961 71 123 456",
-  deliveryType: "Delivery",
-  fullAddress: "Beirut, Hamra Street, Building 42",
-  selectedLocation: { latitude: 33.8938, longitude: 35.5018 },
-  note: "Extra sauce please",
-};
+const SAMPLE_CART = [
+  { en_name: "Chicken Burger", ar_name: "برغر دجاج", price: 12, quantity: 2, category: { en_category: "Burgers", ar_category: "برغر" } },
+  { en_name: "Caesar Salad", ar_name: "سلطة سيزر", price: 8.5, quantity: 1, category: { en_category: "Salads", ar_category: "سلطات" } },
+];
 
 /**
  * Generate a preview message with sample data for superadmin template selector.
  */
-export function buildTemplatePreview(templateId, restaurantName = "My Restaurant", customTemplateStr = "") {
-  const data = { ...SAMPLE_PREVIEW_DATA, restaurantName };
+export function buildTemplatePreview(templateId, restaurantName = "My Restaurant", customTemplateStr = "", itemFormatId = "default") {
+  const items = formatItems(SAMPLE_CART, "$", "en", itemFormatId);
+  const data = {
+    restaurantName,
+    orderType: "Delivery",
+    items,
+    total: "32.50$",
+    customerName: "John Doe",
+    customerPhone: "+961 71 123 456",
+    deliveryType: "Delivery",
+    fullAddress: "Beirut, Hamra Street, Building 42",
+    selectedLocation: { latitude: 33.8938, longitude: 35.5018 },
+    note: "Extra sauce please",
+  };
 
   if (templateId === "custom" && customTemplateStr) {
     return buildCustomMessage(customTemplateStr, data);

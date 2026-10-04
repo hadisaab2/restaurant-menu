@@ -213,6 +213,7 @@ export default function Wizard({ popupHandler, restaurant }) {
       note: formData.note,
       selectedRegion: formData.selectedRegion,
       customWhatsappTemplate: parsedFeatures.custom_whatsapp_template || "",
+      itemFormat: parsedFeatures.whatsapp_item_format || "default",
     });
 
     let totalPrice = 0;

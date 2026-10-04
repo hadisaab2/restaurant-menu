@@ -131,6 +131,7 @@ export default function CartPopup({
       tableNumber: orderType === "DineIn" ? tableNumber : null,
       note: orderNotes,
       customWhatsappTemplate: parsedFeatures.custom_whatsapp_template || "",
+      itemFormat: parsedFeatures.whatsapp_item_format || "default",
     });
   };
 

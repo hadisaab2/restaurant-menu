@@ -75,7 +75,7 @@ import { useEditStatItem } from "../../../apis/statsSection/editStatItem";
 import { useDeleteStatItem } from "../../../apis/statsSection/deleteStatItem";
 import { useGetAboutUs } from "../../../apis/aboutUs/getAboutUs";
 import { useUpdateAboutUsSectionQuery } from "../../../apis/aboutUs/updateAboutUsSection";
-import { WHATSAPP_TEMPLATES, buildTemplatePreview, TEMPLATE_VARIABLES } from "../../../utilities/whatsappTemplates";
+import { WHATSAPP_TEMPLATES, buildTemplatePreview, TEMPLATE_VARIABLES, ITEM_FORMATS } from "../../../utilities/whatsappTemplates";
 import { useAddAboutUsValueQuery } from "../../../apis/aboutUs/addAboutUsValue";
 import { useEditAboutUsValueQuery } from "../../../apis/aboutUs/editAboutUsValue";
 import { useDeleteAboutUsValueQuery } from "../../../apis/aboutUs/deleteAboutUsValue";
@@ -699,6 +699,7 @@ export default function Restaurants({ readOnly = false, salesUserId = null, base
     features.stripe_secret_key = features.stripe_secret_key || "";
     features.payment_methods = features.payment_methods || ["whatsapp"];
     features.custom_whatsapp_template = features.custom_whatsapp_template || "";
+    features.whatsapp_item_format = features.whatsapp_item_format || "default";
     setValue("features", features);
 
     setValue("phone_number", phone_number);
@@ -1559,7 +1560,7 @@ export default function Restaurants({ readOnly = false, salesUserId = null, base
                       </Typography>
                       {isSelected && (
                         <Box sx={{ mt: 1.5, p: 1.5, bgcolor: "#f1f5f9", borderRadius: 1, fontFamily: "monospace", fontSize: 11, whiteSpace: "pre-wrap", maxHeight: 220, overflowY: "auto", lineHeight: 1.5, color: "#334155" }}>
-                          {buildTemplatePreview(t.id || "classic", watch("name") || "Restaurant")}
+                          {buildTemplatePreview(t.id || "classic", watch("name") || "Restaurant", "", watch("features.whatsapp_item_format") || "default")}
                         </Box>
                       )}
                     </Box>
@@ -1656,7 +1657,7 @@ export default function Restaurants({ readOnly = false, salesUserId = null, base
                                 Live Preview:
                               </Typography>
                               <Box sx={{ p: 1.5, bgcolor: "#f1f5f9", borderRadius: 1, fontFamily: "monospace", fontSize: 11, whiteSpace: "pre-wrap", maxHeight: 250, overflowY: "auto", lineHeight: 1.5, color: "#334155" }}>
-                                {buildTemplatePreview("custom", watch("name") || "Restaurant", watch("features.custom_whatsapp_template"))}
+                                {buildTemplatePreview("custom", watch("name") || "Restaurant", watch("features.custom_whatsapp_template"), watch("features.whatsapp_item_format") || "default")}
                               </Box>
                             </Box>
                           )}
@@ -1665,6 +1666,38 @@ export default function Restaurants({ readOnly = false, salesUserId = null, base
                     </Box>
                   );
                 })()}
+              </Box>
+
+              {/* Item Format Selector */}
+              <Typography variant="caption" sx={{ display: "block", mb: 1, color: "#475569", fontWeight: 600 }}>
+                Item Format Style
+              </Typography>
+              <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1, mb: 1 }}>
+                {ITEM_FORMATS.map((fmt) => {
+                  const currentFmt = watch("features.whatsapp_item_format") || "default";
+                  const isActive = currentFmt === fmt.id;
+                  return (
+                    <Box
+                      key={fmt.id}
+                      onClick={() => setValue("features.whatsapp_item_format", fmt.id)}
+                      sx={{
+                        flex: "1 1 calc(50% - 4px)", minWidth: 140,
+                        p: 1, border: isActive ? "2px solid #3b82f6" : "1px solid #e2e8f0",
+                        borderRadius: 1, cursor: "pointer",
+                        bgcolor: isActive ? "#eff6ff" : "#fff",
+                        transition: "all 0.15s",
+                        "&:hover": { borderColor: "#93c5fd" },
+                      }}
+                    >
+                      <Typography variant="caption" sx={{ fontWeight: 600, color: "#0f172a", display: "block" }}>
+                        {fmt.name}
+                      </Typography>
+                      <Box sx={{ fontFamily: "monospace", fontSize: 10, color: "#64748b", whiteSpace: "pre-wrap", mt: 0.5, lineHeight: 1.4 }}>
+                        {fmt.example}
+                      </Box>
+                    </Box>
+                  );
+                })}
               </Box>
             </Box>
             {Number(getValues("template_id")) === 8 && (
