@@ -25,7 +25,7 @@ const STATUS_COLORS = {
 const CATEGORIES = [
   "restaurant", "cafe", "pizza", "burger", "bakery", "dessert", "sushi",
   "flower-shop", "balloon-shop", "cosmetics", "grocery",
-  "gym-supplements", "jewelry",
+  "gym-supplements", "jewelry", "organic-beauty", "charms-accessories",
 ];
 
 const LANGUAGES = [

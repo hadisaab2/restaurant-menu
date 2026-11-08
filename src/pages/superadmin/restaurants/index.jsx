@@ -2761,7 +2761,7 @@ function QuickDemoDialog({ open, onClose, onSuccess, basePath = "/restaurants" }
   const businessIcons = {
     restaurant: "🍽️", cafe: "☕", pizza: "🍕", "flower-shop": "🌸",
     cosmetics: "💄", bakery: "🧁", grocery: "🛒", "gym-supplements": "💪", "balloon-shop": "🎈",
-    burger: "🍔",
+    burger: "🍔", "organic-beauty": "🌿", "charms-accessories": "🎀",
   };
 
   const isCreateDisabled = mode === "import"

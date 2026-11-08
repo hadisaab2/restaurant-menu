@@ -22,6 +22,8 @@ export const TEMPLATES = [
   { value: "cosmetics", label: "Cosmetics" },
   { value: "grocery", label: "Grocery Store" },
   { value: "gym-supplements", label: "Gym & Supplements" },
+  { value: "organic-beauty", label: "Organic Beauty" },
+  { value: "charms-accessories", label: "Charms & Accessories" },
   { value: "custom", label: "Custom (blank)" },
 ];
 
