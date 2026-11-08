@@ -46,6 +46,7 @@ import { useGetCategories } from "../../../../apis/categories/getCategories";
 import { useEditProductQuery } from "../../../../apis/products/editProduct";
 import { useDeleteProductQuery } from "../../../../apis/products/deleteProduct";
 import { toast } from "react-toastify";
+import { getImageUrl } from "../../../../utilities/imageUrl";
 import { useQueryClient } from "@tanstack/react-query";
 import { v4 as uuidv4 } from "uuid";
 import ProductRichTextEditor from "./ProductRichTextEditor";
@@ -491,9 +492,7 @@ export default function AddProduct({
             </UploadedImageWrapper>
           </UploadedImageContainer>
           {images.map(({ url, isDeleted, id }) => {
-            const imageUrl = url.includes("blob")
-              ? url
-              : `https://storage.googleapis.com/menugic-images/${url}`;
+            const imageUrl = url.includes("blob") ? url : getImageUrl(url);
             if (!isDeleted) {
               return (
                 <UploadedImageContainer>

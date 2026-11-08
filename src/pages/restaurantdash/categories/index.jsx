@@ -54,8 +54,7 @@ import ProductOptionsEditor, {
 } from "../../../product-options/ProductOptionsEditor";
 import { emptyOptions, serializeOptions } from "../../../product-options/schema";
 
-const CATEGORY_IMAGE_BASE =
-  "https://storage.googleapis.com/menugic-images/";
+import { getImageUrl } from "../../../utilities/imageUrl";
 
 export default function Categories({ setProducts }) {
   const [showAddComponent, setShowAddComponent] = useState(false);
@@ -170,7 +169,7 @@ export default function Categories({ setProducts }) {
 
     setSelectedIdForAction(category.id);
     setShowAddComponent(true);
-    setImageUrl(`${CATEGORY_IMAGE_BASE}${category?.image_url}`);
+    setImageUrl(getImageUrl(category?.image_url));
   };
 
   const refetchCategories = () => {
@@ -396,7 +395,7 @@ export default function Categories({ setProducts }) {
                         <CategoryThumb>
                           {hasImage ? (
                             <img
-                              src={`${CATEGORY_IMAGE_BASE}${category.image_url}`}
+                              src={getImageUrl(category.image_url)}
                               alt=""
                             />
                           ) : (

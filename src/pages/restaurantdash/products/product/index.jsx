@@ -17,8 +17,8 @@ import {
 } from "./styles";
 import { LANGUAGES } from "../../../../global";
 import { getCookie } from "../../../../utilities/manageCookies";
+import { getImageUrl } from "../../../../utilities/imageUrl";
 
-const GCS_BASE = "https://storage.googleapis.com/menugic-images/";
 
 export default function Product({
   product,
@@ -55,7 +55,7 @@ export default function Product({
           {coverUrl ? (
             <Image
               JPG={isPng}
-              src={`${GCS_BASE}${coverUrl}`}
+              src={getImageUrl(coverUrl)}
               alt=""
             />
           ) : null}
