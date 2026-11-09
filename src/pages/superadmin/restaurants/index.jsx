@@ -2762,6 +2762,7 @@ function QuickDemoDialog({ open, onClose, onSuccess, basePath = "/restaurants" }
     restaurant: "🍽️", cafe: "☕", pizza: "🍕", "flower-shop": "🌸",
     cosmetics: "💄", bakery: "🧁", grocery: "🛒", "gym-supplements": "💪", "balloon-shop": "🎈",
     burger: "🍔", "organic-beauty": "🌿", "charms-accessories": "🎀",
+    "gift-shop": "🎁", "mens-clothing": "👔", "womens-clothing": "👗",
   };
 
   const isCreateDisabled = mode === "import"

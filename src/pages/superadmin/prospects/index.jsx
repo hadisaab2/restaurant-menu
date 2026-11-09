@@ -26,6 +26,7 @@ const CATEGORIES = [
   "restaurant", "cafe", "pizza", "burger", "bakery", "dessert", "sushi",
   "flower-shop", "balloon-shop", "cosmetics", "grocery",
   "gym-supplements", "jewelry", "organic-beauty", "charms-accessories",
+  "gift-shop", "mens-clothing", "womens-clothing",
 ];
 
 const LANGUAGES = [
