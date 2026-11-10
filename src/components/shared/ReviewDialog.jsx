@@ -24,6 +24,7 @@ export const TEMPLATES = [
   { value: "gym-supplements", label: "Gym & Supplements" },
   { value: "organic-beauty", label: "Organic Beauty" },
   { value: "charms-accessories", label: "Charms & Accessories" },
+  { value: "jewelry", label: "Jewelry Shop" },
   { value: "gift-shop", label: "Gift Shop" },
   { value: "mens-clothing", label: "Men's Clothing" },
   { value: "womens-clothing", label: "Women's Clothing" },
